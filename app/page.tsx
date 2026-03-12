@@ -259,15 +259,6 @@ function SectionCard({ section, showCursor }: { section: Section; showCursor: bo
 
 // ── Trend Feed Visual Components ─────────────────────────────
 
-const RISING_GRADIENTS = [
-  { bg: "linear-gradient(135deg, rgba(124,92,252,0.18), rgba(124,92,252,0.06))", border: "rgba(124,92,252,0.35)", color: "#c4b5fd" },
-  { bg: "linear-gradient(135deg, rgba(20,184,166,0.18), rgba(20,184,166,0.06))", border: "rgba(20,184,166,0.35)", color: "#5eead4" },
-  { bg: "linear-gradient(135deg, rgba(251,146,60,0.18), rgba(251,146,60,0.06))", border: "rgba(251,146,60,0.35)", color: "#fdba74" },
-  { bg: "linear-gradient(135deg, rgba(236,72,153,0.18), rgba(236,72,153,0.06))", border: "rgba(236,72,153,0.35)", color: "#f9a8d4" },
-  { bg: "linear-gradient(135deg, rgba(52,211,153,0.18), rgba(52,211,153,0.06))", border: "rgba(52,211,153,0.35)", color: "#6ee7b7" },
-  { bg: "linear-gradient(135deg, rgba(96,165,250,0.18), rgba(96,165,250,0.06))", border: "rgba(96,165,250,0.35)", color: "#93c5fd" },
-];
-
 function parseBullets(body: string): { title: string; desc: string; badge?: string }[] {
   const lines = body.split("\n").filter((l) => l.trim());
   const bullets: { title: string; desc: string; badge?: string }[] = [];
@@ -326,22 +317,20 @@ function TrendRisingSection({ section, isStreaming }: { section: Section; isStre
       {bullets.length > 0 ? (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem" }}>
           {bullets.map((b, i) => {
-            const grad = RISING_GRADIENTS[i % RISING_GRADIENTS.length];
-            const badgeColor = b.badge?.includes("🔥") ? { bg: "rgba(249,115,22,0.2)", color: "#fb923c", label: "Hot" }
-              : b.badge?.includes("📈") ? { bg: "rgba(52,211,153,0.2)", color: "#34d399", label: "Growing" }
-              : b.badge?.includes("⚡") ? { bg: "rgba(96,165,250,0.2)", color: "#60a5fa", label: "Emerging" }
+            const badgeColor = b.badge?.includes("🔥") ? { bg: "rgba(52,211,153,0.2)", color: "#34d399" }
+              : b.badge?.includes("📈") ? { bg: "rgba(52,211,153,0.15)", color: "#34d399" }
+              : b.badge?.includes("⚡") ? { bg: "rgba(52,211,153,0.1)", color: "#34d399" }
               : null;
             return (
               <div key={i} style={{
-                background: grad.bg, border: `1px solid ${grad.border}`,
+                background: "linear-gradient(135deg, rgba(52,211,153,0.12), rgba(52,211,153,0.04))",
+                border: "1px solid rgba(52,211,153,0.25)",
                 borderRadius: 16, padding: "1.25rem", position: "relative", overflow: "hidden",
                 transition: "transform 0.15s, box-shadow 0.15s",
               }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 8px 24px ${grad.border}40`; }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(52,211,153,0.12)"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
               >
-                {/* Glow */}
-                <div style={{ position: "absolute", top: -30, right: -30, width: 100, height: 100, borderRadius: "50%", background: grad.border, opacity: 0.08, filter: "blur(30px)", pointerEvents: "none" }} />
                 {badgeColor && (
                   <span style={{
                     display: "inline-flex", alignItems: "center", gap: 4,
@@ -349,17 +338,17 @@ function TrendRisingSection({ section, isStreaming }: { section: Section; isStre
                     background: badgeColor.bg, color: badgeColor.color,
                     fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.04em",
                     marginBottom: "0.625rem",
-                    border: `1px solid ${badgeColor.color}30`,
+                    border: "1px solid rgba(52,211,153,0.3)",
                   }}>
                     {b.badge}
                   </span>
                 )}
                 {b.title && (
-                  <div style={{ fontSize: "0.9375rem", fontWeight: 750, color: grad.color, marginBottom: "0.375rem", lineHeight: 1.3, letterSpacing: "-0.01em" }}>
+                  <div style={{ fontSize: "0.9375rem", fontWeight: 750, color: "var(--clr-text)", marginBottom: "0.375rem", lineHeight: 1.3, letterSpacing: "-0.01em" }}>
                     {b.title}
                   </div>
                 )}
-                <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.65 }}>
+                <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-2)", lineHeight: 1.65 }}>
                   {b.desc}
                 </div>
               </div>
@@ -381,7 +370,7 @@ function TrendDyingSection({ section, isStreaming }: { section: Section; isStrea
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
         <span style={{ fontSize: "1.25rem" }}>💀</span>
-        <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#f87171", margin: 0, letterSpacing: "-0.02em" }}>
+        <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#ef4444", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
       </div>
@@ -389,8 +378,8 @@ function TrendDyingSection({ section, isStreaming }: { section: Section; isStrea
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem" }}>
           {bullets.map((b, i) => (
             <div key={i} style={{
-              background: "linear-gradient(135deg, rgba(248,113,113,0.1), rgba(127,29,29,0.08))",
-              border: "1px solid rgba(248,113,113,0.25)",
+              background: "linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.03))",
+              border: "1px solid rgba(239,68,68,0.2)",
               borderRadius: 16, padding: "1.25rem", position: "relative", overflow: "hidden",
               transition: "transform 0.15s",
             }}
@@ -400,19 +389,19 @@ function TrendDyingSection({ section, isStreaming }: { section: Section; isStrea
               <span style={{
                 display: "inline-flex", alignItems: "center", gap: 4,
                 padding: "0.2rem 0.6rem", borderRadius: 999,
-                background: "rgba(248,113,113,0.15)", color: "#f87171",
+                background: "rgba(239,68,68,0.15)", color: "#ef4444",
                 fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.06em",
                 marginBottom: "0.625rem",
-                border: "1px solid rgba(248,113,113,0.3)",
+                border: "1px solid rgba(239,68,68,0.3)",
               }}>
                 ⚠️ DECLINING
               </span>
               {b.title && (
-                <div style={{ fontSize: "0.9375rem", fontWeight: 750, color: "#fca5a5", marginBottom: "0.375rem", lineHeight: 1.3 }}>
+                <div style={{ fontSize: "0.9375rem", fontWeight: 750, color: "var(--clr-text)", marginBottom: "0.375rem", lineHeight: 1.3 }}>
                   {b.title}
                 </div>
               )}
-              <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)", lineHeight: 1.65 }}>
+              <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-2)", lineHeight: 1.65 }}>
                 {b.desc}
               </div>
             </div>
@@ -433,7 +422,7 @@ function TrendNichesSection({ section, isStreaming }: { section: Section; isStre
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
         <span style={{ fontSize: "1.25rem" }}>💡</span>
-        <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#fbbf24", margin: 0, letterSpacing: "-0.02em" }}>
+        <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#f59e0b", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
       </div>
@@ -441,34 +430,32 @@ function TrendNichesSection({ section, isStreaming }: { section: Section; isStre
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem" }}>
           {niches.map((n, i) => (
             <div key={i} style={{
-              background: "linear-gradient(135deg, rgba(251,191,36,0.14), rgba(245,158,11,0.06))",
-              border: "1px solid rgba(251,191,36,0.3)",
+              background: "linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04))",
+              border: "1px solid rgba(245,158,11,0.25)",
               borderRadius: 16, padding: "1.25rem", position: "relative", overflow: "hidden",
               transition: "transform 0.15s, box-shadow 0.15s",
             }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(251,191,36,0.15)"; }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(245,158,11,0.1)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
             >
-              {/* Gold glow */}
-              <div style={{ position: "absolute", top: -20, right: -20, width: 80, height: 80, borderRadius: "50%", background: "rgba(251,191,36,0.15)", filter: "blur(25px)", pointerEvents: "none" }} />
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.625rem" }}>
                 {n.title && (
-                  <div style={{ fontSize: "0.9375rem", fontWeight: 750, color: "#fde68a", lineHeight: 1.3, flex: 1 }}>
+                  <div style={{ fontSize: "0.9375rem", fontWeight: 750, color: "var(--clr-text)", lineHeight: 1.3, flex: 1 }}>
                     {n.title}
                   </div>
                 )}
                 <div style={{
                   flexShrink: 0, display: "flex", alignItems: "center", gap: 4,
                   padding: "0.25rem 0.625rem", borderRadius: 999,
-                  background: n.score >= 8 ? "rgba(52,211,153,0.15)" : n.score >= 6 ? "rgba(251,191,36,0.15)" : "rgba(156,163,175,0.15)",
-                  border: `1px solid ${n.score >= 8 ? "rgba(52,211,153,0.35)" : n.score >= 6 ? "rgba(251,191,36,0.35)" : "rgba(156,163,175,0.35)"}`,
+                  background: "rgba(245,158,11,0.15)",
+                  border: "1px solid rgba(245,158,11,0.3)",
                 }}>
-                  <span style={{ fontSize: "0.7rem", fontWeight: 800, color: n.score >= 8 ? "#34d399" : n.score >= 6 ? "#fbbf24" : "#9ca3af" }}>
+                  <span style={{ fontSize: "0.7rem", fontWeight: 800, color: "#f59e0b" }}>
                     {n.score}/10
                   </span>
                 </div>
               </div>
-              <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.65 }}>
+              <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-2)", lineHeight: 1.65 }}>
                 {n.desc}
               </div>
             </div>
@@ -484,23 +471,23 @@ function TrendNichesSection({ section, isStreaming }: { section: Section; isStre
 function TrendPatternHero({ section, isStreaming }: { section: Section; isStreaming: boolean }) {
   // Remove leading markdown bold formatting for a clean display
   const body = section.body.replace(/\*\*/g, "").trim();
+  if (!body && !isStreaming) return null;
   const firstLine = body.split("\n")[0] || "";
   const rest = body.split("\n").slice(1).join("\n").trim();
 
   return (
     <div style={{
-      background: "linear-gradient(135deg, rgba(124,92,252,0.2), rgba(79,142,247,0.12), rgba(124,92,252,0.06))",
-      border: "1px solid rgba(124,92,252,0.35)",
+      background: "linear-gradient(135deg, rgba(124,92,252,0.15), rgba(124,92,252,0.05))",
+      border: "1px solid rgba(124,92,252,0.3)",
       borderRadius: 20, padding: "2rem 2.25rem", position: "relative", overflow: "hidden",
     }}>
-      {/* Large glow blobs */}
-      <div style={{ position: "absolute", top: -60, left: -60, width: 200, height: 200, borderRadius: "50%", background: "rgba(124,92,252,0.12)", filter: "blur(60px)", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", bottom: -40, right: -40, width: 160, height: 160, borderRadius: "50%", background: "rgba(79,142,247,0.1)", filter: "blur(50px)", pointerEvents: "none" }} />
+      {/* Subtle glow */}
+      <div style={{ position: "absolute", top: -60, left: -60, width: 200, height: 200, borderRadius: "50%", background: "rgba(124,92,252,0.1)", filter: "blur(60px)", pointerEvents: "none" }} />
 
       <div style={{ position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
           <span style={{ fontSize: "1.5rem" }}>🔥</span>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#c4b5fd", margin: 0, letterSpacing: "-0.02em" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#7c5cfc", margin: 0, letterSpacing: "-0.02em" }}>
             {section.title}
           </h3>
         </div>
@@ -514,7 +501,7 @@ function TrendPatternHero({ section, isStreaming }: { section: Section; isStream
           </div>
         )}
         {rest && (
-          <div style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", lineHeight: 1.75 }}>
+          <div style={{ fontSize: "0.9375rem", color: "var(--clr-text-2)", lineHeight: 1.75 }}>
             {rest}
           </div>
         )}
@@ -526,22 +513,22 @@ function TrendPatternHero({ section, isStreaming }: { section: Section; isStream
   );
 }
 
-function TrendGenericSection({ section, isStreaming, accentColor, emoji }: {
-  section: Section; isStreaming: boolean; accentColor: string; emoji: string;
+function TrendGenericSection({ section, isStreaming, emoji }: {
+  section: Section; isStreaming: boolean; emoji: string;
 }) {
   const bullets = parseBullets(section.body);
+  if (bullets.length === 0 && !section.body.trim() && !isStreaming) return null;
 
   return (
     <div style={{
-      background: `linear-gradient(135deg, ${accentColor}18, ${accentColor}06)`,
-      border: `1px solid ${accentColor}40`,
+      background: "linear-gradient(135deg, rgba(124,92,252,0.1), rgba(124,92,252,0.03))",
+      border: "1px solid rgba(124,92,252,0.25)",
       borderRadius: 20, padding: "1.75rem 2rem", position: "relative", overflow: "hidden",
     }}>
-      <div style={{ position: "absolute", top: -40, right: -40, width: 140, height: 140, borderRadius: "50%", background: `${accentColor}10`, filter: "blur(40px)", pointerEvents: "none" }} />
       <div style={{ position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
           <span style={{ fontSize: "1.25rem" }}>{emoji}</span>
-          <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: accentColor, margin: 0, letterSpacing: "-0.02em" }}>
+          <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#7c5cfc", margin: 0, letterSpacing: "-0.02em" }}>
             {section.title}
           </h3>
         </div>
@@ -550,21 +537,21 @@ function TrendGenericSection({ section, isStreaming, accentColor, emoji }: {
             {bullets.map((b, i) => (
               <div key={i} style={{
                 padding: "0.875rem 1rem", borderRadius: 12,
-                background: "rgba(0,0,0,0.2)", border: `1px solid ${accentColor}20`,
+                background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
               }}>
                 {b.title && (
                   <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: "0.25rem" }}>
                     {b.title}
                   </div>
                 )}
-                <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.65 }}>
+                <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-2)", lineHeight: 1.65 }}>
                   {b.desc}
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="card-prose" style={{ color: "var(--clr-text-3)" }}>
+          <div className="card-prose" style={{ color: "var(--clr-text-2)" }}>
             <ReactMarkdown remarkPlugins={[remarkGfm]} components={MD}>
               {section.body}
             </ReactMarkdown>
@@ -599,7 +586,7 @@ function TrendFeedResult({ sections, isStreaming }: { sections: Section[]; isStr
         const streaming = s.isLast && isStreaming;
 
         if (!config) {
-          return <TrendGenericSection key={i} section={s} isStreaming={streaming} accentColor="#a78bfa" emoji={s.emoji} />;
+          return <TrendGenericSection key={i} section={s} isStreaming={streaming} emoji={s.emoji} />;
         }
 
         switch (config.component) {
@@ -612,7 +599,7 @@ function TrendFeedResult({ sections, isStreaming }: { sections: Section[]; isStr
           case "niches":
             return <TrendNichesSection key={i} section={s} isStreaming={streaming} />;
           case "generic":
-            return <TrendGenericSection key={i} section={s} isStreaming={streaming} accentColor={config.color} emoji={config.emoji} />;
+            return <TrendGenericSection key={i} section={s} isStreaming={streaming} emoji={config.emoji} />;
           default:
             return <SectionCard key={i} section={s} showCursor={streaming} />;
         }
