@@ -22,40 +22,72 @@ const SYSTEM = `You are a pragmatic CTO who has launched dozens of products.
 You hate over-engineering and gold-plating. Your job is to give founders the fastest, cheapest,
 most appropriate path to a working product — matched exactly to their skill level and budget.
 
-Be specific: name exact tools, real monthly prices, real tradeoffs. No vague advice.
-Format with ## sections, bullet points, **bold** for tool names, and markdown tables for cost breakdowns.`;
+IMPORTANT: You MUST respond with ONLY a single JSON code block. No text before or after.
+The JSON must match the exact schema provided. Be specific: name real tools, real prices, real tradeoffs.`;
 
 const PROMPT = (idea: string, budget: string, techLevel: string) =>
   `Stack recommendation for:
-
 **What they're building:** ${idea}
 **Budget:** ${BUDGET_LABELS[budget] ?? budget}
 **Technical level:** ${TECH_LABELS[techLevel] ?? techLevel}
 
-## 🛠️ Recommended Stack
-The specific tools they should use — matched to their budget and skill level.
-For each tool: what it does, why this one, and what it costs.
+Respond with ONLY a JSON code block matching this exact schema:
 
-## 💰 Full Cost Breakdown
-A markdown table: | Tool | Purpose | Free Tier? | Paid Cost |
-Total it up at the bottom. Stay within their budget.
+\`\`\`json
+{
+  "headline": "One bold sentence summarizing the recommended approach",
+  "phases": [
+    {
+      "name": "Phase 0: Validate",
+      "subtitle": "Prove demand before building anything",
+      "tools": [
+        { "name": "Telegram Bot", "purpose": "Collect interest and test the flow manually", "price": "Free", "free": true }
+      ],
+      "costs": {
+        "tools": [{ "name": "Telegram Bot", "purpose": "Collect interest", "freeTier": true, "monthlyCost": "$0" }],
+        "total": "$0/mo"
+      }
+    },
+    {
+      "name": "Phase 1: MVP",
+      "subtitle": "Get it live in a weekend",
+      "tools": [
+        { "name": "Tool Name", "purpose": "What it does", "price": "Free", "free": true }
+      ],
+      "costs": {
+        "tools": [{ "name": "Tool Name", "purpose": "What it handles", "freeTier": true, "monthlyCost": "$0" }],
+        "total": "$0-5/mo"
+      }
+    }
+  ],
+  "buildOrder": [
+    {
+      "week": "Week 1",
+      "title": "Foundation",
+      "steps": ["Set up X", "Configure Y", "Deploy Z"]
+    }
+  ],
+  "mistakes": [
+    { "title": "Mistake Name", "description": "Why this is wrong and what to do instead. Max 2 sentences." }
+  ],
+  "scalability": [
+    { "trigger": "500+ users", "whatBreaks": "Database queries slow down", "upgradeTo": "Move to Supabase Pro", "severity": "medium" }
+  ],
+  "upgrades": [
+    { "tool": "Current Tool", "trigger": "When you hit X users or Y revenue", "migrateTo": "Better Tool" }
+  ]
+}
+\`\`\`
 
-## 🚀 Build Order
-Step-by-step — what to set up first, what to defer, what to skip entirely.
-Be opinionated. Most people get this order wrong.
-
-## 🔄 When to Upgrade
-At what stage (users, revenue, team size) should they reconsider each tool?
-What triggers an upgrade and what's the migration path?
-
-## ⚠️ Mistakes People at This Level Make
-The 3 most common wrong choices someone with their skill level and budget makes.
-Be blunt.
-
-## 🔮 The Scalability Ceiling
-Where does this stack break down? What breaks first, at what scale, and what's the escape route?
-
-Be specific, realistic, and opinionated. Name actual tools and real dollar amounts.`;
+Rules:
+- "phases": MUST start with Phase 0 (Validate) — the fastest $0 way to test demand before building. Use a Telegram bot, WhatsApp group, Google Form, landing page with waitlist, or similar zero-cost tool. Phase 0 should ALWAYS cost $0. Then 2-3 more phases (MVP, Growth, Scale). Each phase has 2-5 tools. "price": show real monthly cost or "Free". "free": boolean. Each phase must include a "costs" object (see below).
+- Each phase object must also include: "costs": { "tools": [{ "name": "Tool", "purpose": "What", "freeTier": true, "monthlyCost": "$0" }], "total": "$0/mo" } — listing ONLY the tools in that phase with their costs and the phase total.
+- "buildOrder": 3-4 time blocks (Week 1, Week 2, Week 3-4, Month 2). 2-4 steps each. Be opinionated about order.
+- "mistakes": exactly 3 common mistakes for someone at this skill+budget level. Be blunt. Max 2 sentences each.
+- "scalability": 2-4 items. "severity": "low" | "medium" | "high". "trigger": specific metric.
+- "upgrades": 2-4 items. When and what to migrate to.
+- Name REAL tools with REAL prices. No generic advice. Stay within their budget.
+- CONCISENESS IS CRITICAL. Short, punchy text. No filler.`;
 
 export async function POST(req: NextRequest) {
   const { idea, budget, techLevel } = await req.json();
@@ -90,8 +122,8 @@ export async function POST(req: NextRequest) {
         let full = "";
         const s = client.messages.stream({
           model: "claude-opus-4-6",
-          max_tokens: 2500,
-          thinking: { type: "adaptive" },
+          max_tokens: 16000,
+          thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM,
           messages: [{ role: "user", content: PROMPT(idea, budget, techLevel) }],
         });

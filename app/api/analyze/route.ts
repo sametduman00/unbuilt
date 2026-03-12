@@ -113,8 +113,8 @@ export async function POST(req: NextRequest) {
         let full = "";
         const anthropicStream = client.messages.stream({
           model: "claude-opus-4-6",
-          max_tokens: 3500,
-          thinking: { type: "adaptive" },
+          max_tokens: 16000,
+          thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM_PROMPT,
           messages: [{ role: "user", content: USER_PROMPT(idea) }],
         });

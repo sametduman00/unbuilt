@@ -115,6 +115,7 @@ const TOOLS: ToolConfig[] = [
     sources: [
       { name: "Claude AI", color: "#7c5cfc", live: true },
       { name: "App Store", color: "#007AFF", live: true },
+      { name: "Google Play", color: "#34a853", live: true },
     ],
   },
   {
@@ -1258,6 +1259,65 @@ interface HNPost {
 }
 
 
+interface GooglePlayApp {
+  appId: string;
+  title: string;
+  score: number;
+  ratings: number;
+  price: string;
+  description: string;
+  genre: string;
+  icon: string;
+  url: string;
+}
+interface MergedApp {
+  name: string;
+  icon: string;
+  rating: number;
+  totalRatings: number;
+  price: string;
+  description: string;
+  genres: string[];
+  platforms: { ios?: { url: string }; android?: { url: string } };
+}
+function mergeStoreApps(ios: ITunesApp[], android: GooglePlayApp[]): MergedApp[] {
+  const map = new Map<string, MergedApp>();
+  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  for (const a of ios) {
+    const key = normalize(a.trackName);
+    map.set(key, {
+      name: a.trackName,
+      icon: a.artworkUrl60,
+      rating: a.averageUserRating,
+      totalRatings: a.userRatingCount,
+      price: a.formattedPrice,
+      description: a.description,
+      genres: a.genres,
+      platforms: { ios: { url: a.trackViewUrl } },
+    });
+  }
+  for (const a of android) {
+    const key = normalize(a.title);
+    const existing = map.get(key);
+    if (existing) {
+      existing.totalRatings += a.ratings;
+      existing.platforms.android = { url: a.url };
+      if (!existing.icon && a.icon) existing.icon = a.icon;
+    } else {
+      map.set(key, {
+        name: a.title,
+        icon: a.icon,
+        rating: a.score,
+        totalRatings: a.ratings,
+        price: a.price,
+        description: a.description,
+        genres: a.genre ? [a.genre] : [],
+        platforms: { android: { url: a.url } },
+      });
+    }
+  }
+  return Array.from(map.values()).sort((a, b) => b.totalRatings - a.totalRatings);
+}
 interface ITunesApp {
   trackId: number;
   trackName: string;
@@ -1338,6 +1398,413 @@ function parseGapAnalysisJSON(raw: string): GapAnalysisData | null {
   }
 }
 
+// ── Stack Advisor structured types ────────────────────────────
+interface StackPhaseCosts {
+  tools: { name: string; purpose: string; freeTier: boolean; monthlyCost: string }[];
+  total: string;
+}
+interface StackPhase {
+  name: string;
+  subtitle: string;
+  tools: { name: string; purpose: string; price: string; free: boolean }[];
+  costs?: StackPhaseCosts;
+}
+interface StackMistake { title: string; description: string; }
+interface StackScalability { trigger: string; whatBreaks: string; upgradeTo: string; severity: "low" | "medium" | "high"; }
+interface StackUpgrade { tool: string; trigger: string; migrateTo: string; }
+interface StackAdvisorData {
+  headline: string;
+  phases: StackPhase[];
+  costs?: { tools: { name: string; purpose: string; freeTier: boolean; monthlyCost: string }[]; total: string };
+  buildOrder: { week: string; title: string; steps: string[] }[];
+  mistakes: StackMistake[];
+  scalability: StackScalability[];
+  upgrades: StackUpgrade[];
+}
+
+function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
+  const match = raw.match(/```json\s*([\s\S]*?)```/);
+  if (!match) return null;
+  try {
+    const data = JSON.parse(match[1]);
+    if (!data.phases || !data.buildOrder) return null;
+    data.headline = data.headline ?? "";
+    data.mistakes = data.mistakes ?? [];
+    data.scalability = data.scalability ?? [];
+    data.upgrades = data.upgrades ?? [];
+    return data as StackAdvisorData;
+  } catch {
+    return null;
+  }
+}
+
+// ── Stack Advisor Visual Result ──────────────────────────────
+const PHASE_COLORS = ["#eab308", "#34d399", "#60a5fa", "#a78bfa", "#fb923c"];
+const PHASE_BGS = ["rgba(234,179,8,0.08)", "rgba(52,211,153,0.08)", "rgba(96,165,250,0.08)", "rgba(167,139,250,0.08)", "rgba(251,146,60,0.08)"];
+
+function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
+  const isPhaseZero = (name: string) => /phase\s*0/i.test(name) || /validate/i.test(name);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+
+      {/* ── HEADLINE ── */}
+      {data.headline && (
+        <div style={{
+          background: "var(--clr-surface)", border: "1px solid rgba(251,146,60,0.25)",
+          borderRadius: 16, padding: "1.25rem 1.5rem",
+          borderTop: "3px solid #fb923c",
+        }}>
+          <p style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.5, letterSpacing: "-0.01em" }}>
+            {data.headline}
+          </p>
+        </div>
+      )}
+
+      {/* ── PHASES (with embedded cost breakdown) ── */}
+      {data.phases.map((phase, pi) => {
+        const isP0 = isPhaseZero(phase.name);
+        const color = PHASE_COLORS[pi] ?? PHASE_COLORS[PHASE_COLORS.length - 1];
+        const bg = PHASE_BGS[pi] ?? PHASE_BGS[PHASE_BGS.length - 1];
+        const phaseCosts = phase.costs;
+        return (
+          <div key={pi} style={{
+            background: "var(--clr-surface)", border: `1px solid ${isP0 ? "rgba(234,179,8,0.3)" : "var(--clr-border)"}`,
+            borderRadius: 16, overflow: "hidden",
+          }}>
+            <div style={{
+              height: 3, background: `linear-gradient(90deg, ${color}, ${color}80)`,
+            }} />
+            <div style={{ padding: "1.25rem 1.5rem" }}>
+              {/* Phase header */}
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "0.2rem" }}>
+                <div style={{
+                  width: 28, height: 28, borderRadius: 8,
+                  background: bg, border: `1px solid ${color}30`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "0.75rem", fontWeight: 800, color,
+                }}>
+                  {pi}
+                </div>
+                <span style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", letterSpacing: "-0.02em" }}>
+                  {phase.name}
+                </span>
+                {isP0 && (
+                  <span style={{
+                    fontSize: "0.58rem", fontWeight: 800, padding: "0.15rem 0.6rem",
+                    borderRadius: 999, letterSpacing: "0.05em",
+                    background: "rgba(234,179,8,0.15)", color: "#eab308",
+                    border: "1px solid rgba(234,179,8,0.35)",
+                    animation: "pulse 2s ease-in-out infinite",
+                  }}>
+                    DO THIS FIRST
+                  </span>
+                )}
+              </div>
+              {phase.subtitle && (
+                <p style={{ margin: "0 0 1rem 38px", fontSize: "0.78rem", color: "var(--clr-text-5)", lineHeight: 1.4 }}>
+                  {phase.subtitle}
+                </p>
+              )}
+
+              {/* Tool chips */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginLeft: 38 }}>
+                {phase.tools.map((tool, ti) => (
+                  <div key={ti} style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    padding: "0.5rem 0.875rem", borderRadius: 10,
+                    background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
+                  }}>
+                    <div style={{
+                      width: 6, height: 6, borderRadius: "50%",
+                      background: color, flexShrink: 0,
+                    }} />
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                        <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--clr-text)" }}>
+                          {tool.name}
+                        </span>
+                        <span style={{
+                          fontSize: "0.58rem", fontWeight: 700, padding: "0.08rem 0.4rem",
+                          borderRadius: 999,
+                          background: tool.free ? "rgba(52,211,153,0.12)" : "rgba(251,146,60,0.12)",
+                          color: tool.free ? "#34d399" : "#fb923c",
+                          border: `1px solid ${tool.free ? "rgba(52,211,153,0.25)" : "rgba(251,146,60,0.25)"}`,
+                        }}>
+                          {tool.price}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: "0.68rem", color: "var(--clr-text-5)", marginTop: 2 }}>
+                        {tool.purpose}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* ── Per-phase cost breakdown ── */}
+              {phaseCosts && phaseCosts.tools.length > 0 && (
+                <div style={{ marginTop: "1rem", marginLeft: 38 }}>
+                  <div style={{
+                    padding: "0.75rem 1rem", borderRadius: 12,
+                    background: `${color}08`, border: `1px solid ${color}20`,
+                  }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                      {phaseCosts.tools.map((ct, ci) => (
+                        <div key={ci} style={{
+                          display: "flex", alignItems: "center", gap: 8,
+                          padding: "0.3rem 0",
+                        }}>
+                          <div style={{
+                            width: 5, height: 5, borderRadius: "50%", flexShrink: 0,
+                            background: ct.freeTier ? "#34d399" : "#fb923c",
+                          }} />
+                          <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text-3)" }}>
+                            {ct.name}
+                          </span>
+                          <span style={{ fontSize: "0.65rem", color: "var(--clr-text-6)", flex: 1 }}>
+                            {ct.purpose}
+                          </span>
+                          <span style={{
+                            fontSize: "0.56rem", fontWeight: 700, padding: "0.05rem 0.35rem",
+                            borderRadius: 999, flexShrink: 0,
+                            background: ct.freeTier ? "rgba(52,211,153,0.12)" : "rgba(251,146,60,0.12)",
+                            color: ct.freeTier ? "#34d399" : "#fb923c",
+                          }}>
+                            {ct.freeTier ? "FREE" : "PAID"}
+                          </span>
+                          <span style={{ fontSize: "0.8125rem", fontWeight: 800, color: "var(--clr-text)", minWidth: 45, textAlign: "right" }}>
+                            {ct.monthlyCost}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Phase total pill */}
+                    <div style={{
+                      marginTop: "0.5rem", paddingTop: "0.5rem",
+                      borderTop: `1px solid ${color}20`,
+                      display: "flex", justifyContent: "flex-end",
+                    }}>
+                      <div style={{
+                        display: "inline-flex", alignItems: "center", gap: 6,
+                        padding: "0.3rem 0.875rem", borderRadius: 999,
+                        background: `${color}15`, border: `1px solid ${color}30`,
+                      }}>
+                        <span style={{ fontSize: "0.65rem", fontWeight: 600, color: "var(--clr-text-4)" }}>
+                          {phase.name.split(":")[0]} Total
+                        </span>
+                        <span style={{ fontSize: "1rem", fontWeight: 800, color, letterSpacing: "-0.02em" }}>
+                          {phaseCosts.total}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+
+      {/* ── BUILD ORDER TIMELINE ── */}
+      {data.buildOrder.length > 0 && (
+        <div style={{
+          background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
+          borderRadius: 16, padding: "1.25rem 1.5rem",
+        }}>
+          <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-text-5)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
+            Build Order
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 0, position: "relative" }}>
+            {data.buildOrder.map((block, bi) => {
+              const isLast = bi === data.buildOrder.length - 1;
+              const color = PHASE_COLORS[bi] ?? PHASE_COLORS[0];
+              return (
+                <div key={bi} style={{ display: "flex", gap: "1rem", position: "relative", paddingBottom: isLast ? 0 : "1.5rem" }}>
+                  {/* Timeline column */}
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 32, flexShrink: 0 }}>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: "50%",
+                      background: `${color}18`, border: `2px solid ${color}`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: "0.75rem", fontWeight: 800, color, zIndex: 1,
+                    }}>
+                      {bi + 1}
+                    </div>
+                    {!isLast && (
+                      <div style={{ width: 2, flex: 1, background: "var(--clr-border)", marginTop: 4 }} />
+                    )}
+                  </div>
+                  {/* Content */}
+                  <div style={{
+                    flex: 1, padding: "0.625rem 1rem", borderRadius: 12,
+                    background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
+                    marginTop: 0,
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.5rem" }}>
+                      <span style={{ fontSize: "0.68rem", fontWeight: 700, color, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                        {block.week}
+                      </span>
+                      <span style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)" }}>
+                        {block.title}
+                      </span>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                      {block.steps.map((step, si) => (
+                        <div key={si} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                          <span style={{
+                            fontSize: "0.6rem", fontWeight: 700, color: "var(--clr-text-6)",
+                            width: 16, height: 16, borderRadius: "50%",
+                            background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            flexShrink: 0, marginTop: 1,
+                          }}>
+                            {si + 1}
+                          </span>
+                          <span style={{ fontSize: "0.78rem", color: "var(--clr-text-3)", lineHeight: 1.5 }}>
+                            {step}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── MISTAKES TO AVOID ── */}
+      {data.mistakes.length > 0 && (
+        <div style={{
+          background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
+          borderRadius: 16, padding: "1.25rem 1.5rem",
+        }}>
+          <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-text-5)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
+            Mistakes to Avoid
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {data.mistakes.map((m, i) => {
+              const mColor = i === 0 ? "#f87171" : i === 1 ? "#fb923c" : "#eab308";
+              return (
+                <div key={i} style={{
+                  display: "flex", gap: 0, borderRadius: 12, overflow: "hidden",
+                  background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
+                }}>
+                  <div style={{ width: 4, background: mColor, flexShrink: 0 }} />
+                  <div style={{ padding: "0.75rem 1rem" }}>
+                    <div style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 3 }}>
+                      {m.title}
+                    </div>
+                    <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", lineHeight: 1.55 }}>
+                      {m.description}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── SCALABILITY CEILING ── */}
+      {data.scalability.length > 0 && (
+        <div style={{
+          background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
+          borderRadius: 16, padding: "1.25rem 1.5rem",
+        }}>
+          <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-text-5)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
+            Scalability Ceiling
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {data.scalability.map((s, i) => {
+              const sevColor = s.severity === "high" ? "#f87171" : s.severity === "medium" ? "#fb923c" : "#eab308";
+              return (
+                <div key={i} style={{
+                  display: "flex", alignItems: "center", gap: 10,
+                  padding: "0.625rem 1rem", borderRadius: 12,
+                  background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
+                  flexWrap: "wrap",
+                }}>
+                  {/* Trigger */}
+                  <span style={{
+                    fontSize: "0.75rem", fontWeight: 800, color: sevColor,
+                    padding: "0.15rem 0.6rem", borderRadius: 999,
+                    background: `${sevColor}15`, border: `1px solid ${sevColor}30`,
+                    flexShrink: 0,
+                  }}>
+                    {s.trigger}
+                  </span>
+                  {/* Arrow */}
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
+                    <path d="M2 7h10m0 0L9 4m3 3L9 10" stroke="var(--clr-text-6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  {/* What breaks */}
+                  <span style={{ fontSize: "0.75rem", color: "var(--clr-text-3)", flex: 1, minWidth: 100 }}>
+                    {s.whatBreaks}
+                  </span>
+                  {/* Arrow */}
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
+                    <path d="M2 7h10m0 0L9 4m3 3L9 10" stroke="var(--clr-text-6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  {/* Upgrade to */}
+                  <span style={{
+                    fontSize: "0.72rem", fontWeight: 700, color: "#34d399",
+                    padding: "0.15rem 0.6rem", borderRadius: 999,
+                    background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.25)",
+                    flexShrink: 0,
+                  }}>
+                    {s.upgradeTo}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── WHEN TO UPGRADE ── */}
+      {data.upgrades.length > 0 && (
+        <div style={{
+          background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
+          borderRadius: 16, padding: "1.25rem 1.5rem",
+        }}>
+          <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-text-5)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
+            When to Upgrade
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {data.upgrades.map((u, i) => (
+              <div key={i} style={{
+                display: "flex", alignItems: "center", gap: 10,
+                padding: "0.5rem 0.875rem", borderRadius: 10,
+                background: "var(--clr-bg)",
+              }}>
+                <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--clr-text)", minWidth: 80 }}>
+                  {u.tool}
+                </span>
+                <span style={{ fontSize: "0.72rem", color: "var(--clr-text-5)", flex: 1 }}>
+                  {u.trigger}
+                </span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
+                  <path d="M2 7h10m0 0L9 4m3 3L9 10" stroke="var(--clr-text-6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span style={{
+                  fontSize: "0.72rem", fontWeight: 700, color: "#a78bfa",
+                  padding: "0.1rem 0.5rem", borderRadius: 999,
+                  background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.25)",
+                  flexShrink: 0,
+                }}>
+                  {u.migrateTo}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main ───────────────────────────────────────────────────────
 export default function Home() {
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
@@ -1360,6 +1827,10 @@ export default function Home() {
   const [itunesTotalRatings, setItunesTotalRatings] = useState(0);
   const [itunesLoading, setItunesLoading] = useState(false);
   const [itunesFetched, setItunesFetched] = useState(false);
+  const [gplayApps, setGplayApps] = useState<GooglePlayApp[]>([]);
+  const [gplayTotal, setGplayTotal] = useState(0);
+  const [gplayLoading, setGplayLoading] = useState(false);
+  const [gplayFetched, setGplayFetched] = useState(false);
 
   const [domainKeywords, setDomainKeywords] = useState<string[]>([]);
   const [resultCached, setResultCached] = useState<boolean | null>(null);
@@ -1371,19 +1842,21 @@ export default function Home() {
   const scanTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Advance scan to "done" once last step (2) is active AND Claude has finished
+  // Number of scan steps for the current tool (used for timer logic)
+  const scanStepCounts: Record<string, number> = { "trend-feed": 3, "gap-analysis": 3, "competitor-radar": 1, "stack-advisor": 1 };
+  const maxScanStep = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3) - 1;
+
+  // Advance scan to "done" once last step is active AND Claude has finished
   useEffect(() => {
-    // Check specific case first — scanStep 4 means "all done, fade out"
     if (scanStep === 4) {
       const t = setTimeout(() => { setHasResults(true); setScanStep(-1); }, 750);
       return () => clearTimeout(t);
     }
-    // scanStep >= 2 = last scan step reached; wait for loading to finish
-    if (scanStep >= 2 && !loading) {
+    if (scanStep >= maxScanStep && !loading) {
       const t = setTimeout(() => setScanStep(4), 350);
       return () => clearTimeout(t);
     }
-  }, [scanStep, loading]);
+  }, [scanStep, loading, maxScanStep]);
 
   useEffect(() => {
     if (hasResults) {
@@ -1519,6 +1992,27 @@ export default function Home() {
     }
   };
 
+  const fetchGplayApps = async (query: string) => {
+    setGplayLoading(true);
+    setGplayFetched(false);
+    setGplayApps([]);
+    setGplayTotal(0);
+    console.log("[GPlay] fetching with query:", query);
+    try {
+      const res = await fetch(`/api/gplay?q=${encodeURIComponent(query)}`);
+      if (!res.ok) { console.log("[GPlay] error:", res.status); return; }
+      const data = await res.json();
+      setGplayApps(data.results ?? []);
+      setGplayTotal(data.total ?? 0);
+      console.log("[GPlay] results:", data.total, "apps:", (data.results ?? []).map((a: GooglePlayApp) => a.title));
+    } catch (err) {
+      console.log("[GPlay] fetch error:", err);
+    } finally {
+      setGplayLoading(false);
+      setGplayFetched(true);
+    }
+  };
+
   // Fetch domain-specific search terms via Claude Haiku, then kick off dependent API fetches
   const fetchSearchMeta = async (idea: string, extraFetches?: (q: string) => void) => {
     setDomainKeywords([]);
@@ -1567,15 +2061,18 @@ export default function Home() {
     setItunesTotal(0);
     setItunesTotalRatings(0);
     setItunesFetched(false);
+    setGplayApps([]);
+    setGplayTotal(0);
+    setGplayFetched(false);
     setDomainKeywords([]);
 
-    // Start scan sequence
+    // Start scan sequence — number of timed steps depends on the tool
     scanTimersRef.current.forEach(clearTimeout);
     setScanStep(0);
-    scanTimersRef.current = [
-      setTimeout(() => setScanStep((s) => (s < 1 ? 1 : s)), 800),
-      setTimeout(() => setScanStep((s) => (s < 2 ? 2 : s)), 1600),
-    ];
+    const steps = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3);
+    scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
+      setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 800)
+    );
 
     // Expand domain terms via Claude Haiku, then chain API fetches with normalized query
     if (selectedTool === "trend-feed") {
@@ -1629,11 +2126,12 @@ export default function Home() {
           } catch { /* skip */ }
         }
       }
-      // For gap-analysis, use Claude's appStoreQuery for iTunes search
+      // For gap-analysis, use Claude's appStoreQuery for both store searches
       if (selectedTool === "gap-analysis" && fullContent) {
         const gapParsed = parseGapAnalysisJSON(fullContent);
-        const itunesQuery = gapParsed?.appStoreQuery || idea.trim();
-        fetchITunesApps(itunesQuery);
+        const storeQuery = gapParsed?.appStoreQuery || idea.trim();
+        fetchITunesApps(storeQuery);
+        fetchGplayApps(storeQuery);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -1655,6 +2153,8 @@ export default function Home() {
     setHnFetched(false);
     setItunesApps([]);
     setItunesFetched(false);
+    setGplayApps([]);
+    setGplayFetched(false);
     setDomainKeywords([]);
   };
 
@@ -1673,6 +2173,8 @@ export default function Home() {
     setHnFetched(false);
     setItunesApps([]);
     setItunesFetched(false);
+    setGplayApps([]);
+    setGplayFetched(false);
     setDomainKeywords([]);
   };
 
@@ -1821,11 +2323,25 @@ export default function Home() {
 
           {/* ── Scanning overlay ── */}
           {scanStep >= 0 ? (() => {
-            const SCAN_STEPS = [
-              { label: "Scanning GitHub",        icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> },
-              { label: "Scanning Hacker News",   icon: <svg width="15" height="15" viewBox="0 0 18 18" fill="currentColor"><path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/></svg> },
-              { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
-            ];
+            const SCAN_STEPS_MAP: Record<string, { label: string; icon: React.ReactNode }[]> = {
+              "trend-feed": [
+                { label: "Scanning GitHub",        icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> },
+                { label: "Scanning Hacker News",   icon: <svg width="15" height="15" viewBox="0 0 18 18" fill="currentColor"><path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/></svg> },
+                { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
+              ],
+              "gap-analysis": [
+                { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
+                { label: "Searching App Store",    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> },
+                { label: "Searching Google Play",  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.04c.29.12.62.18.97.18.49 0 .97-.14 1.42-.42l.02-.01 1.73-1.01L17.63 22c1.07 0 2.01-.56 2.56-1.43l-9.6-5.55-7.4 8.02zm-.63-1.73l7.22-7.83L2.35 8.7c-.22.44-.35.94-.35 1.48V19.82c0 .6.18 1.15.55 1.49zm17.8-3.38c.59-.36 1.03-.94 1.2-1.63l.01-.04.04-.18c.06-.3.1-.63.1-.97v-.52l-.01-.03c-.05-.63-.32-1.18-.72-1.59L17.7 11.3l-2.87 3.12 5.52 3.51zm-.3-10.2L7.36 1.37 4.57 2.99 14.83 11.3l5.22-3.57z"/></svg> },
+              ],
+              "competitor-radar": [
+                { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
+              ],
+              "stack-advisor": [
+                { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
+              ],
+            };
+            const SCAN_STEPS = SCAN_STEPS_MAP[selectedTool ?? "trend-feed"] ?? SCAN_STEPS_MAP["trend-feed"];
             return (
               <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem 0" }}>
                 <div style={{
@@ -1954,7 +2470,7 @@ export default function Home() {
                 gap: "1rem",
                 paddingBottom: "2rem",
               }}>
-                {TOOLS.map((tool) => (
+                {TOOLS.filter((t) => t.id !== "competitor-radar").map((tool) => (
                   <ToolSelectorCard
                     key={tool.id}
                     tool={tool}
@@ -2098,8 +2614,8 @@ export default function Home() {
               )}
 
               {/* Loading skeleton — only while nothing has streamed yet */}
-              {loading && selectedTool === "gap-analysis" && <GapAnalysisSkeleton />}
-              {loading && selectedTool !== "gap-analysis" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
+              {loading && (selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && <GapAnalysisSkeleton />}
+              {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
 
               {/* Error */}
               {error && (
@@ -2117,7 +2633,6 @@ export default function Home() {
                 (() => {
                   const gapData = parseGapAnalysisJSON(streamedContent);
                   if (gapData) return <GapAnalysisResult data={gapData} />;
-                  // Fallback: if JSON parse fails, render as markdown sections
                   return sections.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       {sections.map((s, i) => (
@@ -2130,7 +2645,23 @@ export default function Home() {
                     </div>
                   );
                 })()
-              ) : selectedTool !== "gap-analysis" ? (
+              ) : selectedTool === "stack-advisor" && !loading && streamedContent ? (
+                (() => {
+                  const stackData = parseStackAdvisorJSON(streamedContent);
+                  if (stackData) return <StackAdvisorResult data={stackData} />;
+                  return sections.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                      {sections.map((s, i) => (
+                        <SectionCard key={i} section={s} showCursor={false} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem", padding: "1.5rem" }}>
+                      No stack recommendation found
+                    </div>
+                  );
+                })()
+              ) : selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" ? (
                 /* All other tools: markdown section cards */
                 sections.length > 0 ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -2145,28 +2676,48 @@ export default function Home() {
                 ) : null
               ) : null}
 
-              {/* ── App Store (Gap Analysis only) — always shown ── */}
-              {selectedTool === "gap-analysis" && (
+              {/* ── App Stores (Gap Analysis only) — unified merged list ── */}
+              {selectedTool === "gap-analysis" && (() => {
+                const storesLoading = (itunesLoading || !itunesFetched) && (gplayLoading || !gplayFetched);
+                const anyLoading = (itunesLoading || !itunesFetched) || (gplayLoading || !gplayFetched);
+                const merged = mergeStoreApps(itunesApps, gplayApps);
+                const totalFound = itunesTotal + gplayTotal;
+                const totalRatings = merged.reduce((s, a) => s + a.totalRatings, 0);
+                return (
                 <div className="section-card" style={{ marginTop: "1rem" }}>
                   <div className="section-card-header">
-                    <div className="section-icon" style={{ background: "rgba(0,122,255,0.1)", border: "1px solid rgba(0,122,255,0.2)" }}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="#007AFF">
-                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                    <div className="section-icon" style={{ background: "rgba(124,92,252,0.1)", border: "1px solid rgba(124,92,252,0.2)" }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="#7c5cfc">
+                        <path d="M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14zm-5 3c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/>
                       </svg>
                     </div>
-                    <span className="section-title">App Store</span>
-                    <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-                      existing apps in this space
-                    </span>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <span className="section-title">Existing Apps</span>
+                      <span style={{ fontSize: "0.62rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
+                        Showing top results · ranked by ratings
+                      </span>
+                    </div>
+                    <div style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
+                      <span style={{
+                        fontSize: "0.58rem", fontWeight: 700, padding: "0.1rem 0.45rem",
+                        borderRadius: 999, background: "rgba(0,122,255,0.08)", color: "#007AFF",
+                        border: "1px solid rgba(0,122,255,0.2)",
+                      }}>App Store</span>
+                      <span style={{
+                        fontSize: "0.58rem", fontWeight: 700, padding: "0.1rem 0.45rem",
+                        borderRadius: 999, background: "rgba(52,168,83,0.08)", color: "#34a853",
+                        border: "1px solid rgba(52,168,83,0.2)",
+                      }}>Google Play</span>
+                    </div>
                   </div>
 
-                  {(itunesLoading || !itunesFetched) ? (
+                  {storesLoading ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                       {[1, 2, 3].map((n) => (
                         <div key={n} className="shimmer" style={{ height: 72, borderRadius: 10 }} />
                       ))}
                     </div>
-                  ) : itunesApps.length === 0 ? (
+                  ) : merged.length === 0 && !anyLoading ? (
                     <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
                       No existing apps found in this niche — open opportunity
                     </div>
@@ -2176,82 +2727,97 @@ export default function Home() {
                       <div style={{ display: "flex", gap: "0.75rem", marginBottom: "0.25rem" }}>
                         <div style={{
                           flex: 1, padding: "0.625rem 0.875rem", borderRadius: 10,
-                          background: "rgba(0,122,255,0.06)", border: "1px solid rgba(0,122,255,0.15)",
+                          background: "rgba(124,92,252,0.06)", border: "1px solid rgba(124,92,252,0.15)",
                           textAlign: "center",
                         }}>
-                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#007AFF", lineHeight: 1 }}>{itunesTotal}</div>
+                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#7c5cfc", lineHeight: 1 }}>{totalFound}</div>
                           <div style={{ fontSize: "0.62rem", color: "var(--clr-text-6)", fontWeight: 600, marginTop: 3 }}>apps found</div>
                         </div>
                         <div style={{
                           flex: 1, padding: "0.625rem 0.875rem", borderRadius: 10,
-                          background: "rgba(0,122,255,0.06)", border: "1px solid rgba(0,122,255,0.15)",
+                          background: "rgba(124,92,252,0.06)", border: "1px solid rgba(124,92,252,0.15)",
                           textAlign: "center",
                         }}>
-                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#007AFF", lineHeight: 1 }}>{itunesTotalRatings.toLocaleString()}</div>
+                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#7c5cfc", lineHeight: 1 }}>{totalRatings.toLocaleString()}</div>
                           <div style={{ fontSize: "0.62rem", color: "var(--clr-text-6)", fontWeight: 600, marginTop: 3 }}>total ratings</div>
+                        </div>
+                        <div style={{
+                          flex: 1, padding: "0.625rem 0.875rem", borderRadius: 10,
+                          background: "rgba(124,92,252,0.06)", border: "1px solid rgba(124,92,252,0.15)",
+                          textAlign: "center",
+                        }}>
+                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#7c5cfc", lineHeight: 1 }}>{merged.length}</div>
+                          <div style={{ fontSize: "0.62rem", color: "var(--clr-text-6)", fontWeight: 600, marginTop: 3 }}>unique apps</div>
                         </div>
                       </div>
 
-                      {/* App cards */}
-                      {itunesApps.map((app) => (
-                        <a
-                          key={app.trackId}
-                          href={app.trackViewUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                      {anyLoading && (
+                        <div className="shimmer" style={{ height: 72, borderRadius: 10 }} />
+                      )}
+
+                      {/* Merged app cards */}
+                      {merged.map((app) => (
+                        <div
+                          key={app.name}
                           style={{
                             display: "flex", alignItems: "flex-start", gap: "0.875rem",
                             padding: "0.75rem 0.875rem", borderRadius: 10,
                             background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
-                            textDecoration: "none", transition: "border-color 0.15s",
                           }}
-                          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(0,122,255,0.35)"; }}
-                          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--clr-border)"; }}
                         >
-                          {/* App icon */}
-                          {app.artworkUrl60 && (
-                            <img
-                              src={app.artworkUrl60}
-                              alt=""
-                              width={44}
-                              height={44}
-                              style={{ borderRadius: 10, flexShrink: 0 }}
-                            />
+                          {app.icon && (
+                            <img src={app.icon} alt="" width={44} height={44} style={{ borderRadius: 10, flexShrink: 0 }} />
                           )}
-
-                          {/* Content */}
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.2rem", flexWrap: "wrap" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: "0.2rem", flexWrap: "wrap" }}>
                               <span style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.3 }}>
-                                {app.trackName}
+                                {app.name}
                               </span>
                               <span style={{
-                                fontSize: "0.62rem", fontWeight: 700, padding: "0.1rem 0.45rem",
-                                borderRadius: 999, background: "rgba(0,122,255,0.08)",
-                                color: "#007AFF", flexShrink: 0,
+                                fontSize: "0.6rem", fontWeight: 700, padding: "0.1rem 0.4rem",
+                                borderRadius: 999, background: "rgba(124,92,252,0.08)", color: "#7c5cfc", flexShrink: 0,
                               }}>
-                                {app.formattedPrice}
+                                {app.price}
                               </span>
+                              {/* Platform badges */}
+                              {app.platforms.ios && (
+                                <a href={app.platforms.ios.url} target="_blank" rel="noopener noreferrer"
+                                  style={{
+                                    fontSize: "0.55rem", fontWeight: 700, padding: "0.08rem 0.4rem",
+                                    borderRadius: 999, background: "rgba(0,122,255,0.08)", color: "#007AFF",
+                                    border: "1px solid rgba(0,122,255,0.2)", textDecoration: "none", flexShrink: 0,
+                                  }}>
+                                  App Store
+                                </a>
+                              )}
+                              {app.platforms.android && (
+                                <a href={app.platforms.android.url} target="_blank" rel="noopener noreferrer"
+                                  style={{
+                                    fontSize: "0.55rem", fontWeight: 700, padding: "0.08rem 0.4rem",
+                                    borderRadius: 999, background: "rgba(52,168,83,0.08)", color: "#34a853",
+                                    border: "1px solid rgba(52,168,83,0.2)", textDecoration: "none", flexShrink: 0,
+                                  }}>
+                                  Google Play
+                                </a>
+                              )}
                             </div>
 
-                            {/* Rating + reviews */}
                             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.25rem" }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
                                 {[1, 2, 3, 4, 5].map((star) => (
-                                  <svg key={star} width="11" height="11" viewBox="0 0 18 18" fill={star <= Math.round(app.averageUserRating) ? "#FFB800" : "var(--clr-border)"}>
+                                  <svg key={star} width="11" height="11" viewBox="0 0 18 18" fill={star <= Math.round(app.rating) ? "#FFB800" : "var(--clr-border)"}>
                                     <path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/>
                                   </svg>
                                 ))}
                                 <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--clr-text-4)", marginLeft: 2 }}>
-                                  {app.averageUserRating > 0 ? app.averageUserRating.toFixed(1) : "—"}
+                                  {app.rating > 0 ? app.rating.toFixed(1) : "—"}
                                 </span>
                               </div>
                               <span style={{ fontSize: "0.68rem", color: "var(--clr-text-6)" }}>
-                                {app.userRatingCount.toLocaleString()} ratings
+                                {app.totalRatings.toLocaleString()} ratings
                               </span>
                             </div>
 
-                            {/* Description preview */}
                             <p style={{
                               fontSize: "0.75rem", color: "var(--clr-text-5)", lineHeight: 1.5,
                               margin: 0, overflow: "hidden", display: "-webkit-box",
@@ -2260,7 +2826,6 @@ export default function Home() {
                               {app.description}
                             </p>
 
-                            {/* Genres */}
                             {app.genres.length > 0 && (
                               <div style={{ display: "flex", gap: 4, marginTop: "0.35rem", flexWrap: "wrap" }}>
                                 {app.genres.slice(0, 3).map((g) => (
@@ -2275,12 +2840,13 @@ export default function Home() {
                               </div>
                             )}
                           </div>
-                        </a>
+                        </div>
                       ))}
                     </div>
                   )}
                 </div>
-              )}
+                );
+              })()}
 
               {/* ── Hacker News Buzz (Trend Feed only) — always shown ── */}
               {selectedTool === "trend-feed" && (

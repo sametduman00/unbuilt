@@ -27,7 +27,11 @@
       "Bash(curl -s --max-time 20 \"https://www.searchapi.io/api/v1/search?engine=google_trends&q=legal&data_type=RELATED_QUERIES&api_key=XZDS5Mk5MQGG7tk16Wn2ZeCh\")",
       "Bash(curl -s \"https://itunes.apple.com/search?term=project+management&entity=software&limit=3\" | python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d['resultCount'],'results'\\); [print\\(r['trackName'],'-',r['averageUserRating'],'stars,',r['userRatingCount'],'ratings'\\) for r in d['results']]\")",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(curl -s -X POST http://localhost:3000/api/stack \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"idea\":\"calories by photo\",\"budget\":\"bootstrap\",\"techLevel\":\"nocode\"}' \\\\\n  2>&1 | head -50)",
+      "Bash(lsof -ti:3000 | xargs kill 2>/dev/null; npx next build 2>&1 | tail -15)",
+      "Bash(lsof -ti:3000 | xargs kill 2>/dev/null; wait 2>/dev/null)"
     ]
   }
 }
