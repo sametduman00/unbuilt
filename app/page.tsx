@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useAuth, UserButton, SignInButton } from "@clerk/nextjs";
 
 // ── Types ──────────────────────────────────────────────────────
 type ToolId = "gap-analysis" | "competitor-radar" | "trend-feed" | "stack-advisor";
@@ -1820,6 +1821,7 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
 
 // ── Main ───────────────────────────────────────────────────────
 export default function Home() {
+  const { isSignedIn } = useAuth();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
   const [idea, setIdea] = useState("");
   const [budget, setBudget] = useState<Budget>("bootstrap");
@@ -2327,6 +2329,30 @@ export default function Home() {
                   </svg>
                 )}
               </button>
+
+              {/* Auth */}
+              {!isSignedIn ? (
+                <SignInButton mode="modal">
+                  <button style={{
+                    padding: "0.375rem 0.875rem", borderRadius: 9,
+                    background: "linear-gradient(135deg, rgba(124,92,252,0.15), rgba(79,142,247,0.15))",
+                    border: "1px solid rgba(124,92,252,0.3)",
+                    color: "#c4b5fd", fontSize: "0.8125rem", fontWeight: 600,
+                    cursor: "pointer", fontFamily: "inherit", letterSpacing: "-0.01em",
+                    transition: "all 0.15s ease",
+                  }}>
+                    Sign in
+                  </button>
+                </SignInButton>
+              ) : (
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: { width: 32, height: 32 },
+                    },
+                  }}
+                />
+              )}
             </div>
           </div>
         </header>
@@ -2479,9 +2505,11 @@ export default function Home() {
               {/* ── Tool selector grid ── */}
               <div style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
+                gridTemplateColumns: "repeat(3, 1fr)",
                 gap: "1rem",
                 paddingBottom: "2rem",
+                maxWidth: "54rem",
+                margin: "0 auto",
               }}>
                 {TOOLS.filter((t) => t.id !== "competitor-radar").map((tool) => (
                   <ToolSelectorCard

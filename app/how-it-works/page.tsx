@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useAuth, UserButton, SignInButton } from "@clerk/nextjs";
 
-type TabId = "trend-feed" | "gap-analysis" | "competitor-radar" | "stack-advisor";
+type TabId = "trend-feed" | "gap-analysis" | "stack-advisor";
 
 interface TabConfig {
   id: TabId;
@@ -38,16 +39,6 @@ function IconGap({ color }: { color: string }) {
     </svg>
   );
 }
-function IconRadar({ color }: { color: string }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-      <circle cx="11" cy="11" r="2" fill={color} />
-      <circle cx="11" cy="11" r="5.5" stroke={color} strokeWidth="1.25" opacity="0.55" />
-      <circle cx="11" cy="11" r="9" stroke={color} strokeWidth="1" opacity="0.25" />
-      <path d="M11 2V5M20 11h-3M11 20v-3M2 11h3" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
 function IconStack({ color }: { color: string }) {
   return (
     <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -61,17 +52,17 @@ const TABS: TabConfig[] = [
   {
     id: "trend-feed",
     name: "Trend Feed",
-    tagline: "Real signals, no noise",
+    tagline: "Real signals, not hype",
     accentColor: "#34d399",
     accentRgb: "52,211,153",
     icon: <IconTrend color="#34d399" />,
-    who: "Founders looking for their next idea, researchers scanning markets, or anyone who wants to know what's actually moving before the hype cycle peaks.",
-    what: "Trend Feed uses Claude Opus to analyze a market or industry space and surface what's genuinely rising, what's quietly dying, and where the contrarian opportunity sits — before it becomes obvious.",
+    who: "Founders looking for their next idea, researchers scanning markets, or anyone who wants to know what's actually moving — backed by real data from GitHub and Hacker News, not just AI guesses.",
+    what: "Trend Feed pulls live data from GitHub (repos created in the last 7 days) and Hacker News (posts from the last 30 days), then layers Claude AI analysis on top. You get a Space Temperature score from 0-100 across 5 levels — from Freezing to On Fire — so you can see at a glance whether a space is worth entering right now.",
     steps: [
-      { title: "Describe the space", desc: "Type a market, industry, or category — 'B2B SaaS tools', 'creator economy', 'consumer health apps'. As broad or narrow as you want." },
-      { title: "Claude analyses the landscape", desc: "Claude Opus reasons through the space using its training data on products, companies, behavioral shifts, and market dynamics up to its knowledge cutoff." },
-      { title: "Signals surface in structured sections", desc: "Results stream in live. Each section focuses on a different signal type — rising trends, dying approaches, underserved niches, and one high-conviction opportunity." },
-      { title: "Act on what's contrarian", desc: "The best outputs aren't the obvious ones. The Contrarian Take and Best Opportunity sections are where the real signal lives." },
+      { title: "Describe the space", desc: "Type a market, industry, or technology — 'B2B SaaS tools', 'creator economy', 'AI code editors'. As broad or narrow as you want." },
+      { title: "Live data is pulled", desc: "GitHub is searched for repos created in the last 7 days. Hacker News is queried for posts and discussions from the last 30 days. Both run in parallel while Claude begins its analysis." },
+      { title: "Claude analyzes the landscape", desc: "Claude Sonnet synthesizes the live data with its training knowledge to identify rising topics, dying trends, underserved niches, and contrarian opportunities." },
+      { title: "Space Temperature score appears", desc: "A 0-100 score with 5 levels (Freezing, Cool, Warm, Hot, On Fire) summarizes market momentum. HN engagement data can boost the score up to +15 points based on average post points and comment volume." },
     ],
     inputs: [
       "A market, industry, or category name",
@@ -79,9 +70,9 @@ const TABS: TabConfig[] = [
       "No need for specific company names — Claude infers the landscape",
     ],
     outputs: [
-      { emoji: "📈", label: "What's Rising", preview: "**Async-first B2B tools** gaining real traction as remote teams reject synchronous standup culture. **Vertical AI agents** replacing horizontal platforms in legal, medical, and financial niches..." },
-      { emoji: "💀", label: "What's Dying", preview: "**All-in-one platforms** with feature bloat losing ground to focused single-purpose tools. Founders who built on **Notion as their core DB** are quietly migrating — the API limits are a ceiling..." },
-      { emoji: "🔥", label: "The Pattern to Bet On", preview: "The shift from **software-as-a-tool** to **software-as-a-colleague**. Products that take actions on your behalf (not just surface information) are winning at 3–5× the retention of passive dashboards..." },
+      { emoji: "🌡️", label: "Space Temperature", preview: "**Score: 78/100** — Hot. Significant activity in the last 7 days on GitHub (42 new repos) and strong HN engagement (avg 85 points, 340+ comments across 12 posts). HN boost: +12 points." },
+      { emoji: "📈", label: "Rising Topics", preview: "**Async-first B2B tools** gaining real traction as remote teams reject synchronous standup culture. **Vertical AI agents** replacing horizontal platforms in legal, medical, and financial niches..." },
+      { emoji: "💀", label: "Dying Trends", preview: "**All-in-one platforms** with feature bloat losing ground to focused single-purpose tools. Founders who built on **Notion as their core DB** are quietly migrating — the API limits are a ceiling..." },
       { emoji: "💡", label: "Underexplored Niches", preview: "**Compliance tooling for SMBs** — the customer exists (every business needs it), the problem is acute (penalties are real), but every existing solution targets enterprise and costs $40k+/yr..." },
     ],
   },
@@ -92,51 +83,24 @@ const TABS: TabConfig[] = [
     accentColor: "#a78bfa",
     accentRgb: "167,139,250",
     icon: <IconGap color="#a78bfa" />,
-    who: "Founders with an idea who want to know if there's a real opening before spending months building. Also useful for pivoting an existing product into a better-differentiated position.",
-    what: "Gap Analysis maps your competitive landscape, identifies the specific customer pain points that existing solutions fail to address, and pinpoints where a new entrant can realistically win. It's a second opinion from a relentlessly honest analyst.",
+    who: "Founders with an app idea who want to know if there's a real opening before spending months building. See exactly who you're up against — with real apps from both the App Store and Google Play — plus where existing solutions fall short.",
+    what: "Gap Analysis combines Claude AI with live App Store (iTunes) and Google Play searches to map your competitive landscape. You get a Market Opportunity score 0-100, competitor cards with threat levels, pain points with severity badges, market gaps with opportunity scores, a full SWOT analysis, and an ideal target customer persona — all from one query.",
     steps: [
       { title: "Describe your idea", desc: "Explain your niche or app concept in plain language. 'Project management for freelancers', 'AI writing tool for marketers', 'booking software for tattoo studios'. No deck needed." },
-      { title: "Claude identifies the real competitors", desc: "Not just the obvious ones. Claude surfaces direct competitors, indirect alternatives, and DIY substitutes that users might reach for instead of your product." },
-      { title: "Pain points and gaps surface", desc: "Claude catalogs what frustrates users about existing solutions — from review sites, forum discussions, and product complaints baked into its training data." },
-      { title: "You get a ranked opportunity assessment", desc: "Each gap is evaluated for size, urgency, and how hard it would be to actually win. The output tells you where the opening is and what you'd need to exploit it." },
+      { title: "App stores are searched", desc: "iTunes Search API and Google Play are queried simultaneously for existing apps in your space. Results are merged and deduplicated into one competitor list with ratings, downloads, and pricing." },
+      { title: "Claude analyzes the full picture", desc: "Claude Sonnet identifies direct competitors, indirect alternatives, and DIY substitutes — then maps pain points, market gaps, and strategic opportunities with structured scoring." },
+      { title: "You get a complete market report", desc: "Six visual sections: competitor cards with threat dots, pain points with severity badges, market gaps ranked by opportunity score, SWOT 2x2 grid, your opportunity hero card, and ideal target customer persona." },
     ],
     inputs: [
       "Your niche, category, or product concept",
       "The more specific, the sharper the analysis — 'AI writing tool' vs. 'AI email reply tool for customer support teams'",
-      "No need to list competitors yourself — Claude finds them",
+      "No need to list competitors yourself — Claude finds them, plus real apps from both stores",
     ],
     outputs: [
-      { emoji: "🏆", label: "Key Competitors", preview: "**Notion** (all-in-one, weak on freelancer-specific workflows), **Trello** (simple but no invoicing or client portal), **HoneyBook** (client-facing but bloated for solo operators)..." },
-      { emoji: "😤", label: "Pain Points", preview: "Freelancers report spending **4–6 hours/week** on admin that should be automated. Biggest complaints: **no unified client communication thread**, **manual invoice chasing**, and **time tracking disconnected from billing**..." },
-      { emoji: "🕳️", label: "Market Gaps", preview: "No tool combines **time tracking + automatic invoice generation + client messaging** in one place without enterprise pricing. The $20–$50/month tier is wide open for a focused solution..." },
-      { emoji: "⚡", label: "Opportunity Score", preview: "**High confidence** opening in the solo/micro-agency segment. Existing tools either underserve (Trello) or overcharge (HoneyBook at $400+/yr). A focused product at $29/mo could realistically capture 10k users in 18 months..." },
-    ],
-  },
-  {
-    id: "competitor-radar",
-    name: "Competitor Radar",
-    tagline: "Know your rivals inside out",
-    accentColor: "#38bdf8",
-    accentRgb: "56,189,248",
-    icon: <IconRadar color="#38bdf8" />,
-    who: "Founders who are already building and want competitive intelligence before a launch, fundraise, or major pivot. Also useful for teams doing ongoing market monitoring.",
-    what: "Competitor Radar goes deep on the specific players in your space — their strengths, exploitable weaknesses, recent strategic moves, and exactly how to position against them. It's the kind of analysis a VC associate would spend a week on.",
-    steps: [
-      { title: "Describe what you're building", desc: "Tell Claude your product concept and who you see as the main competition. 'Building a Notion alternative for agency teams, competing with Asana and Monday.com.'" },
-      { title: "Claude maps the full landscape", desc: "Claude identifies direct and non-obvious competitors, then builds a structured analysis of each — what they're actually good at and where they're genuinely weak." },
-      { title: "Exploitable weaknesses are called out", desc: "Not vague 'bad UX' criticism — specific, actionable strategic gaps. Things like: 'their enterprise focus leaves SMB customers underserved at the $50–$200/mo tier.'" },
-      { title: "Recent moves and signals are surfaced", desc: "What have key players launched, acquired, or abandoned recently? What does it signal about where they're heading — and where they're not going?" },
-    ],
-    inputs: [
-      "What you're building — the problem you solve and who for",
-      "Your main competitors (or Claude will identify them)",
-      "Optional: what you want to specifically understand (pricing, UX, positioning)",
-    ],
-    outputs: [
-      { emoji: "💪", label: "What Competitors Do Well", preview: "| Competitor | Core Strength | Why It's Hard to Beat |\n|---|---|---|\n| **Monday.com** | Visual project views | $1B+ marketing spend + massive brand recognition |\n| **Asana** | Enterprise integrations | Deep IT procurement relationships + SOC2 compliance..." },
-      { emoji: "🩸", label: "Exploitable Weaknesses", preview: "**Monday.com**: pricing jumps from $10 to $16/seat with no middle tier — agencies with 8–15 members are systematically overcharged. **Asana**: no built-in time tracking forces users to integrate Harvest/Toggl, creating churn risk..." },
-      { emoji: "⚔️", label: "How to Win", preview: "**Angle 1**: Own the agency vertical. Neither Monday nor Asana has a client-portal feature — agencies are building workarounds in Notion. **Angle 2**: Single-seat pricing for freelancers that scales to teams without a pricing cliff..." },
-      { emoji: "📋", label: "Weekly Watch List", preview: "Monitor **Monday.com's job board** for 'SMB' or 'self-serve' roles — signals a downmarket push. Watch **Asana's changelog** for time-tracking features. Check **G2 reviews monthly** for new complaint patterns..." },
+      { emoji: "🏆", label: "Competitors + Threat Level", preview: "**Notion** — Threat: ●●●○ High. All-in-one workspace, weak on freelancer billing. 4.8★ App Store, 10M+ downloads. **Trello** — Threat: ●●○○ Medium. Simple boards but no invoicing or client portal. 4.5★, 50M+ downloads." },
+      { emoji: "😤", label: "Pain Points + Severity", preview: "🔴 **Critical**: No unified client communication thread — freelancers juggle email, Slack, and DMs. 🟠 **High**: Manual invoice chasing wastes 4-6 hrs/week. 🟡 **Medium**: Time tracking disconnected from billing in every major tool." },
+      { emoji: "🕳️", label: "Market Gaps + Opportunity Score", preview: "**Gap: Unified freelancer workflow** — Opportunity: 87/100. No tool combines time tracking + automatic invoice generation + client messaging under $50/mo. **Gap: Solo-friendly pricing** — Opportunity: 72/100. Every competitor charges per-seat, punishing single operators." },
+      { emoji: "🎯", label: "Target Customer Persona", preview: "**Solo Sarah** — Freelance designer, 28-35, earns $60-120k/yr. Uses 4+ tools daily (Figma, Notion, QuickBooks, Gmail). Will pay $29/mo for something that saves 5+ hrs/week. Discovers tools via Twitter and designer communities." },
     ],
   },
   {
@@ -147,12 +111,12 @@ const TABS: TabConfig[] = [
     accentRgb: "251,146,60",
     icon: <IconStack color="#fb923c" />,
     who: "Anyone starting a new project who doesn't want to over-engineer or waste money on the wrong tools. Especially useful for non-technical founders who need a technical co-founder's opinion, or developers spinning up a new product.",
-    what: "Stack Advisor gives you a specific, opinionated technology stack recommendation tailored to your actual budget and technical level. Real tool names, real monthly costs, real tradeoffs — not a generic 'use React and Node' non-answer.",
+    what: "Stack Advisor recommends specific tools across three build phases — Phase 0 (Validate), Phase 1 (MVP), and Phase 2 (Growth) — using a curated database of 150+ developer tools with real March 2026 pricing. Every recommendation includes free tier details, monthly costs, build order, common mistakes to avoid, scalability ceilings, and when to upgrade.",
     steps: [
       { title: "Describe what you're building", desc: "Give Claude the concept — 'a marketplace for local freelancers with payments and messaging', 'a SaaS dashboard for restaurant managers'. The more specific, the more targeted the stack." },
-      { title: "Set your budget tier", desc: "Choose from Bootstrapped (< $50/mo), Growing ($50–200/mo), Funded ($200–1k/mo), or Scale ($1k+/mo). This filters out tools that are overkill or out of reach." },
+      { title: "Set your budget tier", desc: "Choose from Bootstrapped (< $50/mo), Growing ($50-200/mo), Funded ($200-1k/mo), or Scale ($1k+/mo). This filters out tools that are overkill or out of reach." },
       { title: "Set your technical level", desc: "No-code (you use Notion, Webflow, Zapier), Low-code (you can edit HTML/CSS and follow tutorials), or Developer (you can code, use CLIs, and deploy). Claude adjusts its recommendations accordingly." },
-      { title: "Get a specific build plan", desc: "You get exact tools with monthly costs, a step-by-step build order, and a clear view of where this stack will break down — and when to upgrade." },
+      { title: "Get a phased build plan", desc: "Three phases of tool recommendations with real pricing from our 150+ tool database. Each phase includes tool cards with free tier info, cost breakdowns, build order timeline, mistakes to avoid, and when to upgrade to the next phase." },
     ],
     inputs: [
       "What you're building (be specific about features — auth, payments, real-time, etc.)",
@@ -160,10 +124,10 @@ const TABS: TabConfig[] = [
       "Your technical skill level — be honest, it affects the whole recommendation",
     ],
     outputs: [
-      { emoji: "🛠️", label: "Recommended Stack", preview: "**Frontend**: Next.js on Vercel — free tier covers you to ~$50k MRR. **Auth**: Clerk ($25/mo after 10k MAU) — avoids building auth yourself. **Database**: Supabase (free tier → $25/mo) — Postgres + real-time + storage in one..." },
-      { emoji: "💰", label: "Full Cost Breakdown", preview: "| Tool | Purpose | Free Tier | Paid Cost |\n|---|---|---|---|\n| Vercel | Hosting | ✓ generous | $20/mo |\n| Supabase | Database | ✓ 500MB | $25/mo |\n| Clerk | Auth | ✓ 10k users | $25/mo |\n| **Total** | | | **~$70/mo** |" },
-      { emoji: "🚀", label: "Build Order", preview: "**Week 1**: Set up Next.js + Clerk auth. Don't touch payments yet. **Week 2**: Build core feature (the thing you're actually selling). **Week 3**: Add Stripe. **Week 4**: Deploy and get 10 users. Skip analytics until you have real traffic..." },
-      { emoji: "🔮", label: "Scalability Ceiling", preview: "This stack breaks at around **50k MAU** when Supabase connection pooling becomes an issue and Vercel serverless cold starts affect UX. At that point: migrate to dedicated Postgres (Railway or Render), add Redis for sessions..." },
+      { emoji: "🛠️", label: "Phase 0 — Validate", preview: "**Goal**: Prove demand before writing code. **Carrd** ($0/mo free tier) for landing page. **Tally** ($0) for waitlist form. **Plausible** ($0 self-hosted) for traffic analytics. Total: **$0/mo**. Move to Phase 1 when you hit 200+ signups." },
+      { emoji: "🚀", label: "Phase 1 — MVP", preview: "**Frontend**: Next.js on Vercel — free tier covers you to ~100k visits/mo. **Auth**: Clerk (free to 10k MAU). **Database**: Supabase (free 500MB). **Payments**: Stripe (2.9% + 30¢). Total: **$0/mo** until you scale. Each tool card shows free tier limits." },
+      { emoji: "📈", label: "Phase 2 — Growth", preview: "**Upgrade triggers**: Supabase hits 500MB, Vercel cold starts affect UX, need team seats. **Database**: Supabase Pro ($25/mo). **Monitoring**: Sentry ($26/mo). **Email**: Resend ($20/mo). **Analytics**: PostHog (free to 1M events). Total: **~$71/mo**." },
+      { emoji: "⚠️", label: "Mistakes to Avoid", preview: "**Don't** pay for auth before 10k users — Clerk/Supabase Auth free tiers are generous. **Don't** self-host databases to save $25/mo — your time is worth more. **Don't** add monitoring before launch — you need users before you need observability." },
     ],
   },
 ];
@@ -250,6 +214,7 @@ function MockOutput({ outputs, accentColor, accentRgb }: {
 }
 
 export default function HowItWorks() {
+  const { isSignedIn } = useAuth();
   const [activeTab, setActiveTab] = useState<TabId>("trend-feed");
   const [light, setLight] = useState(false);
   const tab = TABS.find((t) => t.id === activeTab)!;
@@ -338,6 +303,30 @@ export default function HowItWorks() {
                   </svg>
                 )}
               </button>
+
+              {/* Auth */}
+              {!isSignedIn ? (
+                <SignInButton mode="modal">
+                  <button style={{
+                    padding: "0.375rem 0.875rem", borderRadius: 9,
+                    background: "linear-gradient(135deg, rgba(124,92,252,0.15), rgba(79,142,247,0.15))",
+                    border: "1px solid rgba(124,92,252,0.3)",
+                    color: "#c4b5fd", fontSize: "0.8125rem", fontWeight: 600,
+                    cursor: "pointer", fontFamily: "inherit", letterSpacing: "-0.01em",
+                    transition: "all 0.15s ease",
+                  }}>
+                    Sign in
+                  </button>
+                </SignInButton>
+              ) : (
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: { width: 32, height: 32 },
+                    },
+                  }}
+                />
+              )}
             </div>
           </div>
         </header>
@@ -352,10 +341,10 @@ export default function HowItWorks() {
               letterSpacing: "-0.035em", lineHeight: 1.1, color: "var(--clr-text)",
               marginBottom: "1rem",
             }}>
-              Four tools. One honest output.
+              Three tools. One honest output.
             </h1>
             <p style={{ color: "var(--clr-text-5)", fontSize: "1rem", lineHeight: 1.7, textAlign: "center", maxWidth: 560, margin: "0 auto" }}>
-              Each tool uses Claude Opus with a purpose-built prompt to give you structured, specific analysis — not generic AI rambling.
+              Each tool uses Claude Sonnet with a purpose-built prompt and live data sources to give you structured, specific analysis — not generic AI rambling.
             </p>
           </div>
 
