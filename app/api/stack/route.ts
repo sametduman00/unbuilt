@@ -1,9 +1,17 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest } from "next/server";
+import { readFileSync } from "fs";
+import { join } from "path";
 import { getCached, setCached, TTL_MS } from "../_cache";
 import { normalizeQuery } from "../_normalize";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+// Load tool database at startup and build a compact version for the prompt
+const stacksDB = JSON.parse(readFileSync(join(process.cwd(), "data/stacks.json"), "utf-8"));
+const compactToolsDB = (stacksDB.tools as { name: string; category: string; description: string; freeTier: string; pricing: { plan: string; price: string; limits: string }[]; bestFor: string[]; noCode: boolean; openSource?: boolean }[])
+  .map((t) => `${t.name} [${t.category}${t.noCode ? ",nocode" : ""}${t.openSource ? ",oss" : ""}]: ${t.description}. Free: ${t.freeTier}. Plans: ${t.pricing.map((p) => `${p.plan}=${p.price}`).join(", ")}. Best for: ${t.bestFor.join(", ")}`)
+  .join("\n");
 
 const BUDGET_LABELS: Record<string, string> = {
   bootstrap: "Bootstrapped — under $50/month total",
@@ -23,7 +31,9 @@ You hate over-engineering and gold-plating. Your job is to give founders the fas
 most appropriate path to a working product — matched exactly to their skill level and budget.
 
 IMPORTANT: You MUST respond with ONLY a single JSON code block. No text before or after.
-The JSON must match the exact schema provided. Be specific: name real tools, real prices, real tradeoffs.`;
+The JSON must match the exact schema provided.
+You have a curated database of developer tools with verified March 2026 pricing.
+Use ONLY tools from this database — do NOT invent tools or guess prices. Use the exact pricing from the database.`;
 
 const PROMPT = (idea: string, budget: string, techLevel: string) =>
   `Stack recommendation for:
@@ -86,8 +96,11 @@ Rules:
 - "mistakes": exactly 3 common mistakes for someone at this skill+budget level. Be blunt. Max 2 sentences each.
 - "scalability": 2-4 items. "severity": "low" | "medium" | "high". "trigger": specific metric.
 - "upgrades": 2-4 items. When and what to migrate to.
-- Name REAL tools with REAL prices. No generic advice. Stay within their budget.
-- CONCISENESS IS CRITICAL. Short, punchy text. No filler.`;
+- Use ONLY tools from the database below. Use their exact pricing. Do NOT invent tools or guess prices.
+- CONCISENESS IS CRITICAL. Short, punchy text. No filler.
+
+--- TOOL DATABASE (March 2026 verified pricing) ---
+${compactToolsDB}`;
 
 export async function POST(req: NextRequest) {
   const { idea, budget, techLevel } = await req.json();

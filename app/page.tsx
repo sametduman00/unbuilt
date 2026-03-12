@@ -1454,6 +1454,19 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
           borderRadius: 16, padding: "1.25rem 1.5rem",
           borderTop: "3px solid #fb923c",
         }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: "0.5rem" }}>
+            <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--clr-text-6)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              Recommendation
+            </span>
+            <span style={{
+              fontSize: "0.55rem", fontWeight: 700, padding: "0.12rem 0.5rem",
+              borderRadius: 999, background: "rgba(52,211,153,0.1)",
+              color: "#34d399", border: "1px solid rgba(52,211,153,0.25)",
+              letterSpacing: "0.03em",
+            }}>
+              Pricing verified March 2026
+            </span>
+          </div>
           <p style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.5, letterSpacing: "-0.01em" }}>
             {data.headline}
           </p>

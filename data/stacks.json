@@ -1,0 +1,997 @@
+{
+  "lastUpdated": "2026-03",
+  "tools": [
+    {
+      "name": "Vercel",
+      "category": "hosting",
+      "description": "Frontend hosting and serverless functions",
+      "website": "vercel.com",
+      "freeTier": "100GB bandwidth, 6000 build minutes/mo, unlimited personal projects",
+      "pricing": [
+        { "plan": "Hobby", "price": "$0/mo", "limits": "Personal use only" },
+        { "plan": "Pro", "price": "$20/mo", "limits": "Commercial use, team features" },
+        { "plan": "Enterprise", "price": "Custom", "limits": "SLA, advanced security" }
+      ],
+      "bestFor": ["frontend", "nextjs", "serverless"],
+      "noCode": false
+    },
+    {
+      "name": "Netlify",
+      "category": "hosting",
+      "description": "Frontend hosting with edge functions and forms",
+      "website": "netlify.com",
+      "freeTier": "100GB bandwidth, 300 build minutes/mo, 1 concurrent build",
+      "pricing": [
+        { "plan": "Starter", "price": "$0/mo", "limits": "1 member" },
+        { "plan": "Pro", "price": "$19/mo", "limits": "Team features, 3 concurrent builds" },
+        { "plan": "Enterprise", "price": "Custom", "limits": "SLA, SSO" }
+      ],
+      "bestFor": ["frontend", "jamstack", "static-sites"],
+      "noCode": false
+    },
+    {
+      "name": "Cloudflare Pages",
+      "category": "hosting",
+      "description": "Edge-first static and full-stack hosting",
+      "website": "pages.cloudflare.com",
+      "freeTier": "Unlimited bandwidth, 500 builds/mo, 1 concurrent build",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "500 builds/mo" },
+        { "plan": "Pro", "price": "$20/mo", "limits": "5000 builds/mo, 20 concurrent" },
+        { "plan": "Business", "price": "$200/mo", "limits": "Unlimited builds" }
+      ],
+      "bestFor": ["edge", "workers", "global-cdn"],
+      "noCode": false
+    },
+    {
+      "name": "Railway",
+      "category": "hosting",
+      "description": "Full-stack app hosting with databases and cron jobs",
+      "website": "railway.app",
+      "freeTier": "$5 free credit/mo, 512MB RAM, 1GB disk",
+      "pricing": [
+        { "plan": "Trial", "price": "$0/mo", "limits": "$5 credit, no custom domains" },
+        { "plan": "Hobby", "price": "$5/mo + usage", "limits": "8GB RAM, 100GB disk" },
+        { "plan": "Pro", "price": "$20/mo + usage", "limits": "32GB RAM, team features" }
+      ],
+      "bestFor": ["backend", "fullstack", "databases"],
+      "noCode": false
+    },
+    {
+      "name": "Render",
+      "category": "hosting",
+      "description": "Cloud hosting for web services, databases, and cron jobs",
+      "website": "render.com",
+      "freeTier": "750 hours/mo for web services, 90 days for databases",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "Spins down after inactivity" },
+        { "plan": "Starter", "price": "$7/mo", "limits": "512MB RAM, always-on" },
+        { "plan": "Standard", "price": "$25/mo", "limits": "2GB RAM, autoscaling" }
+      ],
+      "bestFor": ["backend", "python", "docker"],
+      "noCode": false
+    },
+    {
+      "name": "Fly.io",
+      "category": "hosting",
+      "description": "Globally distributed app hosting close to users",
+      "website": "fly.io",
+      "freeTier": "3 shared VMs, 160GB outbound, 3GB storage",
+      "pricing": [
+        { "plan": "Hobby", "price": "$0/mo", "limits": "3 VMs, 256MB RAM each" },
+        { "plan": "Launch", "price": "$0/mo + usage", "limits": "Pay-per-use after free tier" },
+        { "plan": "Scale", "price": "$0/mo + usage", "limits": "Dedicated VMs, SOC2" }
+      ],
+      "bestFor": ["global", "edge", "docker"],
+      "noCode": false
+    },
+    {
+      "name": "Supabase",
+      "category": "database",
+      "description": "Postgres database with auth, storage, realtime, and edge functions",
+      "website": "supabase.com",
+      "freeTier": "500MB database, 1GB file storage, 50K monthly active users",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "2 projects, pauses after 1 week inactivity" },
+        { "plan": "Pro", "price": "$25/mo", "limits": "8GB database, 100GB storage, no pause" },
+        { "plan": "Team", "price": "$599/mo", "limits": "SOC2, priority support" }
+      ],
+      "bestFor": ["postgres", "realtime", "auth", "fullstack"],
+      "noCode": false
+    },
+    {
+      "name": "PlanetScale",
+      "category": "database",
+      "description": "Serverless MySQL with branching and zero-downtime migrations",
+      "website": "planetscale.com",
+      "freeTier": "Removed free tier in 2024 — paid only",
+      "pricing": [
+        { "plan": "Scaler", "price": "$39/mo", "limits": "10GB storage, 1 billion row reads" },
+        { "plan": "Scaler Pro", "price": "$99/mo", "limits": "Dedicated resources, SOC2" },
+        { "plan": "Enterprise", "price": "Custom", "limits": "Single-tenant, SLA" }
+      ],
+      "bestFor": ["mysql", "branching", "migrations"],
+      "noCode": false
+    },
+    {
+      "name": "Neon",
+      "category": "database",
+      "description": "Serverless Postgres with branching and autoscaling",
+      "website": "neon.tech",
+      "freeTier": "0.5GB storage, 190 compute hours/mo, 1 project",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "0.5GB, 1 project" },
+        { "plan": "Launch", "price": "$19/mo", "limits": "10GB storage, 300 compute hours" },
+        { "plan": "Scale", "price": "$69/mo", "limits": "50GB storage, 750 compute hours" }
+      ],
+      "bestFor": ["postgres", "serverless", "branching"],
+      "noCode": false
+    },
+    {
+      "name": "Firebase",
+      "category": "database",
+      "description": "Google's app platform with Firestore, auth, hosting, and cloud functions",
+      "website": "firebase.google.com",
+      "freeTier": "1GB Firestore, 10GB hosting, 50K auth/mo, 2M cloud function invocations",
+      "pricing": [
+        { "plan": "Spark (Free)", "price": "$0/mo", "limits": "Generous free tier" },
+        { "plan": "Blaze (Pay-as-you-go)", "price": "$0/mo + usage", "limits": "Pay only for what you use above free tier" }
+      ],
+      "bestFor": ["mobile", "realtime", "google-ecosystem"],
+      "noCode": false
+    },
+    {
+      "name": "Turso",
+      "category": "database",
+      "description": "Edge-native SQLite database (libSQL) with global replication",
+      "website": "turso.tech",
+      "freeTier": "9GB storage, 500 databases, 25 billion row reads",
+      "pricing": [
+        { "plan": "Starter", "price": "$0/mo", "limits": "9GB, 500 DBs" },
+        { "plan": "Scaler", "price": "$29/mo", "limits": "24GB, 10K DBs, 100 billion reads" },
+        { "plan": "Enterprise", "price": "Custom", "limits": "Dedicated, SLA" }
+      ],
+      "bestFor": ["edge", "sqlite", "embedded"],
+      "noCode": false
+    },
+    {
+      "name": "MongoDB Atlas",
+      "category": "database",
+      "description": "Managed MongoDB with full-text search and serverless options",
+      "website": "mongodb.com/atlas",
+      "freeTier": "512MB storage, shared cluster (M0)",
+      "pricing": [
+        { "plan": "Free (M0)", "price": "$0/mo", "limits": "512MB, shared" },
+        { "plan": "Serverless", "price": "$0.10/million reads", "limits": "Pay-per-operation" },
+        { "plan": "Dedicated (M10+)", "price": "From $57/mo", "limits": "2GB RAM, dedicated" }
+      ],
+      "bestFor": ["nosql", "documents", "search"],
+      "noCode": false
+    },
+    {
+      "name": "Clerk",
+      "category": "auth",
+      "description": "Drop-in auth with beautiful UI components, SSO, and MFA",
+      "website": "clerk.com",
+      "freeTier": "10,000 monthly active users, unlimited social logins",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "10K MAUs, 5 social providers" },
+        { "plan": "Pro", "price": "$25/mo + $0.02/MAU", "limits": "Unlimited MAUs, custom domains" },
+        { "plan": "Enterprise", "price": "Custom", "limits": "SSO, SCIM, SLA" }
+      ],
+      "bestFor": ["react", "nextjs", "prebuilt-ui"],
+      "noCode": false
+    },
+    {
+      "name": "Auth0",
+      "category": "auth",
+      "description": "Enterprise-grade identity platform by Okta",
+      "website": "auth0.com",
+      "freeTier": "25,000 MAUs, unlimited social/email logins",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "25K MAUs" },
+        { "plan": "Essentials", "price": "$35/mo", "limits": "Custom domains, MFA" },
+        { "plan": "Professional", "price": "$240/mo", "limits": "Enterprise SSO, roles" }
+      ],
+      "bestFor": ["enterprise", "sso", "compliance"],
+      "noCode": false
+    },
+    {
+      "name": "Supabase Auth",
+      "category": "auth",
+      "description": "Built-in auth included with Supabase — email, social, phone, MFA",
+      "website": "supabase.com/auth",
+      "freeTier": "50,000 MAUs included with Supabase free tier",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "50K MAUs" },
+        { "plan": "Pro", "price": "Included in Supabase Pro ($25/mo)", "limits": "100K MAUs" }
+      ],
+      "bestFor": ["supabase", "postgres", "bundled"],
+      "noCode": false
+    },
+    {
+      "name": "NextAuth (Auth.js)",
+      "category": "auth",
+      "description": "Open-source auth library for Next.js and other frameworks",
+      "website": "authjs.dev",
+      "freeTier": "Completely free and open-source",
+      "pricing": [
+        { "plan": "Open Source", "price": "$0/mo", "limits": "Self-hosted, unlimited users" }
+      ],
+      "bestFor": ["nextjs", "self-hosted", "developers"],
+      "noCode": false
+    },
+    {
+      "name": "Lucia",
+      "category": "auth",
+      "description": "Lightweight open-source auth library — bring your own database",
+      "website": "lucia-auth.com",
+      "freeTier": "Completely free and open-source",
+      "pricing": [
+        { "plan": "Open Source", "price": "$0/mo", "limits": "Self-hosted, any database" }
+      ],
+      "bestFor": ["lightweight", "self-hosted", "typescript"],
+      "noCode": false
+    },
+    {
+      "name": "Stripe",
+      "category": "payments",
+      "description": "Payment processing, subscriptions, invoicing, and billing portal",
+      "website": "stripe.com",
+      "freeTier": "No monthly fee — pay per transaction only",
+      "pricing": [
+        { "plan": "Standard", "price": "2.9% + $0.30/txn", "limits": "Cards, wallets, bank transfers" },
+        { "plan": "Billing (Subscriptions)", "price": "0.5% of recurring revenue", "limits": "On top of payment fees" },
+        { "plan": "Tax", "price": "0.5% per transaction", "limits": "Automatic tax calculation" }
+      ],
+      "bestFor": ["saas", "subscriptions", "marketplaces"],
+      "noCode": false
+    },
+    {
+      "name": "Lemon Squeezy",
+      "category": "payments",
+      "description": "Merchant of record — handles tax, compliance, and billing globally",
+      "website": "lemonsqueezy.com",
+      "freeTier": "No monthly fee — pay per transaction only",
+      "pricing": [
+        { "plan": "Standard", "price": "5% + $0.50/txn", "limits": "All-inclusive: tax, billing, compliance" },
+        { "plan": "Growth", "price": "3.5% + $0.50/txn", "limits": "$100K+ annual volume" }
+      ],
+      "bestFor": ["digital-products", "saas", "global-tax"],
+      "noCode": false
+    },
+    {
+      "name": "Paddle",
+      "category": "payments",
+      "description": "Merchant of record for SaaS — handles tax, billing, compliance",
+      "website": "paddle.com",
+      "freeTier": "No monthly fee — revenue share only",
+      "pricing": [
+        { "plan": "Standard", "price": "5% + $0.50/txn", "limits": "All-inclusive MoR" },
+        { "plan": "Custom", "price": "Negotiable", "limits": "$1M+ annual volume" }
+      ],
+      "bestFor": ["saas", "subscriptions", "b2b"],
+      "noCode": false
+    },
+    {
+      "name": "Gumroad",
+      "category": "payments",
+      "description": "Simple platform for selling digital products and memberships",
+      "website": "gumroad.com",
+      "freeTier": "No monthly fee — flat 10% per sale",
+      "pricing": [
+        { "plan": "Standard", "price": "10% per sale", "limits": "Digital products, memberships, no code needed" }
+      ],
+      "bestFor": ["digital-products", "creators", "nocode"],
+      "noCode": true
+    },
+    {
+      "name": "OpenAI",
+      "category": "ai",
+      "description": "GPT-4o, o1, DALL-E, Whisper, embeddings, and fine-tuning",
+      "website": "openai.com",
+      "freeTier": "$5 free credit for new accounts (expires after 3 months)",
+      "pricing": [
+        { "plan": "GPT-4o", "price": "$2.50/1M input + $10/1M output tokens", "limits": "Most capable multimodal" },
+        { "plan": "GPT-4o mini", "price": "$0.15/1M input + $0.60/1M output", "limits": "Fast and cheap" },
+        { "plan": "o1", "price": "$15/1M input + $60/1M output", "limits": "Advanced reasoning" }
+      ],
+      "bestFor": ["chat", "vision", "embeddings", "general-ai"],
+      "noCode": false
+    },
+    {
+      "name": "Anthropic",
+      "category": "ai",
+      "description": "Claude — advanced reasoning, coding, analysis, and vision",
+      "website": "anthropic.com",
+      "freeTier": "Free tier with rate limits via API",
+      "pricing": [
+        { "plan": "Claude Opus 4", "price": "$15/1M input + $75/1M output tokens", "limits": "Most capable" },
+        { "plan": "Claude Sonnet 4", "price": "$3/1M input + $15/1M output", "limits": "Best balance" },
+        { "plan": "Claude Haiku 3.5", "price": "$0.80/1M input + $4/1M output", "limits": "Fast and cheap" }
+      ],
+      "bestFor": ["reasoning", "coding", "analysis", "long-context"],
+      "noCode": false
+    },
+    {
+      "name": "Groq",
+      "category": "ai",
+      "description": "Ultra-fast LLM inference — Llama, Mixtral, Gemma on custom hardware",
+      "website": "groq.com",
+      "freeTier": "Free tier with rate limits (30 req/min)",
+      "pricing": [
+        { "plan": "Llama 3.3 70B", "price": "$0.59/1M input + $0.79/1M output", "limits": "Very fast inference" },
+        { "plan": "Llama 3.1 8B", "price": "$0.05/1M input + $0.08/1M output", "limits": "Ultra cheap" },
+        { "plan": "Mixtral 8x7B", "price": "$0.24/1M input + $0.24/1M output", "limits": "Good balance" }
+      ],
+      "bestFor": ["speed", "open-source-models", "real-time"],
+      "noCode": false
+    },
+    {
+      "name": "Together AI",
+      "category": "ai",
+      "description": "Open-source model hosting and fine-tuning platform",
+      "website": "together.ai",
+      "freeTier": "$5 free credit for new accounts",
+      "pricing": [
+        { "plan": "Llama 3.3 70B", "price": "$0.88/1M tokens", "limits": "Serverless" },
+        { "plan": "Mixtral 8x22B", "price": "$1.20/1M tokens", "limits": "Serverless" },
+        { "plan": "Fine-tuning", "price": "From $2/1M tokens", "limits": "Custom models" }
+      ],
+      "bestFor": ["open-source", "fine-tuning", "custom-models"],
+      "noCode": false
+    },
+    {
+      "name": "Replicate",
+      "category": "ai",
+      "description": "Run open-source AI models via API — images, video, audio, LLMs",
+      "website": "replicate.com",
+      "freeTier": "Small free credit for exploration",
+      "pricing": [
+        { "plan": "Pay-per-use", "price": "From $0.00025/sec (CPU)", "limits": "CPU and GPU pricing varies" },
+        { "plan": "GPU (A40)", "price": "$0.000575/sec", "limits": "Mid-range GPU" },
+        { "plan": "GPU (A100)", "price": "$0.001150/sec", "limits": "High-end GPU" }
+      ],
+      "bestFor": ["image-gen", "video", "audio", "open-source"],
+      "noCode": false
+    },
+    {
+      "name": "Hugging Face",
+      "category": "ai",
+      "description": "Model hub, inference API, and Spaces for ML apps",
+      "website": "huggingface.co",
+      "freeTier": "Free inference API (rate limited), free Spaces (CPU)",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "Rate-limited inference, CPU Spaces" },
+        { "plan": "Pro", "price": "$9/mo", "limits": "Faster inference, GPU Spaces" },
+        { "plan": "Enterprise", "price": "Custom", "limits": "Dedicated endpoints, SSO" }
+      ],
+      "bestFor": ["models", "ml-ops", "community"],
+      "noCode": false
+    },
+    {
+      "name": "Bubble",
+      "category": "nocode",
+      "description": "Full-stack no-code app builder with database, workflows, and plugins",
+      "website": "bubble.io",
+      "freeTier": "Build and test for free (no custom domain or API workflows)",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "Build only, no deployment" },
+        { "plan": "Starter", "price": "$32/mo", "limits": "Custom domain, basic API" },
+        { "plan": "Growth", "price": "$134/mo", "limits": "More capacity, 2 app editors" },
+        { "plan": "Team", "price": "$399/mo", "limits": "10 editors, sub-apps" }
+      ],
+      "bestFor": ["web-apps", "mvp", "complex-logic"],
+      "noCode": true
+    },
+    {
+      "name": "Webflow",
+      "category": "nocode",
+      "description": "Visual web design and CMS platform — pixel-perfect sites",
+      "website": "webflow.com",
+      "freeTier": "2 projects, webflow.io subdomain, 1GB bandwidth",
+      "pricing": [
+        { "plan": "Starter", "price": "$0/mo", "limits": "2 pages, webflow.io domain" },
+        { "plan": "Basic", "price": "$18/mo", "limits": "Custom domain, 50GB bandwidth" },
+        { "plan": "CMS", "price": "$29/mo", "limits": "Blog, dynamic content" },
+        { "plan": "Business", "price": "$49/mo", "limits": "10K CMS items, forms" }
+      ],
+      "bestFor": ["marketing-sites", "portfolios", "cms"],
+      "noCode": true
+    },
+    {
+      "name": "Framer",
+      "category": "nocode",
+      "description": "Design-to-live-site builder with animations and CMS",
+      "website": "framer.com",
+      "freeTier": "1 site, framer.site subdomain, 1000 visitors/mo",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "1 site, 1K visitors/mo" },
+        { "plan": "Mini", "price": "$5/mo", "limits": "Custom domain, 2K visitors/mo" },
+        { "plan": "Basic", "price": "$15/mo", "limits": "10K visitors, CMS" },
+        { "plan": "Pro", "price": "$30/mo", "limits": "200K visitors, staging" }
+      ],
+      "bestFor": ["landing-pages", "marketing", "design"],
+      "noCode": true
+    },
+    {
+      "name": "Glide",
+      "category": "nocode",
+      "description": "Build mobile and web apps from spreadsheets — no code",
+      "website": "glideapps.com",
+      "freeTier": "3 apps, 500 rows, Glide branding",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "3 apps, 500 rows" },
+        { "plan": "Maker", "price": "$60/mo", "limits": "Unlimited apps, 25K rows" },
+        { "plan": "Team", "price": "$125/mo", "limits": "100K rows, custom branding" }
+      ],
+      "bestFor": ["mobile-apps", "internal-tools", "spreadsheet-data"],
+      "noCode": true
+    },
+    {
+      "name": "FlutterFlow",
+      "category": "nocode",
+      "description": "Visual Flutter app builder — native iOS, Android, and web",
+      "website": "flutterflow.io",
+      "freeTier": "Build and preview for free, no code export",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "Build only, no export" },
+        { "plan": "Standard", "price": "$30/mo", "limits": "Code export, custom domains" },
+        { "plan": "Pro", "price": "$70/mo", "limits": "Team features, GitHub integration" }
+      ],
+      "bestFor": ["mobile-apps", "flutter", "cross-platform"],
+      "noCode": true
+    },
+    {
+      "name": "Adalo",
+      "category": "nocode",
+      "description": "No-code native mobile and web app builder",
+      "website": "adalo.com",
+      "freeTier": "Build and test for free (Adalo branding, no publish)",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "Build only, Adalo branding" },
+        { "plan": "Starter", "price": "$45/mo", "limits": "Publish apps, custom domain" },
+        { "plan": "Professional", "price": "$65/mo", "limits": "API integrations, no branding" }
+      ],
+      "bestFor": ["mobile-apps", "prototyping", "mvp"],
+      "noCode": true
+    },
+    {
+      "name": "Softr",
+      "category": "nocode",
+      "description": "Build web apps and client portals from Airtable or Google Sheets",
+      "website": "softr.io",
+      "freeTier": "1 app, 5 users, Softr branding",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "1 app, 5 users" },
+        { "plan": "Basic", "price": "$59/mo", "limits": "Custom domain, 50 users" },
+        { "plan": "Professional", "price": "$167/mo", "limits": "Unlimited users, API" }
+      ],
+      "bestFor": ["client-portals", "internal-tools", "airtable"],
+      "noCode": true
+    },
+    {
+      "name": "Make.com",
+      "category": "automation",
+      "description": "Visual automation platform — connect APIs, transform data, build workflows",
+      "website": "make.com",
+      "freeTier": "1,000 operations/mo, 2 active scenarios",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "1K ops, 2 scenarios" },
+        { "plan": "Core", "price": "$10.59/mo", "limits": "10K ops, unlimited scenarios" },
+        { "plan": "Pro", "price": "$18.82/mo", "limits": "10K ops, priority execution" }
+      ],
+      "bestFor": ["automation", "api-integration", "data-pipelines"],
+      "noCode": true
+    },
+    {
+      "name": "Zapier",
+      "category": "automation",
+      "description": "Connect 7,000+ apps with automated workflows (Zaps)",
+      "website": "zapier.com",
+      "freeTier": "100 tasks/mo, 5 single-step Zaps",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "100 tasks, 5 Zaps, single-step" },
+        { "plan": "Starter", "price": "$29.99/mo", "limits": "750 tasks, multi-step" },
+        { "plan": "Professional", "price": "$73.50/mo", "limits": "2K tasks, webhooks, paths" }
+      ],
+      "bestFor": ["simple-automation", "app-connectors", "nocode"],
+      "noCode": true
+    },
+    {
+      "name": "n8n",
+      "category": "automation",
+      "description": "Open-source workflow automation — self-host or cloud",
+      "website": "n8n.io",
+      "freeTier": "Free self-hosted (unlimited), cloud starts at Starter",
+      "pricing": [
+        { "plan": "Self-hosted", "price": "$0/mo", "limits": "Unlimited, you host it" },
+        { "plan": "Starter (Cloud)", "price": "$24/mo", "limits": "2.5K executions, 5 workflows" },
+        { "plan": "Pro (Cloud)", "price": "$60/mo", "limits": "10K executions, unlimited workflows" }
+      ],
+      "bestFor": ["self-hosted", "complex-workflows", "developers"],
+      "noCode": false
+    },
+    {
+      "name": "Pipedream",
+      "category": "automation",
+      "description": "Developer-first workflow automation with code and no-code steps",
+      "website": "pipedream.com",
+      "freeTier": "10,000 invocations/mo, unlimited workflows",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "10K invocations, 3 active sources" },
+        { "plan": "Basic", "price": "$29/mo", "limits": "Unlimited invocations, priority" },
+        { "plan": "Advanced", "price": "$99/mo", "limits": "Team features, SSO" }
+      ],
+      "bestFor": ["developer-automation", "webhooks", "event-driven"],
+      "noCode": false
+    },
+    {
+      "name": "Resend",
+      "category": "email",
+      "description": "Modern email API built for developers — React Email compatible",
+      "website": "resend.com",
+      "freeTier": "3,000 emails/mo, 1 domain",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "3K emails/mo, 100/day" },
+        { "plan": "Pro", "price": "$20/mo", "limits": "50K emails/mo, multiple domains" },
+        { "plan": "Enterprise", "price": "$100/mo", "limits": "100K emails/mo, dedicated IP" }
+      ],
+      "bestFor": ["transactional", "react-email", "developer-dx"],
+      "noCode": false
+    },
+    {
+      "name": "Postmark",
+      "category": "email",
+      "description": "Reliable transactional email with excellent deliverability",
+      "website": "postmarkapp.com",
+      "freeTier": "100 emails/mo on free developer plan",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "100 emails/mo" },
+        { "plan": "10K", "price": "$15/mo", "limits": "10K emails/mo" },
+        { "plan": "50K", "price": "$55/mo", "limits": "50K emails/mo" }
+      ],
+      "bestFor": ["transactional", "deliverability", "reliability"],
+      "noCode": false
+    },
+    {
+      "name": "SendGrid",
+      "category": "email",
+      "description": "Email delivery by Twilio — transactional and marketing",
+      "website": "sendgrid.com",
+      "freeTier": "100 emails/day forever",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "100 emails/day" },
+        { "plan": "Essentials", "price": "$19.95/mo", "limits": "50K emails/mo" },
+        { "plan": "Pro", "price": "$89.95/mo", "limits": "100K emails/mo, dedicated IP" }
+      ],
+      "bestFor": ["marketing-email", "transactional", "scale"],
+      "noCode": false
+    },
+    {
+      "name": "Mailgun",
+      "category": "email",
+      "description": "Email API for developers — sending, receiving, and tracking",
+      "website": "mailgun.com",
+      "freeTier": "100 emails/day for first 3 months (trial)",
+      "pricing": [
+        { "plan": "Trial", "price": "$0/mo", "limits": "100 emails/day, 3 months" },
+        { "plan": "Foundation", "price": "$35/mo", "limits": "50K emails/mo" },
+        { "plan": "Scale", "price": "$90/mo", "limits": "100K emails/mo, dedicated IP" }
+      ],
+      "bestFor": ["transactional", "email-parsing", "api-first"],
+      "noCode": false
+    },
+    {
+      "name": "Loops",
+      "category": "email",
+      "description": "Email platform for SaaS — onboarding sequences and product updates",
+      "website": "loops.so",
+      "freeTier": "1,000 contacts, 2,000 emails/mo",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "1K contacts, 2K emails/mo" },
+        { "plan": "Starter", "price": "$49/mo", "limits": "5K contacts, unlimited sends" },
+        { "plan": "Growth", "price": "$149/mo", "limits": "25K contacts" }
+      ],
+      "bestFor": ["saas", "onboarding", "product-emails"],
+      "noCode": false
+    },
+    {
+      "name": "Cloudflare R2",
+      "category": "storage",
+      "description": "S3-compatible object storage with zero egress fees",
+      "website": "cloudflare.com/r2",
+      "freeTier": "10GB storage, 1M Class A ops, 10M Class B ops/mo",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "10GB storage, zero egress" },
+        { "plan": "Pay-as-you-go", "price": "$0.015/GB/mo", "limits": "Zero egress fees always" }
+      ],
+      "bestFor": ["file-storage", "images", "zero-egress"],
+      "noCode": false
+    },
+    {
+      "name": "AWS S3",
+      "category": "storage",
+      "description": "Industry-standard object storage — infinitely scalable",
+      "website": "aws.amazon.com/s3",
+      "freeTier": "5GB storage, 20K GET, 2K PUT/mo for 12 months",
+      "pricing": [
+        { "plan": "Standard", "price": "$0.023/GB/mo", "limits": "$0.09/GB egress" },
+        { "plan": "Infrequent Access", "price": "$0.0125/GB/mo", "limits": "Higher retrieval cost" },
+        { "plan": "Glacier", "price": "$0.004/GB/mo", "limits": "Archive, slow retrieval" }
+      ],
+      "bestFor": ["enterprise", "aws-ecosystem", "backups"],
+      "noCode": false
+    },
+    {
+      "name": "Uploadthing",
+      "category": "storage",
+      "description": "File uploads for Next.js — simple API, built-in CDN",
+      "website": "uploadthing.com",
+      "freeTier": "2GB storage, 2GB bandwidth/mo",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "2GB storage, 2GB bandwidth" },
+        { "plan": "Pro", "price": "$10/mo", "limits": "100GB storage, 100GB bandwidth" },
+        { "plan": "Enterprise", "price": "Custom", "limits": "Unlimited" }
+      ],
+      "bestFor": ["nextjs", "file-uploads", "simple"],
+      "noCode": false
+    },
+    {
+      "name": "Supabase Storage",
+      "category": "storage",
+      "description": "S3-compatible file storage included with Supabase",
+      "website": "supabase.com/storage",
+      "freeTier": "1GB included with Supabase free tier",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "1GB storage" },
+        { "plan": "Pro", "price": "Included in Supabase Pro ($25/mo)", "limits": "100GB, image transforms" }
+      ],
+      "bestFor": ["supabase", "images", "bundled"],
+      "noCode": false
+    },
+    {
+      "name": "PostHog",
+      "category": "analytics",
+      "description": "Product analytics, session replay, feature flags, A/B testing — all-in-one",
+      "website": "posthog.com",
+      "freeTier": "1M events/mo, 5K sessions, 1M feature flag requests",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "1M events, 5K replays/mo" },
+        { "plan": "Pay-as-you-go", "price": "From $0.00031/event", "limits": "After free tier" }
+      ],
+      "bestFor": ["product-analytics", "feature-flags", "replays"],
+      "noCode": false
+    },
+    {
+      "name": "Mixpanel",
+      "category": "analytics",
+      "description": "Event-based product analytics with funnels and retention",
+      "website": "mixpanel.com",
+      "freeTier": "20M events/mo",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "20M events/mo" },
+        { "plan": "Growth", "price": "$28/mo", "limits": "100M events, advanced reports" },
+        { "plan": "Enterprise", "price": "Custom", "limits": "Data governance, SSO" }
+      ],
+      "bestFor": ["product-analytics", "funnels", "retention"],
+      "noCode": false
+    },
+    {
+      "name": "Plausible",
+      "category": "analytics",
+      "description": "Privacy-focused web analytics — lightweight, no cookies",
+      "website": "plausible.io",
+      "freeTier": "No free tier (30-day trial only)",
+      "pricing": [
+        { "plan": "Growth", "price": "$9/mo", "limits": "10K pageviews/mo" },
+        { "plan": "Business", "price": "$19/mo", "limits": "100K pageviews/mo" },
+        { "plan": "Self-hosted", "price": "$0/mo", "limits": "Free, you host it" }
+      ],
+      "bestFor": ["privacy", "gdpr", "simple-analytics"],
+      "noCode": false
+    },
+    {
+      "name": "Umami",
+      "category": "analytics",
+      "description": "Open-source, privacy-focused web analytics",
+      "website": "umami.is",
+      "freeTier": "Free self-hosted (unlimited), cloud has free tier",
+      "pricing": [
+        { "plan": "Self-hosted", "price": "$0/mo", "limits": "Unlimited, you host it" },
+        { "plan": "Hobby (Cloud)", "price": "$0/mo", "limits": "10K events/mo" },
+        { "plan": "Pro (Cloud)", "price": "$20/mo", "limits": "1M events/mo" }
+      ],
+      "bestFor": ["privacy", "self-hosted", "simple"],
+      "noCode": false
+    },
+    {
+      "name": "Sanity",
+      "category": "cms",
+      "description": "Composable content platform with real-time collaboration",
+      "website": "sanity.io",
+      "freeTier": "3 non-admin users, 500K API requests/mo, 20GB bandwidth",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "3 users, 500K API req/mo" },
+        { "plan": "Growth", "price": "$15/mo per user", "limits": "Unlimited API, 1TB bandwidth" },
+        { "plan": "Enterprise", "price": "Custom", "limits": "SSO, SLA" }
+      ],
+      "bestFor": ["structured-content", "headless", "collaboration"],
+      "noCode": false
+    },
+    {
+      "name": "Contentful",
+      "category": "cms",
+      "description": "Enterprise headless CMS with powerful content modeling",
+      "website": "contentful.com",
+      "freeTier": "5 users, 25K records, 2 locales",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "5 users, 25K records" },
+        { "plan": "Basic", "price": "$300/mo", "limits": "20 users, 50K records" },
+        { "plan": "Premium", "price": "Custom", "limits": "Enterprise features" }
+      ],
+      "bestFor": ["enterprise", "content-modeling", "localization"],
+      "noCode": false
+    },
+    {
+      "name": "Strapi",
+      "category": "cms",
+      "description": "Open-source headless CMS — self-hosted or cloud",
+      "website": "strapi.io",
+      "freeTier": "Free self-hosted (unlimited), cloud has free tier",
+      "pricing": [
+        { "plan": "Self-hosted", "price": "$0/mo", "limits": "Unlimited, you host it" },
+        { "plan": "Cloud Free", "price": "$0/mo", "limits": "1 project, 100K API calls/mo" },
+        { "plan": "Cloud Pro", "price": "$99/mo", "limits": "Unlimited API calls, backups" }
+      ],
+      "bestFor": ["self-hosted", "customizable", "rest-graphql"],
+      "noCode": false
+    },
+    {
+      "name": "Payload",
+      "category": "cms",
+      "description": "Code-first TypeScript CMS that lives inside your Next.js app",
+      "website": "payloadcms.com",
+      "freeTier": "Free and open-source (self-hosted)",
+      "pricing": [
+        { "plan": "Open Source", "price": "$0/mo", "limits": "Self-hosted, unlimited" },
+        { "plan": "Cloud", "price": "$50/mo", "limits": "Managed hosting, backups" },
+        { "plan": "Enterprise", "price": "Custom", "limits": "Priority support, SLA" }
+      ],
+      "bestFor": ["nextjs", "typescript", "code-first"],
+      "noCode": false
+    },
+    {
+      "name": "Expo",
+      "category": "mobile",
+      "description": "React Native framework with OTA updates, push notifications, and EAS build",
+      "website": "expo.dev",
+      "freeTier": "Unlimited builds (queue-based), OTA updates, push notifications",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "Queued builds, 1K monthly updates" },
+        { "plan": "Production", "price": "$99/mo", "limits": "Priority builds, 50K updates, team" },
+        { "plan": "Enterprise", "price": "$999/mo", "limits": "Dedicated infra, SLA" }
+      ],
+      "bestFor": ["react-native", "mobile", "ota-updates"],
+      "noCode": false
+    },
+    {
+      "name": "React Native",
+      "category": "mobile",
+      "description": "Cross-platform mobile framework by Meta — JavaScript/TypeScript",
+      "website": "reactnative.dev",
+      "freeTier": "Free and open-source",
+      "pricing": [
+        { "plan": "Open Source", "price": "$0/mo", "limits": "Free, build locally or use Expo" }
+      ],
+      "bestFor": ["mobile", "cross-platform", "javascript"],
+      "noCode": false
+    },
+    {
+      "name": "Telegram Bot API",
+      "category": "messaging",
+      "description": "Build bots for Telegram — free, no approval needed, rich features",
+      "website": "core.telegram.org/bots",
+      "freeTier": "Completely free, no limits on messages",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "Unlimited messages, inline keyboards, payments" }
+      ],
+      "bestFor": ["bots", "mvp-validation", "community"],
+      "noCode": true
+    },
+    {
+      "name": "Twilio",
+      "category": "messaging",
+      "description": "SMS, voice, WhatsApp, and video APIs",
+      "website": "twilio.com",
+      "freeTier": "$15 free credit for trial",
+      "pricing": [
+        { "plan": "SMS", "price": "$0.0079/msg (US)", "limits": "Per message pricing" },
+        { "plan": "WhatsApp", "price": "$0.005-0.08/msg", "limits": "Varies by country" },
+        { "plan": "Voice", "price": "$0.0085/min (US)", "limits": "Per minute pricing" }
+      ],
+      "bestFor": ["sms", "whatsapp", "voice", "notifications"],
+      "noCode": false
+    },
+    {
+      "name": "WhatsApp Business API",
+      "category": "messaging",
+      "description": "Official WhatsApp API for business messaging at scale",
+      "website": "business.whatsapp.com",
+      "freeTier": "1,000 free service conversations/mo",
+      "pricing": [
+        { "plan": "Service conversations", "price": "Free (1K/mo)", "limits": "User-initiated" },
+        { "plan": "Marketing/Utility", "price": "$0.01-0.08/msg", "limits": "Business-initiated, varies by country" }
+      ],
+      "bestFor": ["customer-support", "notifications", "global"],
+      "noCode": false
+    },
+    {
+      "name": "Sentry",
+      "category": "monitoring",
+      "description": "Error tracking, performance monitoring, and session replay",
+      "website": "sentry.io",
+      "freeTier": "5K errors/mo, 10K transactions/mo, 500 replays/mo",
+      "pricing": [
+        { "plan": "Developer", "price": "$0/mo", "limits": "5K errors, 10K transactions" },
+        { "plan": "Team", "price": "$26/mo", "limits": "50K errors, 100K transactions" },
+        { "plan": "Business", "price": "$80/mo", "limits": "Custom limits, SSO" }
+      ],
+      "bestFor": ["error-tracking", "performance", "debugging"],
+      "noCode": false
+    },
+    {
+      "name": "LogRocket",
+      "category": "monitoring",
+      "description": "Session replay with error tracking and product analytics",
+      "website": "logrocket.com",
+      "freeTier": "1,000 sessions/mo",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "1K sessions/mo" },
+        { "plan": "Team", "price": "$99/mo", "limits": "10K sessions, rage clicks" },
+        { "plan": "Professional", "price": "$250/mo", "limits": "25K sessions, integrations" }
+      ],
+      "bestFor": ["session-replay", "debugging", "ux"],
+      "noCode": false
+    },
+    {
+      "name": "Datadog",
+      "category": "monitoring",
+      "description": "Full-stack observability — APM, logs, metrics, synthetics",
+      "website": "datadoghq.com",
+      "freeTier": "5 hosts, 1-day log retention, basic dashboards",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "5 hosts, 1-day retention" },
+        { "plan": "Pro", "price": "$15/host/mo", "limits": "APM, 15-day retention" },
+        { "plan": "Enterprise", "price": "$23/host/mo", "limits": "Custom retention, SLA" }
+      ],
+      "bestFor": ["infrastructure", "apm", "enterprise-monitoring"],
+      "noCode": false
+    },
+    {
+      "name": "Lovable",
+      "category": "ai_builders",
+      "description": "AI full-stack app builder — describe what you want, get a deployed app",
+      "website": "lovable.dev",
+      "freeTier": "Limited free generations, preview deployments",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "Limited generations, Lovable subdomain" },
+        { "plan": "Starter", "price": "$20/mo", "limits": "Unlimited generations, custom domain" },
+        { "plan": "Pro", "price": "$50/mo", "limits": "Priority builds, GitHub sync, team features" }
+      ],
+      "bestFor": ["mvp", "nocode", "full-stack", "ai-generated-apps"],
+      "noCode": true,
+      "openSource": false,
+      "lastUpdated": "2026-03"
+    },
+    {
+      "name": "Bolt.new",
+      "category": "ai_builders",
+      "description": "AI full-stack app builder in the browser — edit, preview, deploy instantly",
+      "website": "bolt.new",
+      "freeTier": "Limited free generations and previews",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "Limited generations" },
+        { "plan": "Pro", "price": "$20/mo", "limits": "Unlimited generations, deploy to Netlify" },
+        { "plan": "Team", "price": "$50/mo", "limits": "Collaboration, priority" }
+      ],
+      "bestFor": ["mvp", "nocode", "prototyping", "full-stack"],
+      "noCode": true,
+      "openSource": true,
+      "lastUpdated": "2026-03"
+    },
+    {
+      "name": "v0 by Vercel",
+      "category": "ai_builders",
+      "description": "AI UI component generator — describe a UI, get React/Tailwind code",
+      "website": "v0.dev",
+      "freeTier": "Limited free generations per day",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "Limited daily generations" },
+        { "plan": "Premium", "price": "$20/mo", "limits": "Unlimited generations, private projects" }
+      ],
+      "bestFor": ["ui-components", "react", "tailwind", "prototyping"],
+      "noCode": false,
+      "openSource": false,
+      "lastUpdated": "2026-03"
+    },
+    {
+      "name": "Cursor",
+      "category": "ai_builders",
+      "description": "AI-native code editor (VS Code fork) with chat, autocomplete, and codebase awareness",
+      "website": "cursor.com",
+      "freeTier": "2,000 completions/mo, 50 premium requests/mo",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "2K completions, 50 premium requests" },
+        { "plan": "Pro", "price": "$20/mo", "limits": "Unlimited completions, 500 premium/mo" },
+        { "plan": "Business", "price": "$40/mo", "limits": "Admin controls, SSO, usage analytics" }
+      ],
+      "bestFor": ["coding", "ai-assisted", "developer-tools"],
+      "noCode": false,
+      "openSource": false,
+      "lastUpdated": "2026-03"
+    },
+    {
+      "name": "Windsurf",
+      "category": "ai_builders",
+      "description": "AI code editor by Codeium — inline completions, chat, and agentic flows",
+      "website": "codeium.com/windsurf",
+      "freeTier": "Free tier with basic completions",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "Basic completions" },
+        { "plan": "Pro", "price": "$15/mo", "limits": "Unlimited completions, premium models" },
+        { "plan": "Team", "price": "$30/mo", "limits": "Admin, SSO, codebase indexing" }
+      ],
+      "bestFor": ["coding", "ai-assisted", "completions"],
+      "noCode": false,
+      "openSource": false,
+      "lastUpdated": "2026-03"
+    },
+    {
+      "name": "Replit",
+      "category": "ai_builders",
+      "description": "Browser IDE with AI — build, run, and deploy apps from anywhere",
+      "website": "replit.com",
+      "freeTier": "Free repls, community hosting, basic AI",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "Basic repls, community hosting" },
+        { "plan": "Hacker", "price": "$25/mo", "limits": "Always-on repls, more storage" },
+        { "plan": "Pro", "price": "$45/mo", "limits": "Boosted compute, AI priority" }
+      ],
+      "bestFor": ["prototyping", "learning", "deployment", "ai-assisted"],
+      "noCode": false,
+      "openSource": false,
+      "lastUpdated": "2026-03"
+    },
+    {
+      "name": "GitHub Copilot",
+      "category": "ai_builders",
+      "description": "AI pair programmer — inline suggestions, chat, and multi-file edits",
+      "website": "github.com/features/copilot",
+      "freeTier": "Free tier with 2,000 completions/mo and 50 chat messages/mo",
+      "pricing": [
+        { "plan": "Free", "price": "$0/mo", "limits": "2K completions, 50 chats/mo" },
+        { "plan": "Pro", "price": "$10/mo", "limits": "Unlimited completions and chat" },
+        { "plan": "Business", "price": "$19/mo", "limits": "Organization policies, SSO" }
+      ],
+      "bestFor": ["coding", "ai-assisted", "github-integration"],
+      "noCode": false,
+      "openSource": false,
+      "lastUpdated": "2026-03"
+    },
+    {
+      "name": "Claude Code",
+      "category": "ai_builders",
+      "description": "AI coding agent CLI by Anthropic — agentic coding with terminal access",
+      "website": "claude.ai/code",
+      "freeTier": "Usage-based via Anthropic API (free tier available)",
+      "pricing": [
+        { "plan": "API usage", "price": "Claude API pricing", "limits": "Pay per token, uses Claude models" }
+      ],
+      "bestFor": ["coding", "agentic", "cli", "refactoring"],
+      "noCode": false,
+      "openSource": false,
+      "lastUpdated": "2026-03"
+    }
+  ]
+}
