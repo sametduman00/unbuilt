@@ -281,7 +281,8 @@ function parseBullets(body: string): { title: string; desc: string; badge?: stri
       bullets.push({ title: "", desc: clean.replace(/\*\*/g, ""), badge: badgeMatch ? badgeMatch[1].trim() : undefined });
     }
   }
-  return bullets;
+  // Drop items with no meaningful text
+  return bullets.filter((b) => b.title || b.desc);
 }
 
 function parseNicheBullets(body: string): { title: string; desc: string; score: number }[] {
@@ -299,7 +300,8 @@ function parseNicheBullets(body: string): { title: string; desc: string; score: 
     const score = high ? Math.floor(Math.random() * 2) + 8 : low ? Math.floor(Math.random() * 3) + 3 : Math.floor(Math.random() * 3) + 6;
     niches.push({ title, desc: rest.replace(/\*\*/g, ""), score });
   }
-  return niches;
+  // Drop items with no meaningful text
+  return niches.filter((n) => n.title || n.desc);
 }
 
 function TrendRisingSection({ section, isStreaming }: { section: Section; isStreaming: boolean }) {
@@ -576,8 +578,8 @@ function TrendFeedResult({ sections, isStreaming }: { sections: Section[]; isStr
     "🧠": { component: "generic", color: "#38bdf8", emoji: "🧠" },
   };
 
-  // Filter out the temperature section (handled separately)
-  const displaySections = sections.filter((s) => s.emoji !== "🌡️");
+  // Filter out the temperature section (handled separately) and empty sections
+  const displaySections = sections.filter((s) => s.emoji !== "🌡️" && (s.body.trim() || (s.isLast && isStreaming)));
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -2585,9 +2587,11 @@ export default function Home() {
     domainKeywords.length === 0 ||
     domainKeywords.some((kw) => text.toLowerCase().includes(kw.toLowerCase()));
 
-  const relevantHnPosts = hnPosts.filter((p) =>
+  const filteredHnPosts = hnPosts.filter((p) =>
     matchesKeywords(p.title ?? "") || matchesKeywords(p.url ?? "")
   );
+  // If keyword filter removes everything, show all posts — the API query was already scoped
+  const relevantHnPosts = filteredHnPosts.length > 0 ? filteredHnPosts : hnPosts;
 
   return (
     <>
