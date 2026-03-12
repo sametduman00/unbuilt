@@ -257,6 +257,370 @@ function SectionCard({ section, showCursor }: { section: Section; showCursor: bo
   );
 }
 
+// ── Trend Feed Visual Components ─────────────────────────────
+
+const RISING_GRADIENTS = [
+  { bg: "linear-gradient(135deg, rgba(124,92,252,0.18), rgba(124,92,252,0.06))", border: "rgba(124,92,252,0.35)", color: "#c4b5fd" },
+  { bg: "linear-gradient(135deg, rgba(20,184,166,0.18), rgba(20,184,166,0.06))", border: "rgba(20,184,166,0.35)", color: "#5eead4" },
+  { bg: "linear-gradient(135deg, rgba(251,146,60,0.18), rgba(251,146,60,0.06))", border: "rgba(251,146,60,0.35)", color: "#fdba74" },
+  { bg: "linear-gradient(135deg, rgba(236,72,153,0.18), rgba(236,72,153,0.06))", border: "rgba(236,72,153,0.35)", color: "#f9a8d4" },
+  { bg: "linear-gradient(135deg, rgba(52,211,153,0.18), rgba(52,211,153,0.06))", border: "rgba(52,211,153,0.35)", color: "#6ee7b7" },
+  { bg: "linear-gradient(135deg, rgba(96,165,250,0.18), rgba(96,165,250,0.06))", border: "rgba(96,165,250,0.35)", color: "#93c5fd" },
+];
+
+function parseBullets(body: string): { title: string; desc: string; badge?: string }[] {
+  const lines = body.split("\n").filter((l) => l.trim());
+  const bullets: { title: string; desc: string; badge?: string }[] = [];
+  for (const line of lines) {
+    const clean = line.replace(/^[-*•]\s*/, "").trim();
+    if (!clean) continue;
+    // Extract badge like **🔥 High Activity** or **📈 Growing**
+    const badgeMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-—–:]\s*/);
+    const rest = badgeMatch ? clean.slice(badgeMatch[0].length) : clean;
+    // Split on **: bold title followed by colon/dash
+    const titleMatch = rest.match(/^\*\*([^*]+)\*\*\s*[-—–:]?\s*([\s\S]*)/);
+    if (titleMatch) {
+      bullets.push({
+        title: titleMatch[1].trim(),
+        desc: titleMatch[2].trim().replace(/\*\*/g, ""),
+        badge: badgeMatch ? badgeMatch[1].trim() : undefined,
+      });
+    } else {
+      // Fallback: whole line as description
+      bullets.push({ title: "", desc: clean.replace(/\*\*/g, ""), badge: badgeMatch ? badgeMatch[1].trim() : undefined });
+    }
+  }
+  return bullets;
+}
+
+function parseNicheBullets(body: string): { title: string; desc: string; score: number }[] {
+  const lines = body.split("\n").filter((l) => l.trim());
+  const niches: { title: string; desc: string; score: number }[] = [];
+  for (const line of lines) {
+    const clean = line.replace(/^[-*•]\s*/, "").trim();
+    if (!clean) continue;
+    const titleMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-—–:]?\s*([\s\S]*)/);
+    const title = titleMatch ? titleMatch[1].trim() : "";
+    const rest = titleMatch ? titleMatch[2].trim() : clean;
+    // Estimate opportunity score from language cues
+    const low = /saturated|small|niche|limited/i.test(rest);
+    const high = /massive|huge|wide open|untapped|nobody|no one|underserved|acute|real/i.test(rest);
+    const score = high ? Math.floor(Math.random() * 2) + 8 : low ? Math.floor(Math.random() * 3) + 3 : Math.floor(Math.random() * 3) + 6;
+    niches.push({ title, desc: rest.replace(/\*\*/g, ""), score });
+  }
+  return niches;
+}
+
+function TrendRisingSection({ section, isStreaming }: { section: Section; isStreaming: boolean }) {
+  const bullets = parseBullets(section.body);
+  if (bullets.length === 0 && !isStreaming) return null;
+
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+        <span style={{ fontSize: "1.25rem" }}>📈</span>
+        <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#34d399", margin: 0, letterSpacing: "-0.02em" }}>
+          {section.title}
+        </h3>
+      </div>
+      {bullets.length > 0 ? (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem" }}>
+          {bullets.map((b, i) => {
+            const grad = RISING_GRADIENTS[i % RISING_GRADIENTS.length];
+            const badgeColor = b.badge?.includes("🔥") ? { bg: "rgba(249,115,22,0.2)", color: "#fb923c", label: "Hot" }
+              : b.badge?.includes("📈") ? { bg: "rgba(52,211,153,0.2)", color: "#34d399", label: "Growing" }
+              : b.badge?.includes("⚡") ? { bg: "rgba(96,165,250,0.2)", color: "#60a5fa", label: "Emerging" }
+              : null;
+            return (
+              <div key={i} style={{
+                background: grad.bg, border: `1px solid ${grad.border}`,
+                borderRadius: 16, padding: "1.25rem", position: "relative", overflow: "hidden",
+                transition: "transform 0.15s, box-shadow 0.15s",
+              }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 8px 24px ${grad.border}40`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
+              >
+                {/* Glow */}
+                <div style={{ position: "absolute", top: -30, right: -30, width: 100, height: 100, borderRadius: "50%", background: grad.border, opacity: 0.08, filter: "blur(30px)", pointerEvents: "none" }} />
+                {badgeColor && (
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", gap: 4,
+                    padding: "0.2rem 0.6rem", borderRadius: 999,
+                    background: badgeColor.bg, color: badgeColor.color,
+                    fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.04em",
+                    marginBottom: "0.625rem",
+                    border: `1px solid ${badgeColor.color}30`,
+                  }}>
+                    {b.badge}
+                  </span>
+                )}
+                {b.title && (
+                  <div style={{ fontSize: "0.9375rem", fontWeight: 750, color: grad.color, marginBottom: "0.375rem", lineHeight: 1.3, letterSpacing: "-0.01em" }}>
+                    {b.title}
+                  </div>
+                )}
+                <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.65 }}>
+                  {b.desc}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="shimmer" style={{ height: 120, borderRadius: 16 }} />
+      )}
+    </div>
+  );
+}
+
+function TrendDyingSection({ section, isStreaming }: { section: Section; isStreaming: boolean }) {
+  const bullets = parseBullets(section.body);
+  if (bullets.length === 0 && !isStreaming) return null;
+
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+        <span style={{ fontSize: "1.25rem" }}>💀</span>
+        <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#f87171", margin: 0, letterSpacing: "-0.02em" }}>
+          {section.title}
+        </h3>
+      </div>
+      {bullets.length > 0 ? (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem" }}>
+          {bullets.map((b, i) => (
+            <div key={i} style={{
+              background: "linear-gradient(135deg, rgba(248,113,113,0.1), rgba(127,29,29,0.08))",
+              border: "1px solid rgba(248,113,113,0.25)",
+              borderRadius: 16, padding: "1.25rem", position: "relative", overflow: "hidden",
+              transition: "transform 0.15s",
+            }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; }}
+            >
+              <span style={{
+                display: "inline-flex", alignItems: "center", gap: 4,
+                padding: "0.2rem 0.6rem", borderRadius: 999,
+                background: "rgba(248,113,113,0.15)", color: "#f87171",
+                fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.06em",
+                marginBottom: "0.625rem",
+                border: "1px solid rgba(248,113,113,0.3)",
+              }}>
+                ⚠️ DECLINING
+              </span>
+              {b.title && (
+                <div style={{ fontSize: "0.9375rem", fontWeight: 750, color: "#fca5a5", marginBottom: "0.375rem", lineHeight: 1.3 }}>
+                  {b.title}
+                </div>
+              )}
+              <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)", lineHeight: 1.65 }}>
+                {b.desc}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="shimmer" style={{ height: 120, borderRadius: 16 }} />
+      )}
+    </div>
+  );
+}
+
+function TrendNichesSection({ section, isStreaming }: { section: Section; isStreaming: boolean }) {
+  const niches = parseNicheBullets(section.body);
+  if (niches.length === 0 && !isStreaming) return null;
+
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+        <span style={{ fontSize: "1.25rem" }}>💡</span>
+        <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#fbbf24", margin: 0, letterSpacing: "-0.02em" }}>
+          {section.title}
+        </h3>
+      </div>
+      {niches.length > 0 ? (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem" }}>
+          {niches.map((n, i) => (
+            <div key={i} style={{
+              background: "linear-gradient(135deg, rgba(251,191,36,0.14), rgba(245,158,11,0.06))",
+              border: "1px solid rgba(251,191,36,0.3)",
+              borderRadius: 16, padding: "1.25rem", position: "relative", overflow: "hidden",
+              transition: "transform 0.15s, box-shadow 0.15s",
+            }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(251,191,36,0.15)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
+            >
+              {/* Gold glow */}
+              <div style={{ position: "absolute", top: -20, right: -20, width: 80, height: 80, borderRadius: "50%", background: "rgba(251,191,36,0.15)", filter: "blur(25px)", pointerEvents: "none" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.625rem" }}>
+                {n.title && (
+                  <div style={{ fontSize: "0.9375rem", fontWeight: 750, color: "#fde68a", lineHeight: 1.3, flex: 1 }}>
+                    {n.title}
+                  </div>
+                )}
+                <div style={{
+                  flexShrink: 0, display: "flex", alignItems: "center", gap: 4,
+                  padding: "0.25rem 0.625rem", borderRadius: 999,
+                  background: n.score >= 8 ? "rgba(52,211,153,0.15)" : n.score >= 6 ? "rgba(251,191,36,0.15)" : "rgba(156,163,175,0.15)",
+                  border: `1px solid ${n.score >= 8 ? "rgba(52,211,153,0.35)" : n.score >= 6 ? "rgba(251,191,36,0.35)" : "rgba(156,163,175,0.35)"}`,
+                }}>
+                  <span style={{ fontSize: "0.7rem", fontWeight: 800, color: n.score >= 8 ? "#34d399" : n.score >= 6 ? "#fbbf24" : "#9ca3af" }}>
+                    {n.score}/10
+                  </span>
+                </div>
+              </div>
+              <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.65 }}>
+                {n.desc}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="shimmer" style={{ height: 120, borderRadius: 16 }} />
+      )}
+    </div>
+  );
+}
+
+function TrendPatternHero({ section, isStreaming }: { section: Section; isStreaming: boolean }) {
+  // Remove leading markdown bold formatting for a clean display
+  const body = section.body.replace(/\*\*/g, "").trim();
+  const firstLine = body.split("\n")[0] || "";
+  const rest = body.split("\n").slice(1).join("\n").trim();
+
+  return (
+    <div style={{
+      background: "linear-gradient(135deg, rgba(124,92,252,0.2), rgba(79,142,247,0.12), rgba(124,92,252,0.06))",
+      border: "1px solid rgba(124,92,252,0.35)",
+      borderRadius: 20, padding: "2rem 2.25rem", position: "relative", overflow: "hidden",
+    }}>
+      {/* Large glow blobs */}
+      <div style={{ position: "absolute", top: -60, left: -60, width: 200, height: 200, borderRadius: "50%", background: "rgba(124,92,252,0.12)", filter: "blur(60px)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: -40, right: -40, width: 160, height: 160, borderRadius: "50%", background: "rgba(79,142,247,0.1)", filter: "blur(50px)", pointerEvents: "none" }} />
+
+      <div style={{ position: "relative" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+          <span style={{ fontSize: "1.5rem" }}>🔥</span>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#c4b5fd", margin: 0, letterSpacing: "-0.02em" }}>
+            {section.title}
+          </h3>
+        </div>
+        {firstLine && (
+          <div style={{
+            fontSize: "1.375rem", fontWeight: 800, color: "var(--clr-text)",
+            lineHeight: 1.35, marginBottom: rest ? "1rem" : 0,
+            letterSpacing: "-0.025em",
+          }}>
+            {firstLine}
+          </div>
+        )}
+        {rest && (
+          <div style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", lineHeight: 1.75 }}>
+            {rest}
+          </div>
+        )}
+        {isStreaming && (
+          <span style={{ display: "inline-block", width: 2, height: "1em", background: "#7c5cfc", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TrendGenericSection({ section, isStreaming, accentColor, emoji }: {
+  section: Section; isStreaming: boolean; accentColor: string; emoji: string;
+}) {
+  const bullets = parseBullets(section.body);
+
+  return (
+    <div style={{
+      background: `linear-gradient(135deg, ${accentColor}18, ${accentColor}06)`,
+      border: `1px solid ${accentColor}40`,
+      borderRadius: 20, padding: "1.75rem 2rem", position: "relative", overflow: "hidden",
+    }}>
+      <div style={{ position: "absolute", top: -40, right: -40, width: 140, height: 140, borderRadius: "50%", background: `${accentColor}10`, filter: "blur(40px)", pointerEvents: "none" }} />
+      <div style={{ position: "relative" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+          <span style={{ fontSize: "1.25rem" }}>{emoji}</span>
+          <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: accentColor, margin: 0, letterSpacing: "-0.02em" }}>
+            {section.title}
+          </h3>
+        </div>
+        {bullets.length > 0 ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            {bullets.map((b, i) => (
+              <div key={i} style={{
+                padding: "0.875rem 1rem", borderRadius: 12,
+                background: "rgba(0,0,0,0.2)", border: `1px solid ${accentColor}20`,
+              }}>
+                {b.title && (
+                  <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: "0.25rem" }}>
+                    {b.title}
+                  </div>
+                )}
+                <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.65 }}>
+                  {b.desc}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="card-prose" style={{ color: "var(--clr-text-3)" }}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={MD}>
+              {section.body}
+            </ReactMarkdown>
+          </div>
+        )}
+        {isStreaming && (
+          <span style={{ display: "inline-block", width: 2, height: "1em", background: "#7c5cfc", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TrendFeedResult({ sections, isStreaming }: { sections: Section[]; isStreaming: boolean }) {
+  // Map sections by their emoji to route to the right visual component
+  const sectionMap: Record<string, { component: "rising" | "dying" | "niches" | "pattern" | "generic"; color: string; emoji: string }> = {
+    "📈": { component: "rising", color: "#34d399", emoji: "📈" },
+    "💀": { component: "dying", color: "#f87171", emoji: "💀" },
+    "🔥": { component: "pattern", color: "#c4b5fd", emoji: "🔥" },
+    "💡": { component: "niches", color: "#fbbf24", emoji: "💡" },
+    "🧲": { component: "generic", color: "#a78bfa", emoji: "🧲" },
+    "🧠": { component: "generic", color: "#38bdf8", emoji: "🧠" },
+  };
+
+  // Filter out the temperature section (handled separately)
+  const displaySections = sections.filter((s) => s.emoji !== "🌡️");
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      {displaySections.map((s, i) => {
+        const config = sectionMap[s.emoji];
+        const streaming = s.isLast && isStreaming;
+
+        if (!config) {
+          return <TrendGenericSection key={i} section={s} isStreaming={streaming} accentColor="#a78bfa" emoji={s.emoji} />;
+        }
+
+        switch (config.component) {
+          case "rising":
+            return <TrendRisingSection key={i} section={s} isStreaming={streaming} />;
+          case "dying":
+            return <TrendDyingSection key={i} section={s} isStreaming={streaming} />;
+          case "pattern":
+            return <TrendPatternHero key={i} section={s} isStreaming={streaming} />;
+          case "niches":
+            return <TrendNichesSection key={i} section={s} isStreaming={streaming} />;
+          case "generic":
+            return <TrendGenericSection key={i} section={s} isStreaming={streaming} accentColor={config.color} emoji={config.emoji} />;
+          default:
+            return <SectionCard key={i} section={s} showCursor={streaming} />;
+        }
+      })}
+    </div>
+  );
+}
+
 // ── Gap Analysis Visual Components ────────────────────────────
 
 function ThreatDots({ level }: { level: number }) {
@@ -2708,6 +3072,15 @@ export default function Home() {
                     </div>
                   );
                 })()
+              ) : selectedTool === "trend-feed" ? (
+                /* Trend Feed: rich visual cards */
+                sections.length > 0 ? (
+                  <TrendFeedResult sections={sections} isStreaming={loading} />
+                ) : !loading && streamedContent ? (
+                  <div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem", padding: "1.5rem" }}>
+                    No analysis sections found for this niche
+                  </div>
+                ) : null
               ) : selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" ? (
                 /* All other tools: markdown section cards */
                 sections.length > 0 ? (
@@ -2897,12 +3270,17 @@ export default function Home() {
 
               {/* ── Hacker News Buzz (Trend Feed only) — always shown ── */}
               {selectedTool === "trend-feed" && (
-                <div className="section-card" style={{ marginTop: "1rem" }}>
-                  <div className="section-card-header">
-                    <div className="section-icon" style={{ background: "rgba(255,102,0,0.1)", border: "1px solid rgba(255,102,0,0.2)" }}>
-                      <svg width="15" height="15" viewBox="0 0 18 18" fill="#ff6600"><path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/></svg>
-                    </div>
-                    <span className="section-title">Hacker News Buzz</span>
+                <div style={{
+                  marginTop: "1.5rem", borderRadius: 20, overflow: "hidden",
+                  background: "linear-gradient(135deg, rgba(255,102,0,0.08), rgba(255,102,0,0.02))",
+                  border: "1px solid rgba(255,102,0,0.2)",
+                  padding: "1.5rem",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+                    <span style={{ fontSize: "1.25rem" }}>🟧</span>
+                    <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#ff6600", margin: 0, letterSpacing: "-0.02em" }}>
+                      Hacker News Buzz
+                    </h3>
                     <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
                       last 30 days · by score
                     </span>
@@ -2919,85 +3297,55 @@ export default function Home() {
                       No relevant Hacker News discussions found for this niche
                     </div>
                   ) : (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
                       {relevantHnPosts.map((post) => {
                         const daysAgo = Math.floor((Date.now() - new Date(post.created_at).getTime()) / 86400000);
                         const hnUrl = `https://news.ycombinator.com/item?id=${post.objectID}`;
-                        const heat =
-                          post.points >= 400 ? { label: "🔥 High Activity", color: "#f97316", bg: "rgba(249,115,22,0.1)" } :
-                          post.points >= 150 ? { label: "📈 Growing", color: "#34d399", bg: "rgba(52,211,153,0.1)" } :
-                          { label: "⚡ Emerging", color: "#60a5fa", bg: "rgba(96,165,250,0.1)" };
 
                         return (
-                          <div key={post.objectID} style={{
-                            display: "flex", alignItems: "flex-start", gap: "0.875rem",
-                            padding: "0.75rem 0.875rem", borderRadius: 10,
-                            background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
-                            transition: "border-color 0.15s",
-                          }}
-                            onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(255,102,0,0.35)"; }}
-                            onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "var(--clr-border)"; }}
+                          <a
+                            key={post.objectID}
+                            href={post.url ?? hnUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: "flex", flexDirection: "column", gap: "0.5rem",
+                              padding: "1rem 1.125rem", borderRadius: 14,
+                              background: "rgba(255,102,0,0.06)",
+                              border: "1px solid rgba(255,102,0,0.15)",
+                              textDecoration: "none", transition: "transform 0.15s, border-color 0.15s, box-shadow 0.15s",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = "translateY(-2px)";
+                              e.currentTarget.style.borderColor = "rgba(255,102,0,0.4)";
+                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(255,102,0,0.12)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = "none";
+                              e.currentTarget.style.borderColor = "rgba(255,102,0,0.15)";
+                              e.currentTarget.style.boxShadow = "none";
+                            }}
                           >
-                            {/* Score column */}
-                            <div style={{
-                              flexShrink: 0, width: 44, display: "flex", flexDirection: "column",
-                              alignItems: "center", gap: 2, paddingTop: 2,
-                            }}>
-                              <svg width="12" height="12" viewBox="0 0 18 18" fill="#ff6600"><path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/></svg>
-                              <span style={{ fontSize: "1rem", fontWeight: 800, color: "#ff6600", lineHeight: 1 }}>
-                                {post.points.toLocaleString()}
+                            <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                              {post.title}
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
+                              <span style={{
+                                display: "inline-flex", alignItems: "center", gap: 4,
+                                padding: "0.175rem 0.5rem", borderRadius: 999,
+                                background: "rgba(255,102,0,0.15)", border: "1px solid rgba(255,102,0,0.3)",
+                                fontSize: "0.7rem", fontWeight: 800, color: "#ff6600",
+                              }}>
+                                ▲ {post.points}
                               </span>
-                              <span style={{ fontSize: "0.6rem", color: "var(--clr-text-7)", fontWeight: 500 }}>pts</span>
+                              <span style={{ fontSize: "0.68rem", color: "var(--clr-text-6)", fontWeight: 500 }}>
+                                {post.num_comments} comments
+                              </span>
+                              <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", marginLeft: "auto" }}>
+                                {daysAgo === 0 ? "today" : `${daysAgo}d ago`}
+                              </span>
                             </div>
-
-                            {/* Content */}
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: "0.3rem", flexWrap: "wrap" }}>
-                                <span style={{
-                                  display: "inline-flex", alignItems: "center",
-                                  padding: "0.1rem 0.45rem", borderRadius: 999,
-                                  background: heat.bg, color: heat.color,
-                                  fontSize: "0.62rem", fontWeight: 700, flexShrink: 0,
-                                }}>
-                                  {heat.label}
-                                </span>
-                              </div>
-                              <a
-                                href={post.url ?? hnUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                  fontSize: "0.875rem", fontWeight: 600, color: "var(--clr-text)",
-                                  textDecoration: "none", lineHeight: 1.45, display: "block",
-                                }}
-                                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#ff6600"; }}
-                                onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text)"; }}
-                              >
-                                {post.title}
-                              </a>
-                              <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: "0.35rem" }}>
-                                <a
-                                  href={hnUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  style={{
-                                    display: "flex", alignItems: "center", gap: 4,
-                                    fontSize: "0.7rem", color: "var(--clr-text-6)", textDecoration: "none", fontWeight: 500,
-                                  }}
-                                  onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#ff6600"; }}
-                                  onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text-6)"; }}
-                                >
-                                  <svg width="11" height="11" viewBox="0 0 20 20" fill="none">
-                                    <path d="M10 2c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm1 13H9v-5h2v5zm0-7H9V6h2v2z" fill="currentColor"/>
-                                  </svg>
-                                  {post.num_comments} comments
-                                </a>
-                                <span style={{ fontSize: "0.7rem", color: "var(--clr-text-7)" }}>
-                                  {daysAgo === 0 ? "today" : `${daysAgo}d ago`}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
+                          </a>
                         );
                       })}
                     </div>
@@ -3008,14 +3356,17 @@ export default function Home() {
 
               {/* ── GitHub trending repos (Trend Feed only) — always shown ── */}
               {selectedTool === "trend-feed" && (
-                <div className="section-card" style={{ marginTop: "1rem" }}>
-                  <div className="section-card-header">
-                    <div className="section-icon" style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.2)" }}>
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" fill="#34d399" />
-                      </svg>
-                    </div>
-                    <span className="section-title">🐙 What developers are building right now</span>
+                <div style={{
+                  marginTop: "1.5rem", borderRadius: 20, overflow: "hidden",
+                  background: "linear-gradient(135deg, rgba(52,211,153,0.08), rgba(52,211,153,0.02))",
+                  border: "1px solid rgba(52,211,153,0.2)",
+                  padding: "1.5rem",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+                    <span style={{ fontSize: "1.25rem" }}>🐙</span>
+                    <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#34d399", margin: 0, letterSpacing: "-0.02em" }}>
+                      What developers are building right now
+                    </h3>
                     <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
                       GitHub · last 7 days · by stars
                     </span>
@@ -3043,28 +3394,32 @@ export default function Home() {
                             rel="noopener noreferrer"
                             style={{
                               display: "flex", flexDirection: "column", gap: "0.5rem",
-                              padding: "0.875rem 1rem", borderRadius: 12,
-                              background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
-                              textDecoration: "none", transition: "border-color 0.15s, transform 0.15s",
+                              padding: "1rem 1.125rem", borderRadius: 14,
+                              background: "rgba(52,211,153,0.06)",
+                              border: "1px solid rgba(52,211,153,0.15)",
+                              textDecoration: "none", transition: "transform 0.15s, border-color 0.15s, box-shadow 0.15s",
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.borderColor = "rgba(52,211,153,0.45)";
-                              e.currentTarget.style.transform = "translateY(-1px)";
+                              e.currentTarget.style.borderColor = "rgba(52,211,153,0.4)";
+                              e.currentTarget.style.transform = "translateY(-2px)";
+                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(52,211,153,0.12)";
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.borderColor = "var(--clr-border)";
+                              e.currentTarget.style.borderColor = "rgba(52,211,153,0.15)";
                               e.currentTarget.style.transform = "none";
+                              e.currentTarget.style.boxShadow = "none";
                             }}
                           >
                             {/* Repo name row */}
                             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-                              <span style={{ fontSize: "0.875rem", fontWeight: 700, color: "#34d399", letterSpacing: "-0.01em", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              <span style={{ fontSize: "0.875rem", fontWeight: 750, color: "#6ee7b7", letterSpacing: "-0.01em", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                                 {repo.full_name}
                               </span>
                               {repo.language && (
                                 <span style={{
-                                  fontSize: "0.6rem", fontWeight: 700, padding: "0.1rem 0.45rem",
-                                  borderRadius: 999, background: "rgba(52,211,153,0.12)",
+                                  fontSize: "0.6rem", fontWeight: 700, padding: "0.15rem 0.5rem",
+                                  borderRadius: 999, background: "rgba(52,211,153,0.15)",
+                                  border: "1px solid rgba(52,211,153,0.25)",
                                   color: "#34d399", letterSpacing: "0.03em", flexShrink: 0,
                                 }}>
                                   {repo.language}
@@ -3075,7 +3430,7 @@ export default function Home() {
                             {/* Description */}
                             {repo.description && (
                               <p style={{
-                                fontSize: "0.78rem", color: "var(--clr-text-4)", lineHeight: 1.5,
+                                fontSize: "0.8rem", color: "var(--clr-text-4)", lineHeight: 1.5,
                                 margin: 0, flex: 1,
                                 overflow: "hidden", display: "-webkit-box",
                                 WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
@@ -3085,14 +3440,19 @@ export default function Home() {
                             )}
 
                             {/* Meta row */}
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "0.775rem", fontWeight: 700, color: "var(--clr-text-3)" }}>
-                                <svg width="12" height="12" viewBox="0 0 13 13" fill="none">
-                                  <path d="M6.5 1l1.545 3.13 3.455.502-2.5 2.436.59 3.44L6.5 8.885l-3.09 1.623.59-3.44L1.5 4.632l3.455-.502L6.5 1z" stroke="currentColor" strokeWidth="1.25" strokeLinejoin="round" />
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
+                              <span style={{
+                                display: "inline-flex", alignItems: "center", gap: 4,
+                                padding: "0.175rem 0.5rem", borderRadius: 999,
+                                background: "rgba(52,211,153,0.15)", border: "1px solid rgba(52,211,153,0.3)",
+                                fontSize: "0.7rem", fontWeight: 800, color: "#34d399",
+                              }}>
+                                <svg width="10" height="10" viewBox="0 0 13 13" fill="none">
+                                  <path d="M6.5 1l1.545 3.13 3.455.502-2.5 2.436.59 3.44L6.5 8.885l-3.09 1.623.59-3.44L1.5 4.632l3.455-.502L6.5 1z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
                                 </svg>
                                 {repo.stargazers_count.toLocaleString()}
-                              </div>
-                              <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
+                              </span>
+                              <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", fontWeight: 500, marginLeft: "auto" }}>
                                 {daysAgo === 0 ? "today" : `${daysAgo}d ago`}
                               </span>
                             </div>

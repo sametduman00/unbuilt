@@ -15,7 +15,6 @@ const PROMPT = (niche: string) => `Trend analysis for the space: "${niche}"
 
 ## 🌡️ Space Temperature
 Score: [integer 1-100, where 1=dead/completely saturated and 100=explosive greenfield opportunity right now]
-Label: [exactly one of: Saturated | Cooling | Neutral | Warming | Growing | Very Hot]
 [Write exactly 2 sentences: the single dominant signal driving this score and what it means for a founder entering now. Be specific and direct.]
 
 ## 📈 What's Rising
