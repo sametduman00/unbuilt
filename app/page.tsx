@@ -737,20 +737,27 @@ function LoadingSkeleton({ tool }: { tool: ToolConfig }) {
 }
 
 // ── Space Score Card ───────────────────────────────────────────
-function SpaceScoreCard({ score, label, summary, hnBoost }: { score: number; label: string; summary: string; hnBoost?: number }) {
+function deriveScoreLabel(pct: number): { emoji: string; label: string } {
+  if (pct >= 81) return { emoji: "🔥", label: "Explosive" };
+  if (pct >= 61) return { emoji: "🟢", label: "Growing" };
+  if (pct >= 41) return { emoji: "🟡", label: "Warming Up" };
+  if (pct >= 21) return { emoji: "🟠", label: "Crowded" };
+  return { emoji: "🔴", label: "Dead Zone" };
+}
+
+function SpaceScoreCard({ score, summary, hnBoost }: { score: number; summary: string; hnBoost?: number }) {
   const pct = Math.max(0, Math.min(100, score));
+  const tier = deriveScoreLabel(pct);
   const color =
-    pct >= 80 ? "#f97316" :
-    pct >= 65 ? "#34d399" :
-    pct >= 40 ? "#60a5fa" : "#9ca3af";
+    pct >= 81 ? "#f97316" :
+    pct >= 61 ? "#34d399" :
+    pct >= 41 ? "#eab308" :
+    pct >= 21 ? "#f97316" : "#ef4444";
   const bgColor =
-    pct >= 80 ? "rgba(249,115,22,0.08)" :
-    pct >= 65 ? "rgba(52,211,153,0.08)" :
-    pct >= 40 ? "rgba(96,165,250,0.08)" : "rgba(156,163,175,0.08)";
-  const tempEmoji =
-    pct >= 80 ? "🔥" :
-    pct >= 65 ? "📈" :
-    pct >= 40 ? "🌤️" : "❄️";
+    pct >= 81 ? "rgba(249,115,22,0.08)" :
+    pct >= 61 ? "rgba(52,211,153,0.08)" :
+    pct >= 41 ? "rgba(234,179,8,0.08)" :
+    pct >= 21 ? "rgba(249,115,22,0.08)" : "rgba(239,68,68,0.08)";
 
   // SVG arc math (36px radius, starts at top, clockwise)
   const r = 36;
@@ -805,7 +812,7 @@ function SpaceScoreCard({ score, label, summary, hnBoost }: { score: number; lab
               background: bgColor, color, fontSize: "0.75rem", fontWeight: 700,
               border: `1px solid ${color}30`,
             }}>
-              {tempEmoji} {label}
+              {tier.emoji} {tier.label}
             </span>
           </div>
           <p style={{
@@ -820,11 +827,11 @@ function SpaceScoreCard({ score, label, summary, hnBoost }: { score: number; lab
       {/* 5-step visual scale */}
       {(() => {
         const steps = [
-          { emoji: "🔴", label: "Dead Zone",   min: 0,  max: 19  },
-          { emoji: "🟠", label: "Crowded",     min: 20, max: 39  },
-          { emoji: "🟡", label: "Warming Up",  min: 40, max: 59  },
-          { emoji: "🟢", label: "Growing",     min: 60, max: 79  },
-          { emoji: "🔥", label: "Explosive",   min: 80, max: 100 },
+          { emoji: "🔴", label: "Dead Zone",   min: 0,  max: 20  },
+          { emoji: "🟠", label: "Crowded",     min: 21, max: 40  },
+          { emoji: "🟡", label: "Warming Up",  min: 41, max: 60  },
+          { emoji: "🟢", label: "Growing",     min: 61, max: 80  },
+          { emoji: "🔥", label: "Explosive",   min: 81, max: 100 },
         ];
         const activeIdx = steps.findIndex((s) => pct >= s.min && pct <= s.max);
         return (
@@ -2634,7 +2641,6 @@ export default function Home() {
                 scoreData ? (
                   <SpaceScoreCard
                     score={Math.min(100, scoreData.score + hnBoost)}
-                    label={scoreData.label}
                     summary={scoreData.summary}
                     hnBoost={hnBoost}
                   />
