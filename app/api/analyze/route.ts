@@ -12,8 +12,8 @@ Your tone is direct, insightful, and slightly contrarian — you cut through hyp
 IMPORTANT: You MUST respond with ONLY a single JSON code block. No text before or after.
 The JSON must match the exact schema provided. Be specific: name real competitors, real products, real pain points.`;
 
-const USER_PROMPT = (idea: string) => `Analyze the market for: "${idea}"
-
+const USER_PROMPT = (idea: string, youtubeContext: string) => `Analyze the market for: "${idea}"
+${youtubeContext}
 Respond with ONLY a JSON code block matching this exact schema:
 
 \`\`\`json
@@ -84,6 +84,59 @@ Rules:
 - Be brutally honest. Name real companies and real products. Skip generic advice.
 - CONCISENESS IS CRITICAL. Every string value should be as short as possible while retaining key information. No filler words.`;
 
+// Fetch top YouTube videos for the idea to give Claude real-time context
+async function fetchYouTubeContext(idea: string): Promise<string> {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey) return "";
+
+  try {
+    const publishedAfter = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString();
+    const searchParams = new URLSearchParams({
+      part: "snippet",
+      type: "video",
+      order: "viewCount",
+      q: `${idea} review OR problem`,
+      maxResults: "5",
+      publishedAfter,
+      key: apiKey,
+    });
+
+    const searchRes = await fetch(`https://www.googleapis.com/youtube/v3/search?${searchParams}`, {
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!searchRes.ok) return "";
+    const searchData = await searchRes.json();
+    const items = searchData.items ?? [];
+    if (items.length === 0) return "";
+
+    // Fetch view counts
+    const videoIds = items.map((item: { id: { videoId: string } }) => item.id.videoId).join(",");
+    const statsRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${apiKey}`,
+      { signal: AbortSignal.timeout(5000) },
+    );
+    const statsMap = new Map<string, number>();
+    if (statsRes.ok) {
+      const statsData = await statsRes.json();
+      for (const v of statsData.items ?? []) {
+        statsMap.set(v.id, parseInt(v.statistics?.viewCount || "0", 10));
+      }
+    }
+
+    const lines = items.map((item: { id: { videoId: string }; snippet: { title: string; channelTitle: string } }) => {
+      const views = statsMap.get(item.id.videoId) ?? 0;
+      const fmtViews = views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M` : views >= 1_000 ? `${Math.round(views / 1_000)}K` : String(views);
+      return `- "${item.snippet.title}" by ${item.snippet.channelTitle} (${fmtViews} views)`;
+    });
+
+    console.log("[Analyze] YouTube context:", lines.length, "videos found");
+    return `\nHere are the most-viewed recent YouTube videos about this space — factor these into your pain points and market gap analysis:\n${lines.join("\n")}\n`;
+  } catch (err) {
+    console.log("[Analyze] YouTube context fetch failed:", err);
+    return "";
+  }
+}
+
 export async function POST(req: NextRequest) {
   const { idea } = await req.json();
 
@@ -110,13 +163,16 @@ export async function POST(req: NextRequest) {
       }
 
       try {
+        // Fetch YouTube context in parallel with prompt construction
+        const youtubeContext = await fetchYouTubeContext(idea);
+
         let full = "";
         const anthropicStream = client.messages.stream({
           model: "claude-opus-4-6",
           max_tokens: 16000,
           thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM_PROMPT,
-          messages: [{ role: "user", content: USER_PROMPT(idea) }],
+          messages: [{ role: "user", content: USER_PROMPT(idea, youtubeContext) }],
         });
         for await (const event of anthropicStream) {
           if (event.type === "content_block_delta" && event.delta.type === "text_delta") {

@@ -2,10 +2,12 @@ import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get("q");
+  console.log("[YouTube API] route hit with q:", q);
   if (!q || q.trim().length < 2)
     return Response.json({ error: "Missing query" }, { status: 400 });
 
   const apiKey = process.env.YOUTUBE_API_KEY;
+  console.log("[YouTube API] key present:", !!apiKey);
   if (!apiKey)
     return Response.json({ error: "YouTube API key not configured" }, { status: 500 });
 
@@ -34,6 +36,7 @@ export async function GET(req: NextRequest) {
     }
     const searchData = await searchRes.json();
     const items = searchData.items ?? [];
+    console.log("[YouTube API] search returned", items.length, "items");
     if (items.length === 0) return Response.json({ results: [], total: 0 });
 
     // Step 2: Fetch statistics for all video IDs

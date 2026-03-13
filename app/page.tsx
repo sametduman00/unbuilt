@@ -2595,10 +2595,8 @@ export default function Home() {
       fetchSearchMeta(idea.trim(), (q) => {
         fetchITunesApps(q);
         fetchGplayApps(q);
-        fetchYouTubeVideos(q + " review", 180);
+        fetchYouTubeVideos(q + " review OR problem", 180);
       });
-    } else if (selectedTool === "stack-advisor") {
-      fetchYouTubeVideos(idea.trim() + " tutorial 2026", 180);
     }
 
     const body: Record<string, string> = { idea };
@@ -2641,6 +2639,23 @@ export default function Home() {
               setStreamedContent((p) => p + parsed.text);
             }
           } catch { /* skip */ }
+        }
+      }
+      // For stack-advisor, fetch YouTube tutorials for recommended tools
+      if (selectedTool === "stack-advisor" && fullContent) {
+        const stackData = parseStackAdvisorJSON(fullContent);
+        if (stackData) {
+          const toolNames = new Set<string>();
+          for (const phase of stackData.phases) {
+            for (const t of phase.tools) {
+              if (t.name) toolNames.add(t.name);
+            }
+          }
+          // Search YouTube for the top tool names as a combined query
+          const topTools = Array.from(toolNames).slice(0, 6);
+          if (topTools.length > 0) {
+            fetchYouTubeVideos(topTools.join(" OR ") + " tutorial", 180);
+          }
         }
       }
     } catch (err) {
