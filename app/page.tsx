@@ -1135,30 +1135,29 @@ function GoogleTrendsChart({ data }: { data: any }) {
       marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
       background: "var(--clr-surface)",
       border: "1px solid var(--clr-border-2)",
-      padding: "1.25rem 1.5rem",
-      maxWidth: 480,
+      padding: "1.5rem",
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem" }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
         </svg>
-        <h3 style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
+        <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           Google Trends
         </h3>
         <span style={{
           display: "inline-flex", alignItems: "center", gap: 4,
-          padding: "0.12rem 0.45rem", borderRadius: 999,
+          padding: "0.15rem 0.5rem", borderRadius: 999,
           background: `${dirColor}18`, border: `1px solid ${dirColor}40`,
-          fontSize: "0.62rem", fontWeight: 700, color: dirColor,
+          fontSize: "0.68rem", fontWeight: 700, color: dirColor,
         }}>
           {dirLabel} {trendPercent !== 0 && `${trendPercent > 0 ? "+" : ""}${trendPercent}%`}
         </span>
-        <span style={{ marginLeft: "auto", fontSize: "0.62rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-          3 months · weekly
+        <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
+          last 3 months · weekly
         </span>
       </div>
 
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: 100 }} preserveAspectRatio="none">
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: 140 }} preserveAspectRatio="none">
         <defs>
           <linearGradient id="trendsGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--clr-text)" stopOpacity="0.15" />
@@ -1292,8 +1291,9 @@ function SpaceScoreCard({ score, summary, hnBoost }: { score: number; summary: s
                     width: "100%", height: 6, borderRadius: 999,
                     background: isActive ? color : "var(--clr-border)",
                     boxShadow: isActive ? `0 0 8px ${color}60` : "none",
+                    transition: "background 0.3s",
                   }} />
-                  <span style={{ fontSize: isActive ? "1rem" : "0.75rem", lineHeight: 1, filter: isActive ? "none" : "grayscale(1) opacity(0.35)" }}>
+                  <span style={{ fontSize: isActive ? "1rem" : "0.75rem", lineHeight: 1, transition: "font-size 0.2s", filter: isActive ? "none" : "grayscale(1) opacity(0.35)" }}>
                     {step.emoji}
                   </span>
                   <span style={{
@@ -2326,7 +2326,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [streamedContent, setStreamedContent] = useState("");
   const [error, setError] = useState("");
-  const [isReady, setIsReady] = useState(false);
+  const [hasResults, setHasResults] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [githubRepos, setGithubRepos] = useState<GithubRepo[]>([]);
   const [githubLoading, setGithubLoading] = useState(false);
@@ -2373,21 +2373,19 @@ export default function Home() {
 
   // Number of scan steps for the current tool (used for timer logic)
   const scanStepCounts: Record<string, number> = { "trend-feed": 5, "gap-analysis": 4, "competitor-radar": 1, "stack-advisor": 1 };
-  // maxScanStep = last VISUAL step (timer-driven). Step 5 = "all done" (transition state).
-  const maxScanStep = scanStepCounts[selectedTool ?? "trend-feed"] ?? 3;
+  const maxScanStep = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3) - 1;
 
-  // Advance scan to "done" for non-trend-feed tools (trend-feed handles its own isReady)
+  // Advance scan to "done" once last step is active AND Claude has finished
   useEffect(() => {
-    if (selectedTool === "trend-feed") return; // trend-feed controls its own flow
-    if (scanStep === maxScanStep) {
-      const t = setTimeout(() => { setIsReady(true); setScanStep(-1); }, 750);
+    if (scanStep === 4) {
+      const t = setTimeout(() => { setHasResults(true); setScanStep(-1); }, 750);
       return () => clearTimeout(t);
     }
-    if (scanStep >= maxScanStep - 1 && scanStep < maxScanStep && !loading) {
-      const t = setTimeout(() => setScanStep(maxScanStep), 350);
+    if (scanStep >= maxScanStep && !loading) {
+      const t = setTimeout(() => setScanStep(4), 350);
       return () => clearTimeout(t);
     }
-  }, [scanStep, loading, maxScanStep, selectedTool]);
+  }, [scanStep, loading, maxScanStep]);
 
   // Handle stack-advisor checklist completion when API response arrives
   useEffect(() => {
@@ -2395,16 +2393,16 @@ export default function Home() {
       if (stackCheckTimerRef.current) { clearInterval(stackCheckTimerRef.current); stackCheckTimerRef.current = null; }
       // Mark all items as done
       setStackCheckItems(prev => prev.map(item => ({ ...item, done: true })));
-      const t = setTimeout(() => { setIsReady(true); setScanStep(-1); setStackCheckItems([]); }, 750);
+      const t = setTimeout(() => { setHasResults(true); setScanStep(-1); setStackCheckItems([]); }, 750);
       return () => clearTimeout(t);
     }
   }, [loading, selectedTool, stackCheckItems.length, scanStep]);
 
   useEffect(() => {
-    if (isReady) {
+    if (hasResults) {
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
     }
-  }, [isReady]);
+  }, [hasResults]);
 
   // Initialize theme from localStorage
   useEffect(() => {
@@ -2427,7 +2425,7 @@ export default function Home() {
     if (stackCheckTimerRef.current) { clearInterval(stackCheckTimerRef.current); stackCheckTimerRef.current = null; }
     setStackCheckItems([]);
     setScanStep(-1);
-    setIsReady(false);
+    setHasResults(false);
     setStreamedContent("");
     setError("");
     setLoading(false);
@@ -2639,132 +2637,19 @@ export default function Home() {
     }
   };
 
-  // ── Trend-feed: single async function that awaits EVERYTHING before showing results ──
-  const runTrendFeedAnalysis = async (rawIdea: string) => {
-    // 1. Get normalized query
-    let query = rawIdea.split(/\s+/).slice(0, 3).join(" ");
-    try {
-      const metaRes = await fetch("/api/trends/meta", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idea: rawIdea }),
-      });
-      if (metaRes.ok) {
-        const meta = await metaRes.json();
-        const full = meta.searchQuery || rawIdea;
-        query = full.split(/\s+/).slice(0, 3).join(" ");
-        setDomainKeywords(meta.keywords ?? []);
-      }
-    } catch { /* use fallback query */ }
-
-    const ytQuery = query.toLowerCase().includes("app") ? query : query + " app";
-
-    // 2. Fetch ALL data sources in parallel (including Claude SSE as collected string)
-    const [trendsData, ytData, hnData, ghData, analysisData, claudeContent] = await Promise.all([
-      // Google Trends
-      fetch(`/api/serpapi?q=${encodeURIComponent(query)}`)
-        .then(r => r.ok ? r.json() : null).catch(() => null),
-      // YouTube
-      fetch(`/api/youtube?${new URLSearchParams({ q: ytQuery, maxResults: "8", days: "90" })}`)
-        .then(r => r.ok ? r.json() : null).catch(() => null),
-      // Hacker News
-      (async () => {
-        const since = Math.floor(Date.now() / 1000) - 30 * 24 * 3600;
-        const q = encodeURIComponent(query);
-        const r = await fetch(
-          `https://hn.algolia.com/api/v1/search?query=${q}&tags=story&numericFilters=created_at_i>${since}&hitsPerPage=10&attributesToRetrieve=objectID,title,points,num_comments,created_at,url&attributesToHighlight=none`,
-        ).catch(() => null);
-        if (!r || !r.ok) return [];
-        const data = await r.json();
-        return (data.hits ?? [])
-          .filter((h: HNPost) => h.points > 0)
-          .sort((a: HNPost, b: HNPost) => (b.points || 0) - (a.points || 0))
-          .slice(0, 8) as HNPost[];
-      })(),
-      // GitHub
-      (async () => {
-        const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
-        const q = encodeURIComponent(`${query} created:>${since}`);
-        const r = await fetch(
-          `https://api.github.com/search/repositories?q=${q}&sort=stars&order=desc&per_page=8`,
-          { headers: { Accept: "application/vnd.github.v3+json" } },
-        ).catch(() => null);
-        if (!r || !r.ok) return [];
-        const data = await r.json();
-        return (data.items ?? []) as GithubRepo[];
-      })(),
-      // Structured analysis (picks) from trend-feed endpoint
-      fetch(`/api/trend-feed?q=${encodeURIComponent(query)}`)
-        .then(r => r.ok ? r.json() : null).catch(() => null),
-      // Claude SSE stream — collect as full string
-      (async () => {
-        try {
-          const res = await fetch("/api/trends", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ idea: rawIdea }),
-          });
-          if (!res.ok) throw new Error("Claude fetch failed");
-          const reader = res.body?.getReader();
-          if (!reader) return { content: "", cached: false };
-          const decoder = new TextDecoder();
-          let buffer = "";
-          let content = "";
-          let cached = false;
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split("\n");
-            buffer = lines.pop() ?? "";
-            for (const line of lines) {
-              if (!line.startsWith("data: ")) continue;
-              const d = line.slice(6);
-              if (d === "[DONE]") break;
-              try {
-                const parsed = JSON.parse(d);
-                if (parsed.meta !== undefined) cached = parsed.meta.cached;
-                else if (parsed.text) content += parsed.text;
-              } catch { /* skip */ }
-            }
-          }
-          return { content, cached };
-        } catch {
-          return { content: "", cached: false };
-        }
-      })(),
-    ]);
-
-    // 3. Set ALL state at once
-    setTrendGoogleData(trendsData);
-    setYtVideos(ytData?.results ?? []);
-    setYtFetched(true);
-    setHnPosts(hnData);
-    setHnFetched(true);
-    setGithubRepos(ghData);
-    setGithubFetched(true);
-    setTrendAnalysis(analysisData?.analysis ?? null);
-    setStreamedContent(claudeContent.content);
-    setResultCached(claudeContent.cached);
-
-    // 4. Done — show results
-    setLoading(false);
-    setScanStep(-1);
-    setIsReady(true);
-  };
-
   const handleSubmit = async () => {
     if (!selectedTool || idea.trim().length < 3) return;
     const tool = TOOLS.find((t) => t.id === selectedTool)!;
 
     setLoading(true);
-    setIsReady(false);
+    setHasResults(false);
     setStreamedContent("");
     setError("");
     setResultCached(null);
     setGithubRepos([]);
     setGithubFetched(false);
     setHnPosts([]);
+
     setHnFetched(false);
     setItunesApps([]);
     setItunesTotal(0);
@@ -2780,28 +2665,11 @@ export default function Home() {
     setTrendAnalysis(null);
     setTrendGoogleData(null);
 
-    // Start scan animation
+    // Start scan sequence — number of timed steps depends on the tool
     scanTimersRef.current.forEach(clearTimeout);
     setScanStep(0);
 
-    // ── Trend Feed: single awaited flow ──
-    if (selectedTool === "trend-feed") {
-      // Scan step timers (visual only — they don't control data flow)
-      const steps = scanStepCounts["trend-feed"] ?? 5;
-      scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
-        setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 800)
-      );
-      try {
-        await runTrendFeedAnalysis(idea.trim());
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-        setLoading(false);
-        setScanStep(-1);
-      }
-      return; // done — runTrendFeedAnalysis sets isReady
-    }
-
-    // ── Other tools: existing flow ──
+    // Stack advisor uses a dynamic checklist instead of fixed scan steps
     if (selectedTool === "stack-advisor") {
       if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
       setStackCheckItems([{ name: STACK_CHECK_TOOLS[0], done: false }]);
@@ -2809,10 +2677,12 @@ export default function Home() {
       stackCheckTimerRef.current = setInterval(() => {
         idx++;
         if (idx >= STACK_CHECK_TOOLS.length) {
+          // Loop back with different items or stop adding
           if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
           return;
         }
         setStackCheckItems(prev => {
+          // Mark previous item as done, add new one
           const updated = prev.map((item, i) => i === prev.length - 1 ? { ...item, done: true } : item);
           return [...updated, { name: STACK_CHECK_TOOLS[idx], done: false }];
         });
@@ -2824,7 +2694,25 @@ export default function Home() {
       );
     }
 
-    if (selectedTool === "gap-analysis") {
+    // Expand domain terms via Claude Haiku, then chain API fetches with normalized query
+    if (selectedTool === "trend-feed") {
+      fetchSearchMeta(idea.trim(), (q) => {
+        fetchHNPosts(q);
+        fetchGithubRepos(q);
+        fetchYouTubeVideos(q, 90);
+        // Fetch Google Trends data
+        fetch(`/api/serpapi?q=${encodeURIComponent(q)}`)
+          .then(r => r.ok ? r.json() : null)
+          .then(data => { if (data) setTrendGoogleData(data); })
+          .catch(() => {});
+        // Fetch structured analysis (picks) from trend-feed endpoint
+        fetch(`/api/trend-feed?q=${encodeURIComponent(q)}`)
+          .then(r => r.ok ? r.json() : null)
+          .then(data => { if (data?.analysis) setTrendAnalysis(data.analysis); })
+          .catch(() => {});
+      });
+    } else if (selectedTool === "gap-analysis") {
+      // Fire store searches first (in parallel) using normalized query
       fetchSearchMeta(idea.trim(), (q) => {
         fetchITunesApps(q);
         fetchGplayApps(q);
@@ -2874,6 +2762,7 @@ export default function Home() {
           } catch { /* skip */ }
         }
       }
+      // For stack-advisor, fetch YouTube tutorials for recommended tools
       if (selectedTool === "stack-advisor" && fullContent) {
         const stackData = parseStackAdvisorJSON(fullContent);
         if (stackData) {
@@ -2883,6 +2772,7 @@ export default function Home() {
               if (t.name) toolNames.add(t.name);
             }
           }
+          // Search YouTube for the top tool names as a combined query
           const topTools = Array.from(toolNames).slice(0, 6);
           if (topTools.length > 0) {
             fetchYouTubeVideos(topTools.join(" OR ") + " tutorial", 180);
@@ -2901,7 +2791,7 @@ export default function Home() {
     if (stackCheckTimerRef.current) { clearInterval(stackCheckTimerRef.current); stackCheckTimerRef.current = null; }
     setStackCheckItems([]);
     setScanStep(-1);
-    setIsReady(false);
+    setHasResults(false);
     setStreamedContent("");
     setError("");
     setResultCached(null);
@@ -2922,7 +2812,7 @@ export default function Home() {
   const fullReset = () => {
     scanTimersRef.current.forEach(clearTimeout);
     setScanStep(-1);
-    setIsReady(false);
+    setHasResults(false);
     setSelectedTool(null);
     setIdea("");
     setStreamedContent("");
@@ -2986,17 +2876,12 @@ export default function Home() {
   const pickedHnPosts = trendAnalysis?.hn?.picks?.length > 0
     ? (trendAnalysis.hn.picks as number[]).map((idx: number) => relevantHnPosts[idx]).filter(Boolean)
     : relevantHnPosts.slice(0, 3);
-  // YouTube picks are objects: { index, reason }
-  const ytPickObjects: { index: number; reason: string }[] = trendAnalysis?.youtube?.picks ?? [];
-  const ytReasonMap = new Map(ytPickObjects.map((p) => [p.index, p.reason]));
-  const pickedYtVideos = ytPickObjects.length > 0
-    ? ytPickObjects.map((p) => ytVideos[p.index]).filter(Boolean)
+  const pickedYtVideos = trendAnalysis?.youtube?.picks?.length > 0
+    ? (trendAnalysis.youtube.picks as number[]).map((idx: number) => ytVideos[idx]).filter(Boolean)
     : ytVideos.slice(0, 3);
   const pickedGithubRepos = trendAnalysis?.github?.picks?.length > 0
     ? (trendAnalysis.github.picks as number[]).map((idx: number) => githubRepos[idx]).filter(Boolean)
     : githubRepos.slice(0, 3);
-
-
 
   return (
     <>
@@ -3052,7 +2937,7 @@ export default function Home() {
 
             {/* Right: Actions */}
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              {isReady && currentTool && (
+              {hasResults && currentTool && (
                 <button
                   onClick={backToTools}
                   style={{
@@ -3223,8 +3108,8 @@ export default function Home() {
                   ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem" }}>
                     {SCAN_STEPS.map((step, i) => {
-                      const isDone   = i < scanStep || scanStep >= maxScanStep;
-                      const isActive = i === scanStep && scanStep < maxScanStep;
+                      const isDone   = i < scanStep || scanStep === 4;
+                      const isActive = i === scanStep && scanStep < 4;
                       const isPend   = !isDone && !isActive;
                       return (
                         <div key={i} style={{
@@ -3288,7 +3173,7 @@ export default function Home() {
           })() : (
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
               {/* ── Hero ── */}
-              {!isReady && (
+              {!hasResults && (
               <div style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
                 justifyContent: "center", textAlign: "center", maxWidth: 720, margin: "0 auto",
@@ -3351,7 +3236,7 @@ export default function Home() {
                 </div>
               )}
               {/* ── Results — inline below input ── */}
-              {isReady && (
+              {hasResults && (
               <div ref={resultsRef} style={{ paddingTop: "1.5rem", paddingBottom: "5rem", animation: "fadeSlideIn 0.3s ease" }}>
 
               {/* ── Compact query bar ── */}
@@ -3440,23 +3325,53 @@ export default function Home() {
                 )}
               </div>
 
-              {/* ── Space Temperature score card (Trend Feed only) ── */}
-              {selectedTool === "trend-feed" && scoreData && (
-                <SpaceScoreCard
-                  score={Math.min(100, scoreData.score + hnBoost)}
-                  summary={scoreData.summary}
-                  hnBoost={hnBoost}
-                />
+              {/* ── Space Temperature score card (Trend Feed only) — always shown ── */}
+              {selectedTool === "trend-feed" && (
+                scoreData ? (
+                  <SpaceScoreCard
+                    score={Math.min(100, scoreData.score + hnBoost)}
+                    summary={scoreData.summary}
+                    hnBoost={hnBoost}
+                  />
+                ) : (
+                  <div style={{
+                    background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
+                    borderRadius: 12, padding: "1.5rem 1.75rem", marginBottom: "1rem",
+                    display: "flex", alignItems: "center", gap: "1.75rem",
+                  }}>
+                    <div className="shimmer" style={{ width: 92, height: 92, borderRadius: "50%", flexShrink: 0 }} />
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+                      <div className="shimmer" style={{ height: 14, borderRadius: 6, width: "40%" }} />
+                      <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "85%" }} />
+                      <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "65%" }} />
+                    </div>
+                  </div>
+                )
               )}
 
               {/* ── Google Trends chart (Trend Feed only) ── */}
-              {selectedTool === "trend-feed" && trendGoogleData && (
-                <GoogleTrendsChart data={trendGoogleData} />
+              {selectedTool === "trend-feed" && (
+                trendGoogleData ? (
+                  <GoogleTrendsChart data={trendGoogleData} />
+                ) : (
+                  <div style={{
+                    marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
+                    background: "var(--clr-surface)",
+                    border: "1px solid var(--clr-border-2)",
+                    padding: "1.5rem",
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+                      <div className="shimmer" style={{ width: 20, height: 20, borderRadius: 4 }} />
+                      <div className="shimmer" style={{ height: 16, borderRadius: 6, width: 120 }} />
+                    </div>
+                    <div className="shimmer" style={{ height: 140, borderRadius: 8 }} />
+                  </div>
+                )
               )}
 
               {/* Loading skeleton — only while nothing has streamed yet */}
               {loading && (selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && <GapAnalysisSkeleton />}
-              {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
+              {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
 
               {/* Error */}
               {error && (
@@ -3503,9 +3418,10 @@ export default function Home() {
                   );
                 })()
               ) : selectedTool === "trend-feed" ? (
+                /* Trend Feed: rich visual cards */
                 sections.length > 0 ? (
-                  <TrendFeedResult sections={sections} isStreaming={false} />
-                ) : streamedContent ? (
+                  <TrendFeedResult sections={sections} isStreaming={loading} />
+                ) : !loading && streamedContent ? (
                   <div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem", padding: "1.5rem" }}>
                     No analysis sections found for this niche
                   </div>
@@ -3697,7 +3613,7 @@ export default function Home() {
                 );
               })()}
 
-              {/* ── Hacker News Buzz (Trend Feed only) ── */}
+              {/* ── Hacker News Buzz (Trend Feed only) — always shown ── */}
               {selectedTool === "trend-feed" && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
@@ -3813,10 +3729,9 @@ export default function Home() {
                     </div>
                   ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {(selectedTool === "trend-feed" ? pickedYtVideos : ytVideos).map((video, vidIdx) => {
+                      {(selectedTool === "trend-feed" ? pickedYtVideos : ytVideos).map((video) => {
                         const daysAgo = Math.floor((Date.now() - new Date(video.publishedAt).getTime()) / 86400000);
                         const fmtViews = video.viewCount >= 1_000_000 ? `${(video.viewCount / 1_000_000).toFixed(1)}M` : video.viewCount >= 1_000 ? `${(video.viewCount / 1_000).toFixed(0)}K` : String(video.viewCount);
-                        const pickReason = selectedTool === "trend-feed" && ytPickObjects[vidIdx]?.reason;
                         return (
                           <a
                             key={video.videoId}
@@ -3884,11 +3799,6 @@ export default function Home() {
                                   {daysAgo === 0 ? "today" : `${daysAgo}d ago`}
                                 </span>
                               </div>
-                              {pickReason && (
-                                <div style={{ fontSize: "0.66rem", color: "var(--clr-text-3)", fontStyle: "italic", lineHeight: 1.35, marginTop: "0.2rem" }}>
-                                  {pickReason}
-                                </div>
-                              )}
                             </div>
                           </a>
                         );
@@ -3898,7 +3808,7 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ── GitHub trending repos (Trend Feed only) ── */}
+              {/* ── GitHub trending repos (Trend Feed only) — always shown ── */}
               {selectedTool === "trend-feed" && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
