@@ -9,29 +9,22 @@ async function fetchGoogleTrends(query: string) {
   if (!key) return null;
 
   try {
-    const url = new URL("https://serpapi.com/search.json");
-    url.searchParams.set("engine", "google_trends");
-    url.searchParams.set("q", query);
-    url.searchParams.set("date", "today 3-m");
-    url.searchParams.set("api_key", key);
-
-    const res = await fetch(url.toString(), { signal: AbortSignal.timeout(10000) });
+    const trendsUrl = `https://serpapi.com/search.json?engine=google_trends&q=${encodeURIComponent(query)}&date=today%203-m&api_key=${key}`;
+    const res = await fetch(trendsUrl, { signal: AbortSignal.timeout(10000) });
     if (!res.ok) return null;
 
     const data = await res.json();
-    const timeline: { date: string; value: number }[] = [];
     const points = data.interest_over_time?.timeline_data ?? [];
 
-    // Last ~30 days worth of points (weekly data → last 4-5 points)
-    const recent = points.slice(-5);
-    for (const pt of recent) {
-      timeline.push({
+    // Full timeline for the chart
+    const timeline: { date: string; value: number }[] = points.map(
+      (pt: { date?: string; values?: { extracted_value?: number }[] }) => ({
         date: pt.date ?? "",
         value: pt.values?.[0]?.extracted_value ?? 0,
-      });
-    }
+      })
+    );
 
-    const allValues = points.map((p: { values?: { extracted_value?: number }[] }) => p.values?.[0]?.extracted_value ?? 0);
+    const allValues = timeline.map((t) => t.value);
     const currentScore = allValues.length > 0 ? allValues[allValues.length - 1] : 0;
     const firstScore = allValues.length > 1 ? allValues[0] : currentScore;
     const trendPercent = firstScore > 0 ? Math.round(((currentScore - firstScore) / firstScore) * 100) : 0;
@@ -211,7 +204,7 @@ IMPORTANT — Analysis depth:
 Return ONLY valid JSON (no markdown, no code fences) in this exact format:
 {
   "score": <integer 0-100, opportunity score — high activity + high competition = LOW score>,
-  "label": "<exactly one of: Dead Zone | Uncharted | Crowded | Warming Up | Growing | Explosive — pick based on market reality, not just score number. Use 'Uncharted' when data is sparse/missing and market is unexplored. Use 'Crowded' only when many competitors exist. Use 'Dead Zone' when demand is genuinely dead.>",
+  "label": "<exactly one of: Dead Zone | Uncharted | Crowded | Warming Up | Growing | Explosive — pick based on market reality, not just score number. Use 'Uncharted' when data is sparse/missing and market is unexplored. Use 'Crowded' only when many competitors exist. Use 'Dead Zone' when demand is genuinely dead. HARD RULE: When score is below 30, label MUST be either 'Dead Zone' or 'Uncharted'. Never use 'Crowded' for scores below 30.>",
   "verdict": "<max 12 words, direct assessment>",
   "summary": "<3-4 sentences combining all signals with specific numbers>",
   "googleTrendsInsight": "<1-2 sentences interpreting the Google Trends data>",
