@@ -259,9 +259,9 @@ export async function GET(req: NextRequest) {
       analysis,
       rawData: {
         trends,
-        youtube: youtube.map((v, i) => ({ index: i, ...v })),
-        hn: hn.map((h, i) => ({ index: i, ...h })),
-        github: github.map((r, i) => ({ index: i, ...r })),
+        youtube: youtube.map((v: any, i: number) => ({ index: i, ...v })),
+        hn: hn.map((h: any, i: number) => ({ index: i, ...h })),
+        github: github.map((r: any, i: number) => ({ index: i, ...r })),
       },
     });
   } catch (err) {
