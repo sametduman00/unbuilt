@@ -1198,7 +1198,7 @@ function GoogleTrendsChart({ data }: { data: any }) {
   );
 }
 
-function SpaceScoreCard({ score, summary, hnBoost }: { score: number; summary: string; hnBoost?: number }) {
+function SpaceScoreCard({ score, summary }: { score: number; summary: string }) {
   const pct = Math.max(0, Math.min(100, score));
   const tier = deriveScoreLabel(pct);
   const color = "var(--clr-text)";
@@ -1310,21 +1310,6 @@ function SpaceScoreCard({ score, summary, hnBoost }: { score: number; summary: s
         );
       })()}
 
-      {/* HN signal contribution */}
-      {hnBoost && hnBoost > 0 ? (
-        <div style={{ marginTop: "0.875rem", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-          <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)" }}>Score includes</span>
-          <span style={{
-            display: "inline-flex", alignItems: "center", gap: 4,
-            padding: "0.1rem 0.5rem", borderRadius: 999,
-            background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
-            fontSize: "0.68rem", fontWeight: 700, color: "var(--clr-text-2)",
-          }}>
-            <svg width="10" height="10" viewBox="0 0 18 18" fill="currentColor"><path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/></svg>
-            HN activity
-          </span>
-        </div>
-      ) : null}
     </div>
   );
 }
@@ -2350,11 +2335,9 @@ export default function Home() {
   const [domainKeywords, setDomainKeywords] = useState<string[]>([]);
   const [resultCached, setResultCached] = useState<boolean | null>(null);
 
-  // Trend-feed structured analysis (picks + Google Trends)
+  // Trend-feed: single API response holds everything
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [trendAnalysis, setTrendAnalysis] = useState<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [trendGoogleData, setTrendGoogleData] = useState<any>(null);
+  const [trendFeedData, setTrendFeedData] = useState<any>(null);
 
   const [scanStep, setScanStep] = useState(-1); // -1=hidden 0-3=active step 4=all done
   const [stackCheckItems, setStackCheckItems] = useState<{ name: string; done: boolean }[]>([]);
@@ -2449,8 +2432,7 @@ export default function Home() {
     setYtLoading(false);
     setYtFetched(false);
     setDomainKeywords([]);
-    setTrendAnalysis(null);
-    setTrendGoogleData(null);
+    setTrendFeedData(null);
 
     setSelectedTool(toolId);
     setTimeout(() => {
@@ -2662,14 +2644,37 @@ export default function Home() {
     setYtLoading(false);
     setYtFetched(false);
     setDomainKeywords([]);
-    setTrendAnalysis(null);
-    setTrendGoogleData(null);
+    setTrendFeedData(null);
 
-    // Start scan sequence — number of timed steps depends on the tool
+    // Start scan animation
     scanTimersRef.current.forEach(clearTimeout);
     setScanStep(0);
 
-    // Stack advisor uses a dynamic checklist instead of fixed scan steps
+    // ── Trend Feed: single fetch, single render ──
+    if (selectedTool === "trend-feed") {
+      const steps = scanStepCounts["trend-feed"] ?? 5;
+      scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
+        setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 800)
+      );
+      try {
+        const res = await fetch(`/api/trend-feed?q=${encodeURIComponent(idea.trim())}`);
+        if (!res.ok) {
+          const d = await res.json();
+          throw new Error(d.error || "Something went wrong");
+        }
+        const data = await res.json();
+        setTrendFeedData(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+        setScanStep(-1);
+        setHasResults(true);
+      }
+      return;
+    }
+
+    // ── Other tools: existing flow ──
     if (selectedTool === "stack-advisor") {
       if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
       setStackCheckItems([{ name: STACK_CHECK_TOOLS[0], done: false }]);
@@ -2677,12 +2682,10 @@ export default function Home() {
       stackCheckTimerRef.current = setInterval(() => {
         idx++;
         if (idx >= STACK_CHECK_TOOLS.length) {
-          // Loop back with different items or stop adding
           if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
           return;
         }
         setStackCheckItems(prev => {
-          // Mark previous item as done, add new one
           const updated = prev.map((item, i) => i === prev.length - 1 ? { ...item, done: true } : item);
           return [...updated, { name: STACK_CHECK_TOOLS[idx], done: false }];
         });
@@ -2694,25 +2697,7 @@ export default function Home() {
       );
     }
 
-    // Expand domain terms via Claude Haiku, then chain API fetches with normalized query
-    if (selectedTool === "trend-feed") {
-      fetchSearchMeta(idea.trim(), (q) => {
-        fetchHNPosts(q);
-        fetchGithubRepos(q);
-        fetchYouTubeVideos(q, 90);
-        // Fetch Google Trends data
-        fetch(`/api/serpapi?q=${encodeURIComponent(q)}`)
-          .then(r => r.ok ? r.json() : null)
-          .then(data => { if (data) setTrendGoogleData(data); })
-          .catch(() => {});
-        // Fetch structured analysis (picks) from trend-feed endpoint
-        fetch(`/api/trend-feed?q=${encodeURIComponent(q)}`)
-          .then(r => r.ok ? r.json() : null)
-          .then(data => { if (data?.analysis) setTrendAnalysis(data.analysis); })
-          .catch(() => {});
-      });
-    } else if (selectedTool === "gap-analysis") {
-      // Fire store searches first (in parallel) using normalized query
+    if (selectedTool === "gap-analysis") {
       fetchSearchMeta(idea.trim(), (q) => {
         fetchITunesApps(q);
         fetchGplayApps(q);
@@ -2762,7 +2747,6 @@ export default function Home() {
           } catch { /* skip */ }
         }
       }
-      // For stack-advisor, fetch YouTube tutorials for recommended tools
       if (selectedTool === "stack-advisor" && fullContent) {
         const stackData = parseStackAdvisorJSON(fullContent);
         if (stackData) {
@@ -2772,7 +2756,6 @@ export default function Home() {
               if (t.name) toolNames.add(t.name);
             }
           }
-          // Search YouTube for the top tool names as a combined query
           const topTools = Array.from(toolNames).slice(0, 6);
           if (topTools.length > 0) {
             fetchYouTubeVideos(topTools.join(" OR ") + " tutorial", 180);
@@ -2807,6 +2790,7 @@ export default function Home() {
     setYtLoading(false);
     setYtFetched(false);
     setDomainKeywords([]);
+    setTrendFeedData(null);
   };
 
   const fullReset = () => {
@@ -2830,6 +2814,7 @@ export default function Home() {
     setYtLoading(false);
     setYtFetched(false);
     setDomainKeywords([]);
+    setTrendFeedData(null);
   };
 
   const allSections = streamedContent ? parseSections(streamedContent, loading) : [];
@@ -2840,48 +2825,22 @@ export default function Home() {
   const scoreData = scoreSection ? parseScore(scoreSection.body) : null;
   const currentTool = TOOLS.find((t) => t.id === selectedTool);
 
-  // HN signal boost: weight the opportunity score based on HN engagement
-  const hnBoost = (() => {
-    if (selectedTool !== "trend-feed" || hnPosts.length === 0) return 0;
-    const topPosts = hnPosts.slice(0, 5);
-    const avgPoints = topPosts.reduce((sum, p) => sum + (p.points || 0), 0) / topPosts.length;
-    const totalComments = topPosts.reduce((sum, p) => sum + (p.num_comments || 0), 0);
-    let boost = 0;
-    // Points signal
-    if (avgPoints >= 400) boost += 10;
-    else if (avgPoints >= 200) boost += 7;
-    else if (avgPoints >= 100) boost += 5;
-    else if (avgPoints >= 50) boost += 3;
-    else boost += 1;
-    // Volume signal (community discussion depth)
-    if (totalComments >= 500) boost += 5;
-    else if (totalComments >= 200) boost += 3;
-    else if (totalComments >= 50) boost += 1;
-    return Math.min(boost, 15); // cap at +15
-  })();
+  // ── Trend-feed: derive all display data from single API response ──
+  const tfAnalysis = trendFeedData?.analysis;
+  const tfRaw = trendFeedData?.rawData;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tfYt: any[] = tfRaw?.youtube ?? [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tfHn: any[] = tfRaw?.hn ?? [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tfGh: any[] = tfRaw?.github ?? [];
 
-
-  // Post-fetch relevance filter — keep only results matching the domain keywords
-  const matchesKeywords = (text: string) =>
-    domainKeywords.length === 0 ||
-    domainKeywords.some((kw) => text.toLowerCase().includes(kw.toLowerCase()));
-
-  const filteredHnPosts = hnPosts.filter((p) =>
-    matchesKeywords(p.title ?? "") || matchesKeywords(p.url ?? "")
-  );
-  // If keyword filter removes everything, show all posts — the API query was already scoped
-  const relevantHnPosts = filteredHnPosts.length > 0 ? filteredHnPosts : hnPosts;
-
-  // Picks-filtered lists for trend-feed (Claude selects best items by index)
-  const pickedHnPosts = trendAnalysis?.hn?.picks?.length > 0
-    ? (trendAnalysis.hn.picks as number[]).map((idx: number) => relevantHnPosts[idx]).filter(Boolean)
-    : relevantHnPosts.slice(0, 3);
-  const pickedYtVideos = trendAnalysis?.youtube?.picks?.length > 0
-    ? (trendAnalysis.youtube.picks as number[]).map((idx: number) => ytVideos[idx]).filter(Boolean)
-    : ytVideos.slice(0, 3);
-  const pickedGithubRepos = trendAnalysis?.github?.picks?.length > 0
-    ? (trendAnalysis.github.picks as number[]).map((idx: number) => githubRepos[idx]).filter(Boolean)
-    : githubRepos.slice(0, 3);
+  const tfYtPicks: number[] = tfAnalysis?.youtube?.picks ?? [];
+  const pickedTfYt = tfYtPicks.length > 0 ? tfYtPicks.map((i: number) => tfYt[i]).filter(Boolean) : tfYt.slice(0, 3);
+  const tfHnPicks: number[] = tfAnalysis?.hn?.picks ?? [];
+  const pickedTfHn = tfHnPicks.length > 0 ? tfHnPicks.map((i: number) => tfHn[i]).filter(Boolean) : tfHn.slice(0, 3);
+  const tfGhPicks: number[] = tfAnalysis?.github?.picks ?? [];
+  const pickedTfGh = tfGhPicks.length > 0 ? tfGhPicks.map((i: number) => tfGh[i]).filter(Boolean) : tfGh.slice(0, 3);
 
   return (
     <>
@@ -3325,48 +3284,17 @@ export default function Home() {
                 )}
               </div>
 
-              {/* ── Space Temperature score card (Trend Feed only) — always shown ── */}
-              {selectedTool === "trend-feed" && (
-                scoreData ? (
-                  <SpaceScoreCard
-                    score={Math.min(100, scoreData.score + hnBoost)}
-                    summary={scoreData.summary}
-                    hnBoost={hnBoost}
-                  />
-                ) : (
-                  <div style={{
-                    background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-                    borderRadius: 12, padding: "1.5rem 1.75rem", marginBottom: "1rem",
-                    display: "flex", alignItems: "center", gap: "1.75rem",
-                  }}>
-                    <div className="shimmer" style={{ width: 92, height: 92, borderRadius: "50%", flexShrink: 0 }} />
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
-                      <div className="shimmer" style={{ height: 14, borderRadius: 6, width: "40%" }} />
-                      <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "85%" }} />
-                      <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "65%" }} />
-                    </div>
-                  </div>
-                )
+              {/* ── Score card (Trend Feed) — from trendFeedData.analysis ── */}
+              {selectedTool === "trend-feed" && tfAnalysis && (
+                <SpaceScoreCard
+                  score={tfAnalysis.score ?? 0}
+                  summary={tfAnalysis.summary ?? ""}
+                />
               )}
 
-              {/* ── Google Trends chart (Trend Feed only) ── */}
-              {selectedTool === "trend-feed" && (
-                trendGoogleData ? (
-                  <GoogleTrendsChart data={trendGoogleData} />
-                ) : (
-                  <div style={{
-                    marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
-                    background: "var(--clr-surface)",
-                    border: "1px solid var(--clr-border-2)",
-                    padding: "1.5rem",
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-                      <div className="shimmer" style={{ width: 20, height: 20, borderRadius: 4 }} />
-                      <div className="shimmer" style={{ height: 16, borderRadius: 6, width: 120 }} />
-                    </div>
-                    <div className="shimmer" style={{ height: 140, borderRadius: 8 }} />
-                  </div>
-                )
+              {/* ── Google Trends chart (Trend Feed) — from trendFeedData.rawData.trends ── */}
+              {selectedTool === "trend-feed" && tfRaw?.trends && (
+                <GoogleTrendsChart data={tfRaw.trends} />
               )}
 
               {/* Loading skeleton — only while nothing has streamed yet */}
@@ -3418,12 +3346,64 @@ export default function Home() {
                   );
                 })()
               ) : selectedTool === "trend-feed" ? (
-                /* Trend Feed: rich visual cards */
-                sections.length > 0 ? (
-                  <TrendFeedResult sections={sections} isStreaming={loading} />
-                ) : !loading && streamedContent ? (
-                  <div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem", padding: "1.5rem" }}>
-                    No analysis sections found for this niche
+                tfAnalysis ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                    {/* Verdict card */}
+                    <div style={{
+                      padding: "1.25rem 1.5rem", borderRadius: 12,
+                      background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+                    }}>
+                      <div style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+                        {tfAnalysis.verdict}
+                      </div>
+                      <p style={{ fontSize: "0.9rem", color: "var(--clr-text-3)", lineHeight: 1.65, margin: 0 }}>
+                        {tfAnalysis.summary}
+                      </p>
+                    </div>
+                    {/* Google Trends insight */}
+                    {tfAnalysis.googleTrendsInsight && (
+                      <div style={{
+                        padding: "1rem 1.25rem", borderRadius: 10,
+                        background: "rgba(var(--clr-text-rgb),0.03)", border: "1px solid var(--clr-border-2)",
+                        fontSize: "0.85rem", color: "var(--clr-text-3)", lineHeight: 1.6,
+                      }}>
+                        <span style={{ fontWeight: 700, color: "var(--clr-text-2)", marginRight: 6 }}>Google Trends:</span>
+                        {tfAnalysis.googleTrendsInsight}
+                      </div>
+                    )}
+                    {/* YouTube insight */}
+                    {tfAnalysis.youtube?.insight && (
+                      <div style={{
+                        padding: "1rem 1.25rem", borderRadius: 10,
+                        background: "rgba(var(--clr-text-rgb),0.03)", border: "1px solid var(--clr-border-2)",
+                        fontSize: "0.85rem", color: "var(--clr-text-3)", lineHeight: 1.6,
+                      }}>
+                        <span style={{ fontWeight: 700, color: "var(--clr-text-2)", marginRight: 6 }}>YouTube:</span>
+                        {tfAnalysis.youtube.insight}
+                      </div>
+                    )}
+                    {/* HN insight */}
+                    {tfAnalysis.hn?.insight && (
+                      <div style={{
+                        padding: "1rem 1.25rem", borderRadius: 10,
+                        background: "rgba(var(--clr-text-rgb),0.03)", border: "1px solid var(--clr-border-2)",
+                        fontSize: "0.85rem", color: "var(--clr-text-3)", lineHeight: 1.6,
+                      }}>
+                        <span style={{ fontWeight: 700, color: "var(--clr-text-2)", marginRight: 6 }}>Hacker News:</span>
+                        {tfAnalysis.hn.insight}
+                      </div>
+                    )}
+                    {/* GitHub insight */}
+                    {tfAnalysis.github?.insight && (
+                      <div style={{
+                        padding: "1rem 1.25rem", borderRadius: 10,
+                        background: "rgba(var(--clr-text-rgb),0.03)", border: "1px solid var(--clr-border-2)",
+                        fontSize: "0.85rem", color: "var(--clr-text-3)", lineHeight: 1.6,
+                      }}>
+                        <span style={{ fontWeight: 700, color: "var(--clr-text-2)", marginRight: 6 }}>GitHub:</span>
+                        {tfAnalysis.github.insight}
+                      </div>
+                    )}
                   </div>
                 ) : null
               ) : selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" ? (
@@ -3631,26 +3611,18 @@ export default function Home() {
                     </span>
                   </div>
 
-                  {(hnLoading || !hnFetched) ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                      {[1, 2, 3].map((n) => (
-                        <div key={n} className="shimmer" style={{ height: 60, borderRadius: 10 }} />
-                      ))}
-                    </div>
-                  ) : pickedHnPosts.length === 0 ? (
+                  {pickedTfHn.length === 0 ? (
                     <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
                       No relevant Hacker News discussions found for this niche
                     </div>
                   ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {pickedHnPosts.map((post) => {
-                        const daysAgo = Math.floor((Date.now() - new Date(post.created_at).getTime()) / 86400000);
+                      {pickedTfHn.map((post: any) => {
                         const hnUrl = `https://news.ycombinator.com/item?id=${post.objectID}`;
-
                         return (
                           <a
                             key={post.objectID}
-                            href={post.url ?? hnUrl}
+                            href={post.url || hnUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{
@@ -3684,10 +3656,10 @@ export default function Home() {
                                 ▲ {post.points}
                               </span>
                               <span style={{ fontSize: "0.68rem", color: "var(--clr-text-6)", fontWeight: 500 }}>
-                                {post.num_comments} comments
+                                {post.comments} comments
                               </span>
                               <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", marginLeft: "auto" }}>
-                                {daysAgo === 0 ? "today" : `${daysAgo}d ago`}
+                                {post.daysAgo === 0 ? "today" : `${post.daysAgo}d ago`}
                               </span>
                             </div>
                           </a>
@@ -3717,21 +3689,23 @@ export default function Home() {
                     </span>
                   </div>
 
-                  {(ytLoading || !ytFetched) ? (
+                  {(selectedTool !== "trend-feed" && (ytLoading || !ytFetched)) ? (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
                       {[1, 2, 3].map((n) => (
                         <div key={n} className="shimmer" style={{ height: 80, borderRadius: 10 }} />
                       ))}
                     </div>
-                  ) : ((selectedTool === "trend-feed" ? pickedYtVideos : ytVideos).length === 0) ? (
+                  ) : ((selectedTool === "trend-feed" ? pickedTfYt : ytVideos).length === 0) ? (
                     <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
                       No relevant YouTube videos found for this niche
                     </div>
                   ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {(selectedTool === "trend-feed" ? pickedYtVideos : ytVideos).map((video) => {
+                      {(selectedTool === "trend-feed" ? pickedTfYt : ytVideos).map((video: any) => {
                         const daysAgo = Math.floor((Date.now() - new Date(video.publishedAt).getTime()) / 86400000);
-                        const fmtViews = video.viewCount >= 1_000_000 ? `${(video.viewCount / 1_000_000).toFixed(1)}M` : video.viewCount >= 1_000 ? `${(video.viewCount / 1_000).toFixed(0)}K` : String(video.viewCount);
+                        const vc = video.viewCount ?? 0;
+                        const fmtViews = vc >= 1_000_000 ? `${(vc / 1_000_000).toFixed(1)}M` : vc >= 1_000 ? `${(vc / 1_000).toFixed(0)}K` : String(vc);
+                        const lc = video.likeCount ?? 0;
                         return (
                           <a
                             key={video.videoId}
@@ -3756,30 +3730,28 @@ export default function Home() {
                               e.currentTarget.style.boxShadow = "none";
                             }}
                           >
-                            {/* Thumbnail */}
-                            {video.thumbnailUrl && (
+                            {/* Thumbnail from YouTube videoId */}
+                            <div style={{
+                              width: 120, minWidth: 120, height: 68, borderRadius: 8, overflow: "hidden",
+                              background: "var(--clr-bg)", flexShrink: 0, position: "relative",
+                            }}>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={`https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                               <div style={{
-                                width: 120, minWidth: 120, height: 68, borderRadius: 8, overflow: "hidden",
-                                background: "var(--clr-bg)", flexShrink: 0, position: "relative",
+                                position: "absolute", bottom: 4, right: 4,
+                                background: "rgba(0,0,0,0.8)", borderRadius: 4,
+                                padding: "1px 5px", fontSize: "0.6rem", color: "#fff", fontWeight: 700,
                               }}>
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={video.thumbnailUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                <div style={{
-                                  position: "absolute", bottom: 4, right: 4,
-                                  background: "rgba(0,0,0,0.8)", borderRadius: 4,
-                                  padding: "1px 5px", fontSize: "0.6rem", color: "#fff", fontWeight: 700,
-                                }}>
-                                  ▶ {fmtViews}
-                                </div>
+                                ▶ {fmtViews}
                               </div>
-                            )}
+                            </div>
                             {/* Info */}
                             <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", minWidth: 0, flex: 1 }}>
                               <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.35, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                                 {video.title}
                               </div>
                               <div style={{ fontSize: "0.7rem", color: "var(--clr-text-5)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                {video.channelTitle}
+                                {video.channel ?? video.channelTitle}
                               </div>
                               <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
                                 <span style={{
@@ -3790,9 +3762,9 @@ export default function Home() {
                                 }}>
                                   {fmtViews} views
                                 </span>
-                                {video.likeCount > 0 && (
+                                {lc > 0 && (
                                   <span style={{ fontSize: "0.62rem", color: "var(--clr-text-6)", fontWeight: 500 }}>
-                                    {video.likeCount >= 1000 ? `${(video.likeCount / 1000).toFixed(0)}K` : video.likeCount} likes
+                                    {lc >= 1000 ? `${(lc / 1000).toFixed(0)}K` : lc} likes
                                   </span>
                                 )}
                                 <span style={{ fontSize: "0.62rem", color: "var(--clr-text-7)", marginLeft: "auto" }}>
@@ -3826,24 +3798,16 @@ export default function Home() {
                     </span>
                   </div>
 
-                  {(githubLoading || !githubFetched) ? (
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.625rem" }}>
-                      {[1, 2, 3, 4].map((n) => (
-                        <div key={n} className="shimmer" style={{ height: 90, borderRadius: 10 }} />
-                      ))}
-                    </div>
-                  ) : pickedGithubRepos.length === 0 ? (
+                  {pickedTfGh.length === 0 ? (
                     <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
                       No relevant GitHub repositories found for this niche
                     </div>
                   ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {pickedGithubRepos.map((repo) => {
-                        const daysAgo = Math.floor((Date.now() - new Date(repo.created_at).getTime()) / 86400000);
-                        return (
+                      {pickedTfGh.map((repo: any) => (
                           <a
-                            key={repo.id}
-                            href={repo.html_url}
+                            key={repo.name}
+                            href={repo.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{
@@ -3864,10 +3828,9 @@ export default function Home() {
                               e.currentTarget.style.boxShadow = "none";
                             }}
                           >
-                            {/* Repo name row */}
                             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
                               <span style={{ fontSize: "0.875rem", fontWeight: 750, color: "var(--clr-text-2)", letterSpacing: "-0.01em", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                {repo.full_name}
+                                {repo.name}
                               </span>
                               {repo.language && (
                                 <span style={{
@@ -3880,8 +3843,6 @@ export default function Home() {
                                 </span>
                               )}
                             </div>
-
-                            {/* Description */}
                             {repo.description && (
                               <p style={{
                                 fontSize: "0.8rem", color: "var(--clr-text-4)", lineHeight: 1.5,
@@ -3892,8 +3853,6 @@ export default function Home() {
                                 {repo.description}
                               </p>
                             )}
-
-                            {/* Meta row */}
                             <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
                               <span style={{
                                 display: "inline-flex", alignItems: "center", gap: 4,
@@ -3904,15 +3863,14 @@ export default function Home() {
                                 <svg width="10" height="10" viewBox="0 0 13 13" fill="none">
                                   <path d="M6.5 1l1.545 3.13 3.455.502-2.5 2.436.59 3.44L6.5 8.885l-3.09 1.623.59-3.44L1.5 4.632l3.455-.502L6.5 1z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
                                 </svg>
-                                {repo.stargazers_count.toLocaleString()}
+                                {(repo.stars ?? 0).toLocaleString()}
                               </span>
                               <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", fontWeight: 500, marginLeft: "auto" }}>
-                                {daysAgo === 0 ? "today" : `${daysAgo}d ago`}
+                                {repo.daysAgo === 0 ? "today" : `${repo.daysAgo}d ago`}
                               </span>
                             </div>
                           </a>
-                        );
-                      })}
+                        ))}
                     </div>
                   )}
                 </div>
