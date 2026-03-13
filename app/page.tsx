@@ -2646,16 +2646,12 @@ export default function Home() {
     setDomainKeywords([]);
     setTrendFeedData(null);
 
-    // Start scan animation
+    // Clear any existing scan timers
     scanTimersRef.current.forEach(clearTimeout);
-    setScanStep(0);
 
-    // ── Trend Feed: single fetch, single render ──
+    // ── Trend Feed: single fetch, single render (no scan overlay) ──
     if (selectedTool === "trend-feed") {
-      const steps = scanStepCounts["trend-feed"] ?? 5;
-      scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
-        setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 800)
-      );
+      setHasResults(true);
       try {
         const res = await fetch(`/api/trend-feed?q=${encodeURIComponent(idea.trim())}`);
         if (!res.ok) {
@@ -2668,11 +2664,12 @@ export default function Home() {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
-        setScanStep(-1);
-        setHasResults(true);
       }
       return;
     }
+
+    // Start scan animation for non-trend-feed tools
+    setScanStep(0);
 
     // ── Other tools: existing flow ──
     if (selectedTool === "stack-advisor") {
@@ -3284,8 +3281,81 @@ export default function Home() {
                 )}
               </div>
 
+              {/* ── Trend Feed: loading skeleton OR real results ── */}
+              {selectedTool === "trend-feed" && loading && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                  {/* Score card skeleton */}
+                  <div style={{
+                    background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+                    borderRadius: 12, padding: "1.5rem 1.75rem",
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "1.75rem" }}>
+                      <div className="shimmer" style={{ width: 92, height: 92, borderRadius: "50%", flexShrink: 0 }} />
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
+                        <div className="shimmer" style={{ height: 14, width: "40%", borderRadius: 6 }} />
+                        <div className="shimmer" style={{ height: 12, width: "90%", borderRadius: 6 }} />
+                        <div className="shimmer" style={{ height: 12, width: "70%", borderRadius: 6 }} />
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: 6, marginTop: "1.25rem" }}>
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <div key={n} className="shimmer" style={{ flex: 1, height: 6, borderRadius: 999 }} />
+                      ))}
+                    </div>
+                  </div>
+                  {/* Chart skeleton */}
+                  <div style={{
+                    background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+                    borderRadius: 12, padding: "1.25rem", maxWidth: 480,
+                  }}>
+                    <div className="shimmer" style={{ height: 14, width: "35%", borderRadius: 6, marginBottom: 12 }} />
+                    <div className="shimmer" style={{ height: 100, borderRadius: 8 }} />
+                  </div>
+                  {/* Verdict skeleton */}
+                  <div style={{
+                    background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+                    borderRadius: 12, padding: "1.25rem 1.5rem",
+                  }}>
+                    <div className="shimmer" style={{ height: 16, width: "50%", borderRadius: 6, marginBottom: 10 }} />
+                    <div className="shimmer" style={{ height: 12, width: "95%", borderRadius: 6, marginBottom: 6 }} />
+                    <div className="shimmer" style={{ height: 12, width: "80%", borderRadius: 6 }} />
+                  </div>
+                  {/* Source insight skeletons */}
+                  {[1, 2, 3].map((n) => (
+                    <div key={n} style={{
+                      background: "rgba(var(--clr-text-rgb),0.03)", border: "1px solid var(--clr-border-2)",
+                      borderRadius: 10, padding: "1rem 1.25rem",
+                    }}>
+                      <div className="shimmer" style={{ height: 12, width: `${55 + n * 10}%`, borderRadius: 6 }} />
+                    </div>
+                  ))}
+                  {/* Section card skeletons (HN, YouTube, GitHub) */}
+                  {[1, 2, 3].map((n) => (
+                    <div key={`sec-${n}`} style={{
+                      background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+                      borderRadius: 12, padding: "1.5rem",
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+                        <div className="shimmer" style={{ width: 28, height: 28, borderRadius: 8 }} />
+                        <div className="shimmer" style={{ height: 16, width: "30%", borderRadius: 6 }} />
+                      </div>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
+                        {[1, 2, 3].map((m) => (
+                          <div key={m} className="shimmer" style={{ height: 70, borderRadius: 10 }} />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  {/* Loading indicator */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--clr-text-6)", fontSize: "0.8125rem", paddingTop: 4 }}>
+                    <div style={{ width: 16, height: 16, border: "2px solid var(--clr-accent)", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+                    Analyzing trends…
+                  </div>
+                </div>
+              )}
+
               {/* ── Score card (Trend Feed) — from trendFeedData.analysis ── */}
-              {selectedTool === "trend-feed" && tfAnalysis && (
+              {selectedTool === "trend-feed" && !loading && tfAnalysis && (
                 <SpaceScoreCard
                   score={tfAnalysis.score ?? 0}
                   summary={tfAnalysis.summary ?? ""}
@@ -3293,13 +3363,13 @@ export default function Home() {
               )}
 
               {/* ── Google Trends chart (Trend Feed) — from trendFeedData.rawData.trends ── */}
-              {selectedTool === "trend-feed" && tfRaw?.trends && (
+              {selectedTool === "trend-feed" && !loading && tfRaw?.trends && (
                 <GoogleTrendsChart data={tfRaw.trends} />
               )}
 
               {/* Loading skeleton — only while nothing has streamed yet */}
               {loading && (selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && <GapAnalysisSkeleton />}
-              {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
+              {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
 
               {/* Error */}
               {error && (
@@ -3345,7 +3415,7 @@ export default function Home() {
                     </div>
                   );
                 })()
-              ) : selectedTool === "trend-feed" ? (
+              ) : selectedTool === "trend-feed" && !loading ? (
                 tfAnalysis ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     {/* Verdict card */}
@@ -3353,12 +3423,9 @@ export default function Home() {
                       padding: "1.25rem 1.5rem", borderRadius: 12,
                       background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
                     }}>
-                      <div style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+                      <div style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.02em" }}>
                         {tfAnalysis.verdict}
                       </div>
-                      <p style={{ fontSize: "0.9rem", color: "var(--clr-text-3)", lineHeight: 1.65, margin: 0 }}>
-                        {tfAnalysis.summary}
-                      </p>
                     </div>
                     {/* Google Trends insight */}
                     {tfAnalysis.googleTrendsInsight && (
@@ -3593,8 +3660,8 @@ export default function Home() {
                 );
               })()}
 
-              {/* ── Hacker News Buzz (Trend Feed only) — always shown ── */}
-              {selectedTool === "trend-feed" && (
+              {/* ── Hacker News Buzz (Trend Feed only) ── */}
+              {selectedTool === "trend-feed" && !loading && trendFeedData && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
                   background: "var(--clr-surface)",
@@ -3672,7 +3739,7 @@ export default function Home() {
 
 
               {/* ── YouTube Buzz (Trend Feed + Gap Analysis) ── */}
-              {(selectedTool === "trend-feed" || selectedTool === "gap-analysis") && (
+              {((selectedTool === "trend-feed" && !loading && trendFeedData) || selectedTool === "gap-analysis") && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
                   background: "var(--clr-surface)",
@@ -3780,8 +3847,8 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ── GitHub trending repos (Trend Feed only) — always shown ── */}
-              {selectedTool === "trend-feed" && (
+              {/* ── GitHub trending repos (Trend Feed only) ── */}
+              {selectedTool === "trend-feed" && !loading && trendFeedData && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
                   background: "var(--clr-surface)",
