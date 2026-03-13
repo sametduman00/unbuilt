@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
-/* ── Color tokens (Clerk-inspired dark palette) ───────────────── */
+/* ── Color tokens ─────────────────────────────────────────────── */
 :root {
-  --clr-bg: #09090b;
-  --clr-surface: #111113;
-  --clr-surface-2: #18181b;
-  --clr-surface-3: #1f1f23;
-  --clr-header-bg: rgba(9,9,11,0.85);
-  --clr-border-deep: #1a1a1f;
-  --clr-border: #27272a;
-  --clr-border-2: #3f3f46;
-  --clr-text: #fafafa;
+  --clr-bg: #000000;
+  --clr-surface: #0a0a0a;
+  --clr-surface-2: #0f0f0f;
+  --clr-surface-3: #111111;
+  --clr-header-bg: rgba(0,0,0,0.8);
+  --clr-border-deep: #1a1a1a;
+  --clr-border: #1a1a1a;
+  --clr-border-2: #222222;
+  --clr-text: #ffffff;
   --clr-text-2: #a1a1aa;
   --clr-text-3: #71717a;
-  --clr-text-4: #52525b;
+  --clr-text-4: #71717a;
   --clr-text-5: #52525b;
   --clr-text-6: #3f3f46;
   --clr-text-7: #3f3f46;
   --clr-text-8: #27272a;
   --clr-placeholder: #3f3f46;
-  --clr-accent: #8b5cf6;
-  --clr-accent-muted: #7c3aed;
+  --clr-accent: #7c3aed;
+  --clr-accent-hover: #6d28d9;
 }
 
 html.light {
@@ -30,8 +30,8 @@ html.light {
   --clr-surface-3: #e4e4e7;
   --clr-header-bg: rgba(250,250,250,0.9);
   --clr-border-deep: #e4e4e7;
-  --clr-border: #d4d4d8;
-  --clr-border-2: #a1a1aa;
+  --clr-border: #e4e4e7;
+  --clr-border-2: #d4d4d8;
   --clr-text: #09090b;
   --clr-text-2: #3f3f46;
   --clr-text-3: #52525b;
@@ -42,22 +42,22 @@ html.light {
   --clr-text-8: #d4d4d8;
   --clr-placeholder: #a1a1aa;
   --clr-accent: #7c3aed;
-  --clr-accent-muted: #6d28d9;
+  --clr-accent-hover: #6d28d9;
 }
 
 @theme {
-  --color-background: #09090b;
-  --color-surface: #111113;
-  --color-surface-2: #18181b;
-  --color-surface-3: #1f1f23;
-  --color-border: #27272a;
-  --color-border-bright: #3f3f46;
-  --color-accent: #8b5cf6;
-  --color-accent-2: #a78bfa;
-  --color-accent-glow: rgba(139, 92, 246, 0.15);
-  --color-text: #fafafa;
+  --color-background: #000000;
+  --color-surface: #0a0a0a;
+  --color-surface-2: #0f0f0f;
+  --color-surface-3: #111111;
+  --color-border: #1a1a1a;
+  --color-border-bright: #222222;
+  --color-accent: #7c3aed;
+  --color-accent-2: #6d28d9;
+  --color-accent-glow: rgba(124, 58, 237, 0.15);
+  --color-text: #ffffff;
   --color-text-secondary: #a1a1aa;
-  --color-text-muted: #52525b;
+  --color-text-muted: #71717a;
 }
 
 * {
@@ -65,12 +65,9 @@ html.light {
 }
 
 body {
-  background-color: #09090b;
-  background-image:
-    radial-gradient(ellipse 60% 40% at 50% -5%, rgba(139,92,246,0.08) 0%, transparent 55%);
-  background-size: 100% 100%;
-  color: #fafafa;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #000000;
+  color: #ffffff;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -78,7 +75,7 @@ body {
 
 /* ── Gradient utilities ───────────────────────── */
 .gradient-text {
-  background: linear-gradient(135deg, #c4b5fd 0%, #8b5cf6 45%, #6d28d9 100%);
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #6d28d9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -93,7 +90,7 @@ body {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(139,92,246,0.5) 0%, rgba(109,40,217,0.3) 100%);
+  background: linear-gradient(135deg, rgba(124,58,237,0.5) 0%, rgba(109,40,217,0.3) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -110,7 +107,7 @@ body {
   background: linear-gradient(
     90deg,
     rgba(255,255,255,0.02) 0%,
-    rgba(139,92,246,0.06) 50%,
+    rgba(124,58,237,0.05) 50%,
     rgba(255,255,255,0.02) 100%
   );
   background-size: 200% 100%;
@@ -119,14 +116,14 @@ body {
 
 /* ── Section cards ────────────────────────────── */
 .section-card {
-  background: var(--clr-surface);
-  border: 1px solid var(--clr-border);
+  background: #0f0f0f;
+  border: 1px solid #222222;
   border-radius: 12px;
   padding: 1.5rem;
   transition: border-color 0.2s;
 }
 .section-card:hover {
-  border-color: var(--clr-border-2);
+  border-color: #333333;
 }
 
 .section-card-header {
@@ -135,7 +132,7 @@ body {
   gap: 0.625rem;
   margin-bottom: 1.25rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--clr-border);
+  border-bottom: 1px solid #1a1a1a;
 }
 
 .section-icon {
@@ -152,13 +149,13 @@ body {
 .section-title {
   font-size: 0.9375rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--clr-text);
+  letter-spacing: -0.02em;
+  color: #ffffff;
 }
 
 /* ── Prose inside cards ───────────────────────── */
 .card-prose p {
-  color: var(--clr-text-2);
+  color: #a1a1aa;
   line-height: 1.75;
   margin-bottom: 0.625rem;
   font-size: 0.9375rem;
@@ -174,7 +171,7 @@ body {
 }
 
 .card-prose ul li {
-  color: var(--clr-text-2);
+  color: #a1a1aa;
   padding: 0.4rem 0.5rem 0.4rem 1rem;
   position: relative;
   line-height: 1.65;
@@ -183,13 +180,13 @@ body {
   transition: background 0.15s;
 }
 .card-prose ul li:hover {
-  background: rgba(255,255,255,0.025);
+  background: rgba(255,255,255,0.03);
 }
 .card-prose ul li::before {
   content: "▸";
   position: absolute;
   left: 0;
-  color: #8b5cf6;
+  color: #7c3aed;
   font-size: 0.75rem;
   top: 0.45rem;
 }
@@ -204,7 +201,7 @@ body {
   gap: 0.375rem;
 }
 .card-prose ol li {
-  color: var(--clr-text-2);
+  color: #a1a1aa;
   padding: 0.4rem 0.5rem 0.4rem 1.75rem;
   position: relative;
   line-height: 1.65;
@@ -220,7 +217,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(139,92,246,0.12);
+  background: rgba(124,58,237,0.15);
   color: #a78bfa;
   border-radius: 4px;
   font-size: 0.7rem;
@@ -231,19 +228,19 @@ body {
 .card-prose h3 {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--clr-text-3);
+  color: #71717a;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin: 1rem 0 0.5rem;
 }
 
 .card-prose strong {
-  color: var(--clr-text);
+  color: #ffffff;
   font-weight: 600;
 }
 
 .card-prose em {
-  color: var(--clr-text-2);
+  color: #a1a1aa;
   font-style: italic;
 }
 
@@ -252,7 +249,7 @@ body {
   overflow-x: auto;
   margin: 0.75rem 0;
   border-radius: 10px;
-  border: 1px solid var(--clr-border);
+  border: 1px solid #222222;
 }
 
 .card-prose table {
@@ -262,22 +259,22 @@ body {
 }
 
 .card-prose th {
-  background: var(--clr-surface-2);
-  color: var(--clr-text-3);
+  background: #111111;
+  color: #71717a;
   font-weight: 600;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0.625rem 0.875rem;
   text-align: left;
-  border-bottom: 1px solid var(--clr-border);
+  border-bottom: 1px solid #222222;
   white-space: nowrap;
 }
 
 .card-prose td {
-  color: var(--clr-text-2);
+  color: #a1a1aa;
   padding: 0.625rem 0.875rem;
-  border-bottom: 1px solid var(--clr-border-deep);
+  border-bottom: 1px solid #1a1a1a;
   vertical-align: top;
   line-height: 1.55;
 }
@@ -291,12 +288,12 @@ body {
 }
 
 .card-prose tr:hover td {
-  background: rgba(139,92,246,0.03);
+  background: rgba(124,58,237,0.03);
 }
 
 .card-prose td:first-child {
   font-weight: 500;
-  color: var(--clr-text);
+  color: #ffffff;
 }
 
 /* ── Badge chips ──────────────────────────────── */
@@ -311,10 +308,10 @@ body {
   vertical-align: middle;
   margin-left: 0.375rem;
 }
-.badge-green  { background: rgba(34,197,94,0.12); color: #22c55e; }
-.badge-red    { background: rgba(239,68,68,0.12); color: #ef4444; }
-.badge-yellow { background: rgba(234,179,8,0.12);  color: #eab308; }
-.badge-purple { background: rgba(139,92,246,0.15);  color: #a78bfa; }
+.badge-green  { background: rgba(124,58,237,0.1); color: #a78bfa; }
+.badge-red    { background: rgba(124,58,237,0.08); color: #7c3aed; }
+.badge-yellow { background: rgba(124,58,237,0.08); color: #7c3aed; }
+.badge-purple { background: rgba(124,58,237,0.15); color: #a78bfa; }
 
 /* react-markdown wraps loose list items in <p> — flatten them */
 .card-prose li > p {
@@ -326,14 +323,14 @@ body {
 /* Horizontal rule */
 .card-prose hr {
   border: none;
-  border-top: 1px solid var(--clr-border);
+  border-top: 1px solid #222222;
   margin: 1rem 0;
 }
 
 /* Block code */
 .card-prose pre {
-  background: var(--clr-bg);
-  border: 1px solid var(--clr-border);
+  background: #0a0a0a;
+  border: 1px solid #222222;
   border-radius: 8px;
   padding: 0.875rem 1rem;
   overflow-x: auto;
@@ -349,18 +346,15 @@ body {
 /* ── Light mode ───────────────────────────────── */
 html.light body {
   background-color: #fafafa;
-  background-image:
-    radial-gradient(ellipse 60% 40% at 50% -5%, rgba(139,92,246,0.06) 0%, transparent 55%);
-  background-size: 100% 100%;
   color: #09090b;
 }
 
 html.light .section-card {
   background: #ffffff;
-  border-color: #d4d4d8;
+  border-color: #e4e4e7;
 }
 html.light .section-card:hover {
-  border-color: #a1a1aa;
+  border-color: #d4d4d8;
 }
 html.light .section-card-header {
   border-bottom-color: #e4e4e7;
@@ -392,29 +386,29 @@ html.light .card-prose td {
   border-bottom-color: #e4e4e7;
 }
 html.light .card-prose .table-wrap {
-  border-color: #d4d4d8;
+  border-color: #e4e4e7;
 }
 html.light .card-prose tr:nth-child(even) td {
   background: rgba(0,0,0,0.015);
 }
 html.light .card-prose tr:hover td {
-  background: rgba(139,92,246,0.03);
+  background: rgba(124,58,237,0.03);
 }
 html.light .card-prose td:first-child {
   color: #09090b;
 }
 html.light .card-prose hr {
-  border-top-color: #d4d4d8;
+  border-top-color: #e4e4e7;
 }
 html.light .card-prose pre {
   background: #f4f4f5;
-  border-color: #d4d4d8;
+  border-color: #e4e4e7;
 }
 html.light .card-prose pre code {
   color: #6d28d9;
 }
 html.light .gradient-text {
-  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 45%, #5b21b6 100%);
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #5b21b6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

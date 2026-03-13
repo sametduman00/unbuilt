@@ -53,9 +53,9 @@ const TABS: TabConfig[] = [
     id: "trend-feed",
     name: "Trend Feed",
     tagline: "Real signals, not hype",
-    accentColor: "#22c55e",
-    accentRgb: "34,197,94",
-    icon: <IconTrend color="#22c55e" />,
+    accentColor: "#7c3aed",
+    accentRgb: "124,58,237",
+    icon: <IconTrend color="#7c3aed" />,
     who: "Founders looking for their next idea, researchers scanning markets, or anyone who wants to know what's actually moving — backed by real data from GitHub and Hacker News, not just AI guesses.",
     what: "Trend Feed pulls live data from GitHub (repos created in the last 7 days) and Hacker News (posts from the last 30 days), then layers Claude AI analysis on top. You get a Space Temperature score from 0-100 across 5 levels — from Freezing to On Fire — so you can see at a glance whether a space is worth entering right now.",
     steps: [
@@ -80,9 +80,9 @@ const TABS: TabConfig[] = [
     id: "gap-analysis",
     name: "Gap Analysis",
     tagline: "Find the gaps before you build",
-    accentColor: "#a78bfa",
-    accentRgb: "139,92,246",
-    icon: <IconGap color="#a78bfa" />,
+    accentColor: "#7c3aed",
+    accentRgb: "124,58,237",
+    icon: <IconGap color="#7c3aed" />,
     who: "Founders with an app idea who want to know if there's a real opening before spending months building. See exactly who you're up against — with real apps from both the App Store and Google Play — plus where existing solutions fall short.",
     what: "Gap Analysis combines Claude AI with live App Store (iTunes) and Google Play searches to map your competitive landscape. You get a Market Opportunity score 0-100, competitor cards with threat levels, pain points with severity badges, market gaps with opportunity scores, a full SWOT analysis, and an ideal target customer persona — all from one query.",
     steps: [
@@ -107,9 +107,9 @@ const TABS: TabConfig[] = [
     id: "stack-advisor",
     name: "Stack Advisor",
     tagline: "Build fast, cheap, and right",
-    accentColor: "#f97316",
-    accentRgb: "249,115,22",
-    icon: <IconStack color="#f97316" />,
+    accentColor: "#7c3aed",
+    accentRgb: "124,58,237",
+    icon: <IconStack color="#7c3aed" />,
     who: "Anyone starting a new project who doesn't want to over-engineer or waste money on the wrong tools. Especially useful for non-technical founders who need a technical co-founder's opinion, or developers spinning up a new product.",
     what: "Stack Advisor recommends specific tools across three build phases — Phase 0 (Validate), Phase 1 (MVP), and Phase 2 (Growth) — using a curated database of 150+ developer tools with real March 2026 pricing. Every recommendation includes free tier details, monthly costs, build order, common mistakes to avoid, scalability ceilings, and when to upgrade.",
     steps: [
@@ -199,7 +199,7 @@ function MockOutput({ outputs, accentColor, accentRgb }: {
                   code: ({ className, children }: any) => (
                     className
                       ? <pre><code className={className}>{children}</code></pre>
-                      : <code style={{ background: "rgba(139,92,246,0.15)", color: "#c4b5fd", padding: "0.1em 0.35em", borderRadius: 4, fontSize: "0.85em" }}>{children}</code>
+                      : <code style={{ background: "rgba(124,58,237,0.15)", color: "#c4b5fd", padding: "0.1em 0.35em", borderRadius: 4, fontSize: "0.85em" }}>{children}</code>
                   ),
                 }}>
                   {out.preview}
@@ -246,74 +246,53 @@ export default function HowItWorks() {
 
         {/* ── Header ── */}
         <header style={{
-          borderBottom: "1px solid var(--clr-border)",
+          borderBottom: "1px solid #1a1a1a",
           backdropFilter: "blur(12px) saturate(180%)",
-          background: "var(--clr-header-bg)",
+          background: "rgba(0,0,0,0.8)",
           position: "sticky", top: 0, zIndex: 50,
         }}>
           <div style={{
             maxWidth: 1200, margin: "0 auto", padding: "0 2rem",
             height: 56, display: "flex", alignItems: "center", justifyContent: "space-between",
           }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-              <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
-                <div style={{
-                  width: 28, height: 28, borderRadius: 7,
-                  background: "#8b5cf6",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <svg width="14" height="14" viewBox="0 0 19 19" fill="none">
-                    <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="white" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </div>
-                <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.02em" }}>Unbuilt</span>
-              </Link>
-              <span style={{ fontSize: "0.8125rem", fontWeight: 500, color: "var(--clr-text-2)", letterSpacing: "-0.01em" }}>
-                How it works
-              </span>
-            </div>
+            <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+              <div style={{
+                width: 28, height: 28, borderRadius: 7,
+                background: "#7c3aed",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <svg width="14" height="14" viewBox="0 0 19 19" fill="none">
+                  <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </div>
+              <span style={{ fontWeight: 700, fontSize: "1rem", color: "#ffffff", letterSpacing: "-0.02em" }}>Unbuilt</span>
+            </Link>
+
+            <span style={{ fontSize: "0.8125rem", fontWeight: 500, color: "#71717a", letterSpacing: "-0.01em" }}>
+              How it works
+            </span>
+
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <Link href="/" style={{
                 display: "flex", alignItems: "center", gap: 6,
-                padding: "0.375rem 0.875rem", borderRadius: 9,
-                background: "rgba(255,255,255,0.04)", border: "1px solid var(--clr-border)",
-                color: "var(--clr-text-3)", fontSize: "0.8125rem", fontWeight: 600,
+                padding: "0.375rem 0.875rem", borderRadius: 999,
+                background: "transparent", border: "1px solid #333333",
+                color: "#ffffff", fontSize: "0.8125rem", fontWeight: 600,
                 textDecoration: "none", letterSpacing: "-0.01em",
               }}>
                 ← Back to tools
               </Link>
-              <button
-                onClick={toggleTheme}
-                aria-label="Toggle theme"
-                style={{
-                  width: 34, height: 34, borderRadius: 9,
-                  background: "rgba(255,255,255,0.04)", border: "1px solid var(--clr-border)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  cursor: "pointer", color: "var(--clr-text-3)", flexShrink: 0,
-                }}
-              >
-                {light ? (
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.5" />
-                    <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M2.93 2.93l1.06 1.06M12.01 12.01l1.06 1.06M2.93 13.07l1.06-1.06M12.01 3.99l1.06-1.06" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M13.5 10.5A6 6 0 015.5 2.5a6 6 0 000 11 6 6 0 008-3z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
-              </button>
 
               {/* Auth */}
               {!isSignedIn ? (
                 <SignInButton mode="modal">
                   <button style={{
-                    padding: "0.375rem 1rem", borderRadius: 8,
-                    background: "#8b5cf6",
-                    border: "none",
-                    color: "#fff", fontSize: "0.8125rem", fontWeight: 600,
+                    padding: "0.375rem 1rem", borderRadius: 999,
+                    background: "transparent",
+                    border: "1px solid #333333",
+                    color: "#ffffff", fontSize: "0.8125rem", fontWeight: 600,
                     cursor: "pointer", fontFamily: "inherit", letterSpacing: "-0.01em",
-                    transition: "background 0.15s ease",
+                    transition: "border-color 0.15s ease",
                   }}>
                     Sign in
                   </button>
@@ -538,8 +517,8 @@ export default function HowItWorks() {
                     href="/"
                     style={{
                       display: "inline-flex", alignItems: "center", gap: 6,
-                      padding: "0.5rem 1.125rem", borderRadius: 8,
-                      background: tab.accentColor,
+                      padding: "0.5rem 1.125rem", borderRadius: 999,
+                      background: "#7c3aed",
                       color: "#fff", fontSize: "0.8125rem", fontWeight: 600,
                       textDecoration: "none", letterSpacing: "-0.01em",
                       boxShadow: "none",
