@@ -187,13 +187,13 @@ async function analyzeWithClaude(
 ${trends ? JSON.stringify(trends, null, 2) : "No data available"}
 
 ## YouTube Videos (last 90 days, sorted by views)
-${JSON.stringify(youtube.map((v, i) => ({ index: i, ...v })), null, 2)}
+${JSON.stringify(youtube.map((v: any, i: number) => ({ index: i, ...v })), null, 2)}
 
 ## Hacker News Stories (last 30 days)
-${JSON.stringify(hn.map((h, i) => ({ index: i, ...h })), null, 2)}
+${JSON.stringify(hn.map((h: any, i: number) => ({ index: i, ...h })), null, 2)}
 
 ## GitHub Repositories (created in last 7 days)
-${JSON.stringify(github.map((r, i) => ({ index: i, ...r })), null, 2)}
+${JSON.stringify(github.map((r: any, i: number) => ({ index: i, ...r })), null, 2)}
 
 Return ONLY valid JSON (no markdown, no code fences) in this exact format:
 {
