@@ -203,7 +203,7 @@ STRICT SCORE RULES - YOU MUST FOLLOW THESE:
 - Do not interpret missing data as opportunity — missing data means unknown or too early
 
 IMPORTANT — Analysis depth:
-- Even if external data is sparse or missing, you MUST produce full analysis for ALL sections (whatsRising, whatsDying, patternToBetOn, underexploredNiches, bestOpportunity) using your own training knowledge about the space.
+- Even if external data is sparse or missing, you MUST produce full analysis for ALL sections (whatsRising, whatsDying, patternToBetOn, contrarianTake, underexploredNiches, bestOpportunity) using your own training knowledge about the space.
 - Never return empty or one-sentence sections. Each section must be substantive.
 
 Return ONLY valid JSON (no markdown, no code fences) in this exact format:
@@ -215,6 +215,7 @@ Return ONLY valid JSON (no markdown, no code fences) in this exact format:
   "whatsRising": "<3-5 things gaining traction, one per line starting with '- ', use **bold** for names>",
   "whatsDying": "<2-4 approaches/tools losing steam, one per line starting with '- ', use **bold** for names>",
   "patternToBetOn": "<2-3 sentences: the emerging structural shift that will define this market in 12-18 months. Be specific and contrarian.>",
+  "contrarianTake": "<2-3 sentences: the thing most founders in this space believe that is probably wrong. What assumption will look naive in 2 years?>",
   "underexploredNiches": "<2-3 specific underserved segments, one per line starting with '- '. Name the customer and their unsolved problem.>",
   "bestOpportunity": "<2-3 sentences: who to build for, what to build, and why now. Be specific.>",
   "youtube": {

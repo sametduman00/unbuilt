@@ -1099,16 +1099,39 @@ function deriveScoreLabel(pct: number): { emoji: string; label: string } {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function GoogleTrendsChart({ data }: { data: any }) {
-  const timeline: { date: string; value: number }[] = data?.timeline ?? data?.timelineData ?? [];
-  if (timeline.length === 0) return null;
+function GoogleTrendsChart({ data, query }: { data: any; query?: string }) {
+  const [activeRange, setActiveRange] = useState<"week" | "month" | "3months">("3months");
+  const [chartData, setChartData] = useState<any>(data);
+  const [loading, setLoading] = useState(false);
 
-  const values = timeline.map((t) => t.value);
+  const tabs: { key: "week" | "month" | "3months"; label: string }[] = [
+    { key: "week", label: "7 days" },
+    { key: "month", label: "1 month" },
+    { key: "3months", label: "3 months" },
+  ];
+
+  const fetchRange = async (range: "week" | "month" | "3months") => {
+    if (range === activeRange || !query) return;
+    setActiveRange(range);
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/serpapi?q=${encodeURIComponent(query)}&range=${range}`);
+      if (res.ok) {
+        const d = await res.json();
+        setChartData(d);
+      }
+    } catch { /* keep existing data */ }
+    setLoading(false);
+  };
+
+  const timeline: { date: string; value: number }[] = chartData?.timeline ?? chartData?.timelineData ?? [];
+  if (timeline.length === 0 && !loading) return null;
+
+  const values = timeline.map((t: any) => t.value);
   const maxVal = Math.max(...values, 1);
   const minVal = Math.min(...values);
-  const range = maxVal - minVal || 1;
+  const valRange = maxVal - minVal || 1;
 
-  // Chart dimensions
   const W = 400;
   const H = 120;
   const padX = 0;
@@ -1116,28 +1139,28 @@ function GoogleTrendsChart({ data }: { data: any }) {
   const chartW = W - padX * 2;
   const chartH = H - padY * 2;
 
-  const points = timeline.map((t, i) => {
-    const x = padX + (i / (timeline.length - 1)) * chartW;
-    const y = padY + chartH - ((t.value - minVal) / range) * chartH;
+  const points = timeline.map((t: any, i: number) => {
+    const x = padX + (i / Math.max(timeline.length - 1, 1)) * chartW;
+    const y = padY + chartH - ((t.value - minVal) / valRange) * chartH;
     return { x, y, ...t };
   });
 
   const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
-  const areaPath = `${linePath} L${points[points.length - 1].x},${H} L${points[0].x},${H} Z`;
+  const areaPath = points.length > 0 ? `${linePath} L${points[points.length - 1].x},${H} L${points[0].x},${H} Z` : "";
 
-  const direction = data?.direction ?? "stable";
-  const trendPercent = data?.trendPercent ?? 0;
+  const direction = chartData?.direction ?? "stable";
+  const trendPercent = chartData?.trendPercent ?? 0;
   const dirLabel = direction === "rising" ? "Rising" : direction === "falling" ? "Falling" : "Stable";
   const dirColor = direction === "rising" ? "#4ade80" : direction === "falling" ? "#f87171" : "var(--clr-text-5)";
 
   return (
     <div style={{
-      marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
+      borderRadius: 12, overflow: "hidden",
       background: "var(--clr-surface)",
       border: "1px solid var(--clr-border-2)",
       padding: "1.5rem",
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "0.75rem" }}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
         </svg>
@@ -1152,46 +1175,67 @@ function GoogleTrendsChart({ data }: { data: any }) {
         }}>
           {dirLabel} {trendPercent !== 0 && `${trendPercent > 0 ? "+" : ""}${trendPercent}%`}
         </span>
-        <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-          last 3 months · weekly
-        </span>
       </div>
 
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: 140 }} preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="trendsGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--clr-text)" stopOpacity="0.15" />
-            <stop offset="100%" stopColor="var(--clr-text)" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        {/* Grid lines */}
-        {[0, 0.25, 0.5, 0.75, 1].map((f) => (
-          <line key={f} x1={padX} x2={W - padX} y1={padY + chartH * (1 - f)} y2={padY + chartH * (1 - f)}
-            stroke="var(--clr-border-2)" strokeWidth="0.5" />
-        ))}
-        {/* Area fill */}
-        <path d={areaPath} fill="url(#trendsGrad)" />
-        {/* Line */}
-        <path d={linePath} fill="none" stroke="var(--clr-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        {/* Dots */}
-        {points.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r="3" fill="var(--clr-surface)" stroke="var(--clr-text)" strokeWidth="1.5" />
-        ))}
-      </svg>
-
-      {/* X-axis labels */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
-        {points.map((p, i) => (
-          <span key={i} style={{ fontSize: "0.6rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-            {p.date.split(" ")[0]}
-          </span>
+      {/* Range tabs */}
+      <div style={{ display: "flex", gap: 4, marginBottom: "1rem" }}>
+        {tabs.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => fetchRange(tab.key)}
+            style={{
+              padding: "0.3rem 0.7rem", borderRadius: 999,
+              border: activeRange === tab.key ? "1px solid var(--clr-text)" : "1px solid var(--clr-border-2)",
+              background: activeRange === tab.key ? "rgba(var(--clr-text-rgb),0.08)" : "transparent",
+              color: activeRange === tab.key ? "var(--clr-text)" : "var(--clr-text-5)",
+              fontSize: "0.7rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+              opacity: loading ? 0.5 : 1, transition: "all 0.15s",
+            }}
+          >
+            {tab.label}
+          </button>
         ))}
       </div>
+
+      {loading ? (
+        <div style={{ width: 400, maxWidth: "100%", height: 120, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: 16, height: 16, border: "2px solid var(--clr-text-5)", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+        </div>
+      ) : (
+        <>
+          <svg viewBox={`0 0 ${W} ${H}`} style={{ width: 400, maxWidth: "100%", height: 120 }} preserveAspectRatio="xMinYMid meet">
+            <defs>
+              <linearGradient id="trendsGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--clr-text)" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="var(--clr-text)" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            {[0, 0.25, 0.5, 0.75, 1].map((f) => (
+              <line key={f} x1={padX} x2={W - padX} y1={padY + chartH * (1 - f)} y2={padY + chartH * (1 - f)}
+                stroke="var(--clr-border-2)" strokeWidth="0.5" />
+            ))}
+            <path d={areaPath} fill="url(#trendsGrad)" />
+            <path d={linePath} fill="none" stroke="var(--clr-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            {points.map((p, i) => (
+              <circle key={i} cx={p.x} cy={p.y} r="3" fill="var(--clr-surface)" stroke="var(--clr-text)" strokeWidth="1.5" />
+            ))}
+          </svg>
+
+          {/* X-axis labels */}
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, maxWidth: 400 }}>
+            {points.map((p, i) => (
+              <span key={i} style={{ fontSize: "0.6rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
+                {(p.date ?? "").split(" ")[0]}
+              </span>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Interest score */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "0.75rem" }}>
         <span style={{ fontSize: "0.72rem", color: "var(--clr-text-5)", fontWeight: 500 }}>
-          Current interest: <strong style={{ color: "var(--clr-text)" }}>{data?.currentScore ?? 0}/100</strong>
+          Current interest: <strong style={{ color: "var(--clr-text)" }}>{chartData?.currentScore ?? 0}/100</strong>
         </span>
       </div>
     </div>
@@ -1507,12 +1551,13 @@ function TrendFeedView({ onBack }: { onBack: () => void }) {
         <SpaceScoreCard score={a.score ?? 0} summary={a.summary ?? ""} />
 
         {/* Google Trends chart */}
-        {raw.trends && <GoogleTrendsChart data={raw.trends} />}
+        {raw.trends && <GoogleTrendsChart data={raw.trends} query={query} />}
 
         {/* Analysis sections */}
         {section("What's Rising", a.whatsRising)}
         {section("What's Dying", a.whatsDying)}
         {section("The Pattern to Bet On", a.patternToBetOn)}
+        {section("The Contrarian Take", a.contrarianTake)}
         {section("Underexplored Niches", a.underexploredNiches)}
         {section("Best Opportunity Right Now", a.bestOpportunity)}
 

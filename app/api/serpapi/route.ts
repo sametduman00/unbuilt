@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const query = searchParams.get('q')
+  const range = searchParams.get('range') || '3months'
 
   if (!query) {
     return NextResponse.json({ error: 'Query required' }, { status: 400 })
@@ -13,9 +14,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'SERPAPI_KEY not configured' }, { status: 500 })
   }
 
+  const dateMap: Record<string, string> = {
+    week: 'now 7-d',
+    month: 'today 1-m',
+    '3months': 'today 3-m',
+  }
+  const serpDate = dateMap[range] || dateMap['3months']
+
   try {
-    // Google Trends - interest over time (last 90 days)
-    const trendsUrl = `https://serpapi.com/search.json?engine=google_trends&q=${encodeURIComponent(query)}&date=today%203-m&api_key=${apiKey}`
+    const trendsUrl = `https://serpapi.com/search.json?engine=google_trends&q=${encodeURIComponent(query)}&date=${encodeURIComponent(serpDate)}&api_key=${apiKey}`
     const trendsRes = await fetch(trendsUrl)
     const trendsData = await trendsRes.json()
 
