@@ -204,15 +204,15 @@ IMPORTANT — Analysis depth:
 Return ONLY valid JSON (no markdown, no code fences) in this exact format:
 {
   "score": <integer 0-100, opportunity score — high activity + high competition = LOW score>,
-  "label": "<exactly one of: Dead Zone | Uncharted | Crowded | Warming Up | Growing | Explosive — pick based on market reality, not just score number. Use 'Uncharted' when data is sparse/missing and market is unexplored. Use 'Crowded' only when many competitors exist. Use 'Dead Zone' when demand is genuinely dead. HARD RULE: When score is below 30, label MUST be either 'Dead Zone' or 'Uncharted'. Never use 'Crowded' for scores below 30.>",
+  "label": "<exactly one of: Dead Zone | Uncharted | Crowded | Warming Up | Growing | Explosive. Rules: 'Dead Zone' = space is actively dying, declining irreversibly, no future. 'Uncharted' = no data available, too early, unknown demand. 'Crowded' = many competitors, high competition, mature/saturated market. A saturated space with millions of users (like fitness apps) is 'Crowded' NOT 'Dead Zone'. If score is under 30 AND YouTube total views are 500K+, use 'Crowded'. If score is under 30 AND data is minimal/zero, use 'Uncharted'. Only use 'Dead Zone' when the space is genuinely dying with declining interest.>",
   "verdict": "<max 12 words, direct assessment>",
   "summary": "<3-4 sentences combining all signals with specific numbers>",
   "googleTrendsInsight": "<1-2 sentences interpreting the Google Trends data>",
-  "whatsRising": "<3-5 things gaining traction, one per line starting with '- ', use **bold** for names>",
-  "whatsDying": "<2-4 approaches/tools losing steam, one per line starting with '- ', use **bold** for names>",
+  "whatsRising": ["<bullet 1: **Name** — why it's rising>", "<bullet 2>", "<bullet 3>", "<bullet 4>"],
+  "whatsDying": ["<bullet 1: **Name** — why it's dying>", "<bullet 2>", "<bullet 3>"],
   "patternToBetOn": "<2-3 sentences: the emerging structural shift that will define this market in 12-18 months. Be specific and contrarian.>",
   "contrarianTake": "<2-3 sentences: the thing most founders in this space believe that is probably wrong. What assumption will look naive in 2 years?>",
-  "underexploredNiches": "<2-3 specific underserved segments, one per line starting with '- '. Name the customer and their unsolved problem.>",
+  "underexploredNiches": ["<niche 1: Name the customer and their unsolved problem>", "<niche 2>", "<niche 3>"],
   "bestOpportunity": "<2-3 sentences: who to build for, what to build, and why now. Be specific.>",
   "youtube": {
     "insight": "<1-2 sentences about YouTube signal>",

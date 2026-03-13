@@ -1510,8 +1510,13 @@ function TrendFeedView({ onBack }: { onBack: () => void }) {
     const hnPicks = resolvePicks(a.hn?.picks, raw.hn);
     const ghPicks = resolvePicks(a.github?.picks, raw.github);
 
-    const section = (title: string, content?: string) => {
-      if (!content || typeof content !== "string") return null;
+    const section = (title: string, content?: string | string[]) => {
+      if (!content) return null;
+      // Normalize: array → join with newlines as bullets, string → pass through
+      const text = Array.isArray(content)
+        ? content.filter(Boolean).map(s => `- ${s.replace(/^[-•]\s*/, "")}`).join("\n")
+        : typeof content === "string" ? content : null;
+      if (!text) return null;
       return (
         <div style={{
           padding: "1.25rem 1.5rem", borderRadius: 12,
@@ -1521,7 +1526,7 @@ function TrendFeedView({ onBack }: { onBack: () => void }) {
             {title}
           </h3>
           <div style={{ fontSize: "0.875rem", color: "var(--clr-text-3)" }}>
-            {renderText(content)}
+            {renderText(text)}
           </div>
         </div>
       );
@@ -1557,6 +1562,7 @@ function TrendFeedView({ onBack }: { onBack: () => void }) {
         <SpaceScoreCard score={a.score ?? 0} summary={a.summary ?? ""} label={a.label} />
 
         {/* Google Trends chart */}
+        {console.log("TRENDS DATA:", JSON.stringify(data?.rawData?.trends))}
         {raw.trends && (raw.trends.timeline?.length > 0 || raw.trends.timelineData?.length > 0) && (
           <GoogleTrendsChart data={raw.trends} query={query} />
         )}
