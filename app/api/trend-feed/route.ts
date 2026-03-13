@@ -202,6 +202,11 @@ IMPORTANT — Score calibration rules:
 - Spaces like "calorie app", "todo app", "habit tracker" are crowded by definition → score should be 20-45.
 - Score 80+ is reserved for genuinely emerging niches with low competition and strong demand signals.
 - Score 90+ requires a clear greenfield opportunity with almost no existing solutions.
+- If Google Trends score is 0 or below 10 AND YouTube has fewer than 3 videos AND GitHub has 0 repos, score must be between 15-35 (Dead Zone or Crowded). Zero data does NOT mean explosive opportunity — it means either too early or no demand.
+
+IMPORTANT — Analysis depth:
+- Even if external data is sparse or missing, you MUST produce full analysis for ALL sections (whatsRising, whatsDying, patternToBetOn, underexploredNiches, bestOpportunity) using your own training knowledge about the space.
+- Never return empty or one-sentence sections. Each section must be substantive.
 
 Return ONLY valid JSON (no markdown, no code fences) in this exact format:
 {
