@@ -91,15 +91,15 @@ const TOOLS: ToolConfig[] = [
     name: "Trend Feed",
     tagline: "Real signals, no noise",
     description: "What's actually rising in a market right now. Emerging niches, dying trends, and contrarian bets — powered by AI, not Twitter hype.",
-    accentColor: "#7c3aed",
-    accentRgb: "124,58,237",
+    accentColor: "#e5e5e5",
+    accentRgb: "229,229,229",
     apiPath: "/api/trends",
     inputLabel: "What space or industry are you curious about?",
     placeholder: 'e.g. "B2B SaaS tools", "consumer health apps", or "creator economy"',
     sources: [
-      { name: "Claude AI", color: "#7c3aed", live: true },
-      { name: "GitHub", color: "#71717a", live: true },
-      { name: "Hacker News", color: "#71717a", live: true },
+      { name: "Claude AI", color: "#e5e5e5", live: true },
+      { name: "GitHub", color: "#888888", live: true },
+      { name: "Hacker News", color: "#888888", live: true },
     ],
   },
   {
@@ -108,15 +108,15 @@ const TOOLS: ToolConfig[] = [
     name: "Gap Analysis",
     tagline: "Find the gaps before you build",
     description: "Spot what competitors are missing. Get a brutally honest read on where you actually have a shot — before you spend months building the wrong thing.",
-    accentColor: "#7c3aed",
-    accentRgb: "124,58,237",
+    accentColor: "#e5e5e5",
+    accentRgb: "229,229,229",
     apiPath: "/api/analyze",
     inputLabel: "Describe your niche or app idea",
     placeholder: 'e.g. "Project management for freelancers" or "AI writing tool for marketers"',
     sources: [
-      { name: "Claude AI", color: "#7c3aed", live: true },
-      { name: "App Store", color: "#71717a", live: true },
-      { name: "Google Play", color: "#71717a", live: true },
+      { name: "Claude AI", color: "#e5e5e5", live: true },
+      { name: "App Store", color: "#888888", live: true },
+      { name: "Google Play", color: "#888888", live: true },
     ],
   },
   {
@@ -125,13 +125,13 @@ const TOOLS: ToolConfig[] = [
     name: "Competitor Radar",
     tagline: "Know your rivals inside out",
     description: "Deep competitive intelligence on who you're really up against — their strategies, exploitable weaknesses, and exactly how to outmaneuver them.",
-    accentColor: "#7c3aed",
-    accentRgb: "124,58,237",
+    accentColor: "#e5e5e5",
+    accentRgb: "229,229,229",
     apiPath: "/api/radar",
     inputLabel: "Describe what you're building and your main competition",
     placeholder: 'e.g. "I\'m building a Notion alternative for agency teams, competing with Asana and Monday.com"',
     sources: [
-      { name: "Claude AI", color: "#7c3aed", live: true },
+      { name: "Claude AI", color: "#e5e5e5", live: true },
     ],
   },
   {
@@ -140,14 +140,14 @@ const TOOLS: ToolConfig[] = [
     name: "Stack Advisor",
     tagline: "Build fast, cheap, and right",
     description: "Tell us what you're building, your budget, and how technical you are. Get the exact tools, real monthly costs, and a step-by-step build order.",
-    accentColor: "#7c3aed",
-    accentRgb: "124,58,237",
+    accentColor: "#e5e5e5",
+    accentRgb: "229,229,229",
     apiPath: "/api/stack",
     inputLabel: "Describe what you want to build",
     placeholder: 'e.g. "A marketplace for local freelancers with payments and messaging"',
     hasExtras: true,
     sources: [
-      { name: "Claude AI", color: "#7c3aed", live: true },
+      { name: "Claude AI", color: "#e5e5e5", live: true },
     ],
   },
 ];
@@ -192,7 +192,7 @@ const MD: Record<string, (props: any) => React.ReactElement> = {
       return <pre><code className={className}>{children}</code></pre>;
     }
     return (
-      <code style={{ background: "rgba(124,58,237,0.12)", color: "#c4b5fd", padding: "0.1em 0.35em", borderRadius: 4, fontSize: "0.85em" }}>
+      <code style={{ background: "rgba(255,255,255,0.12)", color: "#bbbbbb", padding: "0.1em 0.35em", borderRadius: 4, fontSize: "0.85em" }}>
         {children}
       </code>
     );
@@ -238,7 +238,7 @@ function parseScore(body: string): { score: number; label: string; summary: stri
 
 // ── Section Result Card ────────────────────────────────────────
 function SectionCard({ section, showCursor }: { section: Section; showCursor: boolean }) {
-  const meta = SECTION_META[section.emoji] ?? { bg: "rgba(124,58,237,0.1)", color: "#a78bfa" };
+  const meta = SECTION_META[section.emoji] ?? { bg: "rgba(255,255,255,0.1)", color: "#cccccc" };
   return (
     <div className="section-card">
       <div className="section-card-header">
@@ -250,7 +250,7 @@ function SectionCard({ section, showCursor }: { section: Section; showCursor: bo
           {section.body}
         </ReactMarkdown>
         {showCursor && (
-          <span style={{ display: "inline-block", width: 2, height: "1em", background: "#7c3aed", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
+          <span style={{ display: "inline-block", width: 2, height: "1em", background: "#e5e5e5", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
         )}
       </div>
     </div>
@@ -321,7 +321,7 @@ function TrendRisingSection({ section, isStreaming }: { section: Section; isStre
           {bullets.map((b, i) => {
             return (
               <div key={i} style={{
-                background: "#0f0f0f",
+                background: "#111111",
                 border: "1px solid #222222",
                 borderRadius: 12, padding: "1.25rem",
                 transition: "border-color 0.15s",
@@ -333,7 +333,7 @@ function TrendRisingSection({ section, isStreaming }: { section: Section; isStre
                   <span style={{
                     display: "inline-flex", alignItems: "center", gap: 4,
                     padding: "0.2rem 0.6rem", borderRadius: 999,
-                    background: "rgba(124,58,237,0.1)", color: "#a78bfa",
+                    background: "rgba(255,255,255,0.1)", color: "#cccccc",
                     fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.04em",
                     marginBottom: "0.625rem",
                   }}>
@@ -345,7 +345,7 @@ function TrendRisingSection({ section, isStreaming }: { section: Section; isStre
                     {b.title}
                   </div>
                 )}
-                <div style={{ fontSize: "0.8125rem", color: "#71717a", lineHeight: 1.65 }}>
+                <div style={{ fontSize: "0.8125rem", color: "#888888", lineHeight: 1.65 }}>
                   {b.desc}
                 </div>
               </div>
@@ -375,7 +375,7 @@ function TrendDyingSection({ section, isStreaming }: { section: Section; isStrea
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem" }}>
           {bullets.map((b, i) => (
             <div key={i} style={{
-              background: "#0f0f0f",
+              background: "#111111",
               border: "1px solid #222222",
               borderRadius: 12, padding: "1.25rem",
               transition: "border-color 0.15s",
@@ -386,7 +386,7 @@ function TrendDyingSection({ section, isStreaming }: { section: Section; isStrea
               <span style={{
                 display: "inline-flex", alignItems: "center", gap: 4,
                 padding: "0.2rem 0.6rem", borderRadius: 999,
-                background: "rgba(124,58,237,0.1)", color: "#a78bfa",
+                background: "rgba(255,255,255,0.1)", color: "#cccccc",
                 fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.04em",
                 marginBottom: "0.625rem",
               }}>
@@ -397,7 +397,7 @@ function TrendDyingSection({ section, isStreaming }: { section: Section; isStrea
                   {b.title}
                 </div>
               )}
-              <div style={{ fontSize: "0.8125rem", color: "#71717a", lineHeight: 1.65 }}>
+              <div style={{ fontSize: "0.8125rem", color: "#888888", lineHeight: 1.65 }}>
                 {b.desc}
               </div>
             </div>
@@ -426,7 +426,7 @@ function TrendNichesSection({ section, isStreaming }: { section: Section; isStre
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem" }}>
           {niches.map((n, i) => (
             <div key={i} style={{
-              background: "#0f0f0f",
+              background: "#111111",
               border: "1px solid #222222",
               borderRadius: 12, padding: "1.25rem",
               transition: "border-color 0.15s",
@@ -443,14 +443,14 @@ function TrendNichesSection({ section, isStreaming }: { section: Section; isStre
                 <div style={{
                   flexShrink: 0, display: "flex", alignItems: "center", gap: 4,
                   padding: "0.25rem 0.625rem", borderRadius: 999,
-                  background: "rgba(124,58,237,0.12)",
+                  background: "rgba(255,255,255,0.12)",
                 }}>
-                  <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#a78bfa" }}>
+                  <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#cccccc" }}>
                     {n.score}/10
                   </span>
                 </div>
               </div>
-              <div style={{ fontSize: "0.8125rem", color: "#71717a", lineHeight: 1.65 }}>
+              <div style={{ fontSize: "0.8125rem", color: "#888888", lineHeight: 1.65 }}>
                 {n.desc}
               </div>
             </div>
@@ -472,7 +472,7 @@ function TrendPatternHero({ section, isStreaming }: { section: Section; isStream
 
   return (
     <div style={{
-      background: "#0f0f0f",
+      background: "#111111",
       border: "1px solid #222222",
       borderRadius: 12, padding: "2rem 2.25rem", position: "relative", overflow: "hidden",
     }}>
@@ -498,7 +498,7 @@ function TrendPatternHero({ section, isStreaming }: { section: Section; isStream
           </div>
         )}
         {isStreaming && (
-          <span style={{ display: "inline-block", width: 2, height: "1em", background: "#7c3aed", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
+          <span style={{ display: "inline-block", width: 2, height: "1em", background: "#e5e5e5", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
         )}
       </div>
     </div>
@@ -513,7 +513,7 @@ function TrendGenericSection({ section, isStreaming, emoji }: {
 
   return (
     <div style={{
-      background: "#0f0f0f",
+      background: "#111111",
       border: "1px solid #222222",
       borderRadius: 12, padding: "1.75rem 2rem",
     }}>
@@ -550,7 +550,7 @@ function TrendGenericSection({ section, isStreaming, emoji }: {
           </div>
         )}
         {isStreaming && (
-          <span style={{ display: "inline-block", width: 2, height: "1em", background: "#7c3aed", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
+          <span style={{ display: "inline-block", width: 2, height: "1em", background: "#e5e5e5", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
         )}
       </div>
     </div>
@@ -560,12 +560,12 @@ function TrendGenericSection({ section, isStreaming, emoji }: {
 function TrendFeedResult({ sections, isStreaming }: { sections: Section[]; isStreaming: boolean }) {
   // Map sections by their emoji to route to the right visual component
   const sectionMap: Record<string, { component: "rising" | "dying" | "niches" | "pattern" | "generic"; color: string; emoji: string }> = {
-    "📈": { component: "rising", color: "#a78bfa", emoji: "📈" },
-    "💀": { component: "dying", color: "#a78bfa", emoji: "💀" },
-    "🔥": { component: "pattern", color: "#c4b5fd", emoji: "🔥" },
-    "💡": { component: "niches", color: "#a78bfa", emoji: "💡" },
-    "🧲": { component: "generic", color: "#a78bfa", emoji: "🧲" },
-    "🧠": { component: "generic", color: "#a78bfa", emoji: "🧠" },
+    "📈": { component: "rising", color: "#cccccc", emoji: "📈" },
+    "💀": { component: "dying", color: "#cccccc", emoji: "💀" },
+    "🔥": { component: "pattern", color: "#bbbbbb", emoji: "🔥" },
+    "💡": { component: "niches", color: "#cccccc", emoji: "💡" },
+    "🧲": { component: "generic", color: "#cccccc", emoji: "🧲" },
+    "🧠": { component: "generic", color: "#cccccc", emoji: "🧠" },
   };
 
   // Filter out the temperature section (handled separately) and empty sections
@@ -608,9 +608,7 @@ function ThreatDots({ level }: { level: number }) {
       {[1,2,3,4,5].map(i => (
         <span key={i} style={{
           width: 8, height: 8, borderRadius: "50%",
-          background: i <= level
-            ? level >= 4 ? "#a78bfa" : level >= 3 ? "#7c3aed" : "#c4b5fd"
-            : "var(--clr-border)",
+          background: i <= level ? "#ffffff" : "#222222",
         }} />
       ))}
     </span>
@@ -619,8 +617,8 @@ function ThreatDots({ level }: { level: number }) {
 
 function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
   const ms = Math.max(0, Math.min(100, data.marketScore));
-  const msColor = ms >= 61 ? "#a78bfa" : ms >= 41 ? "#7c3aed" : "#6d28d9";
-  const msBg = "rgba(124,58,237,0.06)";
+  const msColor = "#ffffff";
+  const msBg = "rgba(255,255,255,0.04)";
   const msEmoji = ms >= 81 ? "🔥" : ms >= 61 ? "🟢" : ms >= 41 ? "🟡" : ms >= 21 ? "🟠" : "🔴";
   const msR = 36;
   const msCirc = 2 * Math.PI * msR;
@@ -715,7 +713,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
       {/* ── KEY COMPETITORS ── */}
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(124,58,237,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🏆</div>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🏆</div>
           <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>Key Competitors</h2>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "0.5rem" }}>
@@ -735,10 +733,10 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
                 <p style={{ fontSize: "0.68rem", color: "var(--clr-text-5)", margin: "0 0 6px", lineHeight: 1.35 }}>{c.tagline}</p>
               )}
               <div style={{ display: "flex", gap: 8 }}>
-                <div style={{ fontSize: "0.68rem", color: "#a78bfa", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(124,58,237,0.3)", flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: "0.68rem", color: "#cccccc", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(255,255,255,0.3)", flex: 1, minWidth: 0 }}>
                   {c.strengths[0] ?? "—"}
                 </div>
-                <div style={{ fontSize: "0.68rem", color: "#71717a", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(113,113,122,0.3)", flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: "0.68rem", color: "#888888", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(255,255,255,0.3)", flex: 1, minWidth: 0 }}>
                   {c.weaknesses[0] ?? "—"}
                 </div>
               </div>
@@ -750,13 +748,13 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
       {/* ── PAIN POINTS ── */}
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(124,58,237,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>😤</div>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>😤</div>
           <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>Pain Points</h2>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
           {data.painPoints.map((p, i) => {
-            const sevColor = p.severity === "high" ? "#a78bfa" : p.severity === "medium" ? "#7c3aed" : "#71717a";
-            const sevBg = p.severity === "high" ? "rgba(124,58,237,0.12)" : p.severity === "medium" ? "rgba(124,58,237,0.08)" : "rgba(113,113,122,0.08)";
+            const sevColor = p.severity === "high" ? "#ffffff" : p.severity === "medium" ? "#cccccc" : "#888888";
+            const sevBg = p.severity === "high" ? "rgba(255,255,255,0.12)" : p.severity === "medium" ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.08)";
             return (
               <div key={i} style={{
                 display: "flex", alignItems: "center", gap: "0.625rem", padding: "0.5rem 0.75rem", borderRadius: 10,
@@ -790,14 +788,14 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
       {/* ── MARKET GAPS ── */}
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(167,139,250,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🕳️</div>
-          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#a78bfa", margin: 0 }}>Market Gaps</h2>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🕳️</div>
+          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#cccccc", margin: 0 }}>Market Gaps</h2>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           {data.marketGaps.map((g, i) => {
-            const statusColor = g.status === "untapped" ? "#a78bfa" : g.status === "emerging" ? "#7c3aed" : "#71717a";
-            const statusBg = g.status === "untapped" ? "rgba(124,58,237,0.1)" : g.status === "emerging" ? "rgba(124,58,237,0.08)" : "rgba(113,113,122,0.08)";
-            const barColor = g.opportunityScore >= 7 ? "#a78bfa" : g.opportunityScore >= 4 ? "#7c3aed" : "#71717a";
+            const statusColor = g.status === "untapped" ? "#ffffff" : g.status === "emerging" ? "#cccccc" : "#888888";
+            const statusBg = g.status === "untapped" ? "rgba(255,255,255,0.1)" : g.status === "emerging" ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.08)";
+            const barColor = g.opportunityScore >= 7 ? "#ffffff" : g.opportunityScore >= 4 ? "#cccccc" : "#555555";
             return (
               <div key={i} style={{
                 background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
@@ -840,15 +838,15 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
       {/* ── SWOT ── */}
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(124,58,237,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>⚔️</div>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>⚔️</div>
           <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>SWOT</h2>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
           {([
-            { key: "strengths" as const, label: "S", full: "Strengths", color: "#a78bfa", bg: "rgba(124,58,237,0.04)", border: "rgba(124,58,237,0.15)" },
-            { key: "weaknesses" as const, label: "W", full: "Weaknesses", color: "#a78bfa", bg: "rgba(124,58,237,0.04)", border: "rgba(124,58,237,0.15)" },
-            { key: "opportunities" as const, label: "O", full: "Opportunities", color: "#a78bfa", bg: "rgba(124,58,237,0.04)", border: "rgba(124,58,237,0.15)" },
-            { key: "threats" as const, label: "T", full: "Threats", color: "#a78bfa", bg: "rgba(124,58,237,0.04)", border: "rgba(124,58,237,0.15)" },
+            { key: "strengths" as const, label: "S", full: "Strengths", color: "#cccccc", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.15)" },
+            { key: "weaknesses" as const, label: "W", full: "Weaknesses", color: "#cccccc", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.15)" },
+            { key: "opportunities" as const, label: "O", full: "Opportunities", color: "#cccccc", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.15)" },
+            { key: "threats" as const, label: "T", full: "Threats", color: "#cccccc", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.15)" },
           ]).map(q => (
             <div key={q.key} style={{
               background: q.bg, border: `1px solid ${q.border}`,
@@ -872,23 +870,23 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
 
       {/* ── YOUR OPPORTUNITY ── */}
       <div style={{
-        background: "linear-gradient(135deg, rgba(167,139,250,0.06), rgba(124,58,237,0.03))",
-        border: "1px solid rgba(167,139,250,0.2)",
+        background: "linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03))",
+        border: "1px solid rgba(255,255,255,0.2)",
         borderRadius: 12, padding: "1rem 1.125rem",
         position: "relative", overflow: "hidden",
       }}>
         <div style={{
           position: "absolute", top: -30, right: -30, width: 160, height: 160,
-          borderRadius: "50%", background: "rgba(167,139,250,0.05)", filter: "blur(50px)", pointerEvents: "none",
+          borderRadius: "50%", background: "rgba(255,255,255,0.05)", filter: "blur(50px)", pointerEvents: "none",
         }} />
         <div style={{ position: "relative" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-            <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(124,58,237,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>⚡</div>
+            <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>⚡</div>
             <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>Your Opportunity</h2>
             {(() => {
               const u = data.opportunity.urgency;
-              const uColor = u === "high" ? "#a78bfa" : u === "medium" ? "#7c3aed" : "#71717a";
-              const uBg = u === "high" ? "rgba(124,58,237,0.1)" : u === "medium" ? "rgba(124,58,237,0.08)" : "rgba(113,113,122,0.08)";
+              const uColor = u === "high" ? "#ffffff" : u === "medium" ? "#cccccc" : "#888888";
+              const uBg = u === "high" ? "rgba(255,255,255,0.1)" : u === "medium" ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.08)";
               const uLabel = u === "high" ? "Act Now" : u === "medium" ? "6-12 Mo" : "Long Term";
               return (
                 <span style={{
@@ -912,15 +910,15 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "0.5rem" }}>
             {data.opportunity.actionItems.slice(0, 3).map((item) => (
               <div key={item.step} style={{
-                background: "rgba(167,139,250,0.06)", border: "1px solid rgba(167,139,250,0.15)",
+                background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
                 borderRadius: 10, padding: "0.625rem 0.75rem",
                 display: "flex", gap: "0.5rem", alignItems: "flex-start",
               }}>
                 <div style={{
                   width: 22, height: 22, borderRadius: "50%", flexShrink: 0,
-                  background: "rgba(167,139,250,0.15)", border: "1px solid rgba(167,139,250,0.3)",
+                  background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "0.65rem", fontWeight: 800, color: "#a78bfa",
+                  fontSize: "0.65rem", fontWeight: 800, color: "#cccccc",
                 }}>
                   {item.step}
                 </div>
@@ -942,7 +940,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
         borderRadius: 12, padding: "0.875rem 1rem",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(124,58,237,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🎯</div>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🎯</div>
           <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>Target Customer</h2>
         </div>
 
@@ -951,10 +949,10 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
           <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", width: 72 }}>
             <div style={{
               width: 44, height: 44, borderRadius: "50%",
-              background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)",
+              background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)",
               display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="1.5" strokeLinecap="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cccccc" strokeWidth="1.5" strokeLinecap="round">
                 <circle cx="12" cy="8" r="4"/>
                 <path d="M20 21a8 8 0 1 0-16 0"/>
               </svg>
@@ -974,14 +972,14 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
               <div style={{ fontSize: "0.65rem", color: "var(--clr-text-3)", lineHeight: 1.4 }}>
                 {data.targetCustomer.demographics}
               </div>
-              <div style={{ fontSize: "0.65rem", color: "#a78bfa", fontWeight: 600, lineHeight: 1.4 }}>
+              <div style={{ fontSize: "0.65rem", color: "#cccccc", fontWeight: 600, lineHeight: 1.4 }}>
                 💰 {data.targetCustomer.willingnessToPay}
               </div>
             </div>
 
             {/* Pain points as compact list */}
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <span style={{ fontSize: "0.52rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "#71717a" }}>Pains</span>
+              <span style={{ fontSize: "0.52rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "#888888" }}>Pains</span>
               {data.targetCustomer.painPoints.slice(0, 3).map((p, i) => (
                 <div key={i} style={{ fontSize: "0.65rem", color: "var(--clr-text-4)", lineHeight: 1.35 }}>• {p}</div>
               ))}
@@ -1091,8 +1089,8 @@ function deriveScoreLabel(pct: number): { emoji: string; label: string } {
 function SpaceScoreCard({ score, summary, hnBoost }: { score: number; summary: string; hnBoost?: number }) {
   const pct = Math.max(0, Math.min(100, score));
   const tier = deriveScoreLabel(pct);
-  const color = pct >= 61 ? "#a78bfa" : pct >= 41 ? "#7c3aed" : "#6d28d9";
-  const bgColor = "rgba(124,58,237,0.06)";
+  const color = "#ffffff";
+  const bgColor = "rgba(255,255,255,0.04)";
 
   // SVG arc math (36px radius, starts at top, clockwise)
   const r = 36;
@@ -1207,8 +1205,8 @@ function SpaceScoreCard({ score, summary, hnBoost }: { score: number; summary: s
           <span style={{
             display: "inline-flex", alignItems: "center", gap: 4,
             padding: "0.1rem 0.5rem", borderRadius: 999,
-            background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.25)",
-            fontSize: "0.68rem", fontWeight: 700, color: "#a78bfa",
+            background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)",
+            fontSize: "0.68rem", fontWeight: 700, color: "#cccccc",
           }}>
             <svg width="10" height="10" viewBox="0 0 18 18" fill="currentColor"><path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/></svg>
             HN activity
@@ -1278,16 +1276,14 @@ function ToolSelectorCard({
         overflow: "hidden",
         cursor: "pointer",
         transition: "all 0.18s ease",
-        background: isSelected ? `rgba(${tool.accentRgb},0.04)` : "#0f0f0f",
+        background: isSelected ? "rgba(255,255,255,0.03)" : "#111111",
         border: isSelected
-          ? `1px solid ${tool.accentColor}`
+          ? "1px solid #444444"
           : hovered && !dim
-          ? "1px solid #7c3aed"
-          : "1px solid #1f1f1f",
+          ? "1px solid #444444"
+          : "1px solid #222222",
         boxShadow: isSelected
-          ? `0 0 0 3px rgba(${tool.accentRgb},0.08)`
-          : hovered && !dim
-          ? "0 0 0 1px rgba(124,58,237,0.12)"
+          ? "0 0 0 3px rgba(255,255,255,0.04)"
           : "none",
         opacity: dim ? 0.35 : 1,
         transform: isSelected ? "translateY(-2px)" : hovered && !dim ? "translateY(-1px)" : "none",
@@ -1299,11 +1295,11 @@ function ToolSelectorCard({
         <div style={{
           position: "absolute", top: 12, right: 12,
           width: 20, height: 20, borderRadius: 6,
-          background: tool.accentColor,
+          background: "#ffffff",
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-            <path d="M2 5.5l2.5 2.5 4.5-5" stroke="#fff" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M2 5.5l2.5 2.5 4.5-5" stroke="#000" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
       )}
@@ -1773,8 +1769,8 @@ function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
 }
 
 // ── Stack Advisor Visual Result ──────────────────────────────
-const PHASE_COLORS = ["#c4b5fd", "#a78bfa", "#7c3aed", "#6d28d9", "#5b21b6"];
-const PHASE_BGS = ["rgba(196,181,253,0.08)", "rgba(167,139,250,0.08)", "rgba(124,58,237,0.08)", "rgba(109,40,217,0.08)", "rgba(91,33,182,0.08)"];
+const PHASE_COLORS = ["#ffffff", "#e5e5e5", "#cccccc", "#bbbbbb", "#aaaaaa"];
+const PHASE_BGS = ["rgba(255,255,255,0.04)", "rgba(255,255,255,0.04)", "rgba(255,255,255,0.04)", "rgba(255,255,255,0.04)", "rgba(255,255,255,0.04)"];
 
 function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
   const isPhaseZero = (name: string) => /phase\s*0/i.test(name) || /validate/i.test(name);
@@ -1784,9 +1780,9 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
       {/* ── HEADLINE ── */}
       {data.headline && (
         <div style={{
-          background: "var(--clr-surface)", border: "1px solid rgba(124,58,237,0.25)",
+          background: "var(--clr-surface)", border: "1px solid rgba(255,255,255,0.25)",
           borderRadius: 12, padding: "1.25rem 1.5rem",
-          borderTop: "3px solid #7c3aed",
+          borderTop: "3px solid #e5e5e5",
         }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: "0.5rem" }}>
             <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--clr-text-6)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
@@ -1794,8 +1790,8 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
             </span>
             <span style={{
               fontSize: "0.55rem", fontWeight: 700, padding: "0.12rem 0.5rem",
-              borderRadius: 999, background: "rgba(124,58,237,0.1)",
-              color: "#a78bfa", border: "1px solid rgba(124,58,237,0.25)",
+              borderRadius: 999, background: "rgba(255,255,255,0.1)",
+              color: "#cccccc", border: "1px solid rgba(255,255,255,0.25)",
               letterSpacing: "0.03em",
             }}>
               Pricing verified March 2026
@@ -1839,8 +1835,8 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                   <span style={{
                     fontSize: "0.58rem", fontWeight: 800, padding: "0.15rem 0.6rem",
                     borderRadius: 999, letterSpacing: "0.05em",
-                    background: "rgba(124,58,237,0.15)", color: "#a78bfa",
-                    border: "1px solid rgba(124,58,237,0.35)",
+                    background: "rgba(255,255,255,0.15)", color: "#cccccc",
+                    border: "1px solid rgba(255,255,255,0.35)",
                     animation: "pulse 2s ease-in-out infinite",
                   }}>
                     DO THIS FIRST
@@ -1873,9 +1869,9 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                         <span style={{
                           fontSize: "0.58rem", fontWeight: 700, padding: "0.08rem 0.4rem",
                           borderRadius: 999,
-                          background: tool.free ? "rgba(124,58,237,0.1)" : "rgba(113,113,122,0.08)",
-                          color: tool.free ? "#a78bfa" : "#71717a",
-                          border: `1px solid ${tool.free ? "rgba(124,58,237,0.25)" : "rgba(113,113,122,0.2)"}`,
+                          background: tool.free ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.08)",
+                          color: tool.free ? "#cccccc" : "#888888",
+                          border: `1px solid ${tool.free ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.2)"}`,
                         }}>
                           {tool.price}
                         </span>
@@ -1903,7 +1899,7 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                         }}>
                           <div style={{
                             width: 5, height: 5, borderRadius: "50%", flexShrink: 0,
-                            background: ct.freeTier ? "#a78bfa" : "#71717a",
+                            background: ct.freeTier ? "#cccccc" : "#888888",
                           }} />
                           <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text-3)" }}>
                             {ct.name}
@@ -1914,8 +1910,8 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                           <span style={{
                             fontSize: "0.56rem", fontWeight: 700, padding: "0.05rem 0.35rem",
                             borderRadius: 999, flexShrink: 0,
-                            background: ct.freeTier ? "rgba(124,58,237,0.1)" : "rgba(113,113,122,0.08)",
-                            color: ct.freeTier ? "#a78bfa" : "#71717a",
+                            background: ct.freeTier ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.08)",
+                            color: ct.freeTier ? "#cccccc" : "#888888",
                           }}>
                             {ct.freeTier ? "FREE" : "PAID"}
                           </span>
@@ -2032,7 +2028,7 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {data.mistakes.map((m, i) => {
-              const mColor = i === 0 ? "#a78bfa" : i === 1 ? "#7c3aed" : "#6d28d9";
+              const mColor = i === 0 ? "#ffffff" : i === 1 ? "#cccccc" : "#888888";
               return (
                 <div key={i} style={{
                   display: "flex", gap: 0, borderRadius: 12, overflow: "hidden",
@@ -2065,7 +2061,7 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {data.scalability.map((s, i) => {
-              const sevColor = s.severity === "high" ? "#a78bfa" : s.severity === "medium" ? "#7c3aed" : "#6d28d9";
+              const sevColor = s.severity === "high" ? "#ffffff" : s.severity === "medium" ? "#cccccc" : "#888888";
               return (
                 <div key={i} style={{
                   display: "flex", alignItems: "center", gap: 10,
@@ -2096,9 +2092,9 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                   </svg>
                   {/* Upgrade to */}
                   <span style={{
-                    fontSize: "0.72rem", fontWeight: 700, color: "#a78bfa",
+                    fontSize: "0.72rem", fontWeight: 700, color: "#cccccc",
                     padding: "0.15rem 0.6rem", borderRadius: 999,
-                    background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.25)",
+                    background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)",
                     flexShrink: 0,
                   }}>
                     {s.upgradeTo}
@@ -2136,9 +2132,9 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                   <path d="M2 7h10m0 0L9 4m3 3L9 10" stroke="var(--clr-text-6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
                 <span style={{
-                  fontSize: "0.72rem", fontWeight: 700, color: "#a78bfa",
+                  fontSize: "0.72rem", fontWeight: 700, color: "#cccccc",
                   padding: "0.1rem 0.5rem", borderRadius: 999,
-                  background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.25)",
+                  background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)",
                   flexShrink: 0,
                 }}>
                   {u.migrateTo}
@@ -2586,7 +2582,7 @@ export default function Home() {
         <header style={{
           borderBottom: "1px solid #1a1a1a",
           backdropFilter: "blur(16px)",
-          background: "rgba(0,0,0,0.8)",
+          background: "#080808",
           position: "sticky", top: 0, zIndex: 50,
         }}>
           <div style={{
@@ -2596,20 +2592,20 @@ export default function Home() {
             {/* Left: Logo */}
             <button onClick={fullReset} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer" }}>
               <svg width="20" height="20" viewBox="0 0 19 19" fill="none">
-                <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" />
+                <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="#e5e5e5" strokeWidth="2" strokeLinecap="round" />
               </svg>
               <span style={{ fontWeight: 700, fontSize: "1rem", color: "#ffffff", letterSpacing: "-0.02em" }}>Unbuilt</span>
             </button>
 
             {/* Center: Nav */}
             <Link href="/how-it-works" style={{
-              fontSize: "0.875rem", fontWeight: 400, color: "#71717a",
+              fontSize: "0.875rem", fontWeight: 400, color: "#888888",
               textDecoration: "none",
               transition: "color 0.15s",
               position: "absolute", left: "50%", transform: "translateX(-50%)",
             }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#71717a"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#888888"; }}
             >
               How it works
             </Link>
@@ -2623,7 +2619,7 @@ export default function Home() {
                     display: "flex", alignItems: "center", gap: 6,
                     padding: "0.375rem 0.875rem", borderRadius: 999,
                     background: "transparent", border: "1px solid #222222",
-                    color: "#71717a", fontSize: "0.8125rem", fontWeight: 500,
+                    color: "#888888", fontSize: "0.8125rem", fontWeight: 500,
                     cursor: "pointer", fontFamily: "inherit",
                     transition: "color 0.15s, border-color 0.15s",
                   }}
@@ -2721,7 +2717,7 @@ export default function Home() {
                         <div key={i} style={{
                           display: "flex", alignItems: "center", gap: "0.875rem",
                           padding: "0.625rem 0.75rem", borderRadius: 12,
-                          background: isActive ? `rgba(${currentTool?.accentRgb ?? "124,58,237"},0.05)` : "transparent",
+                          background: isActive ? `rgba(${currentTool?.accentRgb ?? "229,229,229"},0.05)` : "transparent",
                           transition: "background 0.3s",
                           animation: i <= scanStep ? `stepIn 0.3s ease ${i === scanStep ? 0 : 0}ms both` : "none",
                         }}>
@@ -2735,12 +2731,12 @@ export default function Home() {
                                 animation: "checkPop 0.35s cubic-bezier(0.16,1,0.3,1)",
                               }}>
                                 <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-                                  <path d="M2 5.5l2.5 2.5 4.5-5" stroke="#a78bfa" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                                  <path d="M2 5.5l2.5 2.5 4.5-5" stroke="#cccccc" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                               </div>
                             ) : isActive ? (
-                              <div style={{ width: 22, height: 22, borderRadius: "50%", border: `1.5px solid rgba(${currentTool?.accentRgb ?? "124,58,237"},0.3)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <div style={{ width: 8, height: 8, borderRadius: "50%", background: currentTool?.accentColor ?? "#7c3aed", animation: "pulse 1s ease-in-out infinite" }} />
+                              <div style={{ width: 22, height: 22, borderRadius: "50%", border: `1.5px solid rgba(${currentTool?.accentRgb ?? "229,229,229"},0.3)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <div style={{ width: 8, height: 8, borderRadius: "50%", background: currentTool?.accentColor ?? "#e5e5e5", animation: "pulse 1s ease-in-out infinite" }} />
                               </div>
                             ) : (
                               <div style={{ width: 22, height: 22, borderRadius: "50%", border: "1.5px solid var(--clr-border)" }} />
@@ -2748,7 +2744,7 @@ export default function Home() {
                           </div>
 
                           {/* Source icon */}
-                          <span style={{ color: isDone ? "#a78bfa" : isActive ? (currentTool?.accentColor ?? "#7c3aed") : "var(--clr-text-7)", transition: "color 0.3s", flexShrink: 0 }}>
+                          <span style={{ color: isDone ? "#cccccc" : isActive ? (currentTool?.accentColor ?? "#e5e5e5") : "var(--clr-text-7)", transition: "color 0.3s", flexShrink: 0 }}>
                             {step.icon}
                           </span>
 
@@ -2764,7 +2760,7 @@ export default function Home() {
 
                           {/* Done tag */}
                           {isDone && (
-                            <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "#a78bfa", letterSpacing: "0.04em", animation: "checkPop 0.35s ease" }}>
+                            <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "#cccccc", letterSpacing: "0.04em", animation: "checkPop 0.35s ease" }}>
                               done
                             </span>
                           )}
@@ -2784,30 +2780,23 @@ export default function Home() {
                 justifyContent: "center", textAlign: "center", maxWidth: 720, margin: "0 auto",
                 width: "100%", padding: "3rem 0 2rem", position: "relative",
               }}>
-                {/* Background radial glow */}
-                <div style={{
-                  position: "absolute", top: "-40%", left: "50%", transform: "translateX(-50%)",
-                  width: "120%", height: "100%",
-                  background: "radial-gradient(ellipse at center, rgba(124,58,237,0.08) 0%, transparent 70%)",
-                  pointerEvents: "none", zIndex: 0,
-                }} />
-
                 <h1 style={{
                   fontSize: "clamp(2.75rem, 5vw, 4.5rem)", fontWeight: 700,
                   letterSpacing: "-0.03em", lineHeight: 1.08,
-                  color: "#ffffff", marginBottom: "1.25rem", position: "relative", zIndex: 1,
+                  color: "#ffffff", marginBottom: "0.75rem",
                 }}>
-                  Build what the market<br />actually needs.
+                  <span style={{ color: "#555555" }}>Claude says your idea is great.</span>
+                  <br />
+                  <span style={{ color: "#ffffff" }}>We&apos;ll tell you the truth.</span>
                 </h1>
                 <p style={{
-                  color: "#71717a", fontSize: "1.125rem", lineHeight: 1.6,
-                  maxWidth: 480, margin: "0 auto 2rem", position: "relative", zIndex: 1,
+                  color: "#888888", fontSize: "1.125rem", lineHeight: 1.6,
+                  maxWidth: 480, margin: "0 auto 2rem",
                 }}>
                   Pick your situation. Get a real analysis — competitors, market gaps, trends, or tech stack — powered by Claude.
                 </p>
                 <div style={{
                   display: "flex", gap: "0.75rem", justifyContent: "center",
-                  position: "relative", zIndex: 1,
                 }}>
                   <button
                     onClick={() => {
@@ -2816,13 +2805,13 @@ export default function Home() {
                     }}
                     style={{
                       padding: "0.75rem 1.75rem", borderRadius: 999,
-                      background: "#7c3aed", border: "none",
-                      color: "#ffffff", fontSize: "0.9375rem", fontWeight: 600,
+                      background: "#ffffff", border: "none",
+                      color: "#000000", fontSize: "0.9375rem", fontWeight: 600,
                       cursor: "pointer", fontFamily: "inherit",
                       transition: "background 0.15s",
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "#6d28d9"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "#7c3aed"; }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "#e5e5e5"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; }}
                   >
                     Start for free
                   </button>
@@ -2956,15 +2945,15 @@ export default function Home() {
                   <span style={{
                     display: "inline-flex", alignItems: "center", gap: 5,
                     padding: "0.2rem 0.65rem", borderRadius: 999,
-                    background: "rgba(124,58,237,0.08)",
-                    border: "1px solid rgba(124,58,237,0.25)",
+                    background: "rgba(255,255,255,0.08)",
+                    border: "1px solid rgba(255,255,255,0.25)",
                     fontSize: "0.68rem", fontWeight: 600,
-                    color: "#a78bfa",
+                    color: "#cccccc",
                     flexShrink: 0,
                   }}>
                     <span style={{
                       width: 5, height: 5, borderRadius: "50%",
-                      background: "#a78bfa",
+                      background: "#cccccc",
                       animation: resultCached ? "none" : "pulse 2s ease-in-out infinite",
                     }} />
                     {resultCached ? "Cached result" : "Live result"}
@@ -3004,8 +2993,8 @@ export default function Home() {
               {error && (
                 <div style={{
                   padding: "1rem 1.25rem", borderRadius: 12,
-                  background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)",
-                  color: "#f87171", fontSize: "0.875rem",
+                  background: "rgba(255,255,255,0.04)", border: "1px solid #222222",
+                  color: "#cccccc", fontSize: "0.875rem",
                 }}>
                   {error}
                 </div>
@@ -3078,8 +3067,8 @@ export default function Home() {
                 return (
                 <div className="section-card" style={{ marginTop: "1rem" }}>
                   <div className="section-card-header">
-                    <div className="section-icon" style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.2)" }}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="#7c3aed">
+                    <div className="section-icon" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)" }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="#e5e5e5">
                         <path d="M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14zm-5 3c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/>
                       </svg>
                     </div>
@@ -3092,13 +3081,13 @@ export default function Home() {
                     <div style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
                       <span style={{
                         fontSize: "0.58rem", fontWeight: 700, padding: "0.1rem 0.45rem",
-                        borderRadius: 999, background: "rgba(124,58,237,0.08)", color: "#a78bfa",
-                        border: "1px solid rgba(124,58,237,0.2)",
+                        borderRadius: 999, background: "rgba(255,255,255,0.08)", color: "#cccccc",
+                        border: "1px solid rgba(255,255,255,0.2)",
                       }}>App Store</span>
                       <span style={{
                         fontSize: "0.58rem", fontWeight: 700, padding: "0.1rem 0.45rem",
-                        borderRadius: 999, background: "rgba(124,58,237,0.08)", color: "#a78bfa",
-                        border: "1px solid rgba(124,58,237,0.2)",
+                        borderRadius: 999, background: "rgba(255,255,255,0.08)", color: "#cccccc",
+                        border: "1px solid rgba(255,255,255,0.2)",
                       }}>Google Play</span>
                     </div>
                   </div>
@@ -3119,26 +3108,26 @@ export default function Home() {
                       <div style={{ display: "flex", gap: "0.75rem", marginBottom: "0.25rem" }}>
                         <div style={{
                           flex: 1, padding: "0.625rem 0.875rem", borderRadius: 10,
-                          background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.15)",
+                          background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
                           textAlign: "center",
                         }}>
-                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#7c3aed", lineHeight: 1 }}>{totalFound}</div>
+                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#e5e5e5", lineHeight: 1 }}>{totalFound}</div>
                           <div style={{ fontSize: "0.62rem", color: "var(--clr-text-6)", fontWeight: 600, marginTop: 3 }}>apps found</div>
                         </div>
                         <div style={{
                           flex: 1, padding: "0.625rem 0.875rem", borderRadius: 10,
-                          background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.15)",
+                          background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
                           textAlign: "center",
                         }}>
-                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#7c3aed", lineHeight: 1 }}>{totalRatings.toLocaleString()}</div>
+                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#e5e5e5", lineHeight: 1 }}>{totalRatings.toLocaleString()}</div>
                           <div style={{ fontSize: "0.62rem", color: "var(--clr-text-6)", fontWeight: 600, marginTop: 3 }}>total ratings</div>
                         </div>
                         <div style={{
                           flex: 1, padding: "0.625rem 0.875rem", borderRadius: 10,
-                          background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.15)",
+                          background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
                           textAlign: "center",
                         }}>
-                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#7c3aed", lineHeight: 1 }}>{merged.length}</div>
+                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#e5e5e5", lineHeight: 1 }}>{merged.length}</div>
                           <div style={{ fontSize: "0.62rem", color: "var(--clr-text-6)", fontWeight: 600, marginTop: 3 }}>unique apps</div>
                         </div>
                       </div>
@@ -3167,7 +3156,7 @@ export default function Home() {
                               </span>
                               <span style={{
                                 fontSize: "0.6rem", fontWeight: 700, padding: "0.1rem 0.4rem",
-                                borderRadius: 999, background: "rgba(124,58,237,0.08)", color: "#7c3aed", flexShrink: 0,
+                                borderRadius: 999, background: "rgba(255,255,255,0.08)", color: "#e5e5e5", flexShrink: 0,
                               }}>
                                 {app.price}
                               </span>
@@ -3176,8 +3165,8 @@ export default function Home() {
                                 <a href={app.platforms.ios.url} target="_blank" rel="noopener noreferrer"
                                   style={{
                                     fontSize: "0.55rem", fontWeight: 700, padding: "0.08rem 0.4rem",
-                                    borderRadius: 999, background: "rgba(124,58,237,0.08)", color: "#a78bfa",
-                                    border: "1px solid rgba(124,58,237,0.2)", textDecoration: "none", flexShrink: 0,
+                                    borderRadius: 999, background: "rgba(255,255,255,0.08)", color: "#cccccc",
+                                    border: "1px solid rgba(255,255,255,0.2)", textDecoration: "none", flexShrink: 0,
                                   }}>
                                   App Store
                                 </a>
@@ -3186,8 +3175,8 @@ export default function Home() {
                                 <a href={app.platforms.android.url} target="_blank" rel="noopener noreferrer"
                                   style={{
                                     fontSize: "0.55rem", fontWeight: 700, padding: "0.08rem 0.4rem",
-                                    borderRadius: 999, background: "rgba(124,58,237,0.08)", color: "#a78bfa",
-                                    border: "1px solid rgba(124,58,237,0.2)", textDecoration: "none", flexShrink: 0,
+                                    borderRadius: 999, background: "rgba(255,255,255,0.08)", color: "#cccccc",
+                                    border: "1px solid rgba(255,255,255,0.2)", textDecoration: "none", flexShrink: 0,
                                   }}>
                                   Google Play
                                 </a>
@@ -3197,7 +3186,7 @@ export default function Home() {
                             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.25rem" }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
                                 {[1, 2, 3, 4, 5].map((star) => (
-                                  <svg key={star} width="11" height="11" viewBox="0 0 18 18" fill={star <= Math.round(app.rating) ? "#FFB800" : "var(--clr-border)"}>
+                                  <svg key={star} width="11" height="11" viewBox="0 0 18 18" fill={star <= Math.round(app.rating) ? "#ffffff" : "#333333"}>
                                     <path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/>
                                   </svg>
                                 ))}
@@ -3244,7 +3233,7 @@ export default function Home() {
               {selectedTool === "trend-feed" && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
-                  background: "#0f0f0f",
+                  background: "#111111",
                   border: "1px solid #222222",
                   padding: "1.5rem",
                 }}>
@@ -3289,8 +3278,8 @@ export default function Home() {
                             }}
                             onMouseEnter={(e) => {
                               e.currentTarget.style.transform = "translateY(-2px)";
-                              e.currentTarget.style.borderColor = "rgba(124,58,237,0.4)";
-                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(124,58,237,0.08)";
+                              e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
+                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(255,255,255,0.08)";
                             }}
                             onMouseLeave={(e) => {
                               e.currentTarget.style.transform = "none";
@@ -3305,8 +3294,8 @@ export default function Home() {
                               <span style={{
                                 display: "inline-flex", alignItems: "center", gap: 4,
                                 padding: "0.175rem 0.5rem", borderRadius: 999,
-                                background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.25)",
-                                fontSize: "0.7rem", fontWeight: 800, color: "#a78bfa",
+                                background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)",
+                                fontSize: "0.7rem", fontWeight: 800, color: "#cccccc",
                               }}>
                                 ▲ {post.points}
                               </span>
@@ -3330,7 +3319,7 @@ export default function Home() {
               {selectedTool === "trend-feed" && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
-                  background: "#0f0f0f",
+                  background: "#111111",
                   border: "1px solid #222222",
                   padding: "1.5rem",
                 }}>
@@ -3372,9 +3361,9 @@ export default function Home() {
                               textDecoration: "none", transition: "transform 0.15s, border-color 0.15s, box-shadow 0.15s",
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.borderColor = "rgba(124,58,237,0.4)";
+                              e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
                               e.currentTarget.style.transform = "translateY(-2px)";
-                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(124,58,237,0.08)";
+                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(255,255,255,0.08)";
                             }}
                             onMouseLeave={(e) => {
                               e.currentTarget.style.borderColor = "#222222";
@@ -3384,15 +3373,15 @@ export default function Home() {
                           >
                             {/* Repo name row */}
                             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-                              <span style={{ fontSize: "0.875rem", fontWeight: 750, color: "#a78bfa", letterSpacing: "-0.01em", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              <span style={{ fontSize: "0.875rem", fontWeight: 750, color: "#cccccc", letterSpacing: "-0.01em", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                                 {repo.full_name}
                               </span>
                               {repo.language && (
                                 <span style={{
                                   fontSize: "0.6rem", fontWeight: 700, padding: "0.15rem 0.5rem",
-                                  borderRadius: 999, background: "rgba(124,58,237,0.1)",
-                                  border: "1px solid rgba(124,58,237,0.25)",
-                                  color: "#a78bfa", letterSpacing: "0.03em", flexShrink: 0,
+                                  borderRadius: 999, background: "rgba(255,255,255,0.1)",
+                                  border: "1px solid rgba(255,255,255,0.25)",
+                                  color: "#cccccc", letterSpacing: "0.03em", flexShrink: 0,
                                 }}>
                                   {repo.language}
                                 </span>
@@ -3416,8 +3405,8 @@ export default function Home() {
                               <span style={{
                                 display: "inline-flex", alignItems: "center", gap: 4,
                                 padding: "0.175rem 0.5rem", borderRadius: 999,
-                                background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.25)",
-                                fontSize: "0.7rem", fontWeight: 800, color: "#a78bfa",
+                                background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)",
+                                fontSize: "0.7rem", fontWeight: 800, color: "#cccccc",
                               }}>
                                 <svg width="10" height="10" viewBox="0 0 13 13" fill="none">
                                   <path d="M6.5 1l1.545 3.13 3.455.502-2.5 2.436.59 3.44L6.5 8.885l-3.09 1.623.59-3.44L1.5 4.632l3.455-.502L6.5 1z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
@@ -3443,7 +3432,7 @@ export default function Home() {
                   marginTop: "2rem", paddingTop: "1.5rem", borderTop: "1px solid var(--clr-border-deep)",
                 }}>
                   <span style={{ display: "flex", alignItems: "center", gap: 7, fontSize: "0.75rem", color: "var(--clr-text-7)" }}>
-                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#a78bfa", display: "inline-block" }} />
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#cccccc", display: "inline-block" }} />
                     Analysis complete
                   </span>
                   <div style={{ display: "flex", gap: 8 }}>
