@@ -15,6 +15,7 @@ const PROMPT = (niche: string) => `Trend analysis for the space: "${niche}"
 
 ## 🌡️ Space Temperature
 Score: [integer 1-100, where 1=dead/completely saturated and 100=explosive greenfield opportunity right now]
+CALIBRATION: Saturated spaces (calorie trackers, todo apps, habit trackers) = 20-45. High activity + high competition = crowded, NOT opportunity. Score 80+ requires genuinely emerging niche with few existing solutions. Score 90+ = clear greenfield with almost no competitors.
 [Write exactly 2 sentences: the single dominant signal driving this score and what it means for a founder entering now. Be specific and direct.]
 
 ## 📈 What's Rising

@@ -195,9 +195,17 @@ ${JSON.stringify(hn.map((h: any, i: number) => ({ index: i, ...h })), null, 2)}
 ## GitHub Repositories (created in last 7 days)
 ${JSON.stringify(github.map((r: any, i: number) => ({ index: i, ...r })), null, 2)}
 
+IMPORTANT — Score calibration rules:
+- Score measures OPPORTUNITY for a new entrant, NOT raw activity level.
+- High activity in a SATURATED space = LOW score (crowded, hard to compete).
+- If GitHub has 8+ new repos this week AND YouTube has 10+ videos → score MUST be ≤70. This signals saturation.
+- Spaces like "calorie app", "todo app", "habit tracker" are crowded by definition → score should be 20-45.
+- Score 80+ is reserved for genuinely emerging niches with low competition and strong demand signals.
+- Score 90+ requires a clear greenfield opportunity with almost no existing solutions.
+
 Return ONLY valid JSON (no markdown, no code fences) in this exact format:
 {
-  "score": <integer 0-100, overall trend strength>,
+  "score": <integer 0-100, opportunity score — high activity + high competition = LOW score>,
   "verdict": "<max 12 words, direct assessment>",
   "summary": "<3-4 sentences combining all signals with specific numbers>",
   "googleTrendsInsight": "<1-2 sentences interpreting the Google Trends data>",

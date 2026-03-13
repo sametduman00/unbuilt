@@ -98,6 +98,7 @@ const TOOLS: ToolConfig[] = [
     placeholder: 'e.g. "B2B SaaS tools", "consumer health apps", or "creator economy"',
     sources: [
       { name: "Claude AI", color: "var(--clr-text-2)", live: true },
+      { name: "Google Trends", color: "var(--clr-text-3)", live: true },
       { name: "GitHub", color: "var(--clr-text-3)", live: true },
       { name: "Hacker News", color: "var(--clr-text-3)", live: true },
       { name: "YouTube", color: "var(--clr-text-3)", live: true },
@@ -1095,6 +1096,106 @@ function deriveScoreLabel(pct: number): { emoji: string; label: string } {
   if (pct >= 41) return { emoji: "🟡", label: "Warming Up" };
   if (pct >= 21) return { emoji: "🟠", label: "Crowded" };
   return { emoji: "🔴", label: "Dead Zone" };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function GoogleTrendsChart({ data }: { data: any }) {
+  const timeline: { date: string; value: number }[] = data?.timelineData ?? [];
+  if (timeline.length === 0) return null;
+
+  const values = timeline.map((t) => t.value);
+  const maxVal = Math.max(...values, 1);
+  const minVal = Math.min(...values);
+  const range = maxVal - minVal || 1;
+
+  // Chart dimensions
+  const W = 400;
+  const H = 120;
+  const padX = 0;
+  const padY = 12;
+  const chartW = W - padX * 2;
+  const chartH = H - padY * 2;
+
+  const points = timeline.map((t, i) => {
+    const x = padX + (i / (timeline.length - 1)) * chartW;
+    const y = padY + chartH - ((t.value - minVal) / range) * chartH;
+    return { x, y, ...t };
+  });
+
+  const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
+  const areaPath = `${linePath} L${points[points.length - 1].x},${H} L${points[0].x},${H} Z`;
+
+  const direction = data?.direction ?? "stable";
+  const trendPercent = data?.trendPercent ?? 0;
+  const dirLabel = direction === "rising" ? "Rising" : direction === "falling" ? "Falling" : "Stable";
+  const dirColor = direction === "rising" ? "#4ade80" : direction === "falling" ? "#f87171" : "var(--clr-text-5)";
+
+  return (
+    <div style={{
+      marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
+      background: "var(--clr-surface)",
+      border: "1px solid var(--clr-border-2)",
+      padding: "1.5rem",
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
+          Google Trends
+        </h3>
+        <span style={{
+          display: "inline-flex", alignItems: "center", gap: 4,
+          padding: "0.15rem 0.5rem", borderRadius: 999,
+          background: `${dirColor}18`, border: `1px solid ${dirColor}40`,
+          fontSize: "0.68rem", fontWeight: 700, color: dirColor,
+        }}>
+          {dirLabel} {trendPercent !== 0 && `${trendPercent > 0 ? "+" : ""}${trendPercent}%`}
+        </span>
+        <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
+          last 3 months · weekly
+        </span>
+      </div>
+
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: 140 }} preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="trendsGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--clr-text)" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="var(--clr-text)" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {/* Grid lines */}
+        {[0, 0.25, 0.5, 0.75, 1].map((f) => (
+          <line key={f} x1={padX} x2={W - padX} y1={padY + chartH * (1 - f)} y2={padY + chartH * (1 - f)}
+            stroke="var(--clr-border-2)" strokeWidth="0.5" />
+        ))}
+        {/* Area fill */}
+        <path d={areaPath} fill="url(#trendsGrad)" />
+        {/* Line */}
+        <path d={linePath} fill="none" stroke="var(--clr-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Dots */}
+        {points.map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r="3" fill="var(--clr-surface)" stroke="var(--clr-text)" strokeWidth="1.5" />
+        ))}
+      </svg>
+
+      {/* X-axis labels */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
+        {points.map((p, i) => (
+          <span key={i} style={{ fontSize: "0.6rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
+            {p.date.split(" ")[0]}
+          </span>
+        ))}
+      </div>
+
+      {/* Interest score */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "0.75rem" }}>
+        <span style={{ fontSize: "0.72rem", color: "var(--clr-text-5)", fontWeight: 500 }}>
+          Current interest: <strong style={{ color: "var(--clr-text)" }}>{data?.currentScore ?? 0}/100</strong>
+        </span>
+      </div>
+    </div>
+  );
 }
 
 function SpaceScoreCard({ score, summary, hnBoost }: { score: number; summary: string; hnBoost?: number }) {
@@ -2249,6 +2350,12 @@ export default function Home() {
   const [domainKeywords, setDomainKeywords] = useState<string[]>([]);
   const [resultCached, setResultCached] = useState<boolean | null>(null);
 
+  // Trend-feed structured analysis (picks + Google Trends)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [trendAnalysis, setTrendAnalysis] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [trendGoogleData, setTrendGoogleData] = useState<any>(null);
+
   const [scanStep, setScanStep] = useState(-1); // -1=hidden 0-3=active step 4=all done
   const [stackCheckItems, setStackCheckItems] = useState<{ name: string; done: boolean }[]>([]);
 
@@ -2265,7 +2372,7 @@ export default function Home() {
   ];
 
   // Number of scan steps for the current tool (used for timer logic)
-  const scanStepCounts: Record<string, number> = { "trend-feed": 4, "gap-analysis": 4, "competitor-radar": 1, "stack-advisor": 1 };
+  const scanStepCounts: Record<string, number> = { "trend-feed": 5, "gap-analysis": 4, "competitor-radar": 1, "stack-advisor": 1 };
   const maxScanStep = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3) - 1;
 
   // Advance scan to "done" once last step is active AND Claude has finished
@@ -2342,6 +2449,8 @@ export default function Home() {
     setYtLoading(false);
     setYtFetched(false);
     setDomainKeywords([]);
+    setTrendAnalysis(null);
+    setTrendGoogleData(null);
 
     setSelectedTool(toolId);
     setTimeout(() => {
@@ -2553,6 +2662,8 @@ export default function Home() {
     setYtLoading(false);
     setYtFetched(false);
     setDomainKeywords([]);
+    setTrendAnalysis(null);
+    setTrendGoogleData(null);
 
     // Start scan sequence — number of timed steps depends on the tool
     scanTimersRef.current.forEach(clearTimeout);
@@ -2589,6 +2700,16 @@ export default function Home() {
         fetchHNPosts(q);
         fetchGithubRepos(q);
         fetchYouTubeVideos(q, 90);
+        // Fetch Google Trends data
+        fetch(`/api/serpapi?q=${encodeURIComponent(q)}`)
+          .then(r => r.ok ? r.json() : null)
+          .then(data => { if (data) setTrendGoogleData(data); })
+          .catch(() => {});
+        // Fetch structured analysis (picks) from trend-feed endpoint
+        fetch(`/api/trend-feed?q=${encodeURIComponent(q)}`)
+          .then(r => r.ok ? r.json() : null)
+          .then(data => { if (data?.analysis) setTrendAnalysis(data.analysis); })
+          .catch(() => {});
       });
     } else if (selectedTool === "gap-analysis") {
       // Fire store searches first (in parallel) using normalized query
@@ -2751,6 +2872,17 @@ export default function Home() {
   // If keyword filter removes everything, show all posts — the API query was already scoped
   const relevantHnPosts = filteredHnPosts.length > 0 ? filteredHnPosts : hnPosts;
 
+  // Picks-filtered lists for trend-feed (Claude selects best items by index)
+  const pickedHnPosts = trendAnalysis?.hn?.picks?.length > 0
+    ? (trendAnalysis.hn.picks as number[]).map((idx: number) => relevantHnPosts[idx]).filter(Boolean)
+    : relevantHnPosts.slice(0, 3);
+  const pickedYtVideos = trendAnalysis?.youtube?.picks?.length > 0
+    ? (trendAnalysis.youtube.picks as number[]).map((idx: number) => ytVideos[idx]).filter(Boolean)
+    : ytVideos.slice(0, 3);
+  const pickedGithubRepos = trendAnalysis?.github?.picks?.length > 0
+    ? (trendAnalysis.github.picks as number[]).map((idx: number) => githubRepos[idx]).filter(Boolean)
+    : githubRepos.slice(0, 3);
+
   return (
     <>
       <style>{`
@@ -2878,6 +3010,7 @@ export default function Home() {
           {scanStep >= 0 ? (() => {
             const SCAN_STEPS_MAP: Record<string, { label: string; icon: React.ReactNode }[]> = {
               "trend-feed": [
+                { label: "Fetching Google Trends", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> },
                 { label: "Scanning GitHub",        icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> },
                 { label: "Scanning Hacker News",   icon: <svg width="15" height="15" viewBox="0 0 18 18" fill="currentColor"><path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/></svg> },
                 { label: "Searching YouTube",      icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 00.5 6.19 31.6 31.6 0 000 12a31.6 31.6 0 00.5 5.81 3.02 3.02 0 002.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 002.12-2.14A31.6 31.6 0 0024 12a31.6 31.6 0 00-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg> },
@@ -3216,6 +3349,26 @@ export default function Home() {
                 )
               )}
 
+              {/* ── Google Trends chart (Trend Feed only) ── */}
+              {selectedTool === "trend-feed" && (
+                trendGoogleData ? (
+                  <GoogleTrendsChart data={trendGoogleData} />
+                ) : (
+                  <div style={{
+                    marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
+                    background: "var(--clr-surface)",
+                    border: "1px solid var(--clr-border-2)",
+                    padding: "1.5rem",
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+                      <div className="shimmer" style={{ width: 20, height: 20, borderRadius: 4 }} />
+                      <div className="shimmer" style={{ height: 16, borderRadius: 6, width: 120 }} />
+                    </div>
+                    <div className="shimmer" style={{ height: 140, borderRadius: 8 }} />
+                  </div>
+                )
+              )}
+
               {/* Loading skeleton — only while nothing has streamed yet */}
               {loading && (selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && <GapAnalysisSkeleton />}
               {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
@@ -3484,13 +3637,13 @@ export default function Home() {
                         <div key={n} className="shimmer" style={{ height: 60, borderRadius: 10 }} />
                       ))}
                     </div>
-                  ) : relevantHnPosts.length === 0 ? (
+                  ) : pickedHnPosts.length === 0 ? (
                     <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
                       No relevant Hacker News discussions found for this niche
                     </div>
                   ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {relevantHnPosts.map((post) => {
+                      {pickedHnPosts.map((post) => {
                         const daysAgo = Math.floor((Date.now() - new Date(post.created_at).getTime()) / 86400000);
                         const hnUrl = `https://news.ycombinator.com/item?id=${post.objectID}`;
 
@@ -3570,13 +3723,13 @@ export default function Home() {
                         <div key={n} className="shimmer" style={{ height: 80, borderRadius: 10 }} />
                       ))}
                     </div>
-                  ) : ytVideos.length === 0 ? (
+                  ) : ((selectedTool === "trend-feed" ? pickedYtVideos : ytVideos).length === 0) ? (
                     <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
                       No relevant YouTube videos found for this niche
                     </div>
                   ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {ytVideos.map((video) => {
+                      {(selectedTool === "trend-feed" ? pickedYtVideos : ytVideos).map((video) => {
                         const daysAgo = Math.floor((Date.now() - new Date(video.publishedAt).getTime()) / 86400000);
                         const fmtViews = video.viewCount >= 1_000_000 ? `${(video.viewCount / 1_000_000).toFixed(1)}M` : video.viewCount >= 1_000 ? `${(video.viewCount / 1_000).toFixed(0)}K` : String(video.viewCount);
                         return (
@@ -3679,13 +3832,13 @@ export default function Home() {
                         <div key={n} className="shimmer" style={{ height: 90, borderRadius: 10 }} />
                       ))}
                     </div>
-                  ) : githubRepos.length === 0 ? (
+                  ) : pickedGithubRepos.length === 0 ? (
                     <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
                       No relevant GitHub repositories found for this niche
                     </div>
                   ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {githubRepos.map((repo) => {
+                      {pickedGithubRepos.map((repo) => {
                         const daysAgo = Math.floor((Date.now() - new Date(repo.created_at).getTime()) / 86400000);
                         return (
                           <a
