@@ -194,6 +194,9 @@ STRICT SCORE RULES - YOU MUST FOLLOW THESE:
 - Score 80+ is ONLY allowed when Google Trends is above 60 AND YouTube has 5+ videos with 100K+ total views
 - Score 85+ is ONLY allowed for genuinely explosive spaces with massive data signals
 - Do not interpret missing data as opportunity — missing data means unknown or too early
+- If Google Trends currentScore is below 20, score cannot exceed 45
+- If the space has well-known incumbents (mention them by name in your analysis), score cannot exceed 55 unless growth signals are very strong
+- Crowded spaces with low Google Trends should score 30-45, not 45-60
 - If score is under 30 and data is minimal, verdict should reflect "Too Early to Tell" or "Uncharted Territory", not "Crowded" — Crowded means many competitors exist.
 
 IMPORTANT — Analysis depth:
@@ -213,14 +216,14 @@ Return ONLY valid JSON (no markdown, no code fences) in this exact format:
   "patternToBetOn": "2-3 sentences: the emerging structural shift that will define this market in 12-18 months. Be specific and contrarian.",
   "contrarianTake": "2-3 sentences: the thing most founders in this space believe that is probably wrong. What assumption will look naive in 2 years?",
   "underexploredNiches": ["Niche 1: name the customer and their unsolved problem", "Niche 2: another underserved segment", "Niche 3: another gap"],
-  "bestOpportunity": "<2-3 sentences: who to build for, what to build, and why now. Be specific.>",
+  "bestOpportunity": "Must be hyper-specific: name the exact customer, exact pain point, exact distribution channel. NOT 'build a platform for X'. Instead: 'Build Y for Z people who struggle with W, sell through A channel because B reason.'",
   "youtube": {
     "insight": "<1-2 sentences about YouTube signal>",
     "picks": [{"index": <0-based index>, "reason": "<why this video matters, max 12 words>"}, ...]
   },
   "hn": {
     "insight": "<1-2 sentences about Hacker News activity>",
-    "picks": [{"index": <0-based index>, "reason": "<why this post matters, max 12 words>"}, ...]
+    "picks": [{"index": <0-based index>, "reason": "<why this post matters, max 12 words>"}, "...only pick posts DIRECTLY about the query topic. If a post is only tangentially related or coincidentally matches a keyword, do NOT pick it. If no HN posts are truly relevant, return an empty picks array []"]
   },
   "github": {
     "insight": "<1-2 sentences about GitHub activity>",
