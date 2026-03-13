@@ -1242,9 +1242,15 @@ function GoogleTrendsChart({ data, query }: { data: any; query?: string }) {
   );
 }
 
-function SpaceScoreCard({ score, summary }: { score: number; summary: string }) {
+function SpaceScoreCard({ score, summary, label }: { score: number; summary: string; label?: string }) {
   const pct = Math.max(0, Math.min(100, score));
-  const tier = deriveScoreLabel(pct);
+  const labelEmojiMap: Record<string, string> = {
+    "Dead Zone": "🔴", "Uncharted": "🌑", "Crowded": "🟠",
+    "Warming Up": "🟡", "Growing": "🟢", "Explosive": "🔥",
+  };
+  const tier = label && labelEmojiMap[label]
+    ? { emoji: labelEmojiMap[label], label }
+    : deriveScoreLabel(pct);
   const color = "var(--clr-text)";
   const bgColor = "rgba(var(--clr-text-rgb),0.04)";
 
@@ -1548,10 +1554,12 @@ function TrendFeedView({ onBack }: { onBack: () => void }) {
         </div>
 
         {/* Score + summary */}
-        <SpaceScoreCard score={a.score ?? 0} summary={a.summary ?? ""} />
+        <SpaceScoreCard score={a.score ?? 0} summary={a.summary ?? ""} label={a.label} />
 
         {/* Google Trends chart */}
-        {raw.trends && <GoogleTrendsChart data={raw.trends} query={query} />}
+        {raw.trends && (raw.trends.timeline?.length > 0 || raw.trends.timelineData?.length > 0) && (
+          <GoogleTrendsChart data={raw.trends} query={query} />
+        )}
 
         {/* Analysis sections */}
         {section("What's Rising", a.whatsRising)}

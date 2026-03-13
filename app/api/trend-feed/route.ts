@@ -211,6 +211,7 @@ IMPORTANT — Analysis depth:
 Return ONLY valid JSON (no markdown, no code fences) in this exact format:
 {
   "score": <integer 0-100, opportunity score — high activity + high competition = LOW score>,
+  "label": "<exactly one of: Dead Zone | Uncharted | Crowded | Warming Up | Growing | Explosive — pick based on market reality, not just score number. Use 'Uncharted' when data is sparse/missing and market is unexplored. Use 'Crowded' only when many competitors exist. Use 'Dead Zone' when demand is genuinely dead.>",
   "verdict": "<max 12 words, direct assessment>",
   "summary": "<3-4 sentences combining all signals with specific numbers>",
   "googleTrendsInsight": "<1-2 sentences interpreting the Google Trends data>",
