@@ -1221,13 +1221,20 @@ function GoogleTrendsChart({ data, query }: { data: any; query?: string }) {
             ))}
           </svg>
 
-          {/* X-axis labels */}
+          {/* X-axis labels — only show when month changes */}
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, maxWidth: 400 }}>
-            {points.map((p, i) => (
-              <span key={i} style={{ fontSize: "0.6rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-                {(p.date ?? "").split(" ")[0]}
-              </span>
-            ))}
+            {points.map((p, i) => {
+              const dateStr = (p.date ?? "").split(" ")[0];
+              const prevDateStr = i > 0 ? (points[i - 1].date ?? "").split(" ")[0] : "";
+              const month = dateStr.replace(/\d/g, "").trim();
+              const prevMonth = prevDateStr.replace(/\d/g, "").trim();
+              const showLabel = i === 0 || month !== prevMonth;
+              return (
+                <span key={i} style={{ fontSize: "0.6rem", color: "var(--clr-text-7)", fontWeight: 500, minWidth: 0 }}>
+                  {showLabel ? dateStr : ""}
+                </span>
+              );
+            })}
           </div>
         </>
       )}
@@ -1245,7 +1252,7 @@ function GoogleTrendsChart({ data, query }: { data: any; query?: string }) {
 function SpaceScoreCard({ score, summary, label }: { score: number; summary: string; label?: string }) {
   const pct = Math.max(0, Math.min(100, score));
   const labelEmojiMap: Record<string, string> = {
-    "Dead Zone": "🔴", "Uncharted": "🌑", "Crowded": "🟠",
+    "Dead Zone": "🔴", "Uncharted": "🌑", "Fading": "🌫️", "Crowded": "🟠",
     "Warming Up": "🟡", "Growing": "🟢", "Explosive": "🔥",
   };
   const tier = label && labelEmojiMap[label]

@@ -207,7 +207,7 @@ IMPORTANT — Analysis depth:
 Return ONLY valid JSON (no markdown, no code fences) in this exact format:
 {
   "score": <integer 0-100, opportunity score — high activity + high competition = LOW score>,
-  "label": "<exactly one of: Dead Zone | Uncharted | Crowded | Warming Up | Growing | Explosive. Rules: 'Dead Zone' = space is actively dying, declining irreversibly, no future. 'Uncharted' = no data available, too early, unknown demand. 'Crowded' = many competitors, high competition, mature/saturated market. A saturated space with millions of users (like fitness apps) is 'Crowded' NOT 'Dead Zone'. If score is under 30 AND YouTube total views are 500K+, use 'Crowded'. If score is under 30 AND data is minimal/zero, use 'Uncharted'. Only use 'Dead Zone' when the space is genuinely dying with declining interest.>",
+  "label": "<exactly one of: Dead Zone | Uncharted | Fading | Crowded | Warming Up | Growing | Explosive. Rules: 'Dead Zone' = space is actively dying, declining irreversibly, no future. 'Uncharted' = no data available, too early, unknown demand. 'Fading' = was relevant but losing steam — use when space has existing competitors but Google Trends trendPercent is below -50% (strongly falling). When trendPercent is below -50%, label should NEVER be 'Crowded' — use 'Fading' or 'Dead Zone'. 'Crowded' = many competitors, high competition, mature/saturated market. If score is under 30 AND YouTube total views are 500K+, use 'Crowded'. If score is under 30 AND data is minimal/zero, use 'Uncharted'.>",
   "verdict": "<max 12 words, direct assessment>",
   "summary": "<3-4 sentences combining all signals with specific numbers>",
   "googleTrendsInsight": "<1-2 sentences interpreting the Google Trends data>",
