@@ -1360,6 +1360,7 @@ function TrendFeedView({ onBack }: { onBack: () => void }) {
 
   // Simple markdown: bold + bullets
   const renderText = (text: string) => {
+    if (!text || typeof text !== "string") return null;
     return text.split("\n").filter(l => l.trim()).map((line, i) => {
       const isBullet = /^[-•]\s/.test(line);
       const content = isBullet ? line.replace(/^[-•]\s*/, "") : line;
@@ -1460,7 +1461,7 @@ function TrendFeedView({ onBack }: { onBack: () => void }) {
     const ghPicks = resolvePicks(a.github?.picks, raw.github);
 
     const section = (title: string, content?: string) => {
-      if (!content) return null;
+      if (!content || typeof content !== "string") return null;
       return (
         <div style={{
           padding: "1.25rem 1.5rem", borderRadius: 12,
@@ -1601,13 +1602,13 @@ function TrendFeedView({ onBack }: { onBack: () => void }) {
                         background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
                         fontSize: "0.7rem", fontWeight: 800, color: "var(--clr-text-2)",
                       }}>
-                        {h.points} pts
+                        {h.points ?? 0} pts
                       </span>
                       <span style={{ fontSize: "0.68rem", color: "var(--clr-text-6)" }}>
-                        {h.comments} comments
+                        {h.comments ?? 0} comments
                       </span>
                       <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", marginLeft: "auto" }}>
-                        {h.daysAgo === 0 ? "today" : `${h.daysAgo}d ago`}
+                        {(h.daysAgo ?? 0) === 0 ? "today" : `${h.daysAgo ?? 0}d ago`}
                       </span>
                     </div>
                     {h.reason && (
@@ -1675,7 +1676,7 @@ function TrendFeedView({ onBack }: { onBack: () => void }) {
                       {(r.stars ?? 0).toLocaleString()} stars
                     </span>
                     <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", marginLeft: "auto" }}>
-                      {r.daysAgo === 0 ? "today" : `${r.daysAgo}d ago`}
+                      {(r.daysAgo ?? 0) === 0 ? "today" : `${r.daysAgo ?? 0}d ago`}
                     </span>
                   </div>
                   {r.reason && (
