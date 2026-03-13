@@ -209,23 +209,28 @@ Return ONLY valid JSON (no markdown, no code fences) in this exact format:
   "verdict": "<max 12 words, direct assessment>",
   "summary": "<3-4 sentences combining all signals with specific numbers>",
   "googleTrendsInsight": "<1-2 sentences interpreting the Google Trends data>",
+  "whatsRising": "<3-5 things gaining traction, one per line starting with '- ', use **bold** for names>",
+  "whatsDying": "<2-4 approaches/tools losing steam, one per line starting with '- ', use **bold** for names>",
+  "patternToBetOn": "<2-3 sentences: the emerging structural shift that will define this market in 12-18 months. Be specific and contrarian.>",
+  "underexploredNiches": "<2-3 specific underserved segments, one per line starting with '- '. Name the customer and their unsolved problem.>",
+  "bestOpportunity": "<2-3 sentences: who to build for, what to build, and why now. Be specific.>",
   "youtube": {
     "insight": "<1-2 sentences about YouTube signal>",
-    "picks": [<0-based indices of most notable videos, max 3>]
+    "picks": [{"index": <0-based index>, "reason": "<why this video matters, max 12 words>"}, ...]
   },
   "hn": {
     "insight": "<1-2 sentences about Hacker News activity>",
-    "picks": [<0-based indices of most notable posts, max 3>]
+    "picks": [{"index": <0-based index>, "reason": "<why this post matters, max 12 words>"}, ...]
   },
   "github": {
     "insight": "<1-2 sentences about GitHub activity>",
-    "picks": [<0-based indices of most notable repos, max 3>]
+    "picks": [{"index": <0-based index>, "reason": "<why this repo matters, max 12 words>"}, ...]
   }
 }`;
 
   const response = await client.messages.create({
     model: "claude-sonnet-4-20250514",
-    max_tokens: 2000,
+    max_tokens: 4000,
     messages: [{ role: "user", content: prompt }],
   });
 

@@ -1100,7 +1100,7 @@ function deriveScoreLabel(pct: number): { emoji: string; label: string } {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function GoogleTrendsChart({ data }: { data: any }) {
-  const timeline: { date: string; value: number }[] = data?.timelineData ?? [];
+  const timeline: { date: string; value: number }[] = data?.timeline ?? data?.timelineData ?? [];
   if (timeline.length === 0) return null;
 
   const values = timeline.map((t) => t.value);
@@ -1310,6 +1310,424 @@ function SpaceScoreCard({ score, summary }: { score: number; summary: string }) 
         );
       })()}
 
+    </div>
+  );
+}
+
+// ── Trend Feed View (self-contained) ──────────────────────────
+function TrendFeedView({ onBack }: { onBack: () => void }) {
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [data, setData] = useState<any>(null);
+  const [error, setError] = useState("");
+  const [scanStep, setScanStep] = useState(0);
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Auto-advance scan steps during loading
+  useEffect(() => {
+    if (status !== "loading") return;
+    setScanStep(0);
+    const t = setInterval(() => setScanStep(s => Math.min(s + 1, 4)), 800);
+    return () => clearInterval(t);
+  }, [status]);
+
+  // Scroll to results when done
+  useEffect(() => {
+    if (status === "done") {
+      setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+    }
+  }, [status]);
+
+  const search = async () => {
+    const q = query.trim();
+    if (q.length < 3) return;
+    setStatus("loading");
+    setError("");
+    setData(null);
+    try {
+      const res = await fetch(`/api/trend-feed?q=${encodeURIComponent(q)}`);
+      if (!res.ok) throw new Error((await res.json()).error || "Request failed");
+      setData(await res.json());
+      setStatus("done");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
+      setStatus("idle");
+    }
+  };
+
+  const searchAgain = () => { setStatus("idle"); setData(null); setError(""); };
+
+  // Simple markdown: bold + bullets
+  const renderText = (text: string) => {
+    return text.split("\n").filter(l => l.trim()).map((line, i) => {
+      const isBullet = /^[-•]\s/.test(line);
+      const content = isBullet ? line.replace(/^[-•]\s*/, "") : line;
+      const parts = content.split(/(\*\*[^*]+\*\*)/g).map((p, j) =>
+        p.startsWith("**") && p.endsWith("**")
+          ? <strong key={j} style={{ color: "var(--clr-text)" }}>{p.slice(2, -2)}</strong>
+          : <span key={j}>{p}</span>
+      );
+      if (isBullet) {
+        return (
+          <div key={i} style={{ display: "flex", gap: 8, paddingLeft: 2, marginBottom: 6 }}>
+            <span style={{ color: "var(--clr-text-5)", flexShrink: 0 }}>•</span>
+            <span style={{ lineHeight: 1.6 }}>{parts}</span>
+          </div>
+        );
+      }
+      return <div key={i} style={{ lineHeight: 1.6, marginBottom: 4 }}>{parts}</div>;
+    });
+  };
+
+  const fmtNum = (n: number) => n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` : n >= 1_000 ? `${(n / 1_000).toFixed(0)}K` : String(n);
+
+  // ── Loading: scanning animation ──
+  if (status === "loading") {
+    const steps = ["Google Trends", "GitHub", "Hacker News", "YouTube", "AI Analysis"];
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "3rem 0", minHeight: 300 }}>
+        <div style={{
+          background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
+          borderRadius: 12, padding: "2rem 2.5rem", width: "100%", maxWidth: 400,
+          animation: "scanCardIn 0.35s cubic-bezier(0.16,1,0.3,1)",
+          boxShadow: "0 24px 64px rgba(0,0,0,0.15)",
+        }}>
+          <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+            <h2 style={{ fontSize: "1.125rem", fontWeight: 750, color: "var(--clr-text)", margin: "0 0 0.375rem", letterSpacing: "-0.025em" }}>
+              Gathering intelligence...
+            </h2>
+            <p style={{ fontSize: "0.8rem", color: "var(--clr-text-5)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {query}
+            </p>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {steps.map((label, i) => {
+              const isDone = scanStep > i;
+              const isActive = scanStep === i;
+              return (
+                <div key={label} style={{
+                  display: "flex", alignItems: "center", gap: "0.75rem",
+                  padding: "0.5rem 0.75rem", borderRadius: 10,
+                  background: isActive ? "rgba(var(--clr-accent-rgb),0.05)" : "transparent",
+                  animation: i <= scanStep ? "stepIn 0.3s ease both" : "none",
+                  opacity: i <= scanStep ? 1 : 0,
+                }}>
+                  <div style={{ width: 20, height: 20, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {isDone ? (
+                      <div style={{
+                        width: 20, height: 20, borderRadius: "50%",
+                        background: "rgba(34,197,94,0.15)", border: "1px solid rgba(34,197,94,0.35)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        animation: "checkPop 0.35s cubic-bezier(0.16,1,0.3,1)",
+                      }}>
+                        <svg width="10" height="10" viewBox="0 0 11 11" fill="none">
+                          <path d="M2 5.5l2.5 2.5 4.5-5" stroke="var(--clr-text-2)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                    ) : (
+                      <div style={{ width: 16, height: 16, border: "2px solid var(--clr-text-5)", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+                    )}
+                  </div>
+                  <span style={{ fontSize: "0.8rem", fontWeight: isDone ? 500 : 600, color: isDone ? "var(--clr-text-5)" : "var(--clr-text-2)" }}>
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Done: results ──
+  if (status === "done" && data) {
+    const a = data.analysis ?? {};
+    const raw = data.rawData ?? {};
+
+    // Resolve picks with reasons (handles both {index, reason} and plain number formats)
+    const resolvePicks = (picks: any[], items: any[]) =>
+      (picks ?? []).map((p: any) => {
+        const idx = typeof p === "number" ? p : p?.index;
+        const item = items?.[idx];
+        if (!item) return null;
+        return { ...item, reason: typeof p === "object" ? p.reason ?? "" : "" };
+      }).filter(Boolean);
+
+    const ytPicks = resolvePicks(a.youtube?.picks, raw.youtube);
+    const hnPicks = resolvePicks(a.hn?.picks, raw.hn);
+    const ghPicks = resolvePicks(a.github?.picks, raw.github);
+
+    const section = (title: string, content?: string) => {
+      if (!content) return null;
+      return (
+        <div style={{
+          padding: "1.25rem 1.5rem", borderRadius: 12,
+          background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+        }}>
+          <h3 style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", margin: "0 0 0.75rem", letterSpacing: "-0.02em" }}>
+            {title}
+          </h3>
+          <div style={{ fontSize: "0.875rem", color: "var(--clr-text-3)" }}>
+            {renderText(content)}
+          </div>
+        </div>
+      );
+    };
+
+    return (
+      <div ref={resultsRef} style={{ paddingTop: "1.5rem", paddingBottom: "5rem", display: "flex", flexDirection: "column", gap: "1rem", animation: "fadeSlideIn 0.3s ease" }}>
+
+        {/* Query bar */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: 12,
+          padding: "0.75rem 1rem", background: "var(--clr-surface)",
+          border: "1px solid var(--clr-border)", borderRadius: 12,
+          marginBottom: "0.25rem",
+        }}>
+          <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-accent)", letterSpacing: "0.07em", textTransform: "uppercase" }}>
+            Trend Feed
+          </span>
+          <span style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>
+            {query}
+          </span>
+          <button onClick={searchAgain} style={{
+            padding: "0.3rem 0.75rem", borderRadius: 999,
+            background: "transparent", border: "1px solid var(--clr-border-2)",
+            color: "var(--clr-text-5)", fontSize: "0.75rem", fontWeight: 500,
+            cursor: "pointer", fontFamily: "inherit",
+          }}>
+            New search
+          </button>
+        </div>
+
+        {/* Score + summary */}
+        <SpaceScoreCard score={a.score ?? 0} summary={a.summary ?? ""} />
+
+        {/* Google Trends chart */}
+        {raw.trends && <GoogleTrendsChart data={raw.trends} />}
+
+        {/* Analysis sections */}
+        {section("What's Rising", a.whatsRising)}
+        {section("What's Dying", a.whatsDying)}
+        {section("The Pattern to Bet On", a.patternToBetOn)}
+        {section("Underexplored Niches", a.underexploredNiches)}
+        {section("Best Opportunity Right Now", a.bestOpportunity)}
+
+        {/* YouTube picks */}
+        {ytPicks.length > 0 && (
+          <div style={{ padding: "1.5rem", borderRadius: 12, background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+              <h3 style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
+                YouTube
+              </h3>
+              {a.youtube?.insight && (
+                <span style={{ fontSize: "0.75rem", color: "var(--clr-text-5)", fontWeight: 400 }}>
+                  {a.youtube.insight}
+                </span>
+              )}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
+              {ytPicks.map((v: any) => (
+                <a key={v.videoId} href={`https://youtube.com/watch?v=${v.videoId}`} target="_blank" rel="noopener noreferrer" style={{
+                  display: "flex", gap: "0.75rem", padding: "0.875rem 1rem", borderRadius: 12,
+                  background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+                  textDecoration: "none", transition: "transform 0.15s, border-color 0.15s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = "rgba(var(--clr-text-rgb),0.4)"; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = "var(--clr-border-2)"; }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <div style={{ width: 120, minWidth: 120, height: 68, borderRadius: 8, overflow: "hidden", background: "var(--clr-bg)", flexShrink: 0, position: "relative" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={`https://i.ytimg.com/vi/${v.videoId}/mqdefault.jpg`} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <div style={{ position: "absolute", bottom: 4, right: 4, background: "rgba(0,0,0,0.8)", borderRadius: 4, padding: "1px 5px", fontSize: "0.6rem", color: "#fff", fontWeight: 700 }}>
+                      {fmtNum(v.viewCount ?? 0)} views
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", minWidth: 0, flex: 1 }}>
+                    <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.35, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      {v.title}
+                    </div>
+                    <div style={{ fontSize: "0.7rem", color: "var(--clr-text-5)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {v.channel}
+                    </div>
+                    {v.reason && (
+                      <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", fontStyle: "italic", marginTop: "auto" }}>
+                        {v.reason}
+                      </div>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* HN picks */}
+        {hnPicks.length > 0 && (
+          <div style={{ padding: "1.5rem", borderRadius: 12, background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+              <h3 style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
+                Hacker News
+              </h3>
+              {a.hn?.insight && (
+                <span style={{ fontSize: "0.75rem", color: "var(--clr-text-5)", fontWeight: 400 }}>
+                  {a.hn.insight}
+                </span>
+              )}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
+              {hnPicks.map((h: any) => {
+                const hnUrl = `https://news.ycombinator.com/item?id=${h.objectID}`;
+                return (
+                  <a key={h.objectID} href={h.url || hnUrl} target="_blank" rel="noopener noreferrer" style={{
+                    display: "flex", flexDirection: "column", gap: "0.5rem",
+                    padding: "1rem 1.125rem", borderRadius: 12,
+                    background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+                    textDecoration: "none", transition: "transform 0.15s, border-color 0.15s",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = "rgba(var(--clr-text-rgb),0.4)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = "var(--clr-border-2)"; }}
+                  >
+                    <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      {h.title}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
+                      <span style={{
+                        display: "inline-flex", alignItems: "center", gap: 4,
+                        padding: "0.175rem 0.5rem", borderRadius: 999,
+                        background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
+                        fontSize: "0.7rem", fontWeight: 800, color: "var(--clr-text-2)",
+                      }}>
+                        {h.points} pts
+                      </span>
+                      <span style={{ fontSize: "0.68rem", color: "var(--clr-text-6)" }}>
+                        {h.comments} comments
+                      </span>
+                      <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", marginLeft: "auto" }}>
+                        {h.daysAgo === 0 ? "today" : `${h.daysAgo}d ago`}
+                      </span>
+                    </div>
+                    {h.reason && (
+                      <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", fontStyle: "italic" }}>
+                        {h.reason}
+                      </div>
+                    )}
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* GitHub picks */}
+        {ghPicks.length > 0 && (
+          <div style={{ padding: "1.5rem", borderRadius: 12, background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+              <h3 style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
+                GitHub
+              </h3>
+              {a.github?.insight && (
+                <span style={{ fontSize: "0.75rem", color: "var(--clr-text-5)", fontWeight: 400 }}>
+                  {a.github.insight}
+                </span>
+              )}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
+              {ghPicks.map((r: any) => (
+                <a key={r.name} href={r.url} target="_blank" rel="noopener noreferrer" style={{
+                  display: "flex", flexDirection: "column", gap: "0.5rem",
+                  padding: "1rem 1.125rem", borderRadius: 12,
+                  background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+                  textDecoration: "none", transition: "transform 0.15s, border-color 0.15s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = "rgba(var(--clr-text-rgb),0.4)"; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = "var(--clr-border-2)"; }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ fontSize: "0.875rem", fontWeight: 750, color: "var(--clr-text-2)", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {r.name}
+                    </span>
+                    {r.language && (
+                      <span style={{
+                        fontSize: "0.6rem", fontWeight: 700, padding: "0.15rem 0.5rem",
+                        borderRadius: 999, background: "rgba(var(--clr-text-rgb),0.1)",
+                        border: "1px solid rgba(var(--clr-text-rgb),0.25)", color: "var(--clr-text-2)",
+                      }}>
+                        {r.language}
+                      </span>
+                    )}
+                  </div>
+                  {r.description && (
+                    <p style={{ fontSize: "0.8rem", color: "var(--clr-text-4)", lineHeight: 1.5, margin: 0, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      {r.description}
+                    </p>
+                  )}
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
+                    <span style={{
+                      display: "inline-flex", alignItems: "center", gap: 4,
+                      padding: "0.175rem 0.5rem", borderRadius: 999,
+                      background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
+                      fontSize: "0.7rem", fontWeight: 800, color: "var(--clr-text-2)",
+                    }}>
+                      {(r.stars ?? 0).toLocaleString()} stars
+                    </span>
+                    <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", marginLeft: "auto" }}>
+                      {r.daysAgo === 0 ? "today" : `${r.daysAgo}d ago`}
+                    </span>
+                  </div>
+                  {r.reason && (
+                    <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", fontStyle: "italic" }}>
+                      {r.reason}
+                    </div>
+                  )}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Idle: search input ──
+  return (
+    <div style={{ maxWidth: 540, margin: "0 auto", padding: "2rem 0", width: "100%" }}>
+      <div style={{
+        display: "flex", gap: "0.5rem",
+        padding: "0.5rem", borderRadius: 12,
+        background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+      }}>
+        <input
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && search()}
+          placeholder='e.g. "B2B SaaS tools", "consumer health apps"'
+          style={{
+            flex: 1, padding: "0.625rem 0.875rem", borderRadius: 8,
+            border: "none", outline: "none",
+            background: "transparent", color: "var(--clr-text)",
+            fontSize: "0.9rem", fontFamily: "inherit",
+          }}
+        />
+        <button onClick={search} disabled={query.trim().length < 3} style={{
+          padding: "0.625rem 1.25rem", borderRadius: 8,
+          background: query.trim().length >= 3 ? "var(--clr-accent)" : "var(--clr-border)",
+          border: "none", color: query.trim().length >= 3 ? "#fff" : "var(--clr-text-6)",
+          fontSize: "0.8125rem", fontWeight: 600, cursor: query.trim().length >= 3 ? "pointer" : "default",
+          fontFamily: "inherit", transition: "background 0.15s",
+        }}>
+          Analyze
+        </button>
+      </div>
+      {error && (
+        <div style={{ marginTop: "0.75rem", padding: "0.75rem 1rem", borderRadius: 10, background: "rgba(var(--clr-text-rgb),0.04)", border: "1px solid var(--clr-border-2)", color: "var(--clr-text-2)", fontSize: "0.8125rem" }}>
+          {error}
+        </div>
+      )}
     </div>
   );
 }
@@ -2335,10 +2753,6 @@ export default function Home() {
   const [domainKeywords, setDomainKeywords] = useState<string[]>([]);
   const [resultCached, setResultCached] = useState<boolean | null>(null);
 
-  // Trend-feed: single API response holds everything
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [trendFeedData, setTrendFeedData] = useState<any>(null);
-
   const [scanStep, setScanStep] = useState(-1); // -1=hidden 0-3=active step 4=all done
   const [stackCheckItems, setStackCheckItems] = useState<{ name: string; done: boolean }[]>([]);
 
@@ -2432,7 +2846,7 @@ export default function Home() {
     setYtLoading(false);
     setYtFetched(false);
     setDomainKeywords([]);
-    setTrendFeedData(null);
+
 
     setSelectedTool(toolId);
     setTimeout(() => {
@@ -2644,31 +3058,15 @@ export default function Home() {
     setYtLoading(false);
     setYtFetched(false);
     setDomainKeywords([]);
-    setTrendFeedData(null);
+
 
     // Clear any existing scan timers
     scanTimersRef.current.forEach(clearTimeout);
 
-    // ── Trend Feed: single fetch, single render (no scan overlay) ──
-    if (selectedTool === "trend-feed") {
-      setHasResults(true);
-      try {
-        const res = await fetch(`/api/trend-feed?q=${encodeURIComponent(idea.trim())}`);
-        if (!res.ok) {
-          const d = await res.json();
-          throw new Error(d.error || "Something went wrong");
-        }
-        const data = await res.json();
-        setTrendFeedData(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
-      }
-      return;
-    }
+    // Trend feed is handled by TrendFeedView component — skip here
+    if (selectedTool === "trend-feed") return;
 
-    // Start scan animation for non-trend-feed tools
+    // Start scan animation
     setScanStep(0);
 
     // ── Other tools: existing flow ──
@@ -2787,7 +3185,7 @@ export default function Home() {
     setYtLoading(false);
     setYtFetched(false);
     setDomainKeywords([]);
-    setTrendFeedData(null);
+
   };
 
   const fullReset = () => {
@@ -2811,7 +3209,7 @@ export default function Home() {
     setYtLoading(false);
     setYtFetched(false);
     setDomainKeywords([]);
-    setTrendFeedData(null);
+
   };
 
   const allSections = streamedContent ? parseSections(streamedContent, loading) : [];
@@ -2822,22 +3220,7 @@ export default function Home() {
   const scoreData = scoreSection ? parseScore(scoreSection.body) : null;
   const currentTool = TOOLS.find((t) => t.id === selectedTool);
 
-  // ── Trend-feed: derive all display data from single API response ──
-  const tfAnalysis = trendFeedData?.analysis;
-  const tfRaw = trendFeedData?.rawData;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tfYt: any[] = tfRaw?.youtube ?? [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tfHn: any[] = tfRaw?.hn ?? [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tfGh: any[] = tfRaw?.github ?? [];
 
-  const tfYtPicks: number[] = tfAnalysis?.youtube?.picks ?? [];
-  const pickedTfYt = tfYtPicks.length > 0 ? tfYtPicks.map((i: number) => tfYt[i]).filter(Boolean) : tfYt.slice(0, 3);
-  const tfHnPicks: number[] = tfAnalysis?.hn?.picks ?? [];
-  const pickedTfHn = tfHnPicks.length > 0 ? tfHnPicks.map((i: number) => tfHn[i]).filter(Boolean) : tfHn.slice(0, 3);
-  const tfGhPicks: number[] = tfAnalysis?.github?.picks ?? [];
-  const pickedTfGh = tfGhPicks.length > 0 ? tfGhPicks.map((i: number) => tfGh[i]).filter(Boolean) : tfGh.slice(0, 3);
 
   return (
     <>
@@ -2893,7 +3276,7 @@ export default function Home() {
 
             {/* Right: Actions */}
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              {hasResults && currentTool && (
+              {(hasResults || selectedTool === "trend-feed") && currentTool && (
                 <button
                   onClick={backToTools}
                   style={{
@@ -2965,13 +3348,6 @@ export default function Home() {
           {/* ── Scanning overlay ── */}
           {scanStep >= 0 ? (() => {
             const SCAN_STEPS_MAP: Record<string, { label: string; icon: React.ReactNode }[]> = {
-              "trend-feed": [
-                { label: "Fetching Google Trends", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> },
-                { label: "Scanning GitHub",        icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> },
-                { label: "Scanning Hacker News",   icon: <svg width="15" height="15" viewBox="0 0 18 18" fill="currentColor"><path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/></svg> },
-                { label: "Searching YouTube",      icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 00.5 6.19 31.6 31.6 0 000 12a31.6 31.6 0 00.5 5.81 3.02 3.02 0 002.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 002.12-2.14A31.6 31.6 0 0024 12a31.6 31.6 0 00-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg> },
-                { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
-              ],
               "gap-analysis": [
                 { label: "Searching App Store",    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> },
                 { label: "Searching Google Play",  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.04c.29.12.62.18.97.18.49 0 .97-.14 1.42-.42l.02-.01 1.73-1.01L17.63 22c1.07 0 2.01-.56 2.56-1.43l-9.6-5.55-7.4 8.02zm-.63-1.73l7.22-7.83L2.35 8.7c-.22.44-.35.94-.35 1.48V19.82c0 .6.18 1.15.55 1.49zm17.8-3.38c.59-.36 1.03-.94 1.2-1.63l.01-.04.04-.18c.06-.3.1-.63.1-.97v-.52l-.01-.03c-.05-.63-.32-1.18-.72-1.59L17.7 11.3l-2.87 3.12 5.52 3.51zm-.3-10.2L7.36 1.37 4.57 2.99 14.83 11.3l5.22-3.57z"/></svg> },
@@ -2985,7 +3361,7 @@ export default function Home() {
                 { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
               ],
             };
-            const SCAN_STEPS = SCAN_STEPS_MAP[selectedTool ?? "trend-feed"] ?? SCAN_STEPS_MAP["trend-feed"];
+            const SCAN_STEPS = SCAN_STEPS_MAP[selectedTool ?? "gap-analysis"] ?? SCAN_STEPS_MAP["gap-analysis"];
             return (
               <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem 0" }}>
                 <div style={{
@@ -3129,7 +3505,7 @@ export default function Home() {
           })() : (
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
               {/* ── Hero ── */}
-              {!hasResults && (
+              {!hasResults && selectedTool !== "trend-feed" && (
               <div style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
                 justifyContent: "center", textAlign: "center", maxWidth: 720, margin: "0 auto",
@@ -3174,8 +3550,13 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* ── Input section (appears on tool selection) ── */}
-              {selectedTool && currentTool && (
+              {/* ── Trend Feed (self-contained component) ── */}
+              {selectedTool === "trend-feed" && (
+                <TrendFeedView onBack={backToTools} />
+              )}
+
+              {/* ── Input section (appears on tool selection, not for trend-feed) ── */}
+              {selectedTool && currentTool && selectedTool !== "trend-feed" && (
                 <div ref={inputSectionRef}>
                   <InputSection
                     tool={currentTool}
@@ -3281,92 +3662,6 @@ export default function Home() {
                 )}
               </div>
 
-              {/* ── Trend Feed: loading skeleton OR real results ── */}
-              {selectedTool === "trend-feed" && loading && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  {/* Score card skeleton */}
-                  <div style={{
-                    background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
-                    borderRadius: 12, padding: "1.5rem 1.75rem",
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "1.75rem" }}>
-                      <div className="shimmer" style={{ width: 92, height: 92, borderRadius: "50%", flexShrink: 0 }} />
-                      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
-                        <div className="shimmer" style={{ height: 14, width: "40%", borderRadius: 6 }} />
-                        <div className="shimmer" style={{ height: 12, width: "90%", borderRadius: 6 }} />
-                        <div className="shimmer" style={{ height: 12, width: "70%", borderRadius: 6 }} />
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", gap: 6, marginTop: "1.25rem" }}>
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <div key={n} className="shimmer" style={{ flex: 1, height: 6, borderRadius: 999 }} />
-                      ))}
-                    </div>
-                  </div>
-                  {/* Chart skeleton */}
-                  <div style={{
-                    background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
-                    borderRadius: 12, padding: "1.25rem", maxWidth: 480,
-                  }}>
-                    <div className="shimmer" style={{ height: 14, width: "35%", borderRadius: 6, marginBottom: 12 }} />
-                    <div className="shimmer" style={{ height: 100, borderRadius: 8 }} />
-                  </div>
-                  {/* Verdict skeleton */}
-                  <div style={{
-                    background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
-                    borderRadius: 12, padding: "1.25rem 1.5rem",
-                  }}>
-                    <div className="shimmer" style={{ height: 16, width: "50%", borderRadius: 6, marginBottom: 10 }} />
-                    <div className="shimmer" style={{ height: 12, width: "95%", borderRadius: 6, marginBottom: 6 }} />
-                    <div className="shimmer" style={{ height: 12, width: "80%", borderRadius: 6 }} />
-                  </div>
-                  {/* Source insight skeletons */}
-                  {[1, 2, 3].map((n) => (
-                    <div key={n} style={{
-                      background: "rgba(var(--clr-text-rgb),0.03)", border: "1px solid var(--clr-border-2)",
-                      borderRadius: 10, padding: "1rem 1.25rem",
-                    }}>
-                      <div className="shimmer" style={{ height: 12, width: `${55 + n * 10}%`, borderRadius: 6 }} />
-                    </div>
-                  ))}
-                  {/* Section card skeletons (HN, YouTube, GitHub) */}
-                  {[1, 2, 3].map((n) => (
-                    <div key={`sec-${n}`} style={{
-                      background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
-                      borderRadius: 12, padding: "1.5rem",
-                    }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-                        <div className="shimmer" style={{ width: 28, height: 28, borderRadius: 8 }} />
-                        <div className="shimmer" style={{ height: 16, width: "30%", borderRadius: 6 }} />
-                      </div>
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                        {[1, 2, 3].map((m) => (
-                          <div key={m} className="shimmer" style={{ height: 70, borderRadius: 10 }} />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                  {/* Loading indicator */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--clr-text-6)", fontSize: "0.8125rem", paddingTop: 4 }}>
-                    <div style={{ width: 16, height: 16, border: "2px solid var(--clr-accent)", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-                    Analyzing trends…
-                  </div>
-                </div>
-              )}
-
-              {/* ── Score card (Trend Feed) — from trendFeedData.analysis ── */}
-              {selectedTool === "trend-feed" && !loading && tfAnalysis && (
-                <SpaceScoreCard
-                  score={tfAnalysis.score ?? 0}
-                  summary={tfAnalysis.summary ?? ""}
-                />
-              )}
-
-              {/* ── Google Trends chart (Trend Feed) — from trendFeedData.rawData.trends ── */}
-              {selectedTool === "trend-feed" && !loading && tfRaw?.trends && (
-                <GoogleTrendsChart data={tfRaw.trends} />
-              )}
-
               {/* Loading skeleton — only while nothing has streamed yet */}
               {loading && (selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && <GapAnalysisSkeleton />}
               {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
@@ -3415,65 +3710,7 @@ export default function Home() {
                     </div>
                   );
                 })()
-              ) : selectedTool === "trend-feed" && !loading ? (
-                tfAnalysis ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    {/* Verdict card */}
-                    <div style={{
-                      padding: "1.25rem 1.5rem", borderRadius: 12,
-                      background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
-                    }}>
-                      <div style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.02em" }}>
-                        {tfAnalysis.verdict}
-                      </div>
-                    </div>
-                    {/* Google Trends insight */}
-                    {tfAnalysis.googleTrendsInsight && (
-                      <div style={{
-                        padding: "1rem 1.25rem", borderRadius: 10,
-                        background: "rgba(var(--clr-text-rgb),0.03)", border: "1px solid var(--clr-border-2)",
-                        fontSize: "0.85rem", color: "var(--clr-text-3)", lineHeight: 1.6,
-                      }}>
-                        <span style={{ fontWeight: 700, color: "var(--clr-text-2)", marginRight: 6 }}>Google Trends:</span>
-                        {tfAnalysis.googleTrendsInsight}
-                      </div>
-                    )}
-                    {/* YouTube insight */}
-                    {tfAnalysis.youtube?.insight && (
-                      <div style={{
-                        padding: "1rem 1.25rem", borderRadius: 10,
-                        background: "rgba(var(--clr-text-rgb),0.03)", border: "1px solid var(--clr-border-2)",
-                        fontSize: "0.85rem", color: "var(--clr-text-3)", lineHeight: 1.6,
-                      }}>
-                        <span style={{ fontWeight: 700, color: "var(--clr-text-2)", marginRight: 6 }}>YouTube:</span>
-                        {tfAnalysis.youtube.insight}
-                      </div>
-                    )}
-                    {/* HN insight */}
-                    {tfAnalysis.hn?.insight && (
-                      <div style={{
-                        padding: "1rem 1.25rem", borderRadius: 10,
-                        background: "rgba(var(--clr-text-rgb),0.03)", border: "1px solid var(--clr-border-2)",
-                        fontSize: "0.85rem", color: "var(--clr-text-3)", lineHeight: 1.6,
-                      }}>
-                        <span style={{ fontWeight: 700, color: "var(--clr-text-2)", marginRight: 6 }}>Hacker News:</span>
-                        {tfAnalysis.hn.insight}
-                      </div>
-                    )}
-                    {/* GitHub insight */}
-                    {tfAnalysis.github?.insight && (
-                      <div style={{
-                        padding: "1rem 1.25rem", borderRadius: 10,
-                        background: "rgba(var(--clr-text-rgb),0.03)", border: "1px solid var(--clr-border-2)",
-                        fontSize: "0.85rem", color: "var(--clr-text-3)", lineHeight: 1.6,
-                      }}>
-                        <span style={{ fontWeight: 700, color: "var(--clr-text-2)", marginRight: 6 }}>GitHub:</span>
-                        {tfAnalysis.github.insight}
-                      </div>
-                    )}
-                  </div>
-                ) : null
-              ) : selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" ? (
+              ) : selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" ? (
                 /* All other tools: markdown section cards */
                 sections.length > 0 ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -3660,86 +3897,9 @@ export default function Home() {
                 );
               })()}
 
-              {/* ── Hacker News Buzz (Trend Feed only) ── */}
-              {selectedTool === "trend-feed" && !loading && trendFeedData && (
-                <div style={{
-                  marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
-                  background: "var(--clr-surface)",
-                  border: "1px solid var(--clr-border-2)",
-                  padding: "1.5rem",
-                }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-                    <span style={{ fontSize: "1.25rem" }}>🟧</span>
-                    <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
-                      Hacker News Buzz
-                    </h3>
-                    <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-                      last 30 days · by score
-                    </span>
-                  </div>
 
-                  {pickedTfHn.length === 0 ? (
-                    <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
-                      No relevant Hacker News discussions found for this niche
-                    </div>
-                  ) : (
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {pickedTfHn.map((post: any) => {
-                        const hnUrl = `https://news.ycombinator.com/item?id=${post.objectID}`;
-                        return (
-                          <a
-                            key={post.objectID}
-                            href={post.url || hnUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                              display: "flex", flexDirection: "column", gap: "0.5rem",
-                              padding: "1rem 1.125rem", borderRadius: 12,
-                              background: "var(--clr-surface)",
-                              border: "1px solid var(--clr-border-2)",
-                              textDecoration: "none", transition: "transform 0.15s, border-color 0.15s, box-shadow 0.15s",
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.transform = "translateY(-2px)";
-                              e.currentTarget.style.borderColor = "rgba(var(--clr-text-rgb),0.4)";
-                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(var(--clr-text-rgb),0.08)";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.transform = "none";
-                              e.currentTarget.style.borderColor = "var(--clr-border-2)";
-                              e.currentTarget.style.boxShadow = "none";
-                            }}
-                          >
-                            <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                              {post.title}
-                            </div>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
-                              <span style={{
-                                display: "inline-flex", alignItems: "center", gap: 4,
-                                padding: "0.175rem 0.5rem", borderRadius: 999,
-                                background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
-                                fontSize: "0.7rem", fontWeight: 800, color: "var(--clr-text-2)",
-                              }}>
-                                ▲ {post.points}
-                              </span>
-                              <span style={{ fontSize: "0.68rem", color: "var(--clr-text-6)", fontWeight: 500 }}>
-                                {post.comments} comments
-                              </span>
-                              <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", marginLeft: "auto" }}>
-                                {post.daysAgo === 0 ? "today" : `${post.daysAgo}d ago`}
-                              </span>
-                            </div>
-                          </a>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
-
-
-              {/* ── YouTube Buzz (Trend Feed + Gap Analysis) ── */}
-              {((selectedTool === "trend-feed" && !loading && trendFeedData) || selectedTool === "gap-analysis") && (
+              {/* ── YouTube (Gap Analysis only) ── */}
+              {selectedTool === "gap-analysis" && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
                   background: "var(--clr-surface)",
@@ -3749,26 +3909,26 @@ export default function Home() {
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
                     <span style={{ fontSize: "1.25rem" }}>📺</span>
                     <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
-                      {selectedTool === "gap-analysis" ? "What YouTube Says" : "YouTube Buzz"}
+                      What YouTube Says
                     </h3>
                     <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-                      {selectedTool === "gap-analysis" ? "last 6 months · reviews" : "last 90 days · by views"}
+                      last 6 months · reviews
                     </span>
                   </div>
 
-                  {(selectedTool !== "trend-feed" && (ytLoading || !ytFetched)) ? (
+                  {(ytLoading || !ytFetched) ? (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
                       {[1, 2, 3].map((n) => (
                         <div key={n} className="shimmer" style={{ height: 80, borderRadius: 10 }} />
                       ))}
                     </div>
-                  ) : ((selectedTool === "trend-feed" ? pickedTfYt : ytVideos).length === 0) ? (
+                  ) : (ytVideos.length === 0) ? (
                     <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
                       No relevant YouTube videos found for this niche
                     </div>
                   ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {(selectedTool === "trend-feed" ? pickedTfYt : ytVideos).map((video: any) => {
+                      {ytVideos.map((video: any) => {
                         const daysAgo = Math.floor((Date.now() - new Date(video.publishedAt).getTime()) / 86400000);
                         const vc = video.viewCount ?? 0;
                         const fmtViews = vc >= 1_000_000 ? `${(vc / 1_000_000).toFixed(1)}M` : vc >= 1_000 ? `${(vc / 1_000).toFixed(0)}K` : String(vc);
@@ -3847,101 +4007,6 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ── GitHub trending repos (Trend Feed only) ── */}
-              {selectedTool === "trend-feed" && !loading && trendFeedData && (
-                <div style={{
-                  marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
-                  background: "var(--clr-surface)",
-                  border: "1px solid var(--clr-border-2)",
-                  padding: "1.5rem",
-                }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-                    <span style={{ fontSize: "1.25rem" }}>🐙</span>
-                    <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
-                      What developers are building right now
-                    </h3>
-                    <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-                      GitHub · last 7 days · by stars
-                    </span>
-                  </div>
-
-                  {pickedTfGh.length === 0 ? (
-                    <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
-                      No relevant GitHub repositories found for this niche
-                    </div>
-                  ) : (
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {pickedTfGh.map((repo: any) => (
-                          <a
-                            key={repo.name}
-                            href={repo.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                              display: "flex", flexDirection: "column", gap: "0.5rem",
-                              padding: "1rem 1.125rem", borderRadius: 12,
-                              background: "var(--clr-surface)",
-                              border: "1px solid var(--clr-border-2)",
-                              textDecoration: "none", transition: "transform 0.15s, border-color 0.15s, box-shadow 0.15s",
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.borderColor = "rgba(var(--clr-text-rgb),0.4)";
-                              e.currentTarget.style.transform = "translateY(-2px)";
-                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(var(--clr-text-rgb),0.08)";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.borderColor = "var(--clr-border-2)";
-                              e.currentTarget.style.transform = "none";
-                              e.currentTarget.style.boxShadow = "none";
-                            }}
-                          >
-                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-                              <span style={{ fontSize: "0.875rem", fontWeight: 750, color: "var(--clr-text-2)", letterSpacing: "-0.01em", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                {repo.name}
-                              </span>
-                              {repo.language && (
-                                <span style={{
-                                  fontSize: "0.6rem", fontWeight: 700, padding: "0.15rem 0.5rem",
-                                  borderRadius: 999, background: "rgba(var(--clr-text-rgb),0.1)",
-                                  border: "1px solid rgba(var(--clr-text-rgb),0.25)",
-                                  color: "var(--clr-text-2)", letterSpacing: "0.03em", flexShrink: 0,
-                                }}>
-                                  {repo.language}
-                                </span>
-                              )}
-                            </div>
-                            {repo.description && (
-                              <p style={{
-                                fontSize: "0.8rem", color: "var(--clr-text-4)", lineHeight: 1.5,
-                                margin: 0, flex: 1,
-                                overflow: "hidden", display: "-webkit-box",
-                                WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
-                              }}>
-                                {repo.description}
-                              </p>
-                            )}
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
-                              <span style={{
-                                display: "inline-flex", alignItems: "center", gap: 4,
-                                padding: "0.175rem 0.5rem", borderRadius: 999,
-                                background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
-                                fontSize: "0.7rem", fontWeight: 800, color: "var(--clr-text-2)",
-                              }}>
-                                <svg width="10" height="10" viewBox="0 0 13 13" fill="none">
-                                  <path d="M6.5 1l1.545 3.13 3.455.502-2.5 2.436.59 3.44L6.5 8.885l-3.09 1.623.59-3.44L1.5 4.632l3.455-.502L6.5 1z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                                </svg>
-                                {(repo.stars ?? 0).toLocaleString()}
-                              </span>
-                              <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", fontWeight: 500, marginLeft: "auto" }}>
-                                {repo.daysAgo === 0 ? "today" : `${repo.daysAgo}d ago`}
-                              </span>
-                            </div>
-                          </a>
-                        ))}
-                    </div>
-                  )}
-                </div>
-              )}
 
               {/* ── Footer ── */}
               {!loading && streamedContent && (
