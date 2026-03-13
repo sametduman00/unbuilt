@@ -92,7 +92,7 @@ const TOOLS: ToolConfig[] = [
     tagline: "Real signals, no noise",
     description: "What's actually rising in a market right now. Emerging niches, dying trends, and contrarian bets — powered by AI, not Twitter hype.",
     accentColor: "var(--clr-accent)",
-    accentRgb: "229,229,229",
+    accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/trends",
     inputLabel: "What space or industry are you curious about?",
     placeholder: 'e.g. "B2B SaaS tools", "consumer health apps", or "creator economy"',
@@ -109,7 +109,7 @@ const TOOLS: ToolConfig[] = [
     tagline: "Find the gaps before you build",
     description: "Spot what competitors are missing. Get a brutally honest read on where you actually have a shot — before you spend months building the wrong thing.",
     accentColor: "var(--clr-accent)",
-    accentRgb: "229,229,229",
+    accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/analyze",
     inputLabel: "Describe your niche or app idea",
     placeholder: 'e.g. "Project management for freelancers" or "AI writing tool for marketers"',
@@ -126,7 +126,7 @@ const TOOLS: ToolConfig[] = [
     tagline: "Know your rivals inside out",
     description: "Deep competitive intelligence on who you're really up against — their strategies, exploitable weaknesses, and exactly how to outmaneuver them.",
     accentColor: "var(--clr-accent)",
-    accentRgb: "229,229,229",
+    accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/radar",
     inputLabel: "Describe what you're building and your main competition",
     placeholder: 'e.g. "I\'m building a Notion alternative for agency teams, competing with Asana and Monday.com"',
@@ -141,7 +141,7 @@ const TOOLS: ToolConfig[] = [
     tagline: "Build fast, cheap, and right",
     description: "Tell us what you're building, your budget, and how technical you are. Get the exact tools, real monthly costs, and a step-by-step build order.",
     accentColor: "var(--clr-accent)",
-    accentRgb: "229,229,229",
+    accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/stack",
     inputLabel: "Describe what you want to build",
     placeholder: 'e.g. "A marketplace for local freelancers with payments and messaging"',
@@ -239,6 +239,7 @@ function parseScore(body: string): { score: number; label: string; summary: stri
 // ── Section Result Card ────────────────────────────────────────
 function SectionCard({ section, showCursor }: { section: Section; showCursor: boolean }) {
   const meta = SECTION_META[section.emoji] ?? { bg: "rgba(var(--clr-text-rgb),0.1)", color: "var(--clr-text-2)" };
+  if (!section.body.trim() && !showCursor) return null;
   return (
     <div className="section-card">
       <div className="section-card-header">
@@ -616,6 +617,13 @@ function ThreatDots({ level }: { level: number }) {
 }
 
 function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
+  // Filter out empty items
+  data = {
+    ...data,
+    competitors: data.competitors.filter(c => c.name?.trim()),
+    painPoints: data.painPoints.filter(p => p.quote?.trim()),
+    marketGaps: data.marketGaps.filter(g => g.title?.trim() || g.description?.trim()),
+  };
   const ms = Math.max(0, Math.min(100, data.marketScore));
   const msColor = "var(--clr-text)";
   const msBg = "rgba(var(--clr-text-rgb),0.04)";
@@ -1480,14 +1488,14 @@ function InputSection({
                       style={{
                         display: "flex", alignItems: "center", justifyContent: "space-between",
                         padding: "0.5rem 0.75rem", borderRadius: 9,
-                        background: budget === opt.id ? `rgba(${tool.accentRgb},0.1)` : "transparent",
-                        border: budget === opt.id ? `1px solid rgba(${tool.accentRgb},0.4)` : "1px solid var(--clr-border)",
+                        background: budget === opt.id ? "rgba(var(--clr-text-rgb),0.08)" : "transparent",
+                        border: budget === opt.id ? "1px solid rgba(var(--clr-text-rgb),0.3)" : "1px solid var(--clr-border)",
                         cursor: "pointer", textAlign: "left", fontFamily: "inherit",
                         transition: "all 0.12s",
                       }}
                     >
-                      <span style={{ fontSize: "0.8rem", fontWeight: 600, color: budget === opt.id ? tool.accentColor : "var(--clr-text-3)" }}>{opt.label}</span>
-                      <span style={{ fontSize: "0.7rem", color: budget === opt.id ? `rgba(${tool.accentRgb},0.7)` : "var(--clr-text-6)" }}>{opt.sub}</span>
+                      <span style={{ fontSize: "0.8rem", fontWeight: 600, color: budget === opt.id ? "var(--clr-text)" : "var(--clr-text-3)" }}>{opt.label}</span>
+                      <span style={{ fontSize: "0.7rem", color: budget === opt.id ? "var(--clr-text-3)" : "var(--clr-text-6)" }}>{opt.sub}</span>
                     </button>
                   ))}
                 </div>
@@ -1510,14 +1518,14 @@ function InputSection({
                       style={{
                         display: "flex", alignItems: "center", justifyContent: "space-between",
                         padding: "0.5rem 0.75rem", borderRadius: 9,
-                        background: techLevel === opt.id ? `rgba(${tool.accentRgb},0.1)` : "transparent",
-                        border: techLevel === opt.id ? `1px solid rgba(${tool.accentRgb},0.4)` : "1px solid var(--clr-border)",
+                        background: techLevel === opt.id ? "rgba(var(--clr-text-rgb),0.08)" : "transparent",
+                        border: techLevel === opt.id ? "1px solid rgba(var(--clr-text-rgb),0.3)" : "1px solid var(--clr-border)",
                         cursor: "pointer", textAlign: "left", fontFamily: "inherit",
                         transition: "all 0.12s",
                       }}
                     >
-                      <span style={{ fontSize: "0.8rem", fontWeight: 600, color: techLevel === opt.id ? tool.accentColor : "var(--clr-text-3)" }}>{opt.label}</span>
-                      <span style={{ fontSize: "0.7rem", color: techLevel === opt.id ? `rgba(${tool.accentRgb},0.7)` : "var(--clr-text-6)" }}>{opt.sub}</span>
+                      <span style={{ fontSize: "0.8rem", fontWeight: 600, color: techLevel === opt.id ? "var(--clr-text)" : "var(--clr-text-3)" }}>{opt.label}</span>
+                      <span style={{ fontSize: "0.7rem", color: techLevel === opt.id ? "var(--clr-text-3)" : "var(--clr-text-6)" }}>{opt.sub}</span>
                     </button>
                   ))}
                 </div>
@@ -1773,6 +1781,16 @@ const PHASE_COLORS = ["var(--clr-text)", "var(--clr-text-2)", "var(--clr-text-3)
 const PHASE_BGS = ["rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)"];
 
 function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
+  // Filter out empty phases/items
+  data = {
+    ...data,
+    phases: data.phases.filter(p => p.name?.trim() && p.tools.length > 0),
+    mistakes: data.mistakes.filter(m => m.title?.trim() || m.description?.trim()),
+    scalability: data.scalability.filter(s => s.trigger?.trim()),
+    upgrades: data.upgrades.filter(u => u.tool?.trim()),
+    buildOrder: data.buildOrder.filter(b => b.title?.trim() && b.steps.length > 0),
+  };
+  if (!data.headline && data.phases.length === 0) return null;
   const isPhaseZero = (name: string) => /phase\s*0/i.test(name) || /validate/i.test(name);
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -2224,6 +2242,31 @@ export default function Home() {
   };
 
   const handleSelectTool = (toolId: ToolId) => {
+    // Reset all result state when switching tools
+    scanTimersRef.current.forEach(clearTimeout);
+    setScanStep(-1);
+    setHasResults(false);
+    setStreamedContent("");
+    setError("");
+    setLoading(false);
+    setResultCached(null);
+    setGithubRepos([]);
+    setGithubLoading(false);
+    setGithubFetched(false);
+    setHnPosts([]);
+    setHnLoading(false);
+    setHnFetched(false);
+    setItunesApps([]);
+    setItunesTotal(0);
+    setItunesTotalRatings(0);
+    setItunesLoading(false);
+    setItunesFetched(false);
+    setGplayApps([]);
+    setGplayTotal(0);
+    setGplayLoading(false);
+    setGplayFetched(false);
+    setDomainKeywords([]);
+
     setSelectedTool(toolId);
     setTimeout(() => {
       inputSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -2743,7 +2786,7 @@ export default function Home() {
                         <div key={i} style={{
                           display: "flex", alignItems: "center", gap: "0.875rem",
                           padding: "0.625rem 0.75rem", borderRadius: 12,
-                          background: isActive ? `rgba(${currentTool?.accentRgb ?? "229,229,229"},0.05)` : "transparent",
+                          background: isActive ? `rgba(${currentTool?.accentRgb ?? "var(--clr-accent-rgb)"},0.05)` : "transparent",
                           transition: "background 0.3s",
                           animation: i <= scanStep ? `stepIn 0.3s ease ${i === scanStep ? 0 : 0}ms both` : "none",
                         }}>
@@ -2761,7 +2804,7 @@ export default function Home() {
                                 </svg>
                               </div>
                             ) : isActive ? (
-                              <div style={{ width: 22, height: 22, borderRadius: "50%", border: `1.5px solid rgba(${currentTool?.accentRgb ?? "229,229,229"},0.3)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                              <div style={{ width: 22, height: 22, borderRadius: "50%", border: `1.5px solid rgba(${currentTool?.accentRgb ?? "var(--clr-accent-rgb)"},0.3)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                                 <div style={{ width: 8, height: 8, borderRadius: "50%", background: currentTool?.accentColor ?? "var(--clr-accent)", animation: "pulse 1s ease-in-out infinite" }} />
                               </div>
                             ) : (
@@ -2807,7 +2850,7 @@ export default function Home() {
                 width: "100%", padding: "2rem 0 1.5rem", position: "relative",
               }}>
                 <h1 style={{
-                  fontSize: "clamp(1.75rem, 3.2vw, 2.75rem)", fontWeight: 700,
+                  fontSize: "clamp(2.1rem, 3.84vw, 3.3rem)", fontWeight: 700,
                   letterSpacing: "-0.03em", lineHeight: 1.15,
                   color: "var(--clr-text)", marginBottom: "0.75rem",
                   whiteSpace: "nowrap",
