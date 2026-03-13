@@ -195,14 +195,12 @@ ${JSON.stringify(hn.map((h: any, i: number) => ({ index: i, ...h })), null, 2)}
 ## GitHub Repositories (created in last 7 days)
 ${JSON.stringify(github.map((r: any, i: number) => ({ index: i, ...r })), null, 2)}
 
-IMPORTANT — Score calibration rules:
-- Score measures OPPORTUNITY for a new entrant, NOT raw activity level.
-- High activity in a SATURATED space = LOW score (crowded, hard to compete).
-- If GitHub has 8+ new repos this week AND YouTube has 10+ videos → score MUST be ≤70. This signals saturation.
-- Spaces like "calorie app", "todo app", "habit tracker" are crowded by definition → score should be 20-45.
-- Score 80+ is reserved for genuinely emerging niches with low competition and strong demand signals.
-- Score 90+ requires a clear greenfield opportunity with almost no existing solutions.
-- If Google Trends score is 0 or below 10 AND YouTube has fewer than 3 videos AND GitHub has 0 repos, score must be between 15-35 (Dead Zone or Crowded). Zero data does NOT mean explosive opportunity — it means either too early or no demand.
+STRICT SCORE RULES - YOU MUST FOLLOW THESE:
+- If Google Trends currentScore is 0 AND YouTube has 0-1 videos AND GitHub has 0 repos: score MUST be 15-30, no exceptions
+- If Google Trends currentScore is under 15 AND total YouTube views under 10000: score MUST be under 40
+- Score 80+ is ONLY allowed when Google Trends is above 60 AND YouTube has 5+ videos with 100K+ total views
+- Score 85+ is ONLY allowed for genuinely explosive spaces with massive data signals
+- Do not interpret missing data as opportunity — missing data means unknown or too early
 
 IMPORTANT — Analysis depth:
 - Even if external data is sparse or missing, you MUST produce full analysis for ALL sections (whatsRising, whatsDying, patternToBetOn, underexploredNiches, bestOpportunity) using your own training knowledge about the space.
