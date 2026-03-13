@@ -208,11 +208,11 @@ Return ONLY valid JSON (no markdown, no code fences) in this exact format:
   "verdict": "<max 12 words, direct assessment>",
   "summary": "<3-4 sentences combining all signals with specific numbers>",
   "googleTrendsInsight": "<1-2 sentences interpreting the Google Trends data>",
-  "whatsRising": ["<bullet 1: **Name** — why it's rising>", "<bullet 2>", "<bullet 3>", "<bullet 4>"],
-  "whatsDying": ["<bullet 1: **Name** — why it's dying>", "<bullet 2>", "<bullet 3>"],
-  "patternToBetOn": "<2-3 sentences: the emerging structural shift that will define this market in 12-18 months. Be specific and contrarian.>",
-  "contrarianTake": "<2-3 sentences: the thing most founders in this space believe that is probably wrong. What assumption will look naive in 2 years?>",
-  "underexploredNiches": ["<niche 1: Name the customer and their unsolved problem>", "<niche 2>", "<niche 3>"],
+  "whatsRising": ["**Example Tool** — gaining traction because X (+200% growth)", "second rising trend", "third rising trend", "fourth rising trend"],
+  "whatsDying": ["**Old Approach** — losing steam because X", "second declining thing", "third declining thing"],
+  "patternToBetOn": "2-3 sentences: the emerging structural shift that will define this market in 12-18 months. Be specific and contrarian.",
+  "contrarianTake": "2-3 sentences: the thing most founders in this space believe that is probably wrong. What assumption will look naive in 2 years?",
+  "underexploredNiches": ["Niche 1: name the customer and their unsolved problem", "Niche 2: another underserved segment", "Niche 3: another gap"],
   "bestOpportunity": "<2-3 sentences: who to build for, what to build, and why now. Be specific.>",
   "youtube": {
     "insight": "<1-2 sentences about YouTube signal>",
@@ -241,7 +241,11 @@ Return ONLY valid JSON (no markdown, no code fences) in this exact format:
 
   // Try to parse JSON — strip code fences if Claude adds them despite instructions
   const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-  return JSON.parse(cleaned);
+  const parsed = JSON.parse(cleaned);
+  console.log("CLAUDE RESPONSE KEYS:", Object.keys(parsed));
+  console.log("whatsRising:", JSON.stringify(parsed.whatsRising)?.slice(0, 200));
+  console.log("whatsDying:", JSON.stringify(parsed.whatsDying)?.slice(0, 200));
+  return parsed;
 }
 
 /* ── GET handler ──────────────────────────────────────────────── */
