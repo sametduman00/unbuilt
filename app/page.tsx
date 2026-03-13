@@ -2198,11 +2198,19 @@ export default function Home() {
   const [resultCached, setResultCached] = useState<boolean | null>(null);
 
   const [scanStep, setScanStep] = useState(-1); // -1=hidden 0-3=active step 4=all done
+  const [stackCheckItems, setStackCheckItems] = useState<{ name: string; done: boolean }[]>([]);
 
   const inputSectionRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const scanTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const stackCheckTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  const STACK_CHECK_TOOLS = [
+    "Vercel", "Supabase", "Stripe", "Clerk", "Resend", "Anthropic API",
+    "OpenAI", "Cloudflare", "PlanetScale", "Railway", "Fly.io",
+    "Lemon Squeezy", "PostHog", "Sentry", "Neon", "Upstash",
+  ];
 
   // Number of scan steps for the current tool (used for timer logic)
   const scanStepCounts: Record<string, number> = { "trend-feed": 3, "gap-analysis": 3, "competitor-radar": 1, "stack-advisor": 1 };
@@ -2219,6 +2227,17 @@ export default function Home() {
       return () => clearTimeout(t);
     }
   }, [scanStep, loading, maxScanStep]);
+
+  // Handle stack-advisor checklist completion when API response arrives
+  useEffect(() => {
+    if (selectedTool === "stack-advisor" && !loading && stackCheckItems.length > 0 && scanStep >= 0) {
+      if (stackCheckTimerRef.current) { clearInterval(stackCheckTimerRef.current); stackCheckTimerRef.current = null; }
+      // Mark all items as done
+      setStackCheckItems(prev => prev.map(item => ({ ...item, done: true })));
+      const t = setTimeout(() => { setHasResults(true); setScanStep(-1); setStackCheckItems([]); }, 750);
+      return () => clearTimeout(t);
+    }
+  }, [loading, selectedTool, stackCheckItems.length, scanStep]);
 
   useEffect(() => {
     if (hasResults) {
@@ -2244,6 +2263,8 @@ export default function Home() {
   const handleSelectTool = (toolId: ToolId) => {
     // Reset all result state when switching tools
     scanTimersRef.current.forEach(clearTimeout);
+    if (stackCheckTimerRef.current) { clearInterval(stackCheckTimerRef.current); stackCheckTimerRef.current = null; }
+    setStackCheckItems([]);
     setScanStep(-1);
     setHasResults(false);
     setStreamedContent("");
@@ -2455,10 +2476,31 @@ export default function Home() {
     // Start scan sequence — number of timed steps depends on the tool
     scanTimersRef.current.forEach(clearTimeout);
     setScanStep(0);
-    const steps = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3);
-    scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
-      setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 800)
-    );
+
+    // Stack advisor uses a dynamic checklist instead of fixed scan steps
+    if (selectedTool === "stack-advisor") {
+      if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
+      setStackCheckItems([{ name: STACK_CHECK_TOOLS[0], done: false }]);
+      let idx = 0;
+      stackCheckTimerRef.current = setInterval(() => {
+        idx++;
+        if (idx >= STACK_CHECK_TOOLS.length) {
+          // Loop back with different items or stop adding
+          if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
+          return;
+        }
+        setStackCheckItems(prev => {
+          // Mark previous item as done, add new one
+          const updated = prev.map((item, i) => i === prev.length - 1 ? { ...item, done: true } : item);
+          return [...updated, { name: STACK_CHECK_TOOLS[idx], done: false }];
+        });
+      }, 500);
+    } else {
+      const steps = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3);
+      scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
+        setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 800)
+      );
+    }
 
     // Expand domain terms via Claude Haiku, then chain API fetches with normalized query
     if (selectedTool === "trend-feed") {
@@ -2467,7 +2509,11 @@ export default function Home() {
         fetchGithubRepos(q);
       });
     } else if (selectedTool === "gap-analysis") {
-      // iTunes fetch deferred until Claude returns appStoreQuery
+      // Fire store searches first (in parallel) using normalized query
+      fetchSearchMeta(idea.trim(), (q) => {
+        fetchITunesApps(q);
+        fetchGplayApps(q);
+      });
     }
 
     const body: Record<string, string> = { idea };
@@ -2512,13 +2558,6 @@ export default function Home() {
           } catch { /* skip */ }
         }
       }
-      // For gap-analysis, use Claude's appStoreQuery for both store searches
-      if (selectedTool === "gap-analysis" && fullContent) {
-        const gapParsed = parseGapAnalysisJSON(fullContent);
-        const storeQuery = gapParsed?.appStoreQuery || idea.trim();
-        fetchITunesApps(storeQuery);
-        fetchGplayApps(storeQuery);
-      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -2528,6 +2567,8 @@ export default function Home() {
 
   const backToTools = () => {
     scanTimersRef.current.forEach(clearTimeout);
+    if (stackCheckTimerRef.current) { clearInterval(stackCheckTimerRef.current); stackCheckTimerRef.current = null; }
+    setStackCheckItems([]);
     setScanStep(-1);
     setHasResults(false);
     setStreamedContent("");
@@ -2736,9 +2777,9 @@ export default function Home() {
                 { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
               ],
               "gap-analysis": [
-                { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
                 { label: "Searching App Store",    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> },
                 { label: "Searching Google Play",  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.04c.29.12.62.18.97.18.49 0 .97-.14 1.42-.42l.02-.01 1.73-1.01L17.63 22c1.07 0 2.01-.56 2.56-1.43l-9.6-5.55-7.4 8.02zm-.63-1.73l7.22-7.83L2.35 8.7c-.22.44-.35.94-.35 1.48V19.82c0 .6.18 1.15.55 1.49zm17.8-3.38c.59-.36 1.03-.94 1.2-1.63l.01-.04.04-.18c.06-.3.1-.63.1-.97v-.52l-.01-.03c-.05-.63-.32-1.18-.72-1.59L17.7 11.3l-2.87 3.12 5.52 3.51zm-.3-10.2L7.36 1.37 4.57 2.99 14.83 11.3l5.22-3.57z"/></svg> },
+                { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
               ],
               "competitor-radar": [
                 { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
@@ -2769,7 +2810,7 @@ export default function Home() {
                       </div>
                     )}
                     <h2 style={{ fontSize: "1.125rem", fontWeight: 750, color: "var(--clr-text)", letterSpacing: "-0.025em", margin: "0 0 0.375rem" }}>
-                      Gathering intelligence…
+                      {selectedTool === "stack-advisor" ? "Evaluating tools…" : "Gathering intelligence…"}
                     </h2>
                     <p style={{ fontSize: "0.8rem", color: "var(--clr-text-5)", margin: 0, lineHeight: 1.5, maxWidth: 280, marginInline: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {idea}
@@ -2777,6 +2818,53 @@ export default function Home() {
                   </div>
 
                   {/* Steps */}
+                  {selectedTool === "stack-advisor" ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem", maxHeight: 320, overflowY: "auto" }}>
+                      {stackCheckItems.map((item, i) => {
+                        const isLast = i === stackCheckItems.length - 1;
+                        const isDone = item.done;
+                        return (
+                          <div key={item.name} style={{
+                            display: "flex", alignItems: "center", gap: "0.875rem",
+                            padding: "0.5rem 0.75rem", borderRadius: 12,
+                            background: !isDone ? `rgba(${currentTool?.accentRgb ?? "var(--clr-accent-rgb)"},0.05)` : "transparent",
+                            transition: "background 0.3s",
+                            animation: "stepIn 0.3s ease both",
+                          }}>
+                            <div style={{ width: 22, height: 22, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                              {isDone ? (
+                                <div style={{
+                                  width: 22, height: 22, borderRadius: "50%",
+                                  background: "rgba(34,197,94,0.15)", border: "1px solid rgba(34,197,94,0.35)",
+                                  display: "flex", alignItems: "center", justifyContent: "center",
+                                  animation: "checkPop 0.35s cubic-bezier(0.16,1,0.3,1)",
+                                }}>
+                                  <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+                                    <path d="M2 5.5l2.5 2.5 4.5-5" stroke="var(--clr-text-2)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                </div>
+                              ) : (
+                                <div style={{ width: 18, height: 18, border: "2px solid var(--clr-text-5)", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+                              )}
+                            </div>
+                            <span style={{
+                              fontSize: "0.875rem", fontWeight: isDone ? 500 : 600,
+                              color: isDone ? "var(--clr-text-3)" : "var(--clr-text)",
+                              transition: "color 0.3s", flex: 1,
+                            }}>
+                              Checking {item.name}
+                              {!isDone && <span style={{ animation: "blink 1.1s step-end infinite" }}>…</span>}
+                            </span>
+                            {isDone && (
+                              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style={{ flexShrink: 0, animation: "checkPop 0.35s ease" }}>
+                                <path d="M2 6.5l3 3 5.5-6" stroke="rgb(34,197,94)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem" }}>
                     {SCAN_STEPS.map((step, i) => {
                       const isDone   = i < scanStep || scanStep === 4;
@@ -2837,6 +2925,7 @@ export default function Home() {
                       );
                     })}
                   </div>
+                  )}
                 </div>
               </div>
             );
