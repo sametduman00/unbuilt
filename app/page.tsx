@@ -2159,7 +2159,6 @@ export default function Home() {
   const [streamedContent, setStreamedContent] = useState("");
   const [error, setError] = useState("");
   const [hasResults, setHasResults] = useState(false);
-  const [light, setLight] = useState(false);
   const [githubRepos, setGithubRepos] = useState<GithubRepo[]>([]);
   const [githubLoading, setGithubLoading] = useState(false);
   const [githubFetched, setGithubFetched] = useState(false);
@@ -2208,21 +2207,11 @@ export default function Home() {
     }
   }, [hasResults]);
 
+  // Force dark mode — remove any stale light mode from previous sessions
   useEffect(() => {
-    if (localStorage.getItem("theme") === "light") {
-      setLight(true);
-      document.documentElement.classList.add("light");
-    }
+    document.documentElement.classList.remove("light");
+    localStorage.removeItem("theme");
   }, []);
-
-  const toggleTheme = () => {
-    const next = !light;
-    console.log("[theme toggle] switching to:", next ? "light" : "dark");
-    setLight(next);
-    document.documentElement.classList.toggle("light", next);
-    console.log("[theme toggle] html classes:", document.documentElement.className);
-    localStorage.setItem("theme", next ? "light" : "dark");
-  };
 
   const handleSelectTool = (toolId: ToolId) => {
     setSelectedTool(toolId);
@@ -2582,7 +2571,7 @@ export default function Home() {
         <header style={{
           borderBottom: "1px solid #1a1a1a",
           backdropFilter: "blur(16px)",
-          background: "#080808",
+          background: "#0a0a0a",
           position: "sticky", top: 0, zIndex: 50,
         }}>
           <div style={{

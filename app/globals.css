@@ -2,11 +2,11 @@
 
 /* ── Color tokens ─────────────────────────────────────────────── */
 :root {
-  --clr-bg: #080808;
+  --clr-bg: #0a0a0a;
   --clr-surface: #111111;
   --clr-surface-2: #111111;
   --clr-surface-3: #161616;
-  --clr-header-bg: #080808;
+  --clr-header-bg: #0a0a0a;
   --clr-border-deep: #1a1a1a;
   --clr-border: #1e1e1e;
   --clr-border-2: #222222;
@@ -23,30 +23,9 @@
   --clr-accent-hover: #ffffff;
 }
 
-html.light {
-  --clr-bg: #fafafa;
-  --clr-surface: #ffffff;
-  --clr-surface-2: #f4f4f5;
-  --clr-surface-3: #e4e4e7;
-  --clr-header-bg: rgba(250,250,250,0.9);
-  --clr-border-deep: #e4e4e7;
-  --clr-border: #e4e4e7;
-  --clr-border-2: #d4d4d8;
-  --clr-text: #09090b;
-  --clr-text-2: #18181b;
-  --clr-text-3: #52525b;
-  --clr-text-4: #777777;
-  --clr-text-5: #777777;
-  --clr-text-6: #aaaaaa;
-  --clr-text-7: #aaaaaa;
-  --clr-text-8: #d4d4d8;
-  --clr-placeholder: #aaaaaa;
-  --clr-accent: #18181b;
-  --clr-accent-hover: #09090b;
-}
 
 @theme {
-  --color-background: #080808;
+  --color-background: #0a0a0a;
   --color-surface: #111111;
   --color-surface-2: #111111;
   --color-surface-3: #161616;
@@ -65,7 +44,7 @@ html.light {
 }
 
 body {
-  background-color: #080808;
+  background-color: #0a0a0a;
   color: #ffffff;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
@@ -341,71 +320,3 @@ body {
   padding: 0;
 }
 
-/* ── Light mode ───────────────────────────────── */
-html.light body {
-  background-color: #fafafa;
-  color: #09090b;
-}
-
-html.light .section-card {
-  background: #ffffff;
-  border-color: #e4e4e7;
-}
-html.light .section-card:hover {
-  border-color: #d4d4d8;
-}
-html.light .section-card-header {
-  border-bottom-color: #e4e4e7;
-}
-html.light .section-title {
-  color: #09090b;
-}
-
-html.light .card-prose p,
-html.light .card-prose ul li,
-html.light .card-prose ol li {
-  color: #3f3f46;
-}
-html.light .card-prose strong {
-  color: #09090b;
-}
-html.light .card-prose em {
-  color: #52525b;
-}
-html.light .card-prose h3 {
-  color: #777777;
-}
-html.light .card-prose th {
-  background: #f4f4f5;
-  color: #52525b;
-}
-html.light .card-prose td {
-  color: #3f3f46;
-  border-bottom-color: #e4e4e7;
-}
-html.light .card-prose .table-wrap {
-  border-color: #e4e4e7;
-}
-html.light .card-prose tr:nth-child(even) td {
-  background: rgba(0,0,0,0.015);
-}
-html.light .card-prose tr:hover td {
-  background: rgba(0,0,0,0.03);
-}
-html.light .card-prose td:first-child {
-  color: #09090b;
-}
-html.light .card-prose hr {
-  border-top-color: #e4e4e7;
-}
-html.light .card-prose pre {
-  background: #f4f4f5;
-  border-color: #e4e4e7;
-}
-html.light .card-prose pre code {
-  color: #18181b;
-}
-html.light .gradient-text {
-  color: #09090b;
-  -webkit-text-fill-color: #09090b;
-}

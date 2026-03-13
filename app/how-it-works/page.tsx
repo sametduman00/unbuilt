@@ -232,7 +232,7 @@ export default function HowItWorks() {
         {/* ── Header ── */}
         <header style={{
           borderBottom: "1px solid #1a1a1a",
-          background: "#080808",
+          background: "#0a0a0a",
           position: "sticky", top: 0, zIndex: 50,
         }}>
           <div style={{
