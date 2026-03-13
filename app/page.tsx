@@ -2373,7 +2373,8 @@ export default function Home() {
 
   // Number of scan steps for the current tool (used for timer logic)
   const scanStepCounts: Record<string, number> = { "trend-feed": 5, "gap-analysis": 4, "competitor-radar": 1, "stack-advisor": 1 };
-  const maxScanStep = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3) - 1;
+  // maxScanStep = last VISUAL step (timer-driven). Step 5 = "all done" (transition state).
+  const maxScanStep = scanStepCounts[selectedTool ?? "trend-feed"] ?? 3;
 
   // Advance scan to "done" once last step is active AND all data has finished loading
   // For trend-feed: wait for Claude streaming + all API fetches + structured analysis
@@ -2381,13 +2382,16 @@ export default function Home() {
     ? !loading && hnFetched && githubFetched && ytFetched && !!trendAnalysis
     : !loading;
 
+  // scanStep flow: 0→1→...→(maxScanStep-1) via timers, then once trendFeedAllDone → maxScanStep (done) → hasResults
   useEffect(() => {
-    if (scanStep === 4) {
+    // "done" step: transition to results
+    if (scanStep === maxScanStep) {
       const t = setTimeout(() => { setHasResults(true); setScanStep(-1); }, 750);
       return () => clearTimeout(t);
     }
-    if (scanStep >= maxScanStep && trendFeedAllDone) {
-      const t = setTimeout(() => setScanStep(4), 350);
+    // Last visual step reached AND all data loaded → advance to "done"
+    if (scanStep >= maxScanStep - 1 && scanStep < maxScanStep && trendFeedAllDone) {
+      const t = setTimeout(() => setScanStep(maxScanStep), 350);
       return () => clearTimeout(t);
     }
   }, [scanStep, trendFeedAllDone, maxScanStep]);
@@ -3121,8 +3125,8 @@ export default function Home() {
                   ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem" }}>
                     {SCAN_STEPS.map((step, i) => {
-                      const isDone   = i < scanStep || scanStep === 4;
-                      const isActive = i === scanStep && scanStep < 4;
+                      const isDone   = i < scanStep || scanStep >= maxScanStep;
+                      const isActive = i === scanStep && scanStep < maxScanStep;
                       const isPend   = !isDone && !isActive;
                       return (
                         <div key={i} style={{
@@ -3248,6 +3252,50 @@ export default function Home() {
                   />
                 </div>
               )}
+              {/* ── Trend Feed inline skeleton — shown after submit, before results are ready ── */}
+              {selectedTool === "trend-feed" && !hasResults && scanStep < 0 && (loading || !trendFeedReady) && (
+                <div style={{ paddingTop: "1.5rem", paddingBottom: "3rem" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                    {/* Score card skeleton */}
+                    <div style={{
+                      background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
+                      borderRadius: 12, padding: "1.5rem 1.75rem",
+                      display: "flex", alignItems: "center", gap: "1.75rem",
+                    }}>
+                      <div className="shimmer" style={{ width: 92, height: 92, borderRadius: "50%", flexShrink: 0 }} />
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+                        <div className="shimmer" style={{ height: 14, borderRadius: 6, width: "40%" }} />
+                        <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "85%" }} />
+                        <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "65%" }} />
+                      </div>
+                    </div>
+                    {/* Trends chart skeleton */}
+                    <div style={{
+                      borderRadius: 12, background: "var(--clr-surface)",
+                      border: "1px solid var(--clr-border-2)",
+                      padding: "1.25rem 1.5rem", maxWidth: 480,
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem" }}>
+                        <div className="shimmer" style={{ width: 16, height: 16, borderRadius: 4 }} />
+                        <div className="shimmer" style={{ height: 14, borderRadius: 6, width: 100 }} />
+                      </div>
+                      <div className="shimmer" style={{ height: 100, borderRadius: 8 }} />
+                    </div>
+                    {/* Section skeletons */}
+                    {[1, 2, 3].map((n) => (
+                      <div key={n} style={{
+                        borderRadius: 12, background: "var(--clr-surface)",
+                        border: "1px solid var(--clr-border-2)", padding: "1.5rem",
+                      }}>
+                        <div className="shimmer" style={{ height: 16, borderRadius: 6, width: "30%", marginBottom: 12 }} />
+                        <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "90%", marginBottom: 8 }} />
+                        <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "75%" }} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* ── Results — inline below input ── */}
               {hasResults && (
               <div ref={resultsRef} style={{ paddingTop: "1.5rem", paddingBottom: "5rem", animation: "fadeSlideIn 0.3s ease" }}>
@@ -3337,48 +3385,6 @@ export default function Home() {
                   </span>
                 )}
               </div>
-
-              {/* ── Trend Feed loading skeleton — shown until ALL data is ready ── */}
-              {selectedTool === "trend-feed" && !trendFeedReady && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                  {/* Score card skeleton */}
-                  <div style={{
-                    background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-                    borderRadius: 12, padding: "1.5rem 1.75rem",
-                    display: "flex", alignItems: "center", gap: "1.75rem",
-                  }}>
-                    <div className="shimmer" style={{ width: 92, height: 92, borderRadius: "50%", flexShrink: 0 }} />
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
-                      <div className="shimmer" style={{ height: 14, borderRadius: 6, width: "40%" }} />
-                      <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "85%" }} />
-                      <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "65%" }} />
-                    </div>
-                  </div>
-                  {/* Trends chart skeleton */}
-                  <div style={{
-                    borderRadius: 12, background: "var(--clr-surface)",
-                    border: "1px solid var(--clr-border-2)",
-                    padding: "1.25rem 1.5rem", maxWidth: 480,
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem" }}>
-                      <div className="shimmer" style={{ width: 16, height: 16, borderRadius: 4 }} />
-                      <div className="shimmer" style={{ height: 14, borderRadius: 6, width: 100 }} />
-                    </div>
-                    <div className="shimmer" style={{ height: 100, borderRadius: 8 }} />
-                  </div>
-                  {/* Section skeletons */}
-                  {[1, 2, 3].map((n) => (
-                    <div key={n} style={{
-                      borderRadius: 12, background: "var(--clr-surface)",
-                      border: "1px solid var(--clr-border-2)", padding: "1.5rem",
-                    }}>
-                      <div className="shimmer" style={{ height: 16, borderRadius: 6, width: "30%", marginBottom: 12 }} />
-                      <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "90%", marginBottom: 8 }} />
-                      <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "75%" }} />
-                    </div>
-                  ))}
-                </div>
-              )}
 
               {/* ── Space Temperature score card (Trend Feed only) ── */}
               {selectedTool === "trend-feed" && trendFeedReady && scoreData && (
