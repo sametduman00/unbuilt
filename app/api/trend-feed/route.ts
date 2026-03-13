@@ -201,10 +201,12 @@ STRICT SCORE RULES - YOU MUST FOLLOW THESE:
 - Score 80+ is ONLY allowed when Google Trends is above 60 AND YouTube has 5+ videos with 100K+ total views
 - Score 85+ is ONLY allowed for genuinely explosive spaces with massive data signals
 - Do not interpret missing data as opportunity — missing data means unknown or too early
+- If score is under 30 and data is minimal, verdict should reflect "Too Early to Tell" or "Uncharted Territory", not "Crowded" — Crowded means many competitors exist.
 
 IMPORTANT — Analysis depth:
 - Even if external data is sparse or missing, you MUST produce full analysis for ALL sections (whatsRising, whatsDying, patternToBetOn, contrarianTake, underexploredNiches, bestOpportunity) using your own training knowledge about the space.
 - Never return empty or one-sentence sections. Each section must be substantive.
+- You MUST always include whatsRising (minimum 4 bullets), whatsDying (minimum 3 bullets), and underexploredNiches (minimum 3 items) in every response, even when external data is zero. Use your training knowledge.
 
 Return ONLY valid JSON (no markdown, no code fences) in this exact format:
 {
