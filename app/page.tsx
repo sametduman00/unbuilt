@@ -1269,7 +1269,7 @@ function ToolSelectorCard({
       style={{
         position: "relative",
         borderRadius: 12,
-        padding: "1.25rem",
+        padding: "1rem",
         display: "flex",
         flexDirection: "column",
         gap: 0,
@@ -1308,7 +1308,7 @@ function ToolSelectorCard({
       <div style={{
         fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em",
         textTransform: "uppercase", color: tool.accentColor,
-        marginBottom: "0.75rem",
+        marginBottom: "0.5rem",
       }}>
         {tool.userLabel}
       </div>
@@ -1319,7 +1319,7 @@ function ToolSelectorCard({
         background: `rgba(${tool.accentRgb},0.08)`,
         border: `1px solid rgba(${tool.accentRgb},0.15)`,
         display: "flex", alignItems: "center", justifyContent: "center",
-        marginBottom: "0.75rem", flexShrink: 0,
+        marginBottom: "0.5rem", flexShrink: 0,
       }}>
         {TOOL_ICONS[tool.id](tool.accentColor)}
       </div>
@@ -2589,7 +2589,8 @@ export default function Home() {
             maxWidth: 1200, margin: "0 auto", padding: "0 2rem",
             height: 56, display: "flex", alignItems: "center", justifyContent: "space-between",
           }}>
-            {/* Left: Logo */}
+            {/* Left: Logo + Nav */}
+            <div style={{ display: "flex", alignItems: "center" }}>
             <button onClick={fullReset} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer" }}>
               <svg width="20" height="20" viewBox="0 0 19 19" fill="none">
                 <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="#e5e5e5" strokeWidth="2" strokeLinecap="round" />
@@ -2597,18 +2598,21 @@ export default function Home() {
               <span style={{ fontWeight: 700, fontSize: "1rem", color: "#ffffff", letterSpacing: "-0.02em" }}>Unbuilt</span>
             </button>
 
-            {/* Center: Nav */}
+            {/* Nav link next to logo */}
             <Link href="/how-it-works" style={{
               fontSize: "0.875rem", fontWeight: 400, color: "#888888",
               textDecoration: "none",
               transition: "color 0.15s",
-              position: "absolute", left: "50%", transform: "translateX(-50%)",
+              marginLeft: "1.5rem",
             }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#888888"; }}
             >
               How it works
             </Link>
+            </div>
+
+            <div style={{ flex: 1 }} />
 
             {/* Right: Actions */}
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -2778,59 +2782,24 @@ export default function Home() {
               <div style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
                 justifyContent: "center", textAlign: "center", maxWidth: 720, margin: "0 auto",
-                width: "100%", padding: "3rem 0 2rem", position: "relative",
+                width: "100%", padding: "2rem 0 1.5rem", position: "relative",
               }}>
                 <h1 style={{
-                  fontSize: "clamp(2.75rem, 5vw, 4.5rem)", fontWeight: 700,
-                  letterSpacing: "-0.03em", lineHeight: 1.08,
+                  fontSize: "clamp(1.75rem, 3.2vw, 2.75rem)", fontWeight: 700,
+                  letterSpacing: "-0.03em", lineHeight: 1.15,
                   color: "#ffffff", marginBottom: "0.75rem",
+                  whiteSpace: "nowrap",
                 }}>
                   <span style={{ color: "#555555" }}>Claude says your idea is great.</span>
                   <br />
                   <span style={{ color: "#ffffff" }}>We&apos;ll tell you the truth.</span>
                 </h1>
                 <p style={{
-                  color: "#888888", fontSize: "1.125rem", lineHeight: 1.6,
-                  maxWidth: 480, margin: "0 auto 2rem",
+                  color: "#888888", fontSize: "1rem", lineHeight: 1.6,
+                  maxWidth: 480, margin: "0 auto 1rem",
                 }}>
                   Pick your situation. Get a real analysis — competitors, market gaps, trends, or tech stack — powered by Claude.
                 </p>
-                <div style={{
-                  display: "flex", gap: "0.75rem", justifyContent: "center",
-                }}>
-                  <button
-                    onClick={() => {
-                      const grid = document.querySelector("[data-tool-grid]");
-                      if (grid) grid.scrollIntoView({ behavior: "smooth", block: "center" });
-                    }}
-                    style={{
-                      padding: "0.75rem 1.75rem", borderRadius: 999,
-                      background: "#ffffff", border: "none",
-                      color: "#000000", fontSize: "0.9375rem", fontWeight: 600,
-                      cursor: "pointer", fontFamily: "inherit",
-                      transition: "background 0.15s",
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "#e5e5e5"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; }}
-                  >
-                    Start for free
-                  </button>
-                  <a
-                    href="/how-it-works"
-                    style={{
-                      padding: "0.75rem 1.75rem", borderRadius: 999,
-                      background: "transparent", border: "1px solid #333333",
-                      color: "#ffffff", fontSize: "0.9375rem", fontWeight: 600,
-                      cursor: "pointer", fontFamily: "inherit", textDecoration: "none",
-                      transition: "border-color 0.15s",
-                      display: "inline-flex", alignItems: "center",
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#555555"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#333333"; }}
-                  >
-                    See how it works
-                  </a>
-                </div>
               </div>
               )}
 
