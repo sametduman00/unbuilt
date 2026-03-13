@@ -1292,9 +1292,8 @@ function SpaceScoreCard({ score, summary, hnBoost }: { score: number; summary: s
                     width: "100%", height: 6, borderRadius: 999,
                     background: isActive ? color : "var(--clr-border)",
                     boxShadow: isActive ? `0 0 8px ${color}60` : "none",
-                    transition: "background 0.3s",
                   }} />
-                  <span style={{ fontSize: isActive ? "1rem" : "0.75rem", lineHeight: 1, transition: "font-size 0.2s", filter: isActive ? "none" : "grayscale(1) opacity(0.35)" }}>
+                  <span style={{ fontSize: isActive ? "1rem" : "0.75rem", lineHeight: 1, filter: isActive ? "none" : "grayscale(1) opacity(0.35)" }}>
                     {step.emoji}
                   </span>
                   <span style={{
@@ -2376,17 +2375,22 @@ export default function Home() {
   const scanStepCounts: Record<string, number> = { "trend-feed": 5, "gap-analysis": 4, "competitor-radar": 1, "stack-advisor": 1 };
   const maxScanStep = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3) - 1;
 
-  // Advance scan to "done" once last step is active AND Claude has finished
+  // Advance scan to "done" once last step is active AND all data has finished loading
+  // For trend-feed: wait for Claude streaming + all API fetches + structured analysis
+  const trendFeedAllDone = selectedTool === "trend-feed"
+    ? !loading && hnFetched && githubFetched && ytFetched && !!trendAnalysis
+    : !loading;
+
   useEffect(() => {
     if (scanStep === 4) {
       const t = setTimeout(() => { setHasResults(true); setScanStep(-1); }, 750);
       return () => clearTimeout(t);
     }
-    if (scanStep >= maxScanStep && !loading) {
+    if (scanStep >= maxScanStep && trendFeedAllDone) {
       const t = setTimeout(() => setScanStep(4), 350);
       return () => clearTimeout(t);
     }
-  }, [scanStep, loading, maxScanStep]);
+  }, [scanStep, trendFeedAllDone, maxScanStep]);
 
   // Handle stack-advisor checklist completion when API response arrives
   useEffect(() => {
@@ -2700,7 +2704,7 @@ export default function Home() {
       fetchSearchMeta(idea.trim(), (q) => {
         fetchHNPosts(q);
         fetchGithubRepos(q);
-        fetchYouTubeVideos(q + " app review", 90);
+        fetchYouTubeVideos(q.toLowerCase().includes("app") ? q : q + " app", 90);
         // Fetch Google Trends data
         fetch(`/api/serpapi?q=${encodeURIComponent(q)}`)
           .then(r => r.ok ? r.json() : null)
@@ -3822,7 +3826,7 @@ export default function Home() {
                                 </span>
                               </div>
                               {pickReason && (
-                                <div style={{ fontSize: "0.66rem", color: "var(--clr-text-5)", fontStyle: "italic", lineHeight: 1.35, marginTop: "0.2rem" }}>
+                                <div style={{ fontSize: "0.66rem", color: "var(--clr-text-3)", fontStyle: "italic", lineHeight: 1.35, marginTop: "0.2rem" }}>
                                   {pickReason}
                                 </div>
                               )}

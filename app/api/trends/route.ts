@@ -46,6 +46,8 @@ What assumption is the market making that will look naive in 2 years?
 Given these trends, what's the single highest-signal opportunity to build in this space today?
 Be specific: who, what, why now.
 
+IMPORTANT: In Best Opportunity and Contrarian Take sections, do NOT recommend trends unrelated to the query (e.g. don't suggest GLP-1 drugs for a fitness app query). Every opportunity must be specific to the queried space — never import outside trends.
+
 Be sharp. Be specific. Name names.`;
 
 export async function POST(req: NextRequest) {
