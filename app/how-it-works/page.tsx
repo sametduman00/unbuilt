@@ -53,9 +53,9 @@ const TABS: TabConfig[] = [
     id: "trend-feed",
     name: "Trend Feed",
     tagline: "Real signals, not hype",
-    accentColor: "#34d399",
-    accentRgb: "52,211,153",
-    icon: <IconTrend color="#34d399" />,
+    accentColor: "#22c55e",
+    accentRgb: "34,197,94",
+    icon: <IconTrend color="#22c55e" />,
     who: "Founders looking for their next idea, researchers scanning markets, or anyone who wants to know what's actually moving — backed by real data from GitHub and Hacker News, not just AI guesses.",
     what: "Trend Feed pulls live data from GitHub (repos created in the last 7 days) and Hacker News (posts from the last 30 days), then layers Claude AI analysis on top. You get a Space Temperature score from 0-100 across 5 levels — from Freezing to On Fire — so you can see at a glance whether a space is worth entering right now.",
     steps: [
@@ -81,7 +81,7 @@ const TABS: TabConfig[] = [
     name: "Gap Analysis",
     tagline: "Find the gaps before you build",
     accentColor: "#a78bfa",
-    accentRgb: "167,139,250",
+    accentRgb: "139,92,246",
     icon: <IconGap color="#a78bfa" />,
     who: "Founders with an app idea who want to know if there's a real opening before spending months building. See exactly who you're up against — with real apps from both the App Store and Google Play — plus where existing solutions fall short.",
     what: "Gap Analysis combines Claude AI with live App Store (iTunes) and Google Play searches to map your competitive landscape. You get a Market Opportunity score 0-100, competitor cards with threat levels, pain points with severity badges, market gaps with opportunity scores, a full SWOT analysis, and an ideal target customer persona — all from one query.",
@@ -107,9 +107,9 @@ const TABS: TabConfig[] = [
     id: "stack-advisor",
     name: "Stack Advisor",
     tagline: "Build fast, cheap, and right",
-    accentColor: "#fb923c",
-    accentRgb: "251,146,60",
-    icon: <IconStack color="#fb923c" />,
+    accentColor: "#f97316",
+    accentRgb: "249,115,22",
+    icon: <IconStack color="#f97316" />,
     who: "Anyone starting a new project who doesn't want to over-engineer or waste money on the wrong tools. Especially useful for non-technical founders who need a technical co-founder's opinion, or developers spinning up a new product.",
     what: "Stack Advisor recommends specific tools across three build phases — Phase 0 (Validate), Phase 1 (MVP), and Phase 2 (Growth) — using a curated database of 150+ developer tools with real March 2026 pricing. Every recommendation includes free tier details, monthly costs, build order, common mistakes to avoid, scalability ceilings, and when to upgrade.",
     steps: [
@@ -199,7 +199,7 @@ function MockOutput({ outputs, accentColor, accentRgb }: {
                   code: ({ className, children }: any) => (
                     className
                       ? <pre><code className={className}>{children}</code></pre>
-                      : <code style={{ background: "rgba(124,92,252,0.15)", color: "#c4b5fd", padding: "0.1em 0.35em", borderRadius: 4, fontSize: "0.85em" }}>{children}</code>
+                      : <code style={{ background: "rgba(139,92,246,0.15)", color: "#c4b5fd", padding: "0.1em 0.35em", borderRadius: 4, fontSize: "0.85em" }}>{children}</code>
                   ),
                 }}>
                   {out.preview}
@@ -246,29 +246,29 @@ export default function HowItWorks() {
 
         {/* ── Header ── */}
         <header style={{
-          borderBottom: "1px solid var(--clr-border-deep)",
-          backdropFilter: "blur(16px)",
+          borderBottom: "1px solid var(--clr-border)",
+          backdropFilter: "blur(12px) saturate(180%)",
           background: "var(--clr-header-bg)",
           position: "sticky", top: 0, zIndex: 50,
         }}>
           <div style={{
-            maxWidth: 1400, margin: "0 auto", padding: "0 2.5rem",
-            height: 64, display: "flex", alignItems: "center", justifyContent: "space-between",
+            maxWidth: 1200, margin: "0 auto", padding: "0 2rem",
+            height: 56, display: "flex", alignItems: "center", justifyContent: "space-between",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-              <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+              <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
                 <div style={{
-                  width: 38, height: 38, borderRadius: 11,
-                  background: "linear-gradient(135deg, #7c5cfc, #4f8ef7)",
+                  width: 28, height: 28, borderRadius: 7,
+                  background: "#8b5cf6",
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
-                  <svg width="19" height="19" viewBox="0 0 19 19" fill="none">
-                    <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="white" strokeWidth="1.75" strokeLinecap="round" />
+                  <svg width="14" height="14" viewBox="0 0 19 19" fill="none">
+                    <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="white" strokeWidth="2" strokeLinecap="round" />
                   </svg>
                 </div>
-                <span style={{ fontWeight: 750, fontSize: "1.125rem", color: "var(--clr-text)", letterSpacing: "-0.025em" }}>Unbuilt</span>
+                <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.02em" }}>Unbuilt</span>
               </Link>
-              <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7c5cfc", letterSpacing: "-0.01em" }}>
+              <span style={{ fontSize: "0.8125rem", fontWeight: 500, color: "var(--clr-text-2)", letterSpacing: "-0.01em" }}>
                 How it works
               </span>
             </div>
@@ -308,12 +308,12 @@ export default function HowItWorks() {
               {!isSignedIn ? (
                 <SignInButton mode="modal">
                   <button style={{
-                    padding: "0.375rem 0.875rem", borderRadius: 9,
-                    background: "linear-gradient(135deg, rgba(124,92,252,0.15), rgba(79,142,247,0.15))",
-                    border: "1px solid rgba(124,92,252,0.3)",
-                    color: "#c4b5fd", fontSize: "0.8125rem", fontWeight: 600,
+                    padding: "0.375rem 1rem", borderRadius: 8,
+                    background: "#8b5cf6",
+                    border: "none",
+                    color: "#fff", fontSize: "0.8125rem", fontWeight: 600,
                     cursor: "pointer", fontFamily: "inherit", letterSpacing: "-0.01em",
-                    transition: "all 0.15s ease",
+                    transition: "background 0.15s ease",
                   }}>
                     Sign in
                   </button>
@@ -385,7 +385,7 @@ export default function HowItWorks() {
             {/* Tool hero */}
             <div style={{
               display: "flex", alignItems: "flex-start", gap: "1.25rem",
-              padding: "1.75rem", borderRadius: 20,
+              padding: "1.75rem", borderRadius: 12,
               background: `rgba(${tab.accentRgb},0.04)`,
               border: `1px solid rgba(${tab.accentRgb},0.18)`,
               marginBottom: "2.5rem",
@@ -422,7 +422,7 @@ export default function HowItWorks() {
                 {/* Steps */}
                 <div style={{
                   background: "var(--clr-surface)", border: "1px solid var(--clr-border-deep)",
-                  borderRadius: 18, padding: "1.5rem",
+                  borderRadius: 12, padding: "1.5rem",
                 }}>
                   <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-7)", marginBottom: "1.25rem" }}>
                     Step by step
@@ -466,7 +466,7 @@ export default function HowItWorks() {
                 {/* Who it's for */}
                 <div style={{
                   background: "var(--clr-surface)", border: "1px solid var(--clr-border-deep)",
-                  borderRadius: 18, padding: "1.5rem",
+                  borderRadius: 12, padding: "1.5rem",
                 }}>
                   <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-7)", marginBottom: "0.875rem" }}>
                     Who it&apos;s for
@@ -479,7 +479,7 @@ export default function HowItWorks() {
                 {/* What you need to provide */}
                 <div style={{
                   background: "var(--clr-surface)", border: "1px solid var(--clr-border-deep)",
-                  borderRadius: 18, padding: "1.5rem",
+                  borderRadius: 12, padding: "1.5rem",
                 }}>
                   <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-7)", marginBottom: "0.875rem" }}>
                     What you provide
@@ -507,7 +507,7 @@ export default function HowItWorks() {
               {/* Right: Sample outputs */}
               <div style={{
                 background: "var(--clr-surface)", border: "1px solid var(--clr-border-deep)",
-                borderRadius: 18, padding: "1.5rem",
+                borderRadius: 12, padding: "1.5rem",
               }}>
                 <div style={{
                   display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -538,11 +538,11 @@ export default function HowItWorks() {
                     href="/"
                     style={{
                       display: "inline-flex", alignItems: "center", gap: 6,
-                      padding: "0.5rem 1.125rem", borderRadius: 10,
-                      background: `linear-gradient(135deg, rgba(${tab.accentRgb},0.85), ${tab.accentColor})`,
-                      color: "#fff", fontSize: "0.8125rem", fontWeight: 700,
+                      padding: "0.5rem 1.125rem", borderRadius: 8,
+                      background: tab.accentColor,
+                      color: "#fff", fontSize: "0.8125rem", fontWeight: 600,
                       textDecoration: "none", letterSpacing: "-0.01em",
-                      boxShadow: `0 4px 16px rgba(${tab.accentRgb},0.3)`,
+                      boxShadow: "none",
                     }}
                   >
                     Try {tab.name}
