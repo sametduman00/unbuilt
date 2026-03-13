@@ -211,7 +211,7 @@ Return ONLY valid JSON (no markdown, no code fences) in this exact format:
   "googleTrendsInsight": "<1-2 sentences interpreting the Google Trends data>",
   "youtube": {
     "insight": "<1-2 sentences about YouTube signal>",
-    "picks": [<0-based indices of most notable videos, max 3>]
+    "picks": [{"index": <0-based index>, "reason": "<max 15 words why this video matters>"}, ...]
   },
   "hn": {
     "insight": "<1-2 sentences about Hacker News activity>",

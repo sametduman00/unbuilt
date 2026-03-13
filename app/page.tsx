@@ -1135,29 +1135,30 @@ function GoogleTrendsChart({ data }: { data: any }) {
       marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
       background: "var(--clr-surface)",
       border: "1px solid var(--clr-border-2)",
-      padding: "1.5rem",
+      padding: "1.25rem 1.5rem",
+      maxWidth: 480,
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem" }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
         </svg>
-        <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
+        <h3 style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           Google Trends
         </h3>
         <span style={{
           display: "inline-flex", alignItems: "center", gap: 4,
-          padding: "0.15rem 0.5rem", borderRadius: 999,
+          padding: "0.12rem 0.45rem", borderRadius: 999,
           background: `${dirColor}18`, border: `1px solid ${dirColor}40`,
-          fontSize: "0.68rem", fontWeight: 700, color: dirColor,
+          fontSize: "0.62rem", fontWeight: 700, color: dirColor,
         }}>
           {dirLabel} {trendPercent !== 0 && `${trendPercent > 0 ? "+" : ""}${trendPercent}%`}
         </span>
-        <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-          last 3 months · weekly
+        <span style={{ marginLeft: "auto", fontSize: "0.62rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
+          3 months · weekly
         </span>
       </div>
 
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: 140 }} preserveAspectRatio="none">
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: 100 }} preserveAspectRatio="none">
         <defs>
           <linearGradient id="trendsGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--clr-text)" stopOpacity="0.15" />
@@ -2699,7 +2700,7 @@ export default function Home() {
       fetchSearchMeta(idea.trim(), (q) => {
         fetchHNPosts(q);
         fetchGithubRepos(q);
-        fetchYouTubeVideos(q, 90);
+        fetchYouTubeVideos(q + " app review", 90);
         // Fetch Google Trends data
         fetch(`/api/serpapi?q=${encodeURIComponent(q)}`)
           .then(r => r.ok ? r.json() : null)
@@ -2876,12 +2877,20 @@ export default function Home() {
   const pickedHnPosts = trendAnalysis?.hn?.picks?.length > 0
     ? (trendAnalysis.hn.picks as number[]).map((idx: number) => relevantHnPosts[idx]).filter(Boolean)
     : relevantHnPosts.slice(0, 3);
-  const pickedYtVideos = trendAnalysis?.youtube?.picks?.length > 0
-    ? (trendAnalysis.youtube.picks as number[]).map((idx: number) => ytVideos[idx]).filter(Boolean)
+  // YouTube picks are objects: { index, reason }
+  const ytPickObjects: { index: number; reason: string }[] = trendAnalysis?.youtube?.picks ?? [];
+  const ytReasonMap = new Map(ytPickObjects.map((p) => [p.index, p.reason]));
+  const pickedYtVideos = ytPickObjects.length > 0
+    ? ytPickObjects.map((p) => ytVideos[p.index]).filter(Boolean)
     : ytVideos.slice(0, 3);
   const pickedGithubRepos = trendAnalysis?.github?.picks?.length > 0
     ? (trendAnalysis.github.picks as number[]).map((idx: number) => githubRepos[idx]).filter(Boolean)
     : githubRepos.slice(0, 3);
+
+  // Trend-feed: all data must be ready before showing any results
+  const trendFeedReady = selectedTool === "trend-feed"
+    ? !loading && hnFetched && githubFetched && ytFetched && !!trendAnalysis
+    : true;
 
   return (
     <>
@@ -3325,18 +3334,13 @@ export default function Home() {
                 )}
               </div>
 
-              {/* ── Space Temperature score card (Trend Feed only) — always shown ── */}
-              {selectedTool === "trend-feed" && (
-                scoreData ? (
-                  <SpaceScoreCard
-                    score={Math.min(100, scoreData.score + hnBoost)}
-                    summary={scoreData.summary}
-                    hnBoost={hnBoost}
-                  />
-                ) : (
+              {/* ── Trend Feed loading skeleton — shown until ALL data is ready ── */}
+              {selectedTool === "trend-feed" && !trendFeedReady && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                  {/* Score card skeleton */}
                   <div style={{
                     background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-                    borderRadius: 12, padding: "1.5rem 1.75rem", marginBottom: "1rem",
+                    borderRadius: 12, padding: "1.5rem 1.75rem",
                     display: "flex", alignItems: "center", gap: "1.75rem",
                   }}>
                     <div className="shimmer" style={{ width: 92, height: 92, borderRadius: "50%", flexShrink: 0 }} />
@@ -3346,32 +3350,49 @@ export default function Home() {
                       <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "65%" }} />
                     </div>
                   </div>
-                )
+                  {/* Trends chart skeleton */}
+                  <div style={{
+                    borderRadius: 12, background: "var(--clr-surface)",
+                    border: "1px solid var(--clr-border-2)",
+                    padding: "1.25rem 1.5rem", maxWidth: 480,
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem" }}>
+                      <div className="shimmer" style={{ width: 16, height: 16, borderRadius: 4 }} />
+                      <div className="shimmer" style={{ height: 14, borderRadius: 6, width: 100 }} />
+                    </div>
+                    <div className="shimmer" style={{ height: 100, borderRadius: 8 }} />
+                  </div>
+                  {/* Section skeletons */}
+                  {[1, 2, 3].map((n) => (
+                    <div key={n} style={{
+                      borderRadius: 12, background: "var(--clr-surface)",
+                      border: "1px solid var(--clr-border-2)", padding: "1.5rem",
+                    }}>
+                      <div className="shimmer" style={{ height: 16, borderRadius: 6, width: "30%", marginBottom: 12 }} />
+                      <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "90%", marginBottom: 8 }} />
+                      <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "75%" }} />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* ── Space Temperature score card (Trend Feed only) ── */}
+              {selectedTool === "trend-feed" && trendFeedReady && scoreData && (
+                <SpaceScoreCard
+                  score={Math.min(100, scoreData.score + hnBoost)}
+                  summary={scoreData.summary}
+                  hnBoost={hnBoost}
+                />
               )}
 
               {/* ── Google Trends chart (Trend Feed only) ── */}
-              {selectedTool === "trend-feed" && (
-                trendGoogleData ? (
-                  <GoogleTrendsChart data={trendGoogleData} />
-                ) : (
-                  <div style={{
-                    marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
-                    background: "var(--clr-surface)",
-                    border: "1px solid var(--clr-border-2)",
-                    padding: "1.5rem",
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-                      <div className="shimmer" style={{ width: 20, height: 20, borderRadius: 4 }} />
-                      <div className="shimmer" style={{ height: 16, borderRadius: 6, width: 120 }} />
-                    </div>
-                    <div className="shimmer" style={{ height: 140, borderRadius: 8 }} />
-                  </div>
-                )
+              {selectedTool === "trend-feed" && trendFeedReady && trendGoogleData && (
+                <GoogleTrendsChart data={trendGoogleData} />
               )}
 
               {/* Loading skeleton — only while nothing has streamed yet */}
               {loading && (selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && <GapAnalysisSkeleton />}
-              {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
+              {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
 
               {/* Error */}
               {error && (
@@ -3418,10 +3439,10 @@ export default function Home() {
                   );
                 })()
               ) : selectedTool === "trend-feed" ? (
-                /* Trend Feed: rich visual cards */
-                sections.length > 0 ? (
-                  <TrendFeedResult sections={sections} isStreaming={loading} />
-                ) : !loading && streamedContent ? (
+                /* Trend Feed: rich visual cards — only render when all data ready */
+                trendFeedReady && sections.length > 0 ? (
+                  <TrendFeedResult sections={sections} isStreaming={false} />
+                ) : trendFeedReady && streamedContent ? (
                   <div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem", padding: "1.5rem" }}>
                     No analysis sections found for this niche
                   </div>
@@ -3613,8 +3634,8 @@ export default function Home() {
                 );
               })()}
 
-              {/* ── Hacker News Buzz (Trend Feed only) — always shown ── */}
-              {selectedTool === "trend-feed" && (
+              {/* ── Hacker News Buzz (Trend Feed only) ── */}
+              {selectedTool === "trend-feed" && trendFeedReady && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
                   background: "var(--clr-surface)",
@@ -3700,7 +3721,7 @@ export default function Home() {
 
 
               {/* ── YouTube Buzz (Trend Feed + Gap Analysis) ── */}
-              {(selectedTool === "trend-feed" || selectedTool === "gap-analysis") && (
+              {((selectedTool === "trend-feed" && trendFeedReady) || selectedTool === "gap-analysis") && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
                   background: "var(--clr-surface)",
@@ -3729,9 +3750,10 @@ export default function Home() {
                     </div>
                   ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {(selectedTool === "trend-feed" ? pickedYtVideos : ytVideos).map((video) => {
+                      {(selectedTool === "trend-feed" ? pickedYtVideos : ytVideos).map((video, vidIdx) => {
                         const daysAgo = Math.floor((Date.now() - new Date(video.publishedAt).getTime()) / 86400000);
                         const fmtViews = video.viewCount >= 1_000_000 ? `${(video.viewCount / 1_000_000).toFixed(1)}M` : video.viewCount >= 1_000 ? `${(video.viewCount / 1_000).toFixed(0)}K` : String(video.viewCount);
+                        const pickReason = selectedTool === "trend-feed" && ytPickObjects[vidIdx]?.reason;
                         return (
                           <a
                             key={video.videoId}
@@ -3799,6 +3821,11 @@ export default function Home() {
                                   {daysAgo === 0 ? "today" : `${daysAgo}d ago`}
                                 </span>
                               </div>
+                              {pickReason && (
+                                <div style={{ fontSize: "0.66rem", color: "var(--clr-text-5)", fontStyle: "italic", lineHeight: 1.35, marginTop: "0.2rem" }}>
+                                  {pickReason}
+                                </div>
+                              )}
                             </div>
                           </a>
                         );
@@ -3808,8 +3835,8 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ── GitHub trending repos (Trend Feed only) — always shown ── */}
-              {selectedTool === "trend-feed" && (
+              {/* ── GitHub trending repos (Trend Feed only) ── */}
+              {selectedTool === "trend-feed" && trendFeedReady && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
                   background: "var(--clr-surface)",
