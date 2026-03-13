@@ -40,7 +40,9 @@
       "Bash(cat /Users/mac/unbuilt/unbuilt/data/stacks.json | python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); names=[t['name'] for t in data['tools']]; print\\(len\\(names\\)\\); print\\('\\\\n'.join\\(sorted\\(names\\)\\)\\)\")",
       "Bash(node -e \"const c = require\\('@clerk/nextjs'\\); console.log\\(Object.keys\\(c\\).sort\\(\\).join\\('\\\\n'\\)\\)\" 2>&1 | head -40)",
       "Bash(node -e \"const c = require\\('@clerk/nextjs'\\); console.log\\(Object.keys\\(c\\).filter\\(k => k.includes\\('Sign'\\) || k.includes\\('User'\\) || k.includes\\('Show'\\) || k.includes\\('Loaded'\\) || k.includes\\('Auth'\\)\\).sort\\(\\).join\\('\\\\n'\\)\\)\")",
-      "Bash(node -e \"try { require\\('@clerk/themes'\\); console.log\\('OK'\\) } catch\\(e\\) { console.log\\(e.message\\) }\")"
+      "Bash(node -e \"try { require\\('@clerk/themes'\\); console.log\\('OK'\\) } catch\\(e\\) { console.log\\(e.message\\) }\")",
+      "Bash(grep -c 'color: \"#' app/page.tsx)",
+      "Bash(grep -c '#[0-9a-fA-F]\\\\{3,6\\\\}' app/page.tsx; grep -c '#[0-9a-fA-F]\\\\{3,6\\\\}' app/how-it-works/page.tsx; grep -c '#[0-9a-fA-F]\\\\{3,6\\\\}' app/globals.css)"
     ]
   }
 }

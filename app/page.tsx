@@ -91,15 +91,15 @@ const TOOLS: ToolConfig[] = [
     name: "Trend Feed",
     tagline: "Real signals, no noise",
     description: "What's actually rising in a market right now. Emerging niches, dying trends, and contrarian bets — powered by AI, not Twitter hype.",
-    accentColor: "#e5e5e5",
+    accentColor: "var(--clr-accent)",
     accentRgb: "229,229,229",
     apiPath: "/api/trends",
     inputLabel: "What space or industry are you curious about?",
     placeholder: 'e.g. "B2B SaaS tools", "consumer health apps", or "creator economy"',
     sources: [
-      { name: "Claude AI", color: "#e5e5e5", live: true },
-      { name: "GitHub", color: "#888888", live: true },
-      { name: "Hacker News", color: "#888888", live: true },
+      { name: "Claude AI", color: "var(--clr-text-2)", live: true },
+      { name: "GitHub", color: "var(--clr-text-3)", live: true },
+      { name: "Hacker News", color: "var(--clr-text-3)", live: true },
     ],
   },
   {
@@ -108,15 +108,15 @@ const TOOLS: ToolConfig[] = [
     name: "Gap Analysis",
     tagline: "Find the gaps before you build",
     description: "Spot what competitors are missing. Get a brutally honest read on where you actually have a shot — before you spend months building the wrong thing.",
-    accentColor: "#e5e5e5",
+    accentColor: "var(--clr-accent)",
     accentRgb: "229,229,229",
     apiPath: "/api/analyze",
     inputLabel: "Describe your niche or app idea",
     placeholder: 'e.g. "Project management for freelancers" or "AI writing tool for marketers"',
     sources: [
-      { name: "Claude AI", color: "#e5e5e5", live: true },
-      { name: "App Store", color: "#888888", live: true },
-      { name: "Google Play", color: "#888888", live: true },
+      { name: "Claude AI", color: "var(--clr-text-2)", live: true },
+      { name: "App Store", color: "var(--clr-text-3)", live: true },
+      { name: "Google Play", color: "var(--clr-text-3)", live: true },
     ],
   },
   {
@@ -125,13 +125,13 @@ const TOOLS: ToolConfig[] = [
     name: "Competitor Radar",
     tagline: "Know your rivals inside out",
     description: "Deep competitive intelligence on who you're really up against — their strategies, exploitable weaknesses, and exactly how to outmaneuver them.",
-    accentColor: "#e5e5e5",
+    accentColor: "var(--clr-accent)",
     accentRgb: "229,229,229",
     apiPath: "/api/radar",
     inputLabel: "Describe what you're building and your main competition",
     placeholder: 'e.g. "I\'m building a Notion alternative for agency teams, competing with Asana and Monday.com"',
     sources: [
-      { name: "Claude AI", color: "#e5e5e5", live: true },
+      { name: "Claude AI", color: "var(--clr-text-2)", live: true },
     ],
   },
   {
@@ -140,44 +140,44 @@ const TOOLS: ToolConfig[] = [
     name: "Stack Advisor",
     tagline: "Build fast, cheap, and right",
     description: "Tell us what you're building, your budget, and how technical you are. Get the exact tools, real monthly costs, and a step-by-step build order.",
-    accentColor: "#e5e5e5",
+    accentColor: "var(--clr-accent)",
     accentRgb: "229,229,229",
     apiPath: "/api/stack",
     inputLabel: "Describe what you want to build",
     placeholder: 'e.g. "A marketplace for local freelancers with payments and messaging"',
     hasExtras: true,
     sources: [
-      { name: "Claude AI", color: "#e5e5e5", live: true },
+      { name: "Claude AI", color: "var(--clr-text-2)", live: true },
     ],
   },
 ];
 
 // ── Section metadata (for results cards) ──────────────────────
 const SECTION_META: Record<string, { bg: string; color: string }> = {
-  "🏆": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "😤": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "🕳️":{ bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "⚡": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "🎯": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "⚠️":{ bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "💪": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "🩸": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "📣": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "🗺️":{ bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "⚔️":{ bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "📋": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "📈": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "💀": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "🔥": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "💡": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "🧲": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "🧠": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "🛠️":{ bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "💰": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "🚀": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "🔄": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "🔮": { bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
-  "🌡️":{ bg: "rgba(255,255,255,0.04)", color: "#ffffff" },
+  "🏆": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "😤": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "🕳️":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "⚡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "🎯": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "⚠️":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "💪": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "🩸": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "📣": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "🗺️":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "⚔️":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "📋": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "📈": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "💀": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "🔥": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "💡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "🧲": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "🧠": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "🛠️":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "💰": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "🚀": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "🔄": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "🔮": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "🌡️":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
 };
 
 // ── Markdown component map ─────────────────────────────────────
@@ -192,7 +192,7 @@ const MD: Record<string, (props: any) => React.ReactElement> = {
       return <pre><code className={className}>{children}</code></pre>;
     }
     return (
-      <code style={{ background: "rgba(255,255,255,0.12)", color: "#bbbbbb", padding: "0.1em 0.35em", borderRadius: 4, fontSize: "0.85em" }}>
+      <code style={{ background: "rgba(var(--clr-text-rgb),0.12)", color: "var(--clr-text-3)", padding: "0.1em 0.35em", borderRadius: 4, fontSize: "0.85em" }}>
         {children}
       </code>
     );
@@ -238,7 +238,7 @@ function parseScore(body: string): { score: number; label: string; summary: stri
 
 // ── Section Result Card ────────────────────────────────────────
 function SectionCard({ section, showCursor }: { section: Section; showCursor: boolean }) {
-  const meta = SECTION_META[section.emoji] ?? { bg: "rgba(255,255,255,0.1)", color: "#cccccc" };
+  const meta = SECTION_META[section.emoji] ?? { bg: "rgba(var(--clr-text-rgb),0.1)", color: "var(--clr-text-2)" };
   return (
     <div className="section-card">
       <div className="section-card-header">
@@ -250,7 +250,7 @@ function SectionCard({ section, showCursor }: { section: Section; showCursor: bo
           {section.body}
         </ReactMarkdown>
         {showCursor && (
-          <span style={{ display: "inline-block", width: 2, height: "1em", background: "#e5e5e5", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
+          <span style={{ display: "inline-block", width: 2, height: "1em", background: "var(--clr-accent)", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
         )}
       </div>
     </div>
@@ -312,7 +312,7 @@ function TrendRisingSection({ section, isStreaming }: { section: Section; isStre
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
         <span style={{ fontSize: "1.25rem" }}>📈</span>
-        <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "#ffffff", margin: 0, letterSpacing: "-0.02em" }}>
+        <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
       </div>
@@ -321,19 +321,19 @@ function TrendRisingSection({ section, isStreaming }: { section: Section; isStre
           {bullets.map((b, i) => {
             return (
               <div key={i} style={{
-                background: "#111111",
-                border: "1px solid #222222",
+                background: "var(--clr-surface)",
+                border: "1px solid var(--clr-border-2)",
                 borderRadius: 12, padding: "1.25rem",
                 transition: "border-color 0.15s",
               }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#333333"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#222222"; }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--clr-border-3)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--clr-border-2)"; }}
               >
                 {b.badge && (
                   <span style={{
                     display: "inline-flex", alignItems: "center", gap: 4,
                     padding: "0.2rem 0.6rem", borderRadius: 999,
-                    background: "rgba(255,255,255,0.1)", color: "#cccccc",
+                    background: "rgba(var(--clr-text-rgb),0.1)", color: "var(--clr-text-2)",
                     fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.04em",
                     marginBottom: "0.625rem",
                   }}>
@@ -341,11 +341,11 @@ function TrendRisingSection({ section, isStreaming }: { section: Section; isStre
                   </span>
                 )}
                 {b.title && (
-                  <div style={{ fontSize: "0.9375rem", fontWeight: 600, color: "#ffffff", marginBottom: "0.375rem", lineHeight: 1.3, letterSpacing: "-0.01em" }}>
+                  <div style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.375rem", lineHeight: 1.3, letterSpacing: "-0.01em" }}>
                     {b.title}
                   </div>
                 )}
-                <div style={{ fontSize: "0.8125rem", color: "#888888", lineHeight: 1.65 }}>
+                <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.65 }}>
                   {b.desc}
                 </div>
               </div>
@@ -367,7 +367,7 @@ function TrendDyingSection({ section, isStreaming }: { section: Section; isStrea
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
         <span style={{ fontSize: "1.25rem" }}>💀</span>
-        <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "#ffffff", margin: 0, letterSpacing: "-0.02em" }}>
+        <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
       </div>
@@ -375,29 +375,29 @@ function TrendDyingSection({ section, isStreaming }: { section: Section; isStrea
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem" }}>
           {bullets.map((b, i) => (
             <div key={i} style={{
-              background: "#111111",
-              border: "1px solid #222222",
+              background: "var(--clr-surface)",
+              border: "1px solid var(--clr-border-2)",
               borderRadius: 12, padding: "1.25rem",
               transition: "border-color 0.15s",
             }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#333333"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#222222"; }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--clr-border-3)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--clr-border-2)"; }}
             >
               <span style={{
                 display: "inline-flex", alignItems: "center", gap: 4,
                 padding: "0.2rem 0.6rem", borderRadius: 999,
-                background: "rgba(255,255,255,0.1)", color: "#cccccc",
+                background: "rgba(var(--clr-text-rgb),0.1)", color: "var(--clr-text-2)",
                 fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.04em",
                 marginBottom: "0.625rem",
               }}>
                 DECLINING
               </span>
               {b.title && (
-                <div style={{ fontSize: "0.9375rem", fontWeight: 600, color: "#ffffff", marginBottom: "0.375rem", lineHeight: 1.3 }}>
+                <div style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.375rem", lineHeight: 1.3 }}>
                   {b.title}
                 </div>
               )}
-              <div style={{ fontSize: "0.8125rem", color: "#888888", lineHeight: 1.65 }}>
+              <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.65 }}>
                 {b.desc}
               </div>
             </div>
@@ -418,7 +418,7 @@ function TrendNichesSection({ section, isStreaming }: { section: Section; isStre
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
         <span style={{ fontSize: "1.25rem" }}>💡</span>
-        <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "#ffffff", margin: 0, letterSpacing: "-0.02em" }}>
+        <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
       </div>
@@ -426,31 +426,31 @@ function TrendNichesSection({ section, isStreaming }: { section: Section; isStre
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem" }}>
           {niches.map((n, i) => (
             <div key={i} style={{
-              background: "#111111",
-              border: "1px solid #222222",
+              background: "var(--clr-surface)",
+              border: "1px solid var(--clr-border-2)",
               borderRadius: 12, padding: "1.25rem",
               transition: "border-color 0.15s",
             }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#333333"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#222222"; }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--clr-border-3)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--clr-border-2)"; }}
             >
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.625rem" }}>
                 {n.title && (
-                  <div style={{ fontSize: "0.9375rem", fontWeight: 600, color: "#ffffff", lineHeight: 1.3, flex: 1 }}>
+                  <div style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.3, flex: 1 }}>
                     {n.title}
                   </div>
                 )}
                 <div style={{
                   flexShrink: 0, display: "flex", alignItems: "center", gap: 4,
                   padding: "0.25rem 0.625rem", borderRadius: 999,
-                  background: "rgba(255,255,255,0.12)",
+                  background: "rgba(var(--clr-text-rgb),0.12)",
                 }}>
-                  <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#cccccc" }}>
+                  <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--clr-text-2)" }}>
                     {n.score}/10
                   </span>
                 </div>
               </div>
-              <div style={{ fontSize: "0.8125rem", color: "#888888", lineHeight: 1.65 }}>
+              <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.65 }}>
                 {n.desc}
               </div>
             </div>
@@ -472,14 +472,14 @@ function TrendPatternHero({ section, isStreaming }: { section: Section; isStream
 
   return (
     <div style={{
-      background: "#111111",
-      border: "1px solid #222222",
+      background: "var(--clr-surface)",
+      border: "1px solid var(--clr-border-2)",
       borderRadius: 12, padding: "2rem 2.25rem", position: "relative", overflow: "hidden",
     }}>
       <div style={{ position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
           <span style={{ fontSize: "1.5rem" }}>🔥</span>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#ffffff", margin: 0, letterSpacing: "-0.02em" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
             {section.title}
           </h3>
         </div>
@@ -498,7 +498,7 @@ function TrendPatternHero({ section, isStreaming }: { section: Section; isStream
           </div>
         )}
         {isStreaming && (
-          <span style={{ display: "inline-block", width: 2, height: "1em", background: "#e5e5e5", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
+          <span style={{ display: "inline-block", width: 2, height: "1em", background: "var(--clr-accent)", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
         )}
       </div>
     </div>
@@ -513,14 +513,14 @@ function TrendGenericSection({ section, isStreaming, emoji }: {
 
   return (
     <div style={{
-      background: "#111111",
-      border: "1px solid #222222",
+      background: "var(--clr-surface)",
+      border: "1px solid var(--clr-border-2)",
       borderRadius: 12, padding: "1.75rem 2rem",
     }}>
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
           <span style={{ fontSize: "1.25rem" }}>{emoji}</span>
-          <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "#ffffff", margin: 0, letterSpacing: "-0.02em" }}>
+          <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
             {section.title}
           </h3>
         </div>
@@ -550,7 +550,7 @@ function TrendGenericSection({ section, isStreaming, emoji }: {
           </div>
         )}
         {isStreaming && (
-          <span style={{ display: "inline-block", width: 2, height: "1em", background: "#e5e5e5", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
+          <span style={{ display: "inline-block", width: 2, height: "1em", background: "var(--clr-accent)", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
         )}
       </div>
     </div>
@@ -560,12 +560,12 @@ function TrendGenericSection({ section, isStreaming, emoji }: {
 function TrendFeedResult({ sections, isStreaming }: { sections: Section[]; isStreaming: boolean }) {
   // Map sections by their emoji to route to the right visual component
   const sectionMap: Record<string, { component: "rising" | "dying" | "niches" | "pattern" | "generic"; color: string; emoji: string }> = {
-    "📈": { component: "rising", color: "#cccccc", emoji: "📈" },
-    "💀": { component: "dying", color: "#cccccc", emoji: "💀" },
-    "🔥": { component: "pattern", color: "#bbbbbb", emoji: "🔥" },
-    "💡": { component: "niches", color: "#cccccc", emoji: "💡" },
-    "🧲": { component: "generic", color: "#cccccc", emoji: "🧲" },
-    "🧠": { component: "generic", color: "#cccccc", emoji: "🧠" },
+    "📈": { component: "rising", color: "var(--clr-text-2)", emoji: "📈" },
+    "💀": { component: "dying", color: "var(--clr-text-2)", emoji: "💀" },
+    "🔥": { component: "pattern", color: "var(--clr-text-3)", emoji: "🔥" },
+    "💡": { component: "niches", color: "var(--clr-text-2)", emoji: "💡" },
+    "🧲": { component: "generic", color: "var(--clr-text-2)", emoji: "🧲" },
+    "🧠": { component: "generic", color: "var(--clr-text-2)", emoji: "🧠" },
   };
 
   // Filter out the temperature section (handled separately) and empty sections
@@ -608,7 +608,7 @@ function ThreatDots({ level }: { level: number }) {
       {[1,2,3,4,5].map(i => (
         <span key={i} style={{
           width: 8, height: 8, borderRadius: "50%",
-          background: i <= level ? "#ffffff" : "#222222",
+          background: i <= level ? "var(--clr-text)" : "var(--clr-border-2)",
         }} />
       ))}
     </span>
@@ -617,8 +617,8 @@ function ThreatDots({ level }: { level: number }) {
 
 function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
   const ms = Math.max(0, Math.min(100, data.marketScore));
-  const msColor = "#ffffff";
-  const msBg = "rgba(255,255,255,0.04)";
+  const msColor = "var(--clr-text)";
+  const msBg = "rgba(var(--clr-text-rgb),0.04)";
   const msEmoji = ms >= 81 ? "🔥" : ms >= 61 ? "🟢" : ms >= 41 ? "🟡" : ms >= 21 ? "🟠" : "🔴";
   const msR = 36;
   const msCirc = 2 * Math.PI * msR;
@@ -711,10 +711,10 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
       </div>
 
       {/* ── KEY COMPETITORS ── */}
-      <div>
+      {data.competitors.length > 0 && <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🏆</div>
-          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>Key Competitors</h2>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🏆</div>
+          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Key Competitors</h2>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "0.5rem" }}>
           {data.competitors.map((c) => (
@@ -733,28 +733,28 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
                 <p style={{ fontSize: "0.68rem", color: "var(--clr-text-5)", margin: "0 0 6px", lineHeight: 1.35 }}>{c.tagline}</p>
               )}
               <div style={{ display: "flex", gap: 8 }}>
-                <div style={{ fontSize: "0.68rem", color: "#cccccc", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(255,255,255,0.3)", flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: "0.68rem", color: "var(--clr-text-2)", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(var(--clr-text-rgb),0.3)", flex: 1, minWidth: 0 }}>
                   {c.strengths[0] ?? "—"}
                 </div>
-                <div style={{ fontSize: "0.68rem", color: "#888888", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(255,255,255,0.3)", flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(var(--clr-text-rgb),0.3)", flex: 1, minWidth: 0 }}>
                   {c.weaknesses[0] ?? "—"}
                 </div>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </div>}
 
       {/* ── PAIN POINTS ── */}
-      <div>
+      {data.painPoints.length > 0 && <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>😤</div>
-          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>Pain Points</h2>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>😤</div>
+          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Pain Points</h2>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
           {data.painPoints.map((p, i) => {
-            const sevColor = p.severity === "high" ? "#ffffff" : p.severity === "medium" ? "#cccccc" : "#888888";
-            const sevBg = p.severity === "high" ? "rgba(255,255,255,0.12)" : p.severity === "medium" ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.08)";
+            const sevColor = p.severity === "high" ? "var(--clr-text)" : p.severity === "medium" ? "var(--clr-text-2)" : "var(--clr-text-3)";
+            const sevBg = p.severity === "high" ? "rgba(var(--clr-text-rgb),0.12)" : p.severity === "medium" ? "rgba(var(--clr-text-rgb),0.08)" : "rgba(var(--clr-text-rgb),0.08)";
             return (
               <div key={i} style={{
                 display: "flex", alignItems: "center", gap: "0.625rem", padding: "0.5rem 0.75rem", borderRadius: 10,
@@ -783,19 +783,19 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
             );
           })}
         </div>
-      </div>
+      </div>}
 
       {/* ── MARKET GAPS ── */}
-      <div>
+      {data.marketGaps.length > 0 && <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🕳️</div>
-          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#cccccc", margin: 0 }}>Market Gaps</h2>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🕳️</div>
+          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text-2)", margin: 0 }}>Market Gaps</h2>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           {data.marketGaps.map((g, i) => {
-            const statusColor = g.status === "untapped" ? "#ffffff" : g.status === "emerging" ? "#cccccc" : "#888888";
-            const statusBg = g.status === "untapped" ? "rgba(255,255,255,0.1)" : g.status === "emerging" ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.08)";
-            const barColor = g.opportunityScore >= 7 ? "#ffffff" : g.opportunityScore >= 4 ? "#cccccc" : "#555555";
+            const statusColor = g.status === "untapped" ? "var(--clr-text)" : g.status === "emerging" ? "var(--clr-text-2)" : "var(--clr-text-3)";
+            const statusBg = g.status === "untapped" ? "rgba(var(--clr-text-rgb),0.1)" : g.status === "emerging" ? "rgba(var(--clr-text-rgb),0.08)" : "rgba(var(--clr-text-rgb),0.08)";
+            const barColor = g.opportunityScore >= 7 ? "var(--clr-text)" : g.opportunityScore >= 4 ? "var(--clr-text-2)" : "var(--clr-text-5)";
             return (
               <div key={i} style={{
                 background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
@@ -833,20 +833,20 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
             );
           })}
         </div>
-      </div>
+      </div>}
 
       {/* ── SWOT ── */}
-      <div>
+      {(data.swot.strengths.length > 0 || data.swot.weaknesses.length > 0 || data.swot.opportunities.length > 0 || data.swot.threats.length > 0) && <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>⚔️</div>
-          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>SWOT</h2>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>⚔️</div>
+          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>SWOT</h2>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
           {([
-            { key: "strengths" as const, label: "S", full: "Strengths", color: "#cccccc", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.15)" },
-            { key: "weaknesses" as const, label: "W", full: "Weaknesses", color: "#cccccc", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.15)" },
-            { key: "opportunities" as const, label: "O", full: "Opportunities", color: "#cccccc", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.15)" },
-            { key: "threats" as const, label: "T", full: "Threats", color: "#cccccc", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.15)" },
+            { key: "strengths" as const, label: "S", full: "Strengths", color: "var(--clr-text-2)", bg: "rgba(var(--clr-text-rgb),0.04)", border: "rgba(var(--clr-text-rgb),0.15)" },
+            { key: "weaknesses" as const, label: "W", full: "Weaknesses", color: "var(--clr-text-2)", bg: "rgba(var(--clr-text-rgb),0.04)", border: "rgba(var(--clr-text-rgb),0.15)" },
+            { key: "opportunities" as const, label: "O", full: "Opportunities", color: "var(--clr-text-2)", bg: "rgba(var(--clr-text-rgb),0.04)", border: "rgba(var(--clr-text-rgb),0.15)" },
+            { key: "threats" as const, label: "T", full: "Threats", color: "var(--clr-text-2)", bg: "rgba(var(--clr-text-rgb),0.04)", border: "rgba(var(--clr-text-rgb),0.15)" },
           ]).map(q => (
             <div key={q.key} style={{
               background: q.bg, border: `1px solid ${q.border}`,
@@ -866,27 +866,27 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
             </div>
           ))}
         </div>
-      </div>
+      </div>}
 
       {/* ── YOUR OPPORTUNITY ── */}
-      <div style={{
-        background: "linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03))",
-        border: "1px solid rgba(255,255,255,0.2)",
+      {data.opportunity.headline && <div style={{
+        background: "linear-gradient(135deg, rgba(var(--clr-text-rgb),0.06), rgba(var(--clr-text-rgb),0.03))",
+        border: "1px solid rgba(var(--clr-text-rgb),0.2)",
         borderRadius: 12, padding: "1rem 1.125rem",
         position: "relative", overflow: "hidden",
       }}>
         <div style={{
           position: "absolute", top: -30, right: -30, width: 160, height: 160,
-          borderRadius: "50%", background: "rgba(255,255,255,0.05)", filter: "blur(50px)", pointerEvents: "none",
+          borderRadius: "50%", background: "rgba(var(--clr-text-rgb),0.05)", filter: "blur(50px)", pointerEvents: "none",
         }} />
         <div style={{ position: "relative" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-            <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>⚡</div>
-            <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>Your Opportunity</h2>
+            <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>⚡</div>
+            <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Your Opportunity</h2>
             {(() => {
               const u = data.opportunity.urgency;
-              const uColor = u === "high" ? "#ffffff" : u === "medium" ? "#cccccc" : "#888888";
-              const uBg = u === "high" ? "rgba(255,255,255,0.1)" : u === "medium" ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.08)";
+              const uColor = u === "high" ? "var(--clr-text)" : u === "medium" ? "var(--clr-text-2)" : "var(--clr-text-3)";
+              const uBg = u === "high" ? "rgba(var(--clr-text-rgb),0.1)" : u === "medium" ? "rgba(var(--clr-text-rgb),0.08)" : "rgba(var(--clr-text-rgb),0.08)";
               const uLabel = u === "high" ? "Act Now" : u === "medium" ? "6-12 Mo" : "Long Term";
               return (
                 <span style={{
@@ -910,15 +910,15 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "0.5rem" }}>
             {data.opportunity.actionItems.slice(0, 3).map((item) => (
               <div key={item.step} style={{
-                background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
+                background: "rgba(var(--clr-text-rgb),0.06)", border: "1px solid rgba(var(--clr-text-rgb),0.15)",
                 borderRadius: 10, padding: "0.625rem 0.75rem",
                 display: "flex", gap: "0.5rem", alignItems: "flex-start",
               }}>
                 <div style={{
                   width: 22, height: 22, borderRadius: "50%", flexShrink: 0,
-                  background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)",
+                  background: "rgba(var(--clr-text-rgb),0.15)", border: "1px solid rgba(var(--clr-text-rgb),0.3)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "0.65rem", fontWeight: 800, color: "#cccccc",
+                  fontSize: "0.65rem", fontWeight: 800, color: "var(--clr-text-2)",
                 }}>
                   {item.step}
                 </div>
@@ -932,16 +932,16 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
             ))}
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* ── IDEAL TARGET CUSTOMER ── */}
-      <div style={{
+      {data.targetCustomer.persona && <div style={{
         background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
         borderRadius: 12, padding: "0.875rem 1rem",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🎯</div>
-          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>Target Customer</h2>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🎯</div>
+          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Target Customer</h2>
         </div>
 
         <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
@@ -949,10 +949,10 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
           <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", width: 72 }}>
             <div style={{
               width: 44, height: 44, borderRadius: "50%",
-              background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)",
+              background: "rgba(var(--clr-text-rgb),0.12)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
               display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cccccc" strokeWidth="1.5" strokeLinecap="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text-2)" strokeWidth="1.5" strokeLinecap="round">
                 <circle cx="12" cy="8" r="4"/>
                 <path d="M20 21a8 8 0 1 0-16 0"/>
               </svg>
@@ -972,14 +972,14 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
               <div style={{ fontSize: "0.65rem", color: "var(--clr-text-3)", lineHeight: 1.4 }}>
                 {data.targetCustomer.demographics}
               </div>
-              <div style={{ fontSize: "0.65rem", color: "#cccccc", fontWeight: 600, lineHeight: 1.4 }}>
+              <div style={{ fontSize: "0.65rem", color: "var(--clr-text-2)", fontWeight: 600, lineHeight: 1.4 }}>
                 💰 {data.targetCustomer.willingnessToPay}
               </div>
             </div>
 
             {/* Pain points as compact list */}
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <span style={{ fontSize: "0.52rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "#888888" }}>Pains</span>
+              <span style={{ fontSize: "0.52rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--clr-text-3)" }}>Pains</span>
               {data.targetCustomer.painPoints.slice(0, 3).map((p, i) => (
                 <div key={i} style={{ fontSize: "0.65rem", color: "var(--clr-text-4)", lineHeight: 1.35 }}>• {p}</div>
               ))}
@@ -1000,7 +1000,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
             </div>
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }
@@ -1089,8 +1089,8 @@ function deriveScoreLabel(pct: number): { emoji: string; label: string } {
 function SpaceScoreCard({ score, summary, hnBoost }: { score: number; summary: string; hnBoost?: number }) {
   const pct = Math.max(0, Math.min(100, score));
   const tier = deriveScoreLabel(pct);
-  const color = "#ffffff";
-  const bgColor = "rgba(255,255,255,0.04)";
+  const color = "var(--clr-text)";
+  const bgColor = "rgba(var(--clr-text-rgb),0.04)";
 
   // SVG arc math (36px radius, starts at top, clockwise)
   const r = 36;
@@ -1205,8 +1205,8 @@ function SpaceScoreCard({ score, summary, hnBoost }: { score: number; summary: s
           <span style={{
             display: "inline-flex", alignItems: "center", gap: 4,
             padding: "0.1rem 0.5rem", borderRadius: 999,
-            background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)",
-            fontSize: "0.68rem", fontWeight: 700, color: "#cccccc",
+            background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
+            fontSize: "0.68rem", fontWeight: 700, color: "var(--clr-text-2)",
           }}>
             <svg width="10" height="10" viewBox="0 0 18 18" fill="currentColor"><path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/></svg>
             HN activity
@@ -1276,14 +1276,14 @@ function ToolSelectorCard({
         overflow: "hidden",
         cursor: "pointer",
         transition: "all 0.18s ease",
-        background: isSelected ? "rgba(255,255,255,0.03)" : "#111111",
+        background: isSelected ? "rgba(var(--clr-text-rgb),0.03)" : "var(--clr-surface)",
         border: isSelected
-          ? "1px solid #444444"
+          ? "1px solid var(--clr-text-6)"
           : hovered && !dim
-          ? "1px solid #444444"
-          : "1px solid #222222",
+          ? "1px solid var(--clr-text-6)"
+          : "1px solid var(--clr-border-2)",
         boxShadow: isSelected
-          ? "0 0 0 3px rgba(255,255,255,0.04)"
+          ? "0 0 0 3px rgba(var(--clr-text-rgb),0.04)"
           : "none",
         opacity: dim ? 0.35 : 1,
         transform: isSelected ? "translateY(-2px)" : hovered && !dim ? "translateY(-1px)" : "none",
@@ -1295,11 +1295,11 @@ function ToolSelectorCard({
         <div style={{
           position: "absolute", top: 12, right: 12,
           width: 20, height: 20, borderRadius: 6,
-          background: "#ffffff",
+          background: "var(--clr-text)",
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-            <path d="M2 5.5l2.5 2.5 4.5-5" stroke="#000" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M2 5.5l2.5 2.5 4.5-5" stroke="var(--clr-bg)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
       )}
@@ -1538,8 +1538,8 @@ function InputSection({
               style={{
                 display: "flex", alignItems: "center", gap: 8,
                 padding: "0.5625rem 1.25rem", borderRadius: 8,
-                background: canSubmit ? tool.accentColor : "var(--clr-surface-3)",
-                color: canSubmit ? "#fff" : "var(--clr-text-8)",
+                background: canSubmit ? "var(--clr-btn-bg)" : "var(--clr-surface-3)",
+                color: canSubmit ? "var(--clr-btn-text)" : "var(--clr-text-8)",
                 fontSize: "0.875rem", fontWeight: 600, border: "none",
                 cursor: canSubmit ? "pointer" : "not-allowed",
                 fontFamily: "inherit", letterSpacing: "-0.01em",
@@ -1549,7 +1549,7 @@ function InputSection({
             >
               {loading ? (
                 <>
-                  <div style={{ width: 14, height: 14, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+                  <div style={{ width: 14, height: 14, border: "2px solid rgba(var(--clr-text-rgb),0.3)", borderTopColor: "var(--clr-text)", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
                   Running…
                 </>
               ) : (
@@ -1769,8 +1769,8 @@ function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
 }
 
 // ── Stack Advisor Visual Result ──────────────────────────────
-const PHASE_COLORS = ["#ffffff", "#e5e5e5", "#cccccc", "#bbbbbb", "#aaaaaa"];
-const PHASE_BGS = ["rgba(255,255,255,0.04)", "rgba(255,255,255,0.04)", "rgba(255,255,255,0.04)", "rgba(255,255,255,0.04)", "rgba(255,255,255,0.04)"];
+const PHASE_COLORS = ["var(--clr-text)", "var(--clr-text-2)", "var(--clr-text-3)", "var(--clr-text-5)", "var(--clr-text-6)"];
+const PHASE_BGS = ["rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)"];
 
 function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
   const isPhaseZero = (name: string) => /phase\s*0/i.test(name) || /validate/i.test(name);
@@ -1780,9 +1780,9 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
       {/* ── HEADLINE ── */}
       {data.headline && (
         <div style={{
-          background: "var(--clr-surface)", border: "1px solid rgba(255,255,255,0.25)",
+          background: "var(--clr-surface)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
           borderRadius: 12, padding: "1.25rem 1.5rem",
-          borderTop: "3px solid #e5e5e5",
+          borderTop: "3px solid var(--clr-accent)",
         }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: "0.5rem" }}>
             <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--clr-text-6)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
@@ -1790,8 +1790,8 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
             </span>
             <span style={{
               fontSize: "0.55rem", fontWeight: 700, padding: "0.12rem 0.5rem",
-              borderRadius: 999, background: "rgba(255,255,255,0.1)",
-              color: "#cccccc", border: "1px solid rgba(255,255,255,0.25)",
+              borderRadius: 999, background: "rgba(var(--clr-text-rgb),0.1)",
+              color: "var(--clr-text-2)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
               letterSpacing: "0.03em",
             }}>
               Pricing verified March 2026
@@ -1835,8 +1835,8 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                   <span style={{
                     fontSize: "0.58rem", fontWeight: 800, padding: "0.15rem 0.6rem",
                     borderRadius: 999, letterSpacing: "0.05em",
-                    background: "rgba(255,255,255,0.15)", color: "#cccccc",
-                    border: "1px solid rgba(255,255,255,0.35)",
+                    background: "rgba(var(--clr-text-rgb),0.15)", color: "var(--clr-text-2)",
+                    border: "1px solid rgba(var(--clr-text-rgb),0.35)",
                     animation: "pulse 2s ease-in-out infinite",
                   }}>
                     DO THIS FIRST
@@ -1869,9 +1869,9 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                         <span style={{
                           fontSize: "0.58rem", fontWeight: 700, padding: "0.08rem 0.4rem",
                           borderRadius: 999,
-                          background: tool.free ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.08)",
-                          color: tool.free ? "#cccccc" : "#888888",
-                          border: `1px solid ${tool.free ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.2)"}`,
+                          background: tool.free ? "rgba(var(--clr-text-rgb),0.1)" : "rgba(var(--clr-text-rgb),0.08)",
+                          color: tool.free ? "var(--clr-text-2)" : "var(--clr-text-3)",
+                          border: `1px solid ${tool.free ? "rgba(var(--clr-text-rgb),0.25)" : "rgba(var(--clr-text-rgb),0.2)"}`,
                         }}>
                           {tool.price}
                         </span>
@@ -1899,7 +1899,7 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                         }}>
                           <div style={{
                             width: 5, height: 5, borderRadius: "50%", flexShrink: 0,
-                            background: ct.freeTier ? "#cccccc" : "#888888",
+                            background: ct.freeTier ? "var(--clr-text-2)" : "var(--clr-text-3)",
                           }} />
                           <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text-3)" }}>
                             {ct.name}
@@ -1910,8 +1910,8 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                           <span style={{
                             fontSize: "0.56rem", fontWeight: 700, padding: "0.05rem 0.35rem",
                             borderRadius: 999, flexShrink: 0,
-                            background: ct.freeTier ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.08)",
-                            color: ct.freeTier ? "#cccccc" : "#888888",
+                            background: ct.freeTier ? "rgba(var(--clr-text-rgb),0.1)" : "rgba(var(--clr-text-rgb),0.08)",
+                            color: ct.freeTier ? "var(--clr-text-2)" : "var(--clr-text-3)",
                           }}>
                             {ct.freeTier ? "FREE" : "PAID"}
                           </span>
@@ -2028,7 +2028,7 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {data.mistakes.map((m, i) => {
-              const mColor = i === 0 ? "#ffffff" : i === 1 ? "#cccccc" : "#888888";
+              const mColor = i === 0 ? "var(--clr-text)" : i === 1 ? "var(--clr-text-2)" : "var(--clr-text-3)";
               return (
                 <div key={i} style={{
                   display: "flex", gap: 0, borderRadius: 12, overflow: "hidden",
@@ -2061,7 +2061,7 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {data.scalability.map((s, i) => {
-              const sevColor = s.severity === "high" ? "#ffffff" : s.severity === "medium" ? "#cccccc" : "#888888";
+              const sevColor = s.severity === "high" ? "var(--clr-text)" : s.severity === "medium" ? "var(--clr-text-2)" : "var(--clr-text-3)";
               return (
                 <div key={i} style={{
                   display: "flex", alignItems: "center", gap: 10,
@@ -2092,9 +2092,9 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                   </svg>
                   {/* Upgrade to */}
                   <span style={{
-                    fontSize: "0.72rem", fontWeight: 700, color: "#cccccc",
+                    fontSize: "0.72rem", fontWeight: 700, color: "var(--clr-text-2)",
                     padding: "0.15rem 0.6rem", borderRadius: 999,
-                    background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)",
+                    background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
                     flexShrink: 0,
                   }}>
                     {s.upgradeTo}
@@ -2132,9 +2132,9 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                   <path d="M2 7h10m0 0L9 4m3 3L9 10" stroke="var(--clr-text-6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
                 <span style={{
-                  fontSize: "0.72rem", fontWeight: 700, color: "#cccccc",
+                  fontSize: "0.72rem", fontWeight: 700, color: "var(--clr-text-2)",
                   padding: "0.1rem 0.5rem", borderRadius: 999,
-                  background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)",
+                  background: "rgba(var(--clr-text-rgb),0.12)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
                   flexShrink: 0,
                 }}>
                   {u.migrateTo}
@@ -2159,6 +2159,7 @@ export default function Home() {
   const [streamedContent, setStreamedContent] = useState("");
   const [error, setError] = useState("");
   const [hasResults, setHasResults] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [githubRepos, setGithubRepos] = useState<GithubRepo[]>([]);
   const [githubLoading, setGithubLoading] = useState(false);
   const [githubFetched, setGithubFetched] = useState(false);
@@ -2207,11 +2208,20 @@ export default function Home() {
     }
   }, [hasResults]);
 
-  // Force dark mode — remove any stale light mode from previous sessions
+  // Initialize theme from localStorage
   useEffect(() => {
-    document.documentElement.classList.remove("light");
-    localStorage.removeItem("theme");
+    const saved = localStorage.getItem("theme") as "dark" | "light" | null;
+    const t = saved || "dark";
+    setTheme(t);
+    document.documentElement.classList.toggle("light", t === "light");
   }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    localStorage.setItem("theme", next);
+    document.documentElement.classList.toggle("light", next === "light");
+  };
 
   const handleSelectTool = (toolId: ToolId) => {
     setSelectedTool(toolId);
@@ -2569,9 +2579,9 @@ export default function Home() {
 
         {/* ── Header ── */}
         <header style={{
-          borderBottom: "1px solid #1a1a1a",
+          borderBottom: "1px solid var(--clr-border-deep)",
           backdropFilter: "blur(16px)",
-          background: "#0a0a0a",
+          background: "var(--clr-bg)",
           position: "sticky", top: 0, zIndex: 50,
         }}>
           <div style={{
@@ -2582,20 +2592,20 @@ export default function Home() {
             <div style={{ display: "flex", alignItems: "center" }}>
             <button onClick={fullReset} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer" }}>
               <svg width="20" height="20" viewBox="0 0 19 19" fill="none">
-                <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="#e5e5e5" strokeWidth="2" strokeLinecap="round" />
+                <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2" strokeLinecap="round" />
               </svg>
-              <span style={{ fontWeight: 700, fontSize: "1rem", color: "#ffffff", letterSpacing: "-0.02em" }}>Unbuilt</span>
+              <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.02em" }}>Unbuilt</span>
             </button>
 
             {/* Nav link next to logo */}
             <Link href="/how-it-works" style={{
-              fontSize: "0.875rem", fontWeight: 400, color: "#888888",
+              fontSize: "0.875rem", fontWeight: 400, color: "var(--clr-text-3)",
               textDecoration: "none",
               transition: "color 0.15s",
               marginLeft: "1.5rem",
             }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#888888"; }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text-3)"; }}
             >
               How it works
             </Link>
@@ -2611,8 +2621,8 @@ export default function Home() {
                   style={{
                     display: "flex", alignItems: "center", gap: 6,
                     padding: "0.375rem 0.875rem", borderRadius: 999,
-                    background: "transparent", border: "1px solid #222222",
-                    color: "#888888", fontSize: "0.8125rem", fontWeight: 500,
+                    background: "transparent", border: "1px solid var(--clr-border-2)",
+                    color: "var(--clr-text-3)", fontSize: "0.8125rem", fontWeight: 500,
                     cursor: "pointer", fontFamily: "inherit",
                     transition: "color 0.15s, border-color 0.15s",
                   }}
@@ -2621,14 +2631,37 @@ export default function Home() {
                 </button>
               )}
 
+              {/* Theme toggle */}
+              <button
+                onClick={toggleTheme}
+                aria-label="Toggle theme"
+                style={{
+                  background: "none", border: `1px solid var(--clr-border-2)`,
+                  borderRadius: "50%", width: 32, height: 32,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", color: "var(--clr-text-3)",
+                  transition: "border-color 0.15s, color 0.15s",
+                }}
+              >
+                {theme === "dark" ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                )}
+              </button>
+
               {/* Auth */}
               {!isSignedIn ? (
                 <SignInButton mode="modal">
                   <button style={{
                     padding: "0.375rem 1rem", borderRadius: 999,
                     background: "transparent",
-                    border: "1px solid #333333",
-                    color: "#ffffff", fontSize: "0.875rem", fontWeight: 500,
+                    border: "1px solid var(--clr-border-3)",
+                    color: "var(--clr-text)", fontSize: "0.875rem", fontWeight: 500,
                     cursor: "pointer", fontFamily: "inherit",
                     transition: "border-color 0.15s",
                   }}>
@@ -2724,12 +2757,12 @@ export default function Home() {
                                 animation: "checkPop 0.35s cubic-bezier(0.16,1,0.3,1)",
                               }}>
                                 <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-                                  <path d="M2 5.5l2.5 2.5 4.5-5" stroke="#cccccc" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                                  <path d="M2 5.5l2.5 2.5 4.5-5" stroke="var(--clr-text-2)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                               </div>
                             ) : isActive ? (
                               <div style={{ width: 22, height: 22, borderRadius: "50%", border: `1.5px solid rgba(${currentTool?.accentRgb ?? "229,229,229"},0.3)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <div style={{ width: 8, height: 8, borderRadius: "50%", background: currentTool?.accentColor ?? "#e5e5e5", animation: "pulse 1s ease-in-out infinite" }} />
+                                <div style={{ width: 8, height: 8, borderRadius: "50%", background: currentTool?.accentColor ?? "var(--clr-accent)", animation: "pulse 1s ease-in-out infinite" }} />
                               </div>
                             ) : (
                               <div style={{ width: 22, height: 22, borderRadius: "50%", border: "1.5px solid var(--clr-border)" }} />
@@ -2737,7 +2770,7 @@ export default function Home() {
                           </div>
 
                           {/* Source icon */}
-                          <span style={{ color: isDone ? "#cccccc" : isActive ? (currentTool?.accentColor ?? "#e5e5e5") : "var(--clr-text-7)", transition: "color 0.3s", flexShrink: 0 }}>
+                          <span style={{ color: isDone ? "var(--clr-text-2)" : isActive ? (currentTool?.accentColor ?? "var(--clr-accent)") : "var(--clr-text-7)", transition: "color 0.3s", flexShrink: 0 }}>
                             {step.icon}
                           </span>
 
@@ -2753,7 +2786,7 @@ export default function Home() {
 
                           {/* Done tag */}
                           {isDone && (
-                            <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "#cccccc", letterSpacing: "0.04em", animation: "checkPop 0.35s ease" }}>
+                            <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-text-2)", letterSpacing: "0.04em", animation: "checkPop 0.35s ease" }}>
                               done
                             </span>
                           )}
@@ -2776,15 +2809,15 @@ export default function Home() {
                 <h1 style={{
                   fontSize: "clamp(1.75rem, 3.2vw, 2.75rem)", fontWeight: 700,
                   letterSpacing: "-0.03em", lineHeight: 1.15,
-                  color: "#ffffff", marginBottom: "0.75rem",
+                  color: "var(--clr-text)", marginBottom: "0.75rem",
                   whiteSpace: "nowrap",
                 }}>
-                  <span style={{ color: "#555555" }}>Claude says your idea is great.</span>
+                  <span style={{ color: "var(--clr-text-5)" }}>Claude says your idea is great.</span>
                   <br />
-                  <span style={{ color: "#ffffff" }}>We&apos;ll tell you the truth.</span>
+                  <span style={{ color: "var(--clr-text)" }}>We&apos;ll tell you the truth.</span>
                 </h1>
                 <p style={{
-                  color: "#888888", fontSize: "1rem", lineHeight: 1.6,
+                  color: "var(--clr-text-3)", fontSize: "1rem", lineHeight: 1.6,
                   maxWidth: 480, margin: "0 auto 1rem",
                 }}>
                   Pick your situation. Get a real analysis — competitors, market gaps, trends, or tech stack — powered by Claude.
@@ -2903,15 +2936,15 @@ export default function Home() {
                   <span style={{
                     display: "inline-flex", alignItems: "center", gap: 5,
                     padding: "0.2rem 0.65rem", borderRadius: 999,
-                    background: "rgba(255,255,255,0.08)",
-                    border: "1px solid rgba(255,255,255,0.25)",
+                    background: "rgba(var(--clr-text-rgb),0.08)",
+                    border: "1px solid rgba(var(--clr-text-rgb),0.25)",
                     fontSize: "0.68rem", fontWeight: 600,
-                    color: "#cccccc",
+                    color: "var(--clr-text-2)",
                     flexShrink: 0,
                   }}>
                     <span style={{
                       width: 5, height: 5, borderRadius: "50%",
-                      background: "#cccccc",
+                      background: "var(--clr-text-2)",
                       animation: resultCached ? "none" : "pulse 2s ease-in-out infinite",
                     }} />
                     {resultCached ? "Cached result" : "Live result"}
@@ -2951,8 +2984,8 @@ export default function Home() {
               {error && (
                 <div style={{
                   padding: "1rem 1.25rem", borderRadius: 12,
-                  background: "rgba(255,255,255,0.04)", border: "1px solid #222222",
-                  color: "#cccccc", fontSize: "0.875rem",
+                  background: "rgba(var(--clr-text-rgb),0.04)", border: "1px solid var(--clr-border-2)",
+                  color: "var(--clr-text-2)", fontSize: "0.875rem",
                 }}>
                   {error}
                 </div>
@@ -3025,8 +3058,8 @@ export default function Home() {
                 return (
                 <div className="section-card" style={{ marginTop: "1rem" }}>
                   <div className="section-card-header">
-                    <div className="section-icon" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)" }}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="#e5e5e5">
+                    <div className="section-icon" style={{ background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.2)" }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="var(--clr-accent)">
                         <path d="M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14zm-5 3c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/>
                       </svg>
                     </div>
@@ -3039,13 +3072,13 @@ export default function Home() {
                     <div style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
                       <span style={{
                         fontSize: "0.58rem", fontWeight: 700, padding: "0.1rem 0.45rem",
-                        borderRadius: 999, background: "rgba(255,255,255,0.08)", color: "#cccccc",
-                        border: "1px solid rgba(255,255,255,0.2)",
+                        borderRadius: 999, background: "rgba(var(--clr-text-rgb),0.08)", color: "var(--clr-text-2)",
+                        border: "1px solid rgba(var(--clr-text-rgb),0.2)",
                       }}>App Store</span>
                       <span style={{
                         fontSize: "0.58rem", fontWeight: 700, padding: "0.1rem 0.45rem",
-                        borderRadius: 999, background: "rgba(255,255,255,0.08)", color: "#cccccc",
-                        border: "1px solid rgba(255,255,255,0.2)",
+                        borderRadius: 999, background: "rgba(var(--clr-text-rgb),0.08)", color: "var(--clr-text-2)",
+                        border: "1px solid rgba(var(--clr-text-rgb),0.2)",
                       }}>Google Play</span>
                     </div>
                   </div>
@@ -3066,26 +3099,26 @@ export default function Home() {
                       <div style={{ display: "flex", gap: "0.75rem", marginBottom: "0.25rem" }}>
                         <div style={{
                           flex: 1, padding: "0.625rem 0.875rem", borderRadius: 10,
-                          background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
+                          background: "rgba(var(--clr-text-rgb),0.06)", border: "1px solid rgba(var(--clr-text-rgb),0.15)",
                           textAlign: "center",
                         }}>
-                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#e5e5e5", lineHeight: 1 }}>{totalFound}</div>
+                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--clr-text-2)", lineHeight: 1 }}>{totalFound}</div>
                           <div style={{ fontSize: "0.62rem", color: "var(--clr-text-6)", fontWeight: 600, marginTop: 3 }}>apps found</div>
                         </div>
                         <div style={{
                           flex: 1, padding: "0.625rem 0.875rem", borderRadius: 10,
-                          background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
+                          background: "rgba(var(--clr-text-rgb),0.06)", border: "1px solid rgba(var(--clr-text-rgb),0.15)",
                           textAlign: "center",
                         }}>
-                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#e5e5e5", lineHeight: 1 }}>{totalRatings.toLocaleString()}</div>
+                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--clr-text-2)", lineHeight: 1 }}>{totalRatings.toLocaleString()}</div>
                           <div style={{ fontSize: "0.62rem", color: "var(--clr-text-6)", fontWeight: 600, marginTop: 3 }}>total ratings</div>
                         </div>
                         <div style={{
                           flex: 1, padding: "0.625rem 0.875rem", borderRadius: 10,
-                          background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
+                          background: "rgba(var(--clr-text-rgb),0.06)", border: "1px solid rgba(var(--clr-text-rgb),0.15)",
                           textAlign: "center",
                         }}>
-                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#e5e5e5", lineHeight: 1 }}>{merged.length}</div>
+                          <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--clr-text-2)", lineHeight: 1 }}>{merged.length}</div>
                           <div style={{ fontSize: "0.62rem", color: "var(--clr-text-6)", fontWeight: 600, marginTop: 3 }}>unique apps</div>
                         </div>
                       </div>
@@ -3114,7 +3147,7 @@ export default function Home() {
                               </span>
                               <span style={{
                                 fontSize: "0.6rem", fontWeight: 700, padding: "0.1rem 0.4rem",
-                                borderRadius: 999, background: "rgba(255,255,255,0.08)", color: "#e5e5e5", flexShrink: 0,
+                                borderRadius: 999, background: "rgba(var(--clr-text-rgb),0.08)", color: "var(--clr-text-2)", flexShrink: 0,
                               }}>
                                 {app.price}
                               </span>
@@ -3123,8 +3156,8 @@ export default function Home() {
                                 <a href={app.platforms.ios.url} target="_blank" rel="noopener noreferrer"
                                   style={{
                                     fontSize: "0.55rem", fontWeight: 700, padding: "0.08rem 0.4rem",
-                                    borderRadius: 999, background: "rgba(255,255,255,0.08)", color: "#cccccc",
-                                    border: "1px solid rgba(255,255,255,0.2)", textDecoration: "none", flexShrink: 0,
+                                    borderRadius: 999, background: "rgba(var(--clr-text-rgb),0.08)", color: "var(--clr-text-2)",
+                                    border: "1px solid rgba(var(--clr-text-rgb),0.2)", textDecoration: "none", flexShrink: 0,
                                   }}>
                                   App Store
                                 </a>
@@ -3133,8 +3166,8 @@ export default function Home() {
                                 <a href={app.platforms.android.url} target="_blank" rel="noopener noreferrer"
                                   style={{
                                     fontSize: "0.55rem", fontWeight: 700, padding: "0.08rem 0.4rem",
-                                    borderRadius: 999, background: "rgba(255,255,255,0.08)", color: "#cccccc",
-                                    border: "1px solid rgba(255,255,255,0.2)", textDecoration: "none", flexShrink: 0,
+                                    borderRadius: 999, background: "rgba(var(--clr-text-rgb),0.08)", color: "var(--clr-text-2)",
+                                    border: "1px solid rgba(var(--clr-text-rgb),0.2)", textDecoration: "none", flexShrink: 0,
                                   }}>
                                   Google Play
                                 </a>
@@ -3144,7 +3177,7 @@ export default function Home() {
                             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.25rem" }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
                                 {[1, 2, 3, 4, 5].map((star) => (
-                                  <svg key={star} width="11" height="11" viewBox="0 0 18 18" fill={star <= Math.round(app.rating) ? "#ffffff" : "#333333"}>
+                                  <svg key={star} width="11" height="11" viewBox="0 0 18 18" fill={star <= Math.round(app.rating) ? "var(--clr-text)" : "var(--clr-text-8)"}>
                                     <path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/>
                                   </svg>
                                 ))}
@@ -3191,13 +3224,13 @@ export default function Home() {
               {selectedTool === "trend-feed" && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
-                  background: "#111111",
-                  border: "1px solid #222222",
+                  background: "var(--clr-surface)",
+                  border: "1px solid var(--clr-border-2)",
                   padding: "1.5rem",
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
                     <span style={{ fontSize: "1.25rem" }}>🟧</span>
-                    <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#ffffff", margin: 0, letterSpacing: "-0.02em" }}>
+                    <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
                       Hacker News Buzz
                     </h3>
                     <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
@@ -3230,18 +3263,18 @@ export default function Home() {
                             style={{
                               display: "flex", flexDirection: "column", gap: "0.5rem",
                               padding: "1rem 1.125rem", borderRadius: 12,
-                              background: "#111111",
-                              border: "1px solid #222222",
+                              background: "var(--clr-surface)",
+                              border: "1px solid var(--clr-border-2)",
                               textDecoration: "none", transition: "transform 0.15s, border-color 0.15s, box-shadow 0.15s",
                             }}
                             onMouseEnter={(e) => {
                               e.currentTarget.style.transform = "translateY(-2px)";
-                              e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
-                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(255,255,255,0.08)";
+                              e.currentTarget.style.borderColor = "rgba(var(--clr-text-rgb),0.4)";
+                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(var(--clr-text-rgb),0.08)";
                             }}
                             onMouseLeave={(e) => {
                               e.currentTarget.style.transform = "none";
-                              e.currentTarget.style.borderColor = "#222222";
+                              e.currentTarget.style.borderColor = "var(--clr-border-2)";
                               e.currentTarget.style.boxShadow = "none";
                             }}
                           >
@@ -3252,8 +3285,8 @@ export default function Home() {
                               <span style={{
                                 display: "inline-flex", alignItems: "center", gap: 4,
                                 padding: "0.175rem 0.5rem", borderRadius: 999,
-                                background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)",
-                                fontSize: "0.7rem", fontWeight: 800, color: "#cccccc",
+                                background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
+                                fontSize: "0.7rem", fontWeight: 800, color: "var(--clr-text-2)",
                               }}>
                                 ▲ {post.points}
                               </span>
@@ -3277,13 +3310,13 @@ export default function Home() {
               {selectedTool === "trend-feed" && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
-                  background: "#111111",
-                  border: "1px solid #222222",
+                  background: "var(--clr-surface)",
+                  border: "1px solid var(--clr-border-2)",
                   padding: "1.5rem",
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
                     <span style={{ fontSize: "1.25rem" }}>🐙</span>
-                    <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#ffffff", margin: 0, letterSpacing: "-0.02em" }}>
+                    <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
                       What developers are building right now
                     </h3>
                     <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
@@ -3314,32 +3347,32 @@ export default function Home() {
                             style={{
                               display: "flex", flexDirection: "column", gap: "0.5rem",
                               padding: "1rem 1.125rem", borderRadius: 12,
-                              background: "#111111",
-                              border: "1px solid #222222",
+                              background: "var(--clr-surface)",
+                              border: "1px solid var(--clr-border-2)",
                               textDecoration: "none", transition: "transform 0.15s, border-color 0.15s, box-shadow 0.15s",
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
+                              e.currentTarget.style.borderColor = "rgba(var(--clr-text-rgb),0.4)";
                               e.currentTarget.style.transform = "translateY(-2px)";
-                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(255,255,255,0.08)";
+                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(var(--clr-text-rgb),0.08)";
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.borderColor = "#222222";
+                              e.currentTarget.style.borderColor = "var(--clr-border-2)";
                               e.currentTarget.style.transform = "none";
                               e.currentTarget.style.boxShadow = "none";
                             }}
                           >
                             {/* Repo name row */}
                             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-                              <span style={{ fontSize: "0.875rem", fontWeight: 750, color: "#cccccc", letterSpacing: "-0.01em", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              <span style={{ fontSize: "0.875rem", fontWeight: 750, color: "var(--clr-text-2)", letterSpacing: "-0.01em", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                                 {repo.full_name}
                               </span>
                               {repo.language && (
                                 <span style={{
                                   fontSize: "0.6rem", fontWeight: 700, padding: "0.15rem 0.5rem",
-                                  borderRadius: 999, background: "rgba(255,255,255,0.1)",
-                                  border: "1px solid rgba(255,255,255,0.25)",
-                                  color: "#cccccc", letterSpacing: "0.03em", flexShrink: 0,
+                                  borderRadius: 999, background: "rgba(var(--clr-text-rgb),0.1)",
+                                  border: "1px solid rgba(var(--clr-text-rgb),0.25)",
+                                  color: "var(--clr-text-2)", letterSpacing: "0.03em", flexShrink: 0,
                                 }}>
                                   {repo.language}
                                 </span>
@@ -3363,8 +3396,8 @@ export default function Home() {
                               <span style={{
                                 display: "inline-flex", alignItems: "center", gap: 4,
                                 padding: "0.175rem 0.5rem", borderRadius: 999,
-                                background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)",
-                                fontSize: "0.7rem", fontWeight: 800, color: "#cccccc",
+                                background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
+                                fontSize: "0.7rem", fontWeight: 800, color: "var(--clr-text-2)",
                               }}>
                                 <svg width="10" height="10" viewBox="0 0 13 13" fill="none">
                                   <path d="M6.5 1l1.545 3.13 3.455.502-2.5 2.436.59 3.44L6.5 8.885l-3.09 1.623.59-3.44L1.5 4.632l3.455-.502L6.5 1z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
@@ -3390,7 +3423,7 @@ export default function Home() {
                   marginTop: "2rem", paddingTop: "1.5rem", borderTop: "1px solid var(--clr-border-deep)",
                 }}>
                   <span style={{ display: "flex", alignItems: "center", gap: 7, fontSize: "0.75rem", color: "var(--clr-text-7)" }}>
-                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#cccccc", display: "inline-block" }} />
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--clr-text-2)", display: "inline-block" }} />
                     Analysis complete
                   </span>
                   <div style={{ display: "flex", gap: 8 }}>
