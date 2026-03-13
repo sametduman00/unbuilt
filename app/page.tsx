@@ -100,6 +100,7 @@ const TOOLS: ToolConfig[] = [
       { name: "Claude AI", color: "var(--clr-text-2)", live: true },
       { name: "GitHub", color: "var(--clr-text-3)", live: true },
       { name: "Hacker News", color: "var(--clr-text-3)", live: true },
+      { name: "YouTube", color: "var(--clr-text-3)", live: true },
     ],
   },
   {
@@ -117,6 +118,7 @@ const TOOLS: ToolConfig[] = [
       { name: "Claude AI", color: "var(--clr-text-2)", live: true },
       { name: "App Store", color: "var(--clr-text-3)", live: true },
       { name: "Google Play", color: "var(--clr-text-3)", live: true },
+      { name: "YouTube", color: "var(--clr-text-3)", live: true },
     ],
   },
   {
@@ -148,6 +150,7 @@ const TOOLS: ToolConfig[] = [
     hasExtras: true,
     sources: [
       { name: "Claude AI", color: "var(--clr-text-2)", live: true },
+      { name: "YouTube", color: "var(--clr-text-3)", live: true },
     ],
   },
 ];
@@ -1596,6 +1599,16 @@ interface HNPost {
   url: string | null;
 }
 
+interface YouTubeVideo {
+  videoId: string;
+  title: string;
+  channelTitle: string;
+  publishedAt: string;
+  thumbnailUrl: string;
+  viewCount: number;
+  likeCount: number;
+  commentCount: number;
+}
 
 interface GooglePlayApp {
   appId: string;
@@ -1780,7 +1793,23 @@ function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
 const PHASE_COLORS = ["var(--clr-text)", "var(--clr-text-2)", "var(--clr-text-3)", "var(--clr-text-5)", "var(--clr-text-6)"];
 const PHASE_BGS = ["rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)"];
 
-function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
+function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVideos?: YouTubeVideo[] }) {
+  // Build a lookup: tool name (lowercased) → best matching YouTube video
+  const ytToolMap = new Map<string, YouTubeVideo>();
+  if (ytVideos && ytVideos.length > 0) {
+    for (const v of ytVideos) {
+      const titleLower = v.title.toLowerCase();
+      // Check all tool names from all phases
+      for (const phase of data.phases) {
+        for (const tool of phase.tools) {
+          const toolLower = tool.name.toLowerCase();
+          if (titleLower.includes(toolLower) && !ytToolMap.has(toolLower)) {
+            ytToolMap.set(toolLower, v);
+          }
+        }
+      }
+    }
+  }
   // Filter out empty phases/items
   data = {
     ...data,
@@ -1893,6 +1922,26 @@ function StackAdvisorResult({ data }: { data: StackAdvisorData }) {
                         }}>
                           {tool.price}
                         </span>
+                        {(() => {
+                          const ytMatch = ytToolMap.get(tool.name.toLowerCase());
+                          if (!ytMatch) return null;
+                          const fmtV = ytMatch.viewCount >= 1_000_000 ? `${(ytMatch.viewCount / 1_000_000).toFixed(1)}M` : ytMatch.viewCount >= 1_000 ? `${(ytMatch.viewCount / 1_000).toFixed(0)}K` : String(ytMatch.viewCount);
+                          return (
+                            <a
+                              href={`https://youtube.com/watch?v=${ytMatch.videoId}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                fontSize: "0.55rem", fontWeight: 700, padding: "0.08rem 0.4rem",
+                                borderRadius: 999, textDecoration: "none",
+                                background: "rgba(255,0,0,0.08)", color: "var(--clr-text-3)",
+                                border: "1px solid rgba(255,0,0,0.2)",
+                              }}
+                            >
+                              📺 {fmtV} tutorial views
+                            </a>
+                          );
+                        })()}
                       </div>
                       <div style={{ fontSize: "0.68rem", color: "var(--clr-text-5)", marginTop: 2 }}>
                         {tool.purpose}
@@ -2193,6 +2242,9 @@ export default function Home() {
   const [gplayTotal, setGplayTotal] = useState(0);
   const [gplayLoading, setGplayLoading] = useState(false);
   const [gplayFetched, setGplayFetched] = useState(false);
+  const [ytVideos, setYtVideos] = useState<YouTubeVideo[]>([]);
+  const [ytLoading, setYtLoading] = useState(false);
+  const [ytFetched, setYtFetched] = useState(false);
 
   const [domainKeywords, setDomainKeywords] = useState<string[]>([]);
   const [resultCached, setResultCached] = useState<boolean | null>(null);
@@ -2213,7 +2265,7 @@ export default function Home() {
   ];
 
   // Number of scan steps for the current tool (used for timer logic)
-  const scanStepCounts: Record<string, number> = { "trend-feed": 3, "gap-analysis": 3, "competitor-radar": 1, "stack-advisor": 1 };
+  const scanStepCounts: Record<string, number> = { "trend-feed": 4, "gap-analysis": 4, "competitor-radar": 1, "stack-advisor": 1 };
   const maxScanStep = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3) - 1;
 
   // Advance scan to "done" once last step is active AND Claude has finished
@@ -2286,6 +2338,9 @@ export default function Home() {
     setGplayTotal(0);
     setGplayLoading(false);
     setGplayFetched(false);
+    setYtVideos([]);
+    setYtLoading(false);
+    setYtFetched(false);
     setDomainKeywords([]);
 
     setSelectedTool(toolId);
@@ -2420,6 +2475,29 @@ export default function Home() {
     }
   };
 
+  const fetchYouTubeVideos = async (query: string, days = 90) => {
+    setYtLoading(true);
+    setYtFetched(false);
+    setYtVideos([]);
+    console.log("[YouTube] fetching with query:", query);
+    try {
+      const params = new URLSearchParams({ q: query, maxResults: "8", days: String(days) });
+      const res = await fetch(`/api/youtube?${params}`);
+      if (!res.ok) {
+        console.log("[YouTube] error response:", res.status, res.statusText);
+        return;
+      }
+      const data = await res.json();
+      console.log("[YouTube] results:", data.results?.length ?? 0, "videos");
+      setYtVideos(data.results ?? []);
+    } catch (err) {
+      console.log("[YouTube] fetch error:", err);
+    } finally {
+      setYtLoading(false);
+      setYtFetched(true);
+    }
+  };
+
   // Fetch domain-specific search terms via Claude Haiku, then kick off dependent API fetches
   const fetchSearchMeta = async (idea: string, extraFetches?: (q: string) => void) => {
     setDomainKeywords([]);
@@ -2471,6 +2549,9 @@ export default function Home() {
     setGplayApps([]);
     setGplayTotal(0);
     setGplayFetched(false);
+    setYtVideos([]);
+    setYtLoading(false);
+    setYtFetched(false);
     setDomainKeywords([]);
 
     // Start scan sequence — number of timed steps depends on the tool
@@ -2507,13 +2588,17 @@ export default function Home() {
       fetchSearchMeta(idea.trim(), (q) => {
         fetchHNPosts(q);
         fetchGithubRepos(q);
+        fetchYouTubeVideos(q, 90);
       });
     } else if (selectedTool === "gap-analysis") {
       // Fire store searches first (in parallel) using normalized query
       fetchSearchMeta(idea.trim(), (q) => {
         fetchITunesApps(q);
         fetchGplayApps(q);
+        fetchYouTubeVideos(q + " review", 180);
       });
+    } else if (selectedTool === "stack-advisor") {
+      fetchYouTubeVideos(idea.trim() + " tutorial 2026", 180);
     }
 
     const body: Record<string, string> = { idea };
@@ -2582,6 +2667,9 @@ export default function Home() {
     setItunesFetched(false);
     setGplayApps([]);
     setGplayFetched(false);
+    setYtVideos([]);
+    setYtLoading(false);
+    setYtFetched(false);
     setDomainKeywords([]);
   };
 
@@ -2602,6 +2690,9 @@ export default function Home() {
     setItunesFetched(false);
     setGplayApps([]);
     setGplayFetched(false);
+    setYtVideos([]);
+    setYtLoading(false);
+    setYtFetched(false);
     setDomainKeywords([]);
   };
 
@@ -2774,11 +2865,13 @@ export default function Home() {
               "trend-feed": [
                 { label: "Scanning GitHub",        icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> },
                 { label: "Scanning Hacker News",   icon: <svg width="15" height="15" viewBox="0 0 18 18" fill="currentColor"><path d="M9 1l2.2 6.8H18l-5.6 4.1 2.1 6.5L9 14.3l-5.5 4.1 2.1-6.5L0 7.8h6.8L9 1z"/></svg> },
+                { label: "Searching YouTube",      icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 00.5 6.19 31.6 31.6 0 000 12a31.6 31.6 0 00.5 5.81 3.02 3.02 0 002.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 002.12-2.14A31.6 31.6 0 0024 12a31.6 31.6 0 00-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg> },
                 { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
               ],
               "gap-analysis": [
                 { label: "Searching App Store",    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> },
                 { label: "Searching Google Play",  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.04c.29.12.62.18.97.18.49 0 .97-.14 1.42-.42l.02-.01 1.73-1.01L17.63 22c1.07 0 2.01-.56 2.56-1.43l-9.6-5.55-7.4 8.02zm-.63-1.73l7.22-7.83L2.35 8.7c-.22.44-.35.94-.35 1.48V19.82c0 .6.18 1.15.55 1.49zm17.8-3.38c.59-.36 1.03-.94 1.2-1.63l.01-.04.04-.18c.06-.3.1-.63.1-.97v-.52l-.01-.03c-.05-.63-.32-1.18-.72-1.59L17.7 11.3l-2.87 3.12 5.52 3.51zm-.3-10.2L7.36 1.37 4.57 2.99 14.83 11.3l5.22-3.57z"/></svg> },
+                { label: "Searching YouTube",      icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 00.5 6.19 31.6 31.6 0 000 12a31.6 31.6 0 00.5 5.81 3.02 3.02 0 002.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 002.12-2.14A31.6 31.6 0 0024 12a31.6 31.6 0 00-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg> },
                 { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
               ],
               "competitor-radar": [
@@ -3143,7 +3236,7 @@ export default function Home() {
               ) : selectedTool === "stack-advisor" && !loading && streamedContent ? (
                 (() => {
                   const stackData = parseStackAdvisorJSON(streamedContent);
-                  if (stackData) return <StackAdvisorResult data={stackData} />;
+                  if (stackData) return <StackAdvisorResult data={stackData} ytVideos={ytVideos} />;
                   return sections.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       {sections.map((s, i) => (
@@ -3437,6 +3530,115 @@ export default function Home() {
                 </div>
               )}
 
+
+              {/* ── YouTube Buzz (Trend Feed + Gap Analysis) ── */}
+              {(selectedTool === "trend-feed" || selectedTool === "gap-analysis") && (
+                <div style={{
+                  marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
+                  background: "var(--clr-surface)",
+                  border: "1px solid var(--clr-border-2)",
+                  padding: "1.5rem",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+                    <span style={{ fontSize: "1.25rem" }}>📺</span>
+                    <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
+                      {selectedTool === "gap-analysis" ? "What YouTube Says" : "YouTube Buzz"}
+                    </h3>
+                    <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
+                      {selectedTool === "gap-analysis" ? "last 6 months · reviews" : "last 90 days · by views"}
+                    </span>
+                  </div>
+
+                  {(ytLoading || !ytFetched) ? (
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
+                      {[1, 2, 3].map((n) => (
+                        <div key={n} className="shimmer" style={{ height: 80, borderRadius: 10 }} />
+                      ))}
+                    </div>
+                  ) : ytVideos.length === 0 ? (
+                    <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
+                      No relevant YouTube videos found for this niche
+                    </div>
+                  ) : (
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
+                      {ytVideos.map((video) => {
+                        const daysAgo = Math.floor((Date.now() - new Date(video.publishedAt).getTime()) / 86400000);
+                        const fmtViews = video.viewCount >= 1_000_000 ? `${(video.viewCount / 1_000_000).toFixed(1)}M` : video.viewCount >= 1_000 ? `${(video.viewCount / 1_000).toFixed(0)}K` : String(video.viewCount);
+                        return (
+                          <a
+                            key={video.videoId}
+                            href={`https://youtube.com/watch?v=${video.videoId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: "flex", gap: "0.75rem",
+                              padding: "0.875rem 1rem", borderRadius: 12,
+                              background: "var(--clr-surface)",
+                              border: "1px solid var(--clr-border-2)",
+                              textDecoration: "none", transition: "transform 0.15s, border-color 0.15s, box-shadow 0.15s",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = "translateY(-2px)";
+                              e.currentTarget.style.borderColor = "rgba(var(--clr-text-rgb),0.4)";
+                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(var(--clr-text-rgb),0.08)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = "none";
+                              e.currentTarget.style.borderColor = "var(--clr-border-2)";
+                              e.currentTarget.style.boxShadow = "none";
+                            }}
+                          >
+                            {/* Thumbnail */}
+                            {video.thumbnailUrl && (
+                              <div style={{
+                                width: 120, minWidth: 120, height: 68, borderRadius: 8, overflow: "hidden",
+                                background: "var(--clr-bg)", flexShrink: 0, position: "relative",
+                              }}>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={video.thumbnailUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                <div style={{
+                                  position: "absolute", bottom: 4, right: 4,
+                                  background: "rgba(0,0,0,0.8)", borderRadius: 4,
+                                  padding: "1px 5px", fontSize: "0.6rem", color: "#fff", fontWeight: 700,
+                                }}>
+                                  ▶ {fmtViews}
+                                </div>
+                              </div>
+                            )}
+                            {/* Info */}
+                            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", minWidth: 0, flex: 1 }}>
+                              <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.35, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                                {video.title}
+                              </div>
+                              <div style={{ fontSize: "0.7rem", color: "var(--clr-text-5)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                {video.channelTitle}
+                              </div>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
+                                <span style={{
+                                  display: "inline-flex", alignItems: "center", gap: 4,
+                                  padding: "0.15rem 0.45rem", borderRadius: 999,
+                                  background: "rgba(255,0,0,0.1)", border: "1px solid rgba(255,0,0,0.25)",
+                                  fontSize: "0.62rem", fontWeight: 800, color: "var(--clr-text-2)",
+                                }}>
+                                  {fmtViews} views
+                                </span>
+                                {video.likeCount > 0 && (
+                                  <span style={{ fontSize: "0.62rem", color: "var(--clr-text-6)", fontWeight: 500 }}>
+                                    {video.likeCount >= 1000 ? `${(video.likeCount / 1000).toFixed(0)}K` : video.likeCount} likes
+                                  </span>
+                                )}
+                                <span style={{ fontSize: "0.62rem", color: "var(--clr-text-7)", marginLeft: "auto" }}>
+                                  {daysAgo === 0 ? "today" : `${daysAgo}d ago`}
+                                </span>
+                              </div>
+                            </div>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* ── GitHub trending repos (Trend Feed only) — always shown ── */}
               {selectedTool === "trend-feed" && (
