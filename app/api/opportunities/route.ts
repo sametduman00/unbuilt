@@ -526,10 +526,13 @@ export async function GET(req: NextRequest) {
       fetchProductHunt(subcategory),
     ]);
 
-    // Relevance filter: keep only apps matching subcategory keywords
+    // Relevance filter: for multi-word subcategories require ALL keywords match
     const subcategoryWords = subcategory.toLowerCase().split(/\s+/).filter((w: string) => w.length > 3);
     const relevantApps = rawItunesApps.filter((app: any) => {
       const appText = `${app.name} ${app.description || ""}`.toLowerCase();
+      if (subcategoryWords.length >= 2) {
+        return subcategoryWords.every((word: string) => appText.includes(word));
+      }
       return subcategoryWords.some((word: string) => appText.includes(word));
     });
     const itunesApps = relevantApps.length >= 3 ? relevantApps : rawItunesApps;
