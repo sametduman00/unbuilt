@@ -8,10 +8,10 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 async function fetchITunes(query: string) {
   try {
-    const res = await fetch(
-      `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=software&limit=50`,
-      { signal: AbortSignal.timeout(10000) },
-    );
+    const searchTerm = query + " app";
+    const url = `https://itunes.apple.com/search?term=${encodeURIComponent(searchTerm)}&entity=software&limit=50`;
+    console.log("iTunes search URL:", url);
+    const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
     if (!res.ok) return [];
     const data = await res.json();
     return (data.results ?? []).map((r: any) => ({
@@ -369,19 +369,20 @@ function validateOpportunities(opportunities: any[], opts: ValidationOptions = {
         console.log("FILTERED Momentum (year <=", yearCutoff, "):", opp.title, "years found:", years);
         return false;
       }
-      // Momentum: reject if no significant review count (>= 100) in evidence
-      const nums = (opp.evidence || "").match(/[\d,]+/g);
-      if (nums) {
-        const parsed = nums
-          .map((n: string) => parseInt(n.replace(/,/g, ""), 10))
-          .filter((n: number) => !isNaN(n) && n > 0 && !(n >= 2000 && n <= 2099)); // exclude years
-        const maxNum = parsed.length > 0 ? Math.max(...parsed) : 0;
-        if (maxNum < 100) {
-          console.log("FILTERED Momentum (low reviews):", opp.title, "max number:", maxNum);
-          return false;
-        }
-      } else {
+      // Momentum: reject if no review count >= 500 in evidence
+      const allNums = (opp.evidence || "").match(/[\d,]+/g);
+      if (!allNums) {
         console.log("FILTERED Momentum (no numbers in evidence):", opp.title);
+        return false;
+      }
+      const parsed = allNums
+        .map((n: string) => parseInt(n.replace(/,/g, ""), 10))
+        .filter((n: number) => !isNaN(n) && n > 0);
+      // Filter out years (2000-2099) and ratings (1.0-5.9 → integers 1-5)
+      const reviewCandidates = parsed.filter((n: number) => !(n >= 2000 && n <= 2099) && n >= 6);
+      console.log("MOMENTUM review check: numbers found:", parsed, "review candidates:", reviewCandidates);
+      if (reviewCandidates.length === 0 || reviewCandidates.every((n: number) => n < 500)) {
+        console.log("FILTERED Momentum (all review counts < 500):", opp.title, "candidates:", reviewCandidates);
         return false;
       }
     }
