@@ -4,19 +4,23 @@ import { NextRequest, NextResponse } from "next/server";
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 /* ── Step 1: Generate sub-categories ─────────────────────────── */
-async function generateSubCategories(query: string): Promise<string[]> {
+async function generateSubCategories(query: string): Promise<{ name: string; trendQuery: string }[]> {
   const res = await client.messages.create({
     model: "claude-sonnet-4-20250514",
-    max_tokens: 500,
+    max_tokens: 600,
     messages: [{
       role: "user",
       content: `Generate 6 sub-categories that are DIRECT sub-niches within the space "${query}". These must be specific market segments a founder could build a product IN, not adjacent industries or tools for the space.
 
-Example: "mobile gaming" → ["hyper-casual mobile games", "mobile battle royale games", "mobile puzzle games", "mobile RPG games", "mobile sports games", "mobile strategy games"]
+For each sub-category, also provide a SHORT search term (2-3 words max) optimized for Google Trends.
 
-Example: "fitness app" → ["strength training tracker", "running and cardio app", "yoga and flexibility app", "nutrition tracking app", "HIIT workout app", "recovery and sleep app"]
+Example: "mobile gaming" →
+[{"name":"hyper-casual mobile games","trendQuery":"hyper casual games"},{"name":"mobile battle royale games","trendQuery":"battle royale mobile"},{"name":"mobile puzzle games","trendQuery":"puzzle games"},{"name":"mobile RPG games","trendQuery":"mobile RPG"},{"name":"mobile sports games","trendQuery":"sports games mobile"},{"name":"mobile strategy games","trendQuery":"strategy games"}]
 
-Return ONLY a JSON array of 6 strings, nothing else.`,
+Example: "fitness app" →
+[{"name":"strength training tracker","trendQuery":"strength training"},{"name":"running and cardio app","trendQuery":"running app"},{"name":"yoga and flexibility app","trendQuery":"yoga app"},{"name":"nutrition tracking app","trendQuery":"nutrition tracker"},{"name":"HIIT workout app","trendQuery":"HIIT workout"},{"name":"recovery and sleep app","trendQuery":"sleep tracker"}]
+
+Return ONLY a JSON array of 6 objects with "name" and "trendQuery" fields, nothing else.`,
     }],
   });
 
@@ -170,13 +174,13 @@ async function fetchProductHunt(query: string) {
 }
 
 /* ── Step 2: Fetch all data for sub-categories in parallel ───── */
-async function fetchAllData(query: string, subCategories: string[]) {
-  // Fetch trends for each sub-category + main query in parallel
-  const trendQueries = [query, ...subCategories];
+async function fetchAllData(query: string, subCategories: { name: string; trendQuery: string }[]) {
+  // Fetch trends using short trendQuery for each sub-category + main query
+  const trendQueries = [query, ...subCategories.map(s => s.trendQuery)];
   const trendResults = await Promise.all(trendQueries.map(fetchGoogleTrends));
   const mainTrend = trendResults[0];
-  const subTrends = subCategories.map((name, i) => ({
-    name,
+  const subTrends = subCategories.map((sub, i) => ({
+    name: sub.name,
     trend: trendResults[i + 1],
   }));
 
@@ -193,7 +197,7 @@ async function fetchAllData(query: string, subCategories: string[]) {
 /* ── Step 3: Analyze with Claude ─────────────────────────────── */
 async function analyzeWithClaude(
   query: string,
-  subCategories: string[],
+  subCategories: { name: string; trendQuery: string }[],
   data: Awaited<ReturnType<typeof fetchAllData>>
 ) {
   const prompt = `You are a market analyst. Analyze this data for the space "${query}" and return ONLY valid JSON (no markdown, no code fences).
@@ -216,20 +220,39 @@ ${JSON.stringify(data.gplay.slice(0, 10), null, 2)}
 ## Product Hunt recent top posts
 ${JSON.stringify(data.ph.slice(0, 10), null, 2)}
 
-SCORE RULES — YOU MUST FOLLOW THESE:
-- Google Trends below 20 AND minimal data across sources: score max 35
-- Large markets with well-known incumbents: score 30-55
-- Score 80+ ONLY with strong growth signals across multiple sources
-- label must match market reality, not just score number
-- When score below 30 and data sparse: label must be "Uncharted" or "Dead Zone"
-- "Fading": has competitors but search interest declining more than 50%
-- "Crowded": many competitors, high competition — NEVER use for score below 30
-- Market size overrides trend data for labeling. If the space has apps with 1M+ reviews on App Store, this is a LARGE ACTIVE MARKET — label must be "Crowded" minimum, never "Dead Zone" or "Uncharted". Dead Zone is only for spaces with zero or near-zero user activity.
+SCORE CALIBRATION — YOU MUST FOLLOW THESE:
+Score must reflect BOTH market size AND growth opportunity:
+- Apps with 10M+ reviews in the space = score minimum 55 (massive proven demand)
+- Apps with 1M+ reviews = score minimum 45
+- Apps with 100K+ reviews = score minimum 35
+- Google Trends score 50+ AND rising = add 10-20 points
+- Google Trends score below 20 AND no significant app store presence = score max 30
+- Multiple PH products with 500+ votes = add 5-10 points
+- Score 80+ requires: strong trends AND large app store presence AND active PH launches
+
+LABEL RULES — MUST REFLECT MARKET REALITY:
+Label must reflect MARKET REALITY not just search trends:
+- "Dead Zone": literally no products, no users, no search interest. NEVER use for spaces with apps that have reviews.
+- "Uncharted": search interest exists but very few products built. Opportunity to be first.
+- "Fading": was once popular but declining — apps exist but trends dropping 30%+
+- "Warming Up": small but growing — trends rising, few competitors, early stage
+- "Growing": clear upward trajectory — rising trends, new entrants, increasing reviews
+- "Crowded": many competitors with high ratings and reviews — hard to differentiate
+- "Explosive": rapid growth across all signals — trends surging, new apps launching weekly, PH activity high
+- If App Store shows apps with 1M+ reviews, the space is AT MINIMUM "Crowded" — it cannot be Dead Zone or Uncharted
 
 BEST OPPORTUNITY RULES:
-- Must be hyper-specific: exact customer, exact pain point, exact distribution channel
-- Never generic advice like "build a platform for X"
-- Must name the person, the problem, and how to reach them
+- Must be something that NO existing app in the data already does well
+- Never suggest a feature that an existing top app could easily add
+- "distribution" must be a realistic, specific channel (not "social media marketing")
+- Must cite specific numbers from the data to justify "why now"
+- "who" must be a specific persona (not "fitness enthusiasts" — instead "remote workers with back pain who sit 8+ hours")
+
+GAP OPPORTUNITY RULES:
+- Each gap must be SPECIFIC to this space, not generic business advice
+- "evidence" must cite a specific data point (app rating gap, missing feature, trend direction)
+- Never include generic gaps like "better UX" or "AI-powered features" without specific context
+- At least one gap must reference an underserved sub-category from the trends data
 
 Return this exact JSON structure:
 {
