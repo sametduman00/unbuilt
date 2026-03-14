@@ -13,6 +13,9 @@ interface Opportunity {
   difficulty: string;
   description: string;
   evidence: string;
+  typeReason: string;
+  targetAudience: string;
+  difficultyReason: string;
   searchQuery: string;
 }
 
@@ -55,6 +58,7 @@ export default function OpportunitiesPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   // Theme sync
   useEffect(() => {
@@ -78,6 +82,7 @@ export default function OpportunitiesPage() {
     setError(null);
     setOpportunities([]);
     setStats(null);
+    setExpandedIndex(null);
     try {
       const res = await fetch(
         `/api/opportunities?category=${encodeURIComponent(category.slug)}&subcategory=${encodeURIComponent(subcategory)}`,
@@ -383,16 +388,23 @@ export default function OpportunitiesPage() {
                 {opportunities.map((opp, i) => {
                   const typeColor = TYPE_COLORS[opp.type] || "#888";
                   const diffColor = DIFFICULTY_COLORS[opp.difficulty] || "#888";
+                  const isExpanded = expandedIndex === i;
                   return (
-                    <div key={i} style={{
-                      background: "var(--clr-surface)",
-                      border: "1px solid var(--clr-border)",
-                      borderLeft: `3px solid ${typeColor}`,
-                      borderRadius: 10,
-                      padding: "1.5rem",
-                    }}>
-                      {/* Badges */}
-                      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem", flexWrap: "wrap" }}>
+                    <div
+                      key={i}
+                      onClick={() => setExpandedIndex(isExpanded ? null : i)}
+                      style={{
+                        background: "var(--clr-surface)",
+                        border: `1px solid ${isExpanded ? typeColor + "60" : "var(--clr-border)"}`,
+                        borderLeft: `3px solid ${typeColor}`,
+                        borderRadius: 10,
+                        padding: "1.5rem",
+                        cursor: "pointer",
+                        transition: "border-color 0.2s",
+                      }}
+                    >
+                      {/* Badges + expand indicator */}
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem", flexWrap: "wrap" }}>
                         <span style={{
                           display: "inline-block", padding: "0.2rem 0.6rem",
                           borderRadius: 4, fontSize: "0.75rem", fontWeight: 600,
@@ -407,6 +419,9 @@ export default function OpportunitiesPage() {
                         }}>
                           {opp.difficulty}
                         </span>
+                        <span style={{ marginLeft: "auto", fontSize: "0.75rem", color: "var(--clr-text-3)", transition: "transform 0.2s", transform: isExpanded ? "rotate(180deg)" : "none" }}>
+                          ▼
+                        </span>
                       </div>
 
                       {/* Title */}
@@ -414,36 +429,74 @@ export default function OpportunitiesPage() {
                         {opp.title}
                       </h3>
 
-                      {/* Description */}
-                      <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: "0.75rem" }}>
+                      {/* Description (always visible) */}
+                      <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: isExpanded ? "1rem" : 0 }}>
                         {opp.description}
                       </p>
 
-                      {/* Evidence */}
-                      <div style={{
-                        fontSize: "0.8125rem", color: "var(--clr-text-3)",
-                        background: "var(--clr-bg)", borderRadius: 6,
-                        padding: "0.625rem 0.875rem", marginBottom: "1rem",
-                        borderLeft: `2px solid ${typeColor}40`,
-                      }}>
-                        <span style={{ fontWeight: 500, color: "var(--clr-text-2)" }}>Evidence: </span>
-                        {opp.evidence}
-                      </div>
+                      {/* Expanded content */}
+                      {isExpanded && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                          {/* Evidence */}
+                          <div style={{
+                            fontSize: "0.8125rem", color: "var(--clr-text-3)",
+                            background: "var(--clr-bg)", borderRadius: 6,
+                            padding: "0.75rem 1rem",
+                            borderLeft: `2px solid ${typeColor}40`,
+                          }}>
+                            <div style={{ fontWeight: 600, color: "var(--clr-text-2)", marginBottom: "0.25rem", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.04em" }}>Evidence</div>
+                            {opp.evidence}
+                          </div>
 
-                      {/* CTA */}
-                      <Link
-                        href={`/?tool=trend-feed&q=${encodeURIComponent(opp.searchQuery)}`}
-                        style={{
-                          display: "inline-flex", alignItems: "center", gap: 6,
-                          fontSize: "0.8125rem", fontWeight: 500,
-                          color: typeColor, textDecoration: "none",
-                          transition: "opacity 0.15s",
-                        }}
-                        onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.8"; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
-                      >
-                        Analyze this →
-                      </Link>
+                          {/* Why this type */}
+                          <div style={{
+                            fontSize: "0.8125rem", color: "var(--clr-text-3)",
+                            background: "var(--clr-bg)", borderRadius: 6,
+                            padding: "0.75rem 1rem",
+                          }}>
+                            <div style={{ fontWeight: 600, color: "var(--clr-text-2)", marginBottom: "0.25rem", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.04em" }}>Why {opp.type}?</div>
+                            {opp.typeReason}
+                          </div>
+
+                          {/* Target Audience */}
+                          <div style={{
+                            fontSize: "0.8125rem", color: "var(--clr-text-3)",
+                            background: "var(--clr-bg)", borderRadius: 6,
+                            padding: "0.75rem 1rem",
+                          }}>
+                            <div style={{ fontWeight: 600, color: "var(--clr-text-2)", marginBottom: "0.25rem", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.04em" }}>Target Audience</div>
+                            {opp.targetAudience}
+                          </div>
+
+                          {/* Difficulty Explanation */}
+                          <div style={{
+                            fontSize: "0.8125rem", color: "var(--clr-text-3)",
+                            background: "var(--clr-bg)", borderRadius: 6,
+                            padding: "0.75rem 1rem",
+                          }}>
+                            <div style={{ fontWeight: 600, color: diffColor, marginBottom: "0.25rem", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.04em" }}>Difficulty: {opp.difficulty}</div>
+                            {opp.difficultyReason}
+                          </div>
+
+                          {/* CTA */}
+                          <div style={{ paddingTop: "0.5rem" }}>
+                            <Link
+                              href={`/?tool=gap-analysis&q=${encodeURIComponent(opp.searchQuery)}`}
+                              onClick={(e) => e.stopPropagation()}
+                              style={{
+                                display: "inline-flex", alignItems: "center", gap: 6,
+                                fontSize: "0.8125rem", fontWeight: 500,
+                                color: typeColor, textDecoration: "none",
+                                transition: "opacity 0.15s",
+                              }}
+                              onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.8"; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+                            >
+                              Have an idea? Try Gap Analysis →
+                            </Link>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}

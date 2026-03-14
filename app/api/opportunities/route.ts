@@ -133,8 +133,10 @@ PRICE - ONLY use this when:
 - Evidence MUST include: price data from the app list
 
 GEOGRAPHY - ONLY use this when:
-- All top 10 apps have English names and Western themes
-- Evidence MUST include: list of app names showing Western dominance
+- A proven solution exists in English/Western markets but is NOT available in other languages or regions (Spanish, Arabic, Hindi, Turkish, Portuguese, etc.)
+- The opportunity is: localize or build a native alternative for an underserved language/region
+- Do NOT use Geography for age demographics or user types — those are Gap or Complaint
+- Evidence MUST include: names of English-only apps AND the specific underserved language/region
 
 BUNDLE - ONLY use this when:
 - 3+ single-purpose apps exist that each do ONE narrow thing
@@ -149,6 +151,9 @@ Return ONLY valid JSON array (no markdown, no code fences):
     "difficulty": "<exactly one of: Easy | Medium | Hard>",
     "description": "<2-3 sentences explaining the opportunity>",
     "evidence": "<specific data point from the provided data — MUST follow the evidence rules above for the chosen type>",
+    "typeReason": "<1-2 sentences: why this specific type was chosen over others, citing the qualification criteria met>",
+    "targetAudience": "<1-2 sentences: who exactly would use this, be specific about demographics/behavior>",
+    "difficultyReason": "<1 sentence: why this is Easy/Medium/Hard — reference technical scope, APIs needed, content requirements>",
     "searchQuery": "<2-4 words for trend analysis>"
   }
 ]
@@ -164,7 +169,7 @@ RULES:
 
   const response = await client.messages.create({
     model: "claude-sonnet-4-20250514",
-    max_tokens: 3000,
+    max_tokens: 4000,
     messages: [{ role: "user", content: prompt }],
   });
 
