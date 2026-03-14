@@ -443,25 +443,19 @@ export default function OpportunitiesPage() {
                         </h3>
 
                         {/* Description (always visible) */}
-                        <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: isExpanded ? "1rem" : 0 }}>
+                        <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: "0.5rem" }}>
                           {opp.description}
+                        </p>
+
+                        {/* Evidence (always visible) */}
+                        <p style={{ color: "var(--clr-text-3)", fontSize: "0.8125rem", lineHeight: 1.5, marginBottom: isExpanded ? "1rem" : 0 }}>
+                          <strong style={{ color: "var(--clr-text-2)" }}>Evidence:</strong> {opp.evidence}
                         </p>
                       </div>
 
                       {/* Expanded content — clicks don't toggle accordion */}
                       {isExpanded && (
                         <div onClick={(e) => e.stopPropagation()} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                          {/* Evidence */}
-                          <div style={{
-                            fontSize: "0.8125rem", color: "var(--clr-text-3)",
-                            background: "var(--clr-bg)", borderRadius: 6,
-                            padding: "0.75rem 1rem",
-                            borderLeft: `2px solid ${typeColor}40`,
-                          }}>
-                            <div style={{ fontWeight: 600, color: "var(--clr-text-2)", marginBottom: "0.25rem", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.04em" }}>Evidence</div>
-                            {opp.evidence}
-                          </div>
-
                           {/* Why this type */}
                           <div style={{
                             fontSize: "0.8125rem", color: "var(--clr-text-3)",
