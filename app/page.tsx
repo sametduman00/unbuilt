@@ -2905,7 +2905,7 @@ export default function Home() {
               <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.02em" }}>Unbuilt</span>
             </button>
 
-            {/* Nav link next to logo */}
+            {/* Nav links next to logo */}
             <Link href="/how-it-works" style={{
               fontSize: "0.875rem", fontWeight: 400, color: "var(--clr-text-3)",
               textDecoration: "none",
@@ -2916,6 +2916,17 @@ export default function Home() {
               onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text-3)"; }}
             >
               How it works
+            </Link>
+            <Link href="/opportunities" style={{
+              fontSize: "0.875rem", fontWeight: 400, color: "var(--clr-text-3)",
+              textDecoration: "none",
+              transition: "color 0.15s",
+              marginLeft: "1rem",
+            }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text-3)"; }}
+            >
+              Opportunities
             </Link>
             </div>
 
