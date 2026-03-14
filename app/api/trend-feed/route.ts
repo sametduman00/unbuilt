@@ -72,48 +72,99 @@ async function fetchITunes(query: string) {
 
 async function fetchGooglePlay(query: string) {
   try {
-    // Use internal API route since google-play-scraper needs server-side
     const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     const res = await fetch(
       `${base}/api/gplay?q=${encodeURIComponent(query)}`,
       { signal: AbortSignal.timeout(10000) }
     );
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.log("GPlay: error", res.status);
+      return [];
+    }
     const data = await res.json();
-    return (data.results ?? []).map((r: any) => ({
+    const results = (data.results ?? []).map((r: any) => ({
       name: r.title ?? "",
       rating: r.score ?? 0,
       reviewCount: r.ratings ?? 0,
       releaseDate: "",
       price: r.price ?? "Free",
     }));
-  } catch {
+    console.log("GPlay:", results.length, "results for:", query);
+    return results;
+  } catch (err) {
+    console.log("GPlay: fetch error:", err instanceof Error ? err.message : err);
     return [];
   }
 }
 
 async function fetchProductHunt(query: string) {
   const token = process.env.PRODUCTHUNT_API_KEY;
-  if (!token) return [];
+  if (!token) {
+    console.log("PH: no PRODUCTHUNT_API_KEY configured");
+    return [];
+  }
   try {
-    const gqlQuery = `query { posts(order: VOTES, first: 10) { edges { node { name tagline votesCount commentsCount url createdAt topics { edges { node { name } } } } } } }`;
+    // Topic slug mapping for better filtering
+    const topicMap: Record<string, string> = {
+      ai: "artificial-intelligence", fitness: "fitness", health: "health",
+      gaming: "gaming", productivity: "productivity", developer: "developer-tools",
+      design: "design-tools", marketing: "marketing", fintech: "fintech",
+      education: "education", saas: "saas", crypto: "crypto",
+      social: "social-media", ecommerce: "e-commerce", analytics: "analytics",
+      video: "video", music: "music", travel: "travel",
+    };
+    const q = query.toLowerCase().trim();
+    let topicSlug: string | null = null;
+    for (const [key, slug] of Object.entries(topicMap)) {
+      if (q.includes(key)) { topicSlug = slug; break; }
+    }
+
+    const topicFilter = topicSlug ? `, topic: "${topicSlug}"` : "";
+    const gqlQuery = `query { posts(order: VOTES${topicFilter}, first: 20) { edges { node { name tagline votesCount commentsCount url createdAt topics { edges { node { name } } } } } } }`;
+
+    console.log("PH: fetching with topic:", topicSlug ?? "(none)", "for query:", query);
+
     const res = await fetch("https://api.producthunt.com/v2/api/graphql", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({ query: gqlQuery }),
       signal: AbortSignal.timeout(10000),
     });
-    if (!res.ok) return [];
+
+    if (!res.ok) {
+      const body = await res.text();
+      console.log("PH: error response:", res.status, body.slice(0, 200));
+      return [];
+    }
+
     const data = await res.json();
+    if (data.errors) {
+      console.log("PH: GraphQL errors:", JSON.stringify(data.errors).slice(0, 300));
+    }
+
     const edges = data?.data?.posts?.edges ?? [];
-    return edges.map((e: any) => ({
+
+    // If we had a topic filter, use all results. Otherwise filter by query terms.
+    const terms = query.toLowerCase().split(/\s+/);
+    const filtered = topicSlug
+      ? edges
+      : edges.filter((e: any) => {
+          const text = `${e.node?.name ?? ""} ${e.node?.tagline ?? ""} ${(e.node?.topics?.edges ?? []).map((t: any) => t.node?.name ?? "").join(" ")}`.toLowerCase();
+          return terms.some((t: string) => text.includes(t));
+        });
+
+    const results = filtered.slice(0, 10).map((e: any) => ({
       name: e.node?.name ?? "",
       tagline: e.node?.tagline ?? "",
       votesCount: e.node?.votesCount ?? 0,
       commentsCount: e.node?.commentsCount ?? 0,
       url: e.node?.url ?? "",
     }));
-  } catch {
+
+    console.log("PH RAW:", JSON.stringify({ total: edges.length, filtered: filtered.length, results: results.slice(0, 3) }));
+    return results;
+  } catch (err) {
+    console.log("PH: fetch error:", err instanceof Error ? err.message : err);
     return [];
   }
 }
