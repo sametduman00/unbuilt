@@ -206,9 +206,10 @@ GEOGRAPHY HARD RULE: Geography MUST name a specific language (Spanish, Arabic, H
   });
 
   // If too few remain, backfill with a second Claude call
-  if (filtered.length < 4) {
-    const needed = Math.max(4 - filtered.length, raw.length - filtered.length);
-    console.log("BACKFILL triggered: only", filtered.length, "passed, requesting", needed, "more");
+  console.log("POST-VALIDATION:", filtered.length, "opportunities passed");
+  if (filtered.length < 3) {
+    const needed = Math.max(3 - filtered.length, raw.length - filtered.length);
+    console.log("BACKFILL triggered:", filtered.length, "passed (minimum 3), requesting", needed, "more");
     const backfill = await backfillOpportunities(
       subcategory, categoryLabel, itunesApps, newReleases, phPosts,
       filtered, needed,
@@ -216,6 +217,8 @@ GEOGRAPHY HARD RULE: Geography MUST name a specific language (Spanish, Arabic, H
     const validBackfill = validateOpportunities(backfill);
     console.log("BACKFILL result:", { requested: needed, received: backfill.length, passedValidation: validBackfill.length });
     filtered = [...filtered, ...validBackfill];
+  } else {
+    console.log("BACKFILL skipped:", filtered.length, "passed validation (minimum 3)");
   }
 
   return filtered;
@@ -241,6 +244,15 @@ function validateOpportunities(opportunities: any[]): any[] {
     if (!VALID_TYPES.includes(opp.type)) {
       console.log("FILTERED invalid type:", opp.type, opp.title);
       return false;
+    }
+
+    // Momentum: reject if evidence references a year 2022 or earlier
+    if (opp.type === "Momentum") {
+      const years = (opp.evidence || "").match(/\b(20\d{2})\b/g);
+      if (years && years.some((y: string) => parseInt(y, 10) <= 2022)) {
+        console.log("FILTERED Momentum (old year):", opp.title, "years found:", years);
+        return false;
+      }
     }
 
     // Complaint: reject if evidence cites a rating above 4.2
