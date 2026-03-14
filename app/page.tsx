@@ -98,7 +98,6 @@ const TOOLS: ToolConfig[] = [
     placeholder: 'e.g. "B2B SaaS tools", "consumer health apps", or "creator economy"',
     sources: [
       { name: "Claude AI", color: "var(--clr-text-2)", live: true },
-      { name: "Google Trends", color: "var(--clr-text-3)", live: true },
       { name: "App Store", color: "var(--clr-text-3)", live: true },
       { name: "Google Play", color: "var(--clr-text-3)", live: true },
       { name: "Product Hunt", color: "var(--clr-text-3)", live: true },
@@ -3004,8 +3003,8 @@ export default function Home() {
               ],
               "trend-feed": [
                 { label: "Generating sub-categories", icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
-                { label: "Searching Google Trends",  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> },
                 { label: "Searching App Store",      icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> },
+                { label: "Finding new releases",     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> },
                 { label: "Searching Product Hunt",   icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M13.604 8.4h-3.405V12h3.405a1.8 1.8 0 100-3.6zM12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm1.604 14.4h-3.405V18H8.4V6h5.204a4.2 4.2 0 110 8.4z"/></svg> },
                 { label: "Analyzing with AI",        icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
               ],
@@ -3704,6 +3703,24 @@ export default function Home() {
             </div>
           )}
         </main>
+
+        {/* ── Site Footer ── */}
+        <footer style={{
+          padding: "2rem 0",
+          borderTop: "1px solid var(--clr-border-deep)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "0.5rem",
+          fontSize: "0.75rem",
+          color: "var(--clr-text-7)",
+        }}>
+          <a href="/legal/privacy-policy" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Privacy Policy</a>
+          <span style={{ opacity: 0.4 }}>|</span>
+          <a href="/legal/terms-of-service" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Terms of Service</a>
+          <span style={{ opacity: 0.4 }}>|</span>
+          <a href="/legal/cookie-policy" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Cookie Policy</a>
+        </footer>
       </div>
     </>
   );

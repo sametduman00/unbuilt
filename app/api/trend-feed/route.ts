@@ -4,23 +4,19 @@ import { NextRequest, NextResponse } from "next/server";
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 /* ── Step 1: Generate sub-categories ─────────────────────────── */
-async function generateSubCategories(query: string): Promise<{ name: string; trendQuery: string }[]> {
+async function generateSubCategories(query: string): Promise<string[]> {
   const res = await client.messages.create({
     model: "claude-sonnet-4-20250514",
-    max_tokens: 600,
+    max_tokens: 400,
     messages: [{
       role: "user",
       content: `Generate 6 sub-categories that are DIRECT sub-niches within the space "${query}". These must be specific market segments a founder could build a product IN, not adjacent industries or tools for the space.
 
-For each sub-category, also provide a SHORT search term (2-3 words max) optimized for Google Trends.
+Example: "mobile gaming" → ["hyper-casual mobile games","mobile battle royale games","mobile puzzle games","mobile RPG games","mobile sports games","mobile strategy games"]
 
-Example: "mobile gaming" →
-[{"name":"hyper-casual mobile games","trendQuery":"hyper casual games"},{"name":"mobile battle royale games","trendQuery":"battle royale mobile"},{"name":"mobile puzzle games","trendQuery":"puzzle games"},{"name":"mobile RPG games","trendQuery":"mobile RPG"},{"name":"mobile sports games","trendQuery":"sports games mobile"},{"name":"mobile strategy games","trendQuery":"strategy games"}]
+Example: "fitness app" → ["strength training tracker","running and cardio app","yoga and flexibility app","nutrition tracking app","HIIT workout app","recovery and sleep app"]
 
-Example: "fitness app" →
-[{"name":"strength training tracker","trendQuery":"strength training"},{"name":"running and cardio app","trendQuery":"running app"},{"name":"yoga and flexibility app","trendQuery":"yoga app"},{"name":"nutrition tracking app","trendQuery":"nutrition tracker"},{"name":"HIIT workout app","trendQuery":"HIIT workout"},{"name":"recovery and sleep app","trendQuery":"sleep tracker"}]
-
-Return ONLY a JSON array of 6 objects with "name" and "trendQuery" fields, nothing else.`,
+Return ONLY a JSON array of 6 strings, nothing else.`,
     }],
   });
 
@@ -34,30 +30,10 @@ Return ONLY a JSON array of 6 objects with "name" and "trendQuery" fields, nothi
 
 /* ── Data fetchers ───────────────────────────────────────────── */
 
-async function fetchGoogleTrends(query: string) {
-  const key = process.env.SERPAPI_KEY;
-  if (!key) return null;
-  try {
-    const url = `https://serpapi.com/search.json?engine=google_trends&q=${encodeURIComponent(query)}&date=today%203-m&api_key=${key}`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
-    if (!res.ok) return null;
-    const data = await res.json();
-    const points = data.interest_over_time?.timeline_data ?? [];
-    const allValues = points.map((p: any) => p.values?.[0]?.extracted_value ?? 0);
-    const currentScore = allValues.length > 0 ? allValues[allValues.length - 1] : 0;
-    const firstScore = allValues.length > 1 ? allValues[0] : currentScore;
-    const trendPercent = firstScore > 0 ? Math.round(((currentScore - firstScore) / firstScore) * 100) : 0;
-    const direction = trendPercent > 10 ? "rising" : trendPercent < -10 ? "falling" : "stable";
-    return { currentScore, trendPercent, direction };
-  } catch {
-    return null;
-  }
-}
-
 async function fetchITunes(query: string) {
   try {
     const res = await fetch(
-      `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=software&limit=10`,
+      `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=software&limit=50`,
       { signal: AbortSignal.timeout(10000) }
     );
     if (!res.ok) return [];
@@ -72,6 +48,25 @@ async function fetchITunes(query: string) {
   } catch {
     return [];
   }
+}
+
+function filterNewReleases(apps: any[]) {
+  const now = Date.now();
+  const ninetyDays = 90 * 24 * 60 * 60 * 1000;
+  return apps
+    .filter(a => {
+      if (!a.releaseDate) return false;
+      const released = new Date(a.releaseDate).getTime();
+      return now - released <= ninetyDays;
+    })
+    .map(a => {
+      const daysAgo = Math.floor((now - new Date(a.releaseDate).getTime()) / (24 * 60 * 60 * 1000));
+      const sortScore = (a.rating || 0) * Math.log10(Math.max(a.reviewCount || 1, 1));
+      return { ...a, daysAgo, sortScore };
+    })
+    .sort((a, b) => b.sortScore - a.sortScore)
+    .slice(0, 5)
+    .map(({ sortScore: _, ...rest }) => rest);
 }
 
 async function fetchGooglePlay(query: string) {
@@ -108,25 +103,9 @@ async function fetchProductHunt(query: string) {
     return [];
   }
   try {
-    // Topic slug mapping for better filtering
-    const topicMap: Record<string, string> = {
-      ai: "artificial-intelligence", fitness: "fitness", health: "health",
-      gaming: "gaming", productivity: "productivity", developer: "developer-tools",
-      design: "design-tools", marketing: "marketing", fintech: "fintech",
-      education: "education", saas: "saas", crypto: "crypto",
-      social: "social-media", ecommerce: "e-commerce", analytics: "analytics",
-      video: "video", music: "music", travel: "travel",
-    };
-    const q = query.toLowerCase().trim();
-    let topicSlug: string | null = null;
-    for (const [key, slug] of Object.entries(topicMap)) {
-      if (q.includes(key)) { topicSlug = slug; break; }
-    }
+    const gqlQuery = `query { posts(order: VOTES, first: 20) { edges { node { name tagline votesCount commentsCount url createdAt topics { edges { node { name slug } } } } } } }`;
 
-    const topicFilter = topicSlug ? `, topic: "${topicSlug}"` : "";
-    const gqlQuery = `query { posts(order: VOTES${topicFilter}, first: 20) { edges { node { name tagline votesCount commentsCount url createdAt topics { edges { node { name } } } } } } }`;
-
-    console.log("PH: fetching with topic:", topicSlug ?? "(none)", "for query:", query);
+    console.log("PH: fetching top posts, will filter by query:", query);
 
     const res = await fetch("https://api.producthunt.com/v2/api/graphql", {
       method: "POST",
@@ -147,15 +126,25 @@ async function fetchProductHunt(query: string) {
     }
 
     const edges = data?.data?.posts?.edges ?? [];
+    const terms = query.toLowerCase().split(/\s+/).filter(t => t.length > 2);
 
-    // If we had a topic filter, use all results. Otherwise filter by query terms.
-    const terms = query.toLowerCase().split(/\s+/);
-    const filtered = topicSlug
-      ? edges
-      : edges.filter((e: any) => {
-          const text = `${e.node?.name ?? ""} ${e.node?.tagline ?? ""} ${(e.node?.topics?.edges ?? []).map((t: any) => t.node?.name ?? "").join(" ")}`.toLowerCase();
-          return terms.some((t: string) => text.includes(t));
-        });
+    // Keep only posts where topics match OR name/tagline matches query keywords
+    const filtered = edges.filter((e: any) => {
+      const node = e.node;
+      if (!node) return false;
+      const topicText = (node.topics?.edges ?? [])
+        .map((t: any) => `${t.node?.name ?? ""} ${t.node?.slug ?? ""}`)
+        .join(" ")
+        .toLowerCase();
+      const nameTagline = `${node.name ?? ""} ${node.tagline ?? ""}`.toLowerCase();
+      return terms.some((t: string) => topicText.includes(t) || nameTagline.includes(t));
+    });
+
+    // If nothing matches, return empty — do NOT fall back to unrelated top posts
+    if (filtered.length === 0) {
+      console.log("PH: no relevant posts found for:", query, "(checked", edges.length, "posts)");
+      return [];
+    }
 
     const results = filtered.slice(0, 10).map((e: any) => ({
       name: e.node?.name ?? "",
@@ -165,7 +154,7 @@ async function fetchProductHunt(query: string) {
       url: e.node?.url ?? "",
     }));
 
-    console.log("PH RAW:", JSON.stringify({ total: edges.length, filtered: filtered.length, results: results.slice(0, 3) }));
+    console.log("PH:", JSON.stringify({ total: edges.length, matched: filtered.length, results: results.slice(0, 3) }));
     return results;
   } catch (err) {
     console.log("PH: fetch error:", err instanceof Error ? err.message : err);
@@ -177,57 +166,51 @@ async function fetchProductHunt(query: string) {
 
 function calculateScore(
   appStoreData: any[],
-  trendsData: any,
+  newReleases: any[],
   phData: any[],
-  subCategoryTrends: any[]
 ) {
   let score = 30;
 
-  // 1. MARKET SIZE (how many people use this?)
-  const maxReviews = Math.max(...(appStoreData?.map(a => a.reviewCount || 0) || [0]));
+  // Market size (existing apps)
+  const maxReviews = Math.max(...(appStoreData?.map((a: any) => a.reviewCount || 0) || [0]));
   if (maxReviews > 10000000) score += 15;
   else if (maxReviews > 1000000) score += 10;
   else if (maxReviews > 100000) score += 6;
   else if (maxReviews > 10000) score += 3;
 
-  // 2. MOMENTUM (growing or shrinking?)
-  const trendPercent = trendsData?.trendPercent || 0;
-  const currentScore = trendsData?.currentScore || 0;
-  if (trendPercent > 30) score += 20;
-  else if (trendPercent > 10) score += 12;
-  else if (trendPercent > 0) score += 6;
-  else if (trendPercent < -50) score -= 15;
-  else if (trendPercent < -20) score -= 8;
-  else if (trendPercent < 0) score -= 3;
+  // Momentum: new releases in last 90 days
+  const recentCount = newReleases?.length || 0;
+  if (recentCount >= 5) score += 12;
+  else if (recentCount >= 3) score += 7;
+  else if (recentCount >= 1) score += 3;
 
-  // Bonus if search interest itself is high
-  if (currentScore > 60) score += 10;
-  else if (currentScore > 30) score += 5;
-
-  // 3. GAP (is there room?)
-  const risingSubCats = (subCategoryTrends || [])
-    .filter((s: any) => s.direction === "rising" || s.trendPercent > 5).length;
-  score += risingSubCats * 4;
+  // Quality of new releases (are they rated well?)
+  const avgNewRating = newReleases?.length
+    ? newReleases.reduce((a: number, b: any) => a + (b.rating || 0), 0) / newReleases.length
+    : 0;
+  if (avgNewRating > 4.5) score += 8;
+  else if (avgNewRating > 4.0) score += 4;
 
   // Product Hunt innovation signal
-  const phTopVotes = Math.max(...(phData?.map(p => p.votesCount) || [0]));
-  if (phTopVotes > 500) score += 8;
-  else if (phTopVotes > 100) score += 4;
-  else if (phTopVotes > 20) score += 2;
+  const phTopVotes = Math.max(...(phData?.map((p: any) => p.votesCount) || [0]));
+  if (phTopVotes > 500) score += 10;
+  else if (phTopVotes > 100) score += 6;
+  else if (phTopVotes > 20) score += 3;
 
-  // If ALL sub-categories are 0, penalize
-  const allSubCatsZero = (subCategoryTrends || []).every((s: any) => s.currentScore === 0);
-  if (allSubCatsZero) score -= 10;
+  // Gap signal: if new releases exist but low PH votes = underserved
+  if (recentCount > 0 && phTopVotes < 20) score += 5;
 
   return Math.min(92, Math.max(8, Math.round(score)));
 }
 
-function calculateLabel(score: number, trendsData: any, appStoreData: any[]) {
-  const maxReviews = Math.max(...(appStoreData?.map(a => a.reviewCount || 0) || [0]));
-  const trendPercent = trendsData?.trendPercent || 0;
+function calculateLabel(score: number, newReleases: any[], appStoreData: any[], phData: any[]) {
+  const maxReviews = Math.max(...(appStoreData?.map((a: any) => a.reviewCount || 0) || [0]));
+  const recentCount = newReleases?.length || 0;
+  const phTopVotes = Math.max(...(phData?.map((p: any) => p.votesCount) || [0]));
 
-  // Large active markets (500K+ reviews) can NEVER be Fading or Dead Zone
+  // Large active markets (500K+ reviews)
   if (maxReviews > 500000) {
+    if (recentCount === 0) return "Fading";
     if (score >= 72) return "Explosive";
     if (score >= 58) return "Growing";
     return "Crowded";
@@ -235,40 +218,45 @@ function calculateLabel(score: number, trendsData: any, appStoreData: any[]) {
 
   if (score >= 75) return "Explosive";
   if (score >= 60) return "Growing";
-  if (score >= 45) return "Warming Up";
+  if (score >= 45) {
+    if (recentCount >= 3) return "Warming Up";
+    return "Warming Up";
+  }
   if (score >= 32) {
-    if (trendPercent < -40) return "Fading";
+    if (maxReviews > 10000 && recentCount === 0) return "Fading";
     return "Crowded";
   }
-  if (trendPercent < -50 && maxReviews < 5000) return "Dead Zone";
+  if (maxReviews < 5000 && recentCount === 0 && phTopVotes < 20) return "Dead Zone";
   return "Uncharted";
 }
 
-/* ── Step 2: Fetch all data for sub-categories in parallel ───── */
-async function fetchAllData(query: string, subCategories: { name: string; trendQuery: string }[]) {
-  // Fetch trends using short trendQuery for each sub-category + main query
-  const trendQueries = [query, ...subCategories.map(s => s.trendQuery)];
-  const trendResults = await Promise.all(trendQueries.map(fetchGoogleTrends));
-  const mainTrend = trendResults[0];
-  const subTrends = subCategories.map((sub, i) => ({
-    name: sub.name,
-    trend: trendResults[i + 1],
-  }));
-
-  // Fetch app stores + PH for the main query
+/* ── Step 2: Fetch all data in parallel ──────────────────────── */
+async function fetchAllData(query: string, subCategories: string[]) {
   const [itunes, gplay, ph] = await Promise.all([
     fetchITunes(query),
     fetchGooglePlay(query),
     fetchProductHunt(query),
   ]);
 
-  return { mainTrend, subTrends, itunes, gplay, ph };
+  // Extract new releases from iTunes results (already fetched 50)
+  const itunesNewReleases = filterNewReleases(itunes);
+  const gplayNewReleases = filterNewReleases(gplay);
+  const newReleases = [...itunesNewReleases, ...gplayNewReleases]
+    .sort((a, b) => {
+      const scoreA = (a.rating || 0) * Math.log10(Math.max(a.reviewCount || 1, 1));
+      const scoreB = (b.rating || 0) * Math.log10(Math.max(b.reviewCount || 1, 1));
+      return scoreB - scoreA;
+    })
+    .slice(0, 5);
+
+  console.log("New releases:", newReleases.length, "iTunes:", itunesNewReleases.length, "GPlay:", gplayNewReleases.length);
+
+  return { itunes, gplay, ph, newReleases, subCategories };
 }
 
 /* ── Step 3: Analyze with Claude ─────────────────────────────── */
 async function analyzeWithClaude(
   query: string,
-  subCategories: { name: string; trendQuery: string }[],
   data: Awaited<ReturnType<typeof fetchAllData>>,
   score: number,
   label: string
@@ -278,16 +266,13 @@ async function analyzeWithClaude(
 Market score: ${score}/100. Label: ${label}.
 Use these values as context for your analysis — reference them in your verdict and summary.
 
-## Sub-categories and their Google Trends data
-${JSON.stringify(data.subTrends.map(s => ({
-  name: s.name,
-  googleTrends: s.trend ? { currentScore: s.trend.currentScore, trendPercent: s.trend.trendPercent, direction: s.trend.direction } : "No data",
-})), null, 2)}
+## Sub-categories to analyze
+${JSON.stringify(data.subCategories, null, 2)}
 
-## Main query Google Trends
-${data.mainTrend ? JSON.stringify(data.mainTrend, null, 2) : "No data available"}
+## NEW RELEASES (last 90 days)
+${JSON.stringify(data.newReleases, null, 2)}
 
-## iTunes App Store results for "${query}"
+## iTunes App Store results for "${query}" (top by reviews)
 ${JSON.stringify(data.itunes.slice(0, 10), null, 2)}
 
 ## Google Play results for "${query}"
@@ -295,6 +280,13 @@ ${JSON.stringify(data.gplay.slice(0, 10), null, 2)}
 
 ## Product Hunt recent top posts
 ${JSON.stringify(data.ph.slice(0, 10), null, 2)}
+
+RISING SUB-CATEGORIES RULES:
+- Derive momentum from new release patterns, app store data, and your training knowledge
+- A sub-category is "rising" if new apps are launching in it, or if it's an emerging trend
+- A sub-category is "falling" if established apps exist but no new entrants
+- A sub-category is "stable" if it has consistent activity
+- trendScore should reflect relative opportunity (0-100)
 
 BEST OPPORTUNITY RULES:
 - Must be something that NO existing app in the data already does well
@@ -305,9 +297,9 @@ BEST OPPORTUNITY RULES:
 
 GAP OPPORTUNITY RULES:
 - Each gap must be SPECIFIC to this space, not generic business advice
-- "evidence" must cite a specific data point (app rating gap, missing feature, trend direction)
+- "evidence" must cite a specific data point (app rating gap, missing feature, new release pattern)
 - Never include generic gaps like "better UX" or "AI-powered features" without specific context
-- At least one gap must reference an underserved sub-category from the trends data
+- At least one gap must reference an underserved sub-category
 
 Return this exact JSON structure (do NOT include "score" or "label" fields — they are calculated separately):
 {
@@ -368,6 +360,7 @@ IMPORTANT:
     productHuntWins: parsed.productHuntWins?.length ?? 0,
     appStoreWins: parsed.appStoreWins?.length ?? 0,
     gapOpportunities: parsed.gapOpportunities?.length ?? 0,
+    newReleases: data.newReleases.length,
     keys: Object.keys(parsed),
   }));
   return parsed;
@@ -393,13 +386,12 @@ export async function GET(req: NextRequest) {
 
     // Step 2.5: Calculate score and label from raw data
     const allApps = [...data.itunes, ...data.gplay];
-    const subTrendData = data.subTrends.map(s => s.trend).filter(Boolean);
-    const score = calculateScore(allApps, data.mainTrend, data.ph, subTrendData);
-    const label = calculateLabel(score, data.mainTrend, allApps);
-    console.log("CALCULATED:", { score, label, apps: allApps.length, subTrends: subTrendData.length });
+    const score = calculateScore(allApps, data.newReleases, data.ph);
+    const label = calculateLabel(score, data.newReleases, allApps, data.ph);
+    console.log("CALCULATED:", { score, label, apps: allApps.length, newReleases: data.newReleases.length });
 
     // Step 3: Analyze with Claude (score/label pre-calculated)
-    const analysis = await analyzeWithClaude(query, subCategories, data, score, label);
+    const analysis = await analyzeWithClaude(query, data, score, label);
 
     return NextResponse.json({ query, analysis });
   } catch (err) {
