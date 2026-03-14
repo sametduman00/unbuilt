@@ -52,13 +52,19 @@ async function fetchITunes(query: string) {
 
 function filterNewReleases(apps: any[]) {
   const now = Date.now();
-  const ninetyDays = 90 * 24 * 60 * 60 * 1000;
-  return apps
-    .filter(a => {
-      if (!a.releaseDate) return false;
-      const released = new Date(a.releaseDate).getTime();
-      return now - released <= ninetyDays;
-    })
+  const cutoff = 180 * 24 * 60 * 60 * 1000;
+  const withDates = apps.filter(a => a.releaseDate);
+  const recent = withDates.filter(a => {
+    const released = new Date(a.releaseDate).getTime();
+    return now - released <= cutoff;
+  });
+  console.log("filterNewReleases:", {
+    total: apps.length,
+    withDates: withDates.length,
+    within180Days: recent.length,
+    sampleDates: withDates.slice(0, 3).map((a: any) => ({ name: a.name, releaseDate: a.releaseDate })),
+  });
+  return recent
     .map(a => {
       const daysAgo = Math.floor((now - new Date(a.releaseDate).getTime()) / (24 * 60 * 60 * 1000));
       const sortScore = (a.rating || 0) * Math.log10(Math.max(a.reviewCount || 1, 1));
@@ -208,22 +214,27 @@ function calculateLabel(score: number, newReleases: any[], appStoreData: any[], 
   const recentCount = newReleases?.length || 0;
   const phTopVotes = Math.max(...(phData?.map((p: any) => p.votesCount) || [0]));
 
-  // Large active markets (500K+ reviews)
+  console.log("calculateLabel:", { score, maxReviews, recentCount, phTopVotes });
+
+  // Large active markets (500K+ reviews) — NEVER Dead Zone or Uncharted
   if (maxReviews > 500000) {
-    if (recentCount === 0) return "Fading";
-    if (score >= 72) return "Explosive";
-    if (score >= 58) return "Growing";
+    if (score >= 72) {
+      console.log("calculateLabel: 500K+ branch → Explosive");
+      return "Explosive";
+    }
+    if (score >= 58) {
+      console.log("calculateLabel: 500K+ branch → Growing");
+      return "Growing";
+    }
+    console.log("calculateLabel: 500K+ branch → Crowded");
     return "Crowded";
   }
 
   if (score >= 75) return "Explosive";
   if (score >= 60) return "Growing";
-  if (score >= 45) {
-    if (recentCount >= 3) return "Warming Up";
-    return "Warming Up";
-  }
+  if (score >= 45) return "Warming Up";
   if (score >= 32) {
-    if (maxReviews > 10000 && recentCount === 0) return "Fading";
+    if (maxReviews > 10000 && recentCount === 0 && phTopVotes < 20) return "Fading";
     return "Crowded";
   }
   if (maxReviews < 5000 && recentCount === 0 && phTopVotes < 20) return "Dead Zone";
@@ -250,6 +261,7 @@ async function fetchAllData(query: string, subCategories: string[]) {
     .slice(0, 5);
 
   console.log("New releases:", newReleases.length, "iTunes:", itunesNewReleases.length, "GPlay:", gplayNewReleases.length);
+  console.log("PH data:", ph.length, "results. First:", ph.length > 0 ? JSON.stringify(ph[0]) : "none");
 
   return { itunes, gplay, ph, newReleases, subCategories };
 }
@@ -269,7 +281,7 @@ Use these values as context for your analysis — reference them in your verdict
 ## Sub-categories to analyze
 ${JSON.stringify(data.subCategories, null, 2)}
 
-## NEW RELEASES (last 90 days)
+## NEW RELEASES (last 180 days)
 ${JSON.stringify(data.newReleases, null, 2)}
 
 ## iTunes App Store results for "${query}" (top by reviews)
