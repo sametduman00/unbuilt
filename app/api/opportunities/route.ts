@@ -106,10 +106,11 @@ Each opportunity MUST be one of these 6 types. Follow the STRICT qualification r
 ## STRICT TYPE QUALIFICATION RULES
 
 MOMENTUM - ONLY use this when:
-- A NEW app (released in last 180 days) has RAPIDLY growing reviews
+- A NEW app (released in last 180 days) has RAPIDLY growing reviews (500+ reviews minimum)
 - AND no dominant player existed before it
 - Evidence MUST include: release date + review count + days since release
 - Do NOT use for established apps that are already dominant
+- Momentum requires at least 500+ reviews to qualify as real traction. Do not cite apps with fewer than 500 reviews
 
 MONOPOLY - ONLY use this when:
 - ONE app has AT LEAST 5x more reviews than the SECOND place app (e.g. 500K vs 100K = 5x ✓, 270K vs 100K = 2.7x ✗)
@@ -139,7 +140,9 @@ PRICE - ONLY use this when:
 BUNDLE - ONLY use this when:
 - 3+ single-purpose apps exist that each do ONE narrow thing
 - A combined app covering all of them does NOT exist
-- Evidence MUST include: names of the single-purpose apps and what each does
+- Evidence MUST name 3 specific apps from the data AND explain exactly what each one does separately
+- Format: "[App1] handles X, [App2] handles Y, [App3] handles Z — no single app combines all three."
+- NEVER write "users need multiple apps" without naming the specific apps
 
 Return ONLY valid JSON array (no markdown, no code fences):
 [
@@ -167,13 +170,18 @@ RULES:
 
 COMPLAINT HARD RULE: I will programmatically reject any Complaint opportunity where the cited rating is above 4.20. Do not cite apps with ratings above 4.20 for Complaint type. For Complaint type: evidence MUST include the specific app name, its exact rating (e.g. 3.2), AND its review count (e.g. 45,230 reviews). Evidence with no numbers will be rejected.
 
-`;
+NON-OBVIOUS RULE: Each opportunity must provide a NON-OBVIOUS insight that a developer wouldn't think of in 5 minutes. AVOID these generic ideas:
+- "Build a senior-friendly version"
+- "Build an alternative with better UX"
+- "Build for underserved niche"
+- "All-in-one platform"
+Instead cite specific data that reveals a hidden gap: a surprising rating pattern, an unexpected user segment from reviews, a sub-category growing while the main category declines, or a pricing anomaly.`;
 
-  // Claude call with 10-second timeout
+  // Claude call with 25-second timeout
   let raw: any[] = [];
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
+    const timeout = setTimeout(() => controller.abort(), 25000);
     const response = await client.messages.create(
       { model: "claude-sonnet-4-20250514", max_tokens: 2500, messages: [{ role: "user", content: prompt }] },
       { signal: controller.signal as any },
@@ -299,28 +307,6 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
     });
   }
 
-  // GUARANTEED: Bundle opportunity if 3+ apps
-  if (sorted.length >= 3) {
-    const top3 = sorted.slice(0, 3);
-    const n1 = top3[0]?.name || "App1";
-    const n2 = top3[1]?.name || "App2";
-    const n3 = top3[2]?.name || "App3";
-    const r1 = (top3[0]?.reviewCount || 0).toLocaleString();
-    const bundleEvidence = `${n1} (${r1} reviews), ${n2}, and ${n3} all focus on different aspects — no unified solution combines their best features.`;
-    console.log("BUNDLE evidence:", bundleEvidence);
-    results.push({
-      title: `All-in-One ${subcategory} Platform`,
-      type: "Bundle",
-      difficulty: "Hard",
-      description: `Users currently need multiple separate apps for different ${subcategory} needs. A single unified platform combining the best features could simplify their workflow.`,
-      evidence: bundleEvidence,
-      typeReason: "Three or more single-purpose apps exist without a combined alternative.",
-      targetAudience: `Power users who currently switch between ${n1}, ${n2}, and ${n3}.`,
-      difficultyReason: "Hard — requires building multiple feature sets and integrating them into a cohesive product.",
-      searchQuery: `${subcategory} all in one`,
-    });
-  }
-
   // GUARANTEED: Gap opportunity for larger markets
   if (sorted.length > 0) {
     const topApp = sorted[0];
@@ -381,6 +367,21 @@ function validateOpportunities(opportunities: any[], opts: ValidationOptions = {
       const years = combined.match(/\b(20\d{2})\b/g);
       if (years && years.some((y: string) => parseInt(y, 10) <= yearCutoff)) {
         console.log("FILTERED Momentum (year <=", yearCutoff, "):", opp.title, "years found:", years);
+        return false;
+      }
+      // Momentum: reject if no significant review count (>= 100) in evidence
+      const nums = (opp.evidence || "").match(/[\d,]+/g);
+      if (nums) {
+        const parsed = nums
+          .map((n: string) => parseInt(n.replace(/,/g, ""), 10))
+          .filter((n: number) => !isNaN(n) && n > 0 && !(n >= 2000 && n <= 2099)); // exclude years
+        const maxNum = parsed.length > 0 ? Math.max(...parsed) : 0;
+        if (maxNum < 100) {
+          console.log("FILTERED Momentum (low reviews):", opp.title, "max number:", maxNum);
+          return false;
+        }
+      } else {
+        console.log("FILTERED Momentum (no numbers in evidence):", opp.title);
         return false;
       }
     }
