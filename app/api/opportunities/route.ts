@@ -135,10 +135,18 @@ PRICE - ONLY use this when:
 - Evidence MUST include: price data from the app list
 
 GEOGRAPHY - ONLY use this when:
-- A proven solution exists in English/Western markets but is NOT available in other languages or regions (Spanish, Arabic, Hindi, Turkish, Portuguese, etc.)
+- A proven solution exists in English/Western markets but is NOT available in other languages or regions
 - The opportunity is: localize or build a native alternative for an underserved language/region
 - Do NOT use Geography for age demographics or user types — those are Gap or Complaint
 - Evidence MUST include: names of English-only apps AND the specific underserved language/region
+- Do NOT always default to Spanish. Evaluate which language market is MOST underserved based on the app names in the data. Consider:
+  * Arabic (400M speakers, Middle East/North Africa)
+  * Hindi (600M speakers, India)
+  * Portuguese (220M speakers, Brazil)
+  * Turkish (80M speakers, Turkey)
+  * Indonesian (270M speakers, Southeast Asia)
+  * Japanese/Korean if apps are Western-focused
+  Pick the language that makes most sense for the subcategory context
 
 BUNDLE - ONLY use this when:
 - 3+ single-purpose apps exist that each do ONE narrow thing
