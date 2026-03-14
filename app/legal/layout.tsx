@@ -7,6 +7,10 @@ const TITLES: Record<string, string> = {
   "/legal/privacy-policy": "Privacy Policy",
   "/legal/terms-of-service": "Terms of Service",
   "/legal/cookie-policy": "Cookie Policy",
+  "/legal/acceptable-use": "Acceptable Use",
+  "/legal/ai-transparency": "AI Transparency",
+  "/legal/do-not-sell": "Do Not Sell My Info",
+  "/legal/disclaimer": "Disclaimer",
 };
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
@@ -69,7 +73,8 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
           paddingTop: "2rem",
           borderTop: "1px solid #1a1a1a",
           display: "flex",
-          gap: "1.5rem",
+          flexWrap: "wrap",
+          gap: "0.75rem 1.5rem",
           fontSize: 13,
           color: "#555",
         }}>

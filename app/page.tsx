@@ -3711,7 +3711,8 @@ export default function Home() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: "0.5rem",
+          flexWrap: "wrap",
+          gap: "0.25rem 0.5rem",
           fontSize: "0.75rem",
           color: "var(--clr-text-7)",
         }}>
@@ -3720,6 +3721,14 @@ export default function Home() {
           <a href="/legal/terms-of-service" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Terms of Service</a>
           <span style={{ opacity: 0.4 }}>|</span>
           <a href="/legal/cookie-policy" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Cookie Policy</a>
+          <span style={{ opacity: 0.4 }}>|</span>
+          <a href="/legal/acceptable-use" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Acceptable Use</a>
+          <span style={{ opacity: 0.4 }}>|</span>
+          <a href="/legal/ai-transparency" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>AI Transparency</a>
+          <span style={{ opacity: 0.4 }}>|</span>
+          <a href="/legal/do-not-sell" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Do Not Sell</a>
+          <span style={{ opacity: 0.4 }}>|</span>
+          <a href="/legal/disclaimer" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Disclaimer</a>
         </footer>
       </div>
     </>
