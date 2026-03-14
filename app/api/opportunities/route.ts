@@ -92,8 +92,8 @@ async function analyzeOpportunities(
 
 Analyze the "${subcategory}" subcategory within "${categoryLabel}" and generate 6-8 specific, data-driven opportunities.
 
-## App Store Data (top apps by reviews)
-${JSON.stringify(itunesApps.slice(0, 15), null, 2)}
+## App Store Data (top 10 apps by reviews)
+${JSON.stringify(itunesApps.slice(0, 10), null, 2)}
 
 ## New Releases (last 180 days)
 ${JSON.stringify(newReleases, null, 2)}
@@ -185,7 +185,7 @@ GEOGRAPHY HARD RULE: Geography MUST name a specific language (Spanish, Arabic, H
 
   const response = await client.messages.create({
     model: "claude-sonnet-4-20250514",
-    max_tokens: 4000,
+    max_tokens: 2500,
     messages: [{ role: "user", content: prompt }],
   });
 
@@ -214,13 +214,15 @@ GEOGRAPHY HARD RULE: Geography MUST name a specific language (Spanish, Arabic, H
       subcategory, categoryLabel, itunesApps, newReleases, phPosts,
       filtered, needed,
     );
-    const validBackfill = validateOpportunities(backfill);
+    // Relaxed validation for backfill: allow Momentum with years 2021+
+    const validBackfill = validateOpportunities(backfill, { momentumYearCutoff: 2020 });
     console.log("BACKFILL result:", { requested: needed, received: backfill.length, passedValidation: validBackfill.length });
     filtered = [...filtered, ...validBackfill];
   } else {
     console.log("BACKFILL skipped:", filtered.length, "passed validation (minimum 3)");
   }
 
+  console.log("FINAL COUNT:", filtered.length, "opportunities returned");
   return filtered;
 }
 
@@ -238,7 +240,12 @@ const GEO_KEYWORDS = [
 
 const VALID_TYPES = ["Momentum", "Monopoly", "Gap", "Complaint", "Price", "Geography", "Bundle"];
 
-function validateOpportunities(opportunities: any[]): any[] {
+interface ValidationOptions {
+  momentumYearCutoff?: number; // default 2022: reject years <= this value
+}
+
+function validateOpportunities(opportunities: any[], opts: ValidationOptions = {}): any[] {
+  const yearCutoff = opts.momentumYearCutoff ?? 2022;
   const filtered = opportunities.filter((opp) => {
     // Type whitelist: reject unknown types
     if (!VALID_TYPES.includes(opp.type)) {
@@ -246,11 +253,12 @@ function validateOpportunities(opportunities: any[]): any[] {
       return false;
     }
 
-    // Momentum: reject if evidence references a year 2022 or earlier
+    // Momentum: reject if evidence or typeReason references an old year
     if (opp.type === "Momentum") {
-      const years = (opp.evidence || "").match(/\b(20\d{2})\b/g);
-      if (years && years.some((y: string) => parseInt(y, 10) <= 2022)) {
-        console.log("FILTERED Momentum (old year):", opp.title, "years found:", years);
+      const combined = `${opp.evidence || ""} ${opp.typeReason || ""}`;
+      const years = combined.match(/\b(20\d{2})\b/g);
+      if (years && years.some((y: string) => parseInt(y, 10) <= yearCutoff)) {
+        console.log("FILTERED Momentum (year <=", yearCutoff, "):", opp.title, "years found:", years);
         return false;
       }
     }
@@ -392,8 +400,8 @@ async function backfillOpportunities(
   const existingTypes = existing.map((o) => o.type).join(", ");
   const prompt = `You are a market opportunity analyst. I need ${needed} MORE opportunities for "${subcategory}" in "${categoryLabel}".
 
-## App Store Data (top apps by reviews)
-${JSON.stringify(itunesApps.slice(0, 15), null, 2)}
+## App Store Data (top 10 apps by reviews)
+${JSON.stringify(itunesApps.slice(0, 10), null, 2)}
 
 ## New Releases (last 180 days)
 ${JSON.stringify(newReleases, null, 2)}
