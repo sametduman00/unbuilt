@@ -3,233 +3,214 @@ import { NextRequest, NextResponse } from "next/server";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-/* ── Google Trends via SerpAPI ─────────────────────────────────── */
+/* ── Step 1: Generate sub-categories ─────────────────────────── */
+async function generateSubCategories(query: string): Promise<string[]> {
+  const res = await client.messages.create({
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 500,
+    messages: [{
+      role: "user",
+      content: `For the market space "${query}", generate exactly 6 specific sub-categories that represent distinct segments within this space. These should work for any type of business (B2B SaaS, consumer apps, developer tools, services, hardware, etc.) — do NOT assume mobile apps.
+
+Return ONLY a JSON array of 6 strings, no markdown, no explanation.
+Example: ["Sub-category 1", "Sub-category 2", "Sub-category 3", "Sub-category 4", "Sub-category 5", "Sub-category 6"]`,
+    }],
+  });
+
+  const text = res.content
+    .filter((b): b is Anthropic.TextBlock => b.type === "text")
+    .map((b) => b.text)
+    .join("");
+  const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+  return JSON.parse(cleaned);
+}
+
+/* ── Data fetchers ───────────────────────────────────────────── */
+
 async function fetchGoogleTrends(query: string) {
   const key = process.env.SERPAPI_KEY;
   if (!key) return null;
-
   try {
-    const trendsUrl = `https://serpapi.com/search.json?engine=google_trends&q=${encodeURIComponent(query)}&date=today%203-m&api_key=${key}`;
-    const res = await fetch(trendsUrl, { signal: AbortSignal.timeout(10000) });
+    const url = `https://serpapi.com/search.json?engine=google_trends&q=${encodeURIComponent(query)}&date=today%203-m&api_key=${key}`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
     if (!res.ok) return null;
-
     const data = await res.json();
     const points = data.interest_over_time?.timeline_data ?? [];
-
-    // Full timeline for the chart
-    const timeline: { date: string; value: number }[] = points.map(
-      (pt: { date?: string; values?: { extracted_value?: number }[] }) => ({
-        date: pt.date ?? "",
-        value: pt.values?.[0]?.extracted_value ?? 0,
-      })
-    );
-
-    const allValues = timeline.map((t) => t.value);
+    const allValues = points.map((p: any) => p.values?.[0]?.extracted_value ?? 0);
     const currentScore = allValues.length > 0 ? allValues[allValues.length - 1] : 0;
     const firstScore = allValues.length > 1 ? allValues[0] : currentScore;
     const trendPercent = firstScore > 0 ? Math.round(((currentScore - firstScore) / firstScore) * 100) : 0;
-    const direction: "rising" | "falling" | "stable" =
-      trendPercent > 10 ? "rising" : trendPercent < -10 ? "falling" : "stable";
-
-    return { currentScore, trendPercent, direction, timeline };
+    const direction = trendPercent > 10 ? "rising" : trendPercent < -10 ? "falling" : "stable";
+    return { currentScore, trendPercent, direction };
   } catch {
     return null;
   }
 }
 
-/* ── YouTube via YouTube Data API v3 ──────────────────────────── */
-async function fetchYouTube(query: string) {
-  const key = process.env.YOUTUBE_API_KEY;
-  if (!key) return [];
-
+async function fetchITunes(query: string) {
   try {
-    const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
-
-    // Search for videos
-    const searchUrl = new URL("https://www.googleapis.com/youtube/v3/search");
-    searchUrl.searchParams.set("part", "snippet");
-    searchUrl.searchParams.set("q", query);
-    searchUrl.searchParams.set("type", "video");
-    searchUrl.searchParams.set("order", "viewCount");
-    searchUrl.searchParams.set("publishedAfter", since);
-    searchUrl.searchParams.set("maxResults", "10");
-    searchUrl.searchParams.set("key", key);
-
-    const searchRes = await fetch(searchUrl.toString(), { signal: AbortSignal.timeout(10000) });
-    if (!searchRes.ok) return [];
-    const searchData = await searchRes.json();
-
-    const items = searchData.items ?? [];
-    if (items.length === 0) return [];
-
-    // Get statistics for each video
-    const ids = items.map((i: { id?: { videoId?: string } }) => i.id?.videoId).filter(Boolean).join(",");
-    const statsUrl = new URL("https://www.googleapis.com/youtube/v3/videos");
-    statsUrl.searchParams.set("part", "statistics");
-    statsUrl.searchParams.set("id", ids);
-    statsUrl.searchParams.set("key", key);
-
-    const statsRes = await fetch(statsUrl.toString(), { signal: AbortSignal.timeout(10000) });
-    if (!statsRes.ok) return [];
-    const statsData = await statsRes.json();
-
-    const statsMap = new Map<string, { viewCount: number; likeCount: number }>();
-    for (const v of statsData.items ?? []) {
-      statsMap.set(v.id, {
-        viewCount: parseInt(v.statistics?.viewCount ?? "0", 10),
-        likeCount: parseInt(v.statistics?.likeCount ?? "0", 10),
-      });
-    }
-
-    return items.map((item: { id?: { videoId?: string }; snippet?: { title?: string; channelTitle?: string; publishedAt?: string } }) => {
-      const videoId = item.id?.videoId ?? "";
-      const stats = statsMap.get(videoId) ?? { viewCount: 0, likeCount: 0 };
-      return {
-        videoId,
-        title: item.snippet?.title ?? "",
-        channel: item.snippet?.channelTitle ?? "",
-        publishedAt: item.snippet?.publishedAt ?? "",
-        viewCount: stats.viewCount,
-        likeCount: stats.likeCount,
-      };
-    });
-  } catch {
-    return [];
-  }
-}
-
-/* ── Hacker News via Algolia API ──────────────────────────────── */
-async function fetchHackerNews(query: string) {
-  try {
-    const since = Math.floor((Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000);
-
-    const url = new URL("https://hn.algolia.com/api/v1/search");
-    url.searchParams.set("query", query);
-    url.searchParams.set("tags", "story");
-    url.searchParams.set("numericFilters", `created_at_i>${since}`);
-    url.searchParams.set("hitsPerPage", "10");
-
-    const res = await fetch(url.toString(), { signal: AbortSignal.timeout(10000) });
+    const res = await fetch(
+      `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=software&limit=10`,
+      { signal: AbortSignal.timeout(10000) }
+    );
     if (!res.ok) return [];
     const data = await res.json();
-
-    return (data.hits ?? []).map((hit: { title?: string; points?: number; num_comments?: number; url?: string; objectID?: string; created_at_i?: number }) => {
-      const createdAt = (hit.created_at_i ?? 0) * 1000;
-      const daysAgo = Math.floor((Date.now() - createdAt) / (24 * 60 * 60 * 1000));
-      return {
-        title: hit.title ?? "",
-        points: hit.points ?? 0,
-        comments: hit.num_comments ?? 0,
-        url: hit.url ?? "",
-        objectID: hit.objectID ?? "",
-        daysAgo,
-      };
-    });
+    return (data.results ?? []).map((r: any) => ({
+      name: r.trackName ?? "",
+      rating: r.averageUserRating ?? 0,
+      reviewCount: r.userRatingCount ?? 0,
+      releaseDate: r.releaseDate ?? "",
+      price: r.formattedPrice ?? "Free",
+    }));
   } catch {
     return [];
   }
 }
 
-/* ── GitHub via GitHub API ─────────────────────────────────────── */
-async function fetchGitHub(query: string) {
+async function fetchGooglePlay(query: string) {
   try {
-    const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
-    const token = process.env.GITHUB_TOKEN;
-
-    const url = new URL("https://api.github.com/search/repositories");
-    url.searchParams.set("q", `${query} created:>${since}`);
-    url.searchParams.set("sort", "stars");
-    url.searchParams.set("order", "desc");
-    url.searchParams.set("per_page", "10");
-
-    const headers: Record<string, string> = { Accept: "application/vnd.github+json" };
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-
-    const res = await fetch(url.toString(), { headers, signal: AbortSignal.timeout(10000) });
+    // Use internal API route since google-play-scraper needs server-side
+    const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const res = await fetch(
+      `${base}/api/gplay?q=${encodeURIComponent(query)}`,
+      { signal: AbortSignal.timeout(10000) }
+    );
     if (!res.ok) return [];
     const data = await res.json();
-
-    return (data.items ?? []).map((repo: { name?: string; description?: string; stargazers_count?: number; language?: string; html_url?: string; created_at?: string }) => {
-      const createdAt = new Date(repo.created_at ?? "").getTime();
-      const daysAgo = Math.floor((Date.now() - createdAt) / (24 * 60 * 60 * 1000));
-      return {
-        name: repo.name ?? "",
-        description: repo.description ?? "",
-        stars: repo.stargazers_count ?? 0,
-        language: repo.language ?? "",
-        url: repo.html_url ?? "",
-        daysAgo,
-      };
-    });
+    return (data.results ?? []).map((r: any) => ({
+      name: r.title ?? "",
+      rating: r.score ?? 0,
+      reviewCount: r.ratings ?? 0,
+      releaseDate: "",
+      price: r.price ?? "Free",
+    }));
   } catch {
     return [];
   }
 }
 
-/* ── Claude Analysis ──────────────────────────────────────────── */
+async function fetchProductHunt(query: string) {
+  const token = process.env.PRODUCTHUNT_API_KEY;
+  if (!token) return [];
+  try {
+    const gqlQuery = `query { posts(order: VOTES, first: 10) { edges { node { name tagline votesCount commentsCount url createdAt topics { edges { node { name } } } } } } }`;
+    const res = await fetch("https://api.producthunt.com/v2/api/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ query: gqlQuery }),
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const edges = data?.data?.posts?.edges ?? [];
+    return edges.map((e: any) => ({
+      name: e.node?.name ?? "",
+      tagline: e.node?.tagline ?? "",
+      votesCount: e.node?.votesCount ?? 0,
+      commentsCount: e.node?.commentsCount ?? 0,
+      url: e.node?.url ?? "",
+    }));
+  } catch {
+    return [];
+  }
+}
+
+/* ── Step 2: Fetch all data for sub-categories in parallel ───── */
+async function fetchAllData(query: string, subCategories: string[]) {
+  // Fetch trends for each sub-category + main query in parallel
+  const trendQueries = [query, ...subCategories];
+  const trendResults = await Promise.all(trendQueries.map(fetchGoogleTrends));
+  const mainTrend = trendResults[0];
+  const subTrends = subCategories.map((name, i) => ({
+    name,
+    trend: trendResults[i + 1],
+  }));
+
+  // Fetch app stores + PH for the main query
+  const [itunes, gplay, ph] = await Promise.all([
+    fetchITunes(query),
+    fetchGooglePlay(query),
+    fetchProductHunt(query),
+  ]);
+
+  return { mainTrend, subTrends, itunes, gplay, ph };
+}
+
+/* ── Step 3: Analyze with Claude ─────────────────────────────── */
 async function analyzeWithClaude(
   query: string,
-  trends: Awaited<ReturnType<typeof fetchGoogleTrends>>,
-  youtube: Awaited<ReturnType<typeof fetchYouTube>>,
-  hn: Awaited<ReturnType<typeof fetchHackerNews>>,
-  github: Awaited<ReturnType<typeof fetchGitHub>>,
+  subCategories: string[],
+  data: Awaited<ReturnType<typeof fetchAllData>>
 ) {
-  const prompt = `You are a market trend analyst. Analyze the following real-time data for the query "${query}" and return a JSON assessment.
+  const prompt = `You are a market analyst. Analyze this data for the space "${query}" and return ONLY valid JSON (no markdown, no code fences).
 
-## Google Trends (last 3 months)
-${trends ? JSON.stringify(trends, null, 2) : "No data available"}
+## Sub-categories and their Google Trends data
+${JSON.stringify(data.subTrends.map(s => ({
+  name: s.name,
+  googleTrends: s.trend ? { currentScore: s.trend.currentScore, trendPercent: s.trend.trendPercent, direction: s.trend.direction } : "No data",
+})), null, 2)}
 
-## YouTube Videos (last 90 days, sorted by views)
-${JSON.stringify(youtube.map((v: any, i: number) => ({ index: i, ...v })), null, 2)}
+## Main query Google Trends
+${data.mainTrend ? JSON.stringify(data.mainTrend, null, 2) : "No data available"}
 
-## Hacker News Stories (last 30 days)
-${JSON.stringify(hn.map((h: any, i: number) => ({ index: i, ...h })), null, 2)}
+## iTunes App Store results for "${query}"
+${JSON.stringify(data.itunes.slice(0, 10), null, 2)}
 
-## GitHub Repositories (created in last 7 days)
-${JSON.stringify(github.map((r: any, i: number) => ({ index: i, ...r })), null, 2)}
+## Google Play results for "${query}"
+${JSON.stringify(data.gplay.slice(0, 10), null, 2)}
 
-STRICT SCORE RULES - YOU MUST FOLLOW THESE:
-- If Google Trends currentScore is 0 AND YouTube has 0-1 videos AND GitHub has 0 repos: score MUST be 15-30, no exceptions
-- If Google Trends currentScore is under 15 AND total YouTube views under 10000: score MUST be under 40
-- Score 80+ is ONLY allowed when Google Trends is above 60 AND YouTube has 5+ videos with 100K+ total views
-- Score 85+ is ONLY allowed for genuinely explosive spaces with massive data signals
-- Do not interpret missing data as opportunity — missing data means unknown or too early
-- If Google Trends currentScore is below 20, score cannot exceed 45
-- If the space has well-known incumbents (mention them by name in your analysis), score cannot exceed 55 unless growth signals are very strong
-- Crowded spaces with low Google Trends should score 30-45, not 45-60
-- If score is under 30 and data is minimal, verdict should reflect "Too Early to Tell" or "Uncharted Territory", not "Crowded" — Crowded means many competitors exist.
+## Product Hunt recent top posts
+${JSON.stringify(data.ph.slice(0, 10), null, 2)}
 
-IMPORTANT — Analysis depth:
-- Even if external data is sparse or missing, you MUST produce full analysis for ALL sections (whatsRising, whatsDying, patternToBetOn, contrarianTake, underexploredNiches, bestOpportunity) using your own training knowledge about the space.
-- Never return empty or one-sentence sections. Each section must be substantive.
-- You MUST always include whatsRising (minimum 4 bullets), whatsDying (minimum 3 bullets), and underexploredNiches (minimum 3 items) in every response, even when external data is zero. Use your training knowledge.
+SCORE RULES — YOU MUST FOLLOW THESE:
+- Google Trends below 20 AND minimal data across sources: score max 35
+- Large markets with well-known incumbents: score 30-55
+- Score 80+ ONLY with strong growth signals across multiple sources
+- label must match market reality, not just score number
+- When score below 30 and data sparse: label must be "Uncharted" or "Dead Zone"
+- "Fading": has competitors but search interest declining more than 50%
+- "Crowded": many competitors, high competition — NEVER use for score below 30
 
-Return ONLY valid JSON (no markdown, no code fences) in this exact format:
+BEST OPPORTUNITY RULES:
+- Must be hyper-specific: exact customer, exact pain point, exact distribution channel
+- Never generic advice like "build a platform for X"
+- Must name the person, the problem, and how to reach them
+
+Return this exact JSON structure:
 {
-  "score": <integer 0-100, opportunity score — high activity + high competition = LOW score>,
-  "label": "<exactly one of: Dead Zone | Uncharted | Fading | Crowded | Warming Up | Growing | Explosive. Rules: 'Dead Zone' = space is actively dying, declining irreversibly, no future. 'Uncharted' = no data available, too early, unknown demand. 'Fading' = was relevant but losing steam — use when space has existing competitors but Google Trends trendPercent is below -50% (strongly falling). When trendPercent is below -50%, label should NEVER be 'Crowded' — use 'Fading' or 'Dead Zone'. 'Crowded' = many competitors, high competition, mature/saturated market. If score is under 30 AND YouTube total views are 500K+, use 'Crowded'. If score is under 30 AND data is minimal/zero, use 'Uncharted'.>",
+  "score": <integer 0-100>,
+  "label": "<exactly one of: Dead Zone | Uncharted | Fading | Crowded | Warming Up | Growing | Explosive>",
   "verdict": "<max 12 words, direct assessment>",
-  "summary": "<3-4 sentences combining all signals with specific numbers>",
-  "googleTrendsInsight": "<1-2 sentences interpreting the Google Trends data>",
-  "whatsRising": ["**Example Tool** — gaining traction because X (+200% growth)", "second rising trend", "third rising trend", "fourth rising trend"],
-  "whatsDying": ["**Old Approach** — losing steam because X", "second declining thing", "third declining thing"],
-  "patternToBetOn": "2-3 sentences: the emerging structural shift that will define this market in 12-18 months. Be specific and contrarian.",
-  "contrarianTake": "2-3 sentences: the thing most founders in this space believe that is probably wrong. What assumption will look naive in 2 years?",
-  "underexploredNiches": ["Niche 1: name the customer and their unsolved problem", "Niche 2: another underserved segment", "Niche 3: another gap"],
-  "bestOpportunity": "Must be hyper-specific: name the exact customer, exact pain point, exact distribution channel. NOT 'build a platform for X'. Instead: 'Build Y for Z people who struggle with W, sell through A channel because B reason.'",
-  "youtube": {
-    "insight": "<1-2 sentences about YouTube signal>",
-    "picks": [{"index": <0-based index>, "reason": "<why this video matters, max 12 words>"}, ...]
-  },
-  "hn": {
-    "insight": "<1-2 sentences about Hacker News activity>",
-    "picks": [{"index": <0-based index>, "reason": "<why this post matters, max 12 words>"}, "...only pick posts DIRECTLY about the query topic. If a post is only tangentially related or coincidentally matches a keyword, do NOT pick it. If no HN posts are truly relevant, return an empty picks array []"]
-  },
-  "github": {
-    "insight": "<1-2 sentences about GitHub activity>",
-    "picks": [{"index": <0-based index>, "reason": "<why this repo matters, max 12 words>"}, ...]
+  "summary": "<3-4 sentences with specific numbers from the data>",
+  "relevantPlatforms": ["appstore", "googleplay", "producthunt"],
+  "risingSubcategories": [
+    { "name": "<sub-category>", "trendScore": <0-100>, "direction": "rising|falling|stable", "why": "<1 sentence>" }
+  ],
+  "appStoreWins": [
+    { "name": "<app name>", "platform": "appstore|googleplay", "rating": <number>, "reviews": <number>, "why": "<1 sentence why this app matters>" }
+  ],
+  "productHuntWins": [
+    { "name": "<product name>", "votes": <number>, "tagline": "<tagline>", "why": "<1 sentence why this matters>" }
+  ],
+  "gapOpportunities": [
+    { "gap": "<what's missing>", "evidence": "<data-backed reason>", "difficulty": "Easy|Medium|Hard" }
+  ],
+  "bestOpportunity": {
+    "title": "<catchy 5-8 word title>",
+    "who": "<exact target customer>",
+    "what": "<exact product to build>",
+    "why": "<why now, with evidence>",
+    "distribution": "<exact channel and strategy>"
   }
-}`;
+}
+
+IMPORTANT:
+- relevantPlatforms: include "appstore" and "googleplay" ONLY if the space is consumer/mobile. Exclude for B2B, SaaS, developer tools, services.
+- appStoreWins: max 3 items, ONLY from platforms in relevantPlatforms. Pick the most interesting/dominant apps. If appstore/googleplay not in relevantPlatforms, return empty array [].
+- productHuntWins: max 3 items. If no relevant PH posts, return empty array [].
+- gapOpportunities: minimum 3 items. Based on what users search for but is underbuilt.
+- risingSubcategories: include ALL 6 sub-categories with their trend data.
+- Even if external data is sparse, produce full analysis using your training knowledge.`;
 
   const response = await client.messages.create({
     model: "claude-sonnet-4-20250514",
@@ -241,14 +222,8 @@ Return ONLY valid JSON (no markdown, no code fences) in this exact format:
     .filter((b): b is Anthropic.TextBlock => b.type === "text")
     .map((b) => b.text)
     .join("");
-
-  // Try to parse JSON — strip code fences if Claude adds them despite instructions
   const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-  const parsed = JSON.parse(cleaned);
-  console.log("CLAUDE RESPONSE KEYS:", Object.keys(parsed));
-  console.log("whatsRising:", JSON.stringify(parsed.whatsRising)?.slice(0, 200));
-  console.log("whatsDying:", JSON.stringify(parsed.whatsDying)?.slice(0, 200));
-  return parsed;
+  return JSON.parse(cleaned);
 }
 
 /* ── GET handler ──────────────────────────────────────────────── */
@@ -263,27 +238,16 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Fetch all 4 sources in parallel
-    const [trends, youtube, hn, github] = await Promise.all([
-      fetchGoogleTrends(query),
-      fetchYouTube(query),
-      fetchHackerNews(query),
-      fetchGitHub(query),
-    ]);
+    // Step 1: Generate sub-categories
+    const subCategories = await generateSubCategories(query);
 
-    // Send all data to Claude for analysis
-    const analysis = await analyzeWithClaude(query, trends, youtube, hn, github);
+    // Step 2: Fetch all data in parallel
+    const data = await fetchAllData(query, subCategories);
 
-    return NextResponse.json({
-      query,
-      analysis,
-      rawData: {
-        trends,
-        youtube: youtube.map((v: any, i: number) => ({ index: i, ...v })),
-        hn: hn.map((h: any, i: number) => ({ index: i, ...h })),
-        github: github.map((r: any, i: number) => ({ index: i, ...r })),
-      },
-    });
+    // Step 3: Analyze with Claude
+    const analysis = await analyzeWithClaude(query, subCategories, data);
+
+    return NextResponse.json({ query, analysis });
   } catch (err) {
     console.error("trend-feed error:", err);
     return NextResponse.json(

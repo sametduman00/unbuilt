@@ -93,15 +93,15 @@ const TOOLS: ToolConfig[] = [
     description: "What's actually rising in a market right now. Emerging niches, dying trends, and contrarian bets — powered by AI, not Twitter hype.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
-    apiPath: "/api/trends",
+    apiPath: "/api/trend-feed",
     inputLabel: "What space or industry are you curious about?",
     placeholder: 'e.g. "B2B SaaS tools", "consumer health apps", or "creator economy"',
     sources: [
       { name: "Claude AI", color: "var(--clr-text-2)", live: true },
       { name: "Google Trends", color: "var(--clr-text-3)", live: true },
-      { name: "GitHub", color: "var(--clr-text-3)", live: true },
-      { name: "Hacker News", color: "var(--clr-text-3)", live: true },
-      { name: "YouTube", color: "var(--clr-text-3)", live: true },
+      { name: "App Store", color: "var(--clr-text-3)", live: true },
+      { name: "Google Play", color: "var(--clr-text-3)", live: true },
+      { name: "Product Hunt", color: "var(--clr-text-3)", live: true },
     ],
   },
   {
@@ -562,61 +562,16 @@ function TrendGenericSection({ section, isStreaming, emoji }: {
   );
 }
 
-function TrendFeedResult({ sections, isStreaming }: { sections: Section[]; isStreaming: boolean }) {
-  // Map sections by their emoji to route to the right visual component
-  const sectionMap: Record<string, { component: "rising" | "dying" | "niches" | "pattern" | "generic"; color: string; emoji: string }> = {
-    "📈": { component: "rising", color: "var(--clr-text-2)", emoji: "📈" },
-    "💀": { component: "dying", color: "var(--clr-text-2)", emoji: "💀" },
-    "🔥": { component: "pattern", color: "var(--clr-text-3)", emoji: "🔥" },
-    "💡": { component: "niches", color: "var(--clr-text-2)", emoji: "💡" },
-    "🧲": { component: "generic", color: "var(--clr-text-2)", emoji: "🧲" },
-    "🧠": { component: "generic", color: "var(--clr-text-2)", emoji: "🧠" },
-  };
-
-  // Filter out the temperature section (handled separately) and empty sections
-  const displaySections = sections.filter((s) => s.emoji !== "🌡️" && (s.body.trim() || (s.isLast && isStreaming)));
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-      {displaySections.map((s, i) => {
-        const config = sectionMap[s.emoji];
-        const streaming = s.isLast && isStreaming;
-
-        if (!config) {
-          return <TrendGenericSection key={i} section={s} isStreaming={streaming} emoji={s.emoji} />;
-        }
-
-        switch (config.component) {
-          case "rising":
-            return <TrendRisingSection key={i} section={s} isStreaming={streaming} />;
-          case "dying":
-            return <TrendDyingSection key={i} section={s} isStreaming={streaming} />;
-          case "pattern":
-            return <TrendPatternHero key={i} section={s} isStreaming={streaming} />;
-          case "niches":
-            return <TrendNichesSection key={i} section={s} isStreaming={streaming} />;
-          case "generic":
-            return <TrendGenericSection key={i} section={s} isStreaming={streaming} emoji={config.emoji} />;
-          default:
-            return <SectionCard key={i} section={s} showCursor={streaming} />;
-        }
-      })}
-    </div>
-  );
-}
-
-// ── Gap Analysis Visual Components ────────────────────────────
-
 function ThreatDots({ level }: { level: number }) {
   return (
-    <span style={{ display: "inline-flex", gap: 3 }}>
-      {[1,2,3,4,5].map(i => (
-        <span key={i} style={{
-          width: 8, height: 8, borderRadius: "50%",
-          background: i <= level ? "var(--clr-text)" : "var(--clr-border-2)",
+    <div style={{ display: "flex", gap: 3 }}>
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} style={{
+          width: 6, height: 6, borderRadius: "50%",
+          background: i <= level ? "var(--clr-text)" : "var(--clr-border)",
         }} />
       ))}
-    </span>
+    </div>
   );
 }
 
@@ -1098,157 +1053,6 @@ function deriveScoreLabel(pct: number): { emoji: string; label: string } {
   return { emoji: "🔴", label: "Dead Zone" };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function GoogleTrendsChart({ data, query }: { data: any; query?: string }) {
-  const [activeRange, setActiveRange] = useState<"week" | "month" | "3months">("3months");
-  const [chartData, setChartData] = useState<any>(data);
-  const [loading, setLoading] = useState(false);
-
-  const tabs: { key: "week" | "month" | "3months"; label: string }[] = [
-    { key: "week", label: "7 days" },
-    { key: "month", label: "1 month" },
-    { key: "3months", label: "3 months" },
-  ];
-
-  const fetchRange = async (range: "week" | "month" | "3months") => {
-    if (range === activeRange || !query) return;
-    setActiveRange(range);
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/serpapi?q=${encodeURIComponent(query)}&range=${range}`);
-      if (res.ok) {
-        const d = await res.json();
-        setChartData(d);
-      }
-    } catch { /* keep existing data */ }
-    setLoading(false);
-  };
-
-  const timeline: { date: string; value: number }[] = chartData?.timeline ?? chartData?.timelineData ?? [];
-  if (timeline.length === 0 && !loading) return null;
-
-  const values = timeline.map((t: any) => t.value);
-  const maxVal = Math.max(...values, 1);
-  const minVal = Math.min(...values);
-  const valRange = maxVal - minVal || 1;
-
-  const W = 400;
-  const H = 120;
-  const padX = 0;
-  const padY = 12;
-  const chartW = W - padX * 2;
-  const chartH = H - padY * 2;
-
-  const points = timeline.map((t: any, i: number) => {
-    const x = padX + (i / Math.max(timeline.length - 1, 1)) * chartW;
-    const y = padY + chartH - ((t.value - minVal) / valRange) * chartH;
-    return { x, y, ...t };
-  });
-
-  const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
-  const areaPath = points.length > 0 ? `${linePath} L${points[points.length - 1].x},${H} L${points[0].x},${H} Z` : "";
-
-  const direction = chartData?.direction ?? "stable";
-  const trendPercent = chartData?.trendPercent ?? 0;
-  const dirLabel = direction === "rising" ? "Rising" : direction === "falling" ? "Falling" : "Stable";
-  const dirColor = direction === "rising" ? "#4ade80" : direction === "falling" ? "#f87171" : "var(--clr-text-5)";
-
-  return (
-    <div style={{
-      borderRadius: 12, overflow: "hidden",
-      background: "var(--clr-surface)",
-      border: "1px solid var(--clr-border-2)",
-      padding: "1.5rem",
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "0.75rem" }}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-        </svg>
-        <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
-          Google Trends
-        </h3>
-        <span style={{
-          display: "inline-flex", alignItems: "center", gap: 4,
-          padding: "0.15rem 0.5rem", borderRadius: 999,
-          background: `${dirColor}18`, border: `1px solid ${dirColor}40`,
-          fontSize: "0.68rem", fontWeight: 700, color: dirColor,
-        }}>
-          {dirLabel} {trendPercent !== 0 && `${trendPercent > 0 ? "+" : ""}${trendPercent}%`}
-        </span>
-      </div>
-
-      {/* Range tabs */}
-      <div style={{ display: "flex", gap: 4, marginBottom: "1rem" }}>
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => fetchRange(tab.key)}
-            style={{
-              padding: "0.3rem 0.7rem", borderRadius: 999,
-              border: activeRange === tab.key ? "1px solid var(--clr-text)" : "1px solid var(--clr-border-2)",
-              background: activeRange === tab.key ? "rgba(var(--clr-text-rgb),0.08)" : "transparent",
-              color: activeRange === tab.key ? "var(--clr-text)" : "var(--clr-text-5)",
-              fontSize: "0.7rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
-              opacity: loading ? 0.5 : 1, transition: "all 0.15s",
-            }}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {loading ? (
-        <div style={{ width: 400, maxWidth: "100%", height: 120, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ width: 16, height: 16, border: "2px solid var(--clr-text-5)", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-        </div>
-      ) : (
-        <>
-          <svg viewBox={`0 0 ${W} ${H}`} style={{ width: 400, maxWidth: "100%", height: 120 }} preserveAspectRatio="xMinYMid meet">
-            <defs>
-              <linearGradient id="trendsGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--clr-text)" stopOpacity="0.15" />
-                <stop offset="100%" stopColor="var(--clr-text)" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            {[0, 0.25, 0.5, 0.75, 1].map((f) => (
-              <line key={f} x1={padX} x2={W - padX} y1={padY + chartH * (1 - f)} y2={padY + chartH * (1 - f)}
-                stroke="var(--clr-border-2)" strokeWidth="0.5" />
-            ))}
-            <path d={areaPath} fill="url(#trendsGrad)" />
-            <path d={linePath} fill="none" stroke="var(--clr-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            {points.map((p, i) => (
-              <circle key={i} cx={p.x} cy={p.y} r="3" fill="var(--clr-surface)" stroke="var(--clr-text)" strokeWidth="1.5" />
-            ))}
-          </svg>
-
-          {/* X-axis labels — only show when month changes */}
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, maxWidth: 400 }}>
-            {points.map((p, i) => {
-              const dateStr = (p.date ?? "").split(" ")[0];
-              const prevDateStr = i > 0 ? (points[i - 1].date ?? "").split(" ")[0] : "";
-              const month = dateStr.replace(/\d/g, "").trim();
-              const prevMonth = prevDateStr.replace(/\d/g, "").trim();
-              const showLabel = i === 0 || month !== prevMonth;
-              return (
-                <span key={i} style={{ fontSize: "0.6rem", color: "var(--clr-text-7)", fontWeight: 500, minWidth: 0 }}>
-                  {showLabel ? dateStr : ""}
-                </span>
-              );
-            })}
-          </div>
-        </>
-      )}
-
-      {/* Interest score */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "0.75rem" }}>
-        <span style={{ fontSize: "0.72rem", color: "var(--clr-text-5)", fontWeight: 500 }}>
-          Current interest: <strong style={{ color: "var(--clr-text)" }}>{chartData?.currentScore ?? 0}/100</strong>
-        </span>
-      </div>
-    </div>
-  );
-}
-
 function SpaceScoreCard({ score, summary, label }: { score: number; summary: string; label?: string }) {
   const pct = Math.max(0, Math.min(100, score));
   const labelEmojiMap: Record<string, string> = {
@@ -1261,53 +1065,39 @@ function SpaceScoreCard({ score, summary, label }: { score: number; summary: str
   const color = "var(--clr-text)";
   const bgColor = "rgba(var(--clr-text-rgb),0.04)";
 
-  // SVG arc math (36px radius, starts at top, clockwise)
   const r = 36;
   const circ = 2 * Math.PI * r;
   const dash = circ * pct / 100;
-  const offset = circ * 0.25; // start from top
+  const offset = circ * 0.25;
 
   return (
     <div style={{
       background: "var(--clr-surface)", border: `1px solid ${color}40`,
-      borderRadius: 12, padding: "1.5rem 1.75rem", marginBottom: "1rem",
+      borderRadius: 12, padding: "1.5rem 1.75rem",
       position: "relative", overflow: "hidden",
       boxShadow: `0 0 0 1px ${color}10, 0 8px 32px ${color}10`,
     }}>
-      {/* Background glow */}
       <div style={{
         position: "absolute", top: -60, right: -60, width: 240, height: 240,
         borderRadius: "50%", background: `${color}0a`, filter: "blur(60px)", pointerEvents: "none",
       }} />
-
       <div style={{ display: "flex", alignItems: "center", gap: "1.75rem", position: "relative" }}>
-        {/* Circular gauge */}
         <div style={{ position: "relative", flexShrink: 0, width: 92, height: 92 }}>
           <svg width="92" height="92" viewBox="0 0 92 92" style={{ transform: "rotate(-90deg)" }}>
             <circle cx="46" cy="46" r={r} fill="none" stroke="var(--clr-border)" strokeWidth="7" />
-            <circle
-              cx="46" cy="46" r={r} fill="none" stroke={color} strokeWidth="7"
-              strokeDasharray={`${dash} ${circ - dash}`}
-              strokeDashoffset={-offset}
-              strokeLinecap="round"
-            />
+            <circle cx="46" cy="46" r={r} fill="none" stroke={color} strokeWidth="7"
+              strokeDasharray={`${dash} ${circ - dash}`} strokeDashoffset={-offset} strokeLinecap="round" />
           </svg>
-          <div style={{
-            position: "absolute", inset: 0,
-            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-          }}>
+          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
             <span style={{ fontSize: "1.625rem", fontWeight: 800, color, lineHeight: 1, letterSpacing: "-0.03em" }}>{score}</span>
             <span style={{ fontSize: "0.6rem", color: "var(--clr-text-6)", fontWeight: 600, letterSpacing: "0.04em" }}>/100</span>
           </div>
         </div>
-
-        {/* Info */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.5rem" }}>
-            <span style={{
-              fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-text-5)",
-              textTransform: "uppercase", letterSpacing: "0.08em",
-            }}>Space Temperature</span>
+            <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-text-5)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              Space Temperature
+            </span>
             <span style={{
               display: "inline-flex", alignItems: "center", gap: 4,
               padding: "0.175rem 0.6rem", borderRadius: 999,
@@ -1317,482 +1107,250 @@ function SpaceScoreCard({ score, summary, label }: { score: number; summary: str
               {tier.emoji} {tier.label}
             </span>
           </div>
-          <p style={{
-            fontSize: "0.9375rem", color: "var(--clr-text-2)", lineHeight: 1.65,
-            margin: 0, fontWeight: 400,
-          }}>
+          <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-2)", lineHeight: 1.65, margin: 0, fontWeight: 400 }}>
             {summary}
           </p>
         </div>
       </div>
-
-      {/* 5-step visual scale */}
-      {(() => {
-        const steps = [
-          { emoji: "🔴", label: "Dead Zone",   min: 0,  max: 20  },
-          { emoji: "🟠", label: "Crowded",     min: 21, max: 40  },
-          { emoji: "🟡", label: "Warming Up",  min: 41, max: 60  },
-          { emoji: "🟢", label: "Growing",     min: 61, max: 80  },
-          { emoji: "🔥", label: "Explosive",   min: 81, max: 100 },
-        ];
-        const activeIdx = steps.findIndex((s) => pct >= s.min && pct <= s.max);
-        return (
-          <div style={{ marginTop: "1.25rem", display: "flex", gap: 6 }}>
-            {steps.map((step, i) => {
-              const isActive = i === activeIdx;
-              return (
-                <div key={step.label} style={{
-                  flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-                }}>
-                  <div style={{
-                    width: "100%", height: 6, borderRadius: 999,
-                    background: isActive ? color : "var(--clr-border)",
-                    boxShadow: isActive ? `0 0 8px ${color}60` : "none",
-                    transition: "background 0.3s",
-                  }} />
-                  <span style={{ fontSize: isActive ? "1rem" : "0.75rem", lineHeight: 1, transition: "font-size 0.2s", filter: isActive ? "none" : "grayscale(1) opacity(0.35)" }}>
-                    {step.emoji}
-                  </span>
-                  <span style={{
-                    fontSize: "0.58rem", fontWeight: isActive ? 700 : 400,
-                    color: isActive ? color : "var(--clr-text-7)",
-                    textAlign: "center", lineHeight: 1.2,
-                  }}>
-                    {step.label}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        );
-      })()}
-
     </div>
   );
 }
 
-// ── Trend Feed View (self-contained) ──────────────────────────
-function TrendFeedView({ onBack }: { onBack: () => void }) {
-  const [query, setQuery] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [data, setData] = useState<any>(null);
-  const [error, setError] = useState("");
-  const [scanStep, setScanStep] = useState(0);
-  const resultsRef = useRef<HTMLDivElement>(null);
+/* ── Trend Feed Result ─────────────────────────────────────────── */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function TrendFeedResult({ data }: { data: any }) {
+  const a = data?.analysis ?? {};
 
-  // Auto-advance scan steps during loading
-  useEffect(() => {
-    if (status !== "loading") return;
-    setScanStep(0);
-    const t = setInterval(() => setScanStep(s => Math.min(s + 1, 4)), 800);
-    return () => clearInterval(t);
-  }, [status]);
-
-  // Scroll to results when done
-  useEffect(() => {
-    if (status === "done") {
-      setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
-    }
-  }, [status]);
-
-  const search = async () => {
-    const q = query.trim();
-    if (q.length < 3) return;
-    setStatus("loading");
-    setError("");
-    setData(null);
-    try {
-      const res = await fetch(`/api/trend-feed?q=${encodeURIComponent(q)}`);
-      if (!res.ok) throw new Error((await res.json()).error || "Request failed");
-      setData(await res.json());
-      setStatus("done");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
-      setStatus("idle");
-    }
-  };
-
-  const searchAgain = () => { setStatus("idle"); setData(null); setError(""); };
-
-  // Simple markdown: bold + bullets
-  const renderText = (text: string) => {
-    if (!text || typeof text !== "string") return null;
-    return text.split("\n").filter(l => l.trim()).map((line, i) => {
-      const isBullet = /^[-•]\s/.test(line);
-      const content = isBullet ? line.replace(/^[-•]\s*/, "") : line;
-      const parts = content.split(/(\*\*[^*]+\*\*)/g).map((p, j) =>
-        p.startsWith("**") && p.endsWith("**")
-          ? <strong key={j} style={{ color: "var(--clr-text)" }}>{p.slice(2, -2)}</strong>
-          : <span key={j}>{p}</span>
-      );
-      if (isBullet) {
-        return (
-          <div key={i} style={{ display: "flex", gap: 8, paddingLeft: 2, marginBottom: 6 }}>
-            <span style={{ color: "var(--clr-text-5)", flexShrink: 0 }}>•</span>
-            <span style={{ lineHeight: 1.6 }}>{parts}</span>
-          </div>
-        );
-      }
-      return <div key={i} style={{ lineHeight: 1.6, marginBottom: 4 }}>{parts}</div>;
-    });
-  };
-
-  const fmtNum = (n: number) => n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` : n >= 1_000 ? `${(n / 1_000).toFixed(0)}K` : String(n);
-
-  // ── Loading: scanning animation ──
-  if (status === "loading") {
-    const steps = ["Google Trends", "GitHub", "Hacker News", "YouTube", "AI Analysis"];
-    return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "3rem 0", minHeight: 300 }}>
-        <div style={{
-          background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-          borderRadius: 12, padding: "2rem 2.5rem", width: "100%", maxWidth: 400,
-          animation: "scanCardIn 0.35s cubic-bezier(0.16,1,0.3,1)",
-          boxShadow: "0 24px 64px rgba(0,0,0,0.15)",
-        }}>
-          <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-            <h2 style={{ fontSize: "1.125rem", fontWeight: 750, color: "var(--clr-text)", margin: "0 0 0.375rem", letterSpacing: "-0.025em" }}>
-              Gathering intelligence...
-            </h2>
-            <p style={{ fontSize: "0.8rem", color: "var(--clr-text-5)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {query}
-            </p>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            {steps.map((label, i) => {
-              const isDone = scanStep > i;
-              const isActive = scanStep === i;
-              return (
-                <div key={label} style={{
-                  display: "flex", alignItems: "center", gap: "0.75rem",
-                  padding: "0.5rem 0.75rem", borderRadius: 10,
-                  background: isActive ? "rgba(var(--clr-accent-rgb),0.05)" : "transparent",
-                  animation: i <= scanStep ? "stepIn 0.3s ease both" : "none",
-                  opacity: i <= scanStep ? 1 : 0,
-                }}>
-                  <div style={{ width: 20, height: 20, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {isDone ? (
-                      <div style={{
-                        width: 20, height: 20, borderRadius: "50%",
-                        background: "rgba(34,197,94,0.15)", border: "1px solid rgba(34,197,94,0.35)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        animation: "checkPop 0.35s cubic-bezier(0.16,1,0.3,1)",
-                      }}>
-                        <svg width="10" height="10" viewBox="0 0 11 11" fill="none">
-                          <path d="M2 5.5l2.5 2.5 4.5-5" stroke="var(--clr-text-2)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </div>
-                    ) : (
-                      <div style={{ width: 16, height: 16, border: "2px solid var(--clr-text-5)", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-                    )}
-                  </div>
-                  <span style={{ fontSize: "0.8rem", fontWeight: isDone ? 500 : 600, color: isDone ? "var(--clr-text-5)" : "var(--clr-text-2)" }}>
-                    {label}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+  const renderBold = (text: string) => {
+    if (!text || typeof text !== "string") return text;
+    return text.split(/(\*\*[^*]+\*\*)/g).map((p, j) =>
+      p.startsWith("**") && p.endsWith("**")
+        ? <strong key={j} style={{ color: "var(--clr-text)" }}>{p.slice(2, -2)}</strong>
+        : <span key={j}>{p}</span>
     );
-  }
+  };
 
-  // ── Done: results ──
-  if (status === "done" && data) {
-    const a = data.analysis ?? {};
-    const raw = data.rawData ?? {};
+  const difficultyColor = (d: string) =>
+    d === "Easy" ? "#4ade80" : d === "Hard" ? "#f87171" : "#facc15";
 
-    // Resolve picks with reasons (handles both {index, reason} and plain number formats)
-    const resolvePicks = (picks: any[], items: any[]) =>
-      (picks ?? []).map((p: any) => {
-        const idx = typeof p === "number" ? p : p?.index;
-        const item = items?.[idx];
-        if (!item) return null;
-        return { ...item, reason: typeof p === "object" ? p.reason ?? "" : "" };
-      }).filter(Boolean);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      {/* Score Card */}
+      <SpaceScoreCard score={a.score ?? 0} summary={a.summary ?? ""} label={a.label} />
 
-    const ytPicks = resolvePicks(a.youtube?.picks, raw.youtube);
-    const hnPicks = resolvePicks(a.hn?.picks, raw.hn);
-    const ghPicks = resolvePicks(a.github?.picks, raw.github);
+      {/* Verdict */}
+      {a.verdict && (
+        <div style={{
+          padding: "1rem 1.25rem", borderRadius: 12,
+          background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+          fontSize: "1rem", fontWeight: 700, color: "var(--clr-text)",
+          textAlign: "center", letterSpacing: "-0.02em",
+        }}>
+          {a.verdict}
+        </div>
+      )}
 
-    const section = (title: string, content?: string | string[]) => {
-      if (!content) return null;
-      // Normalize: array → join with newlines as bullets, string → pass through
-      const text = Array.isArray(content)
-        ? content.filter(Boolean).map(s => `- ${s.replace(/^[-•]\s*/, "")}`).join("\n")
-        : typeof content === "string" ? content : null;
-      if (!text) return null;
-      return (
+      {/* Rising Sub-categories */}
+      {(a.risingSubcategories ?? []).length > 0 && (
         <div style={{
           padding: "1.25rem 1.5rem", borderRadius: 12,
           background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
         }}>
           <h3 style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", margin: "0 0 0.75rem", letterSpacing: "-0.02em" }}>
-            {title}
+            Rising Sub-categories
           </h3>
-          <div style={{ fontSize: "0.875rem", color: "var(--clr-text-3)" }}>
-            {renderText(text)}
-          </div>
-        </div>
-      );
-    };
-
-    return (
-      <div ref={resultsRef} style={{ paddingTop: "1.5rem", paddingBottom: "5rem", display: "flex", flexDirection: "column", gap: "1rem", animation: "fadeSlideIn 0.3s ease" }}>
-
-        {/* Query bar */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: 12,
-          padding: "0.75rem 1rem", background: "var(--clr-surface)",
-          border: "1px solid var(--clr-border)", borderRadius: 12,
-          marginBottom: "0.25rem",
-        }}>
-          <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-accent)", letterSpacing: "0.07em", textTransform: "uppercase" }}>
-            Trend Feed
-          </span>
-          <span style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>
-            {query}
-          </span>
-          <button onClick={searchAgain} style={{
-            padding: "0.3rem 0.75rem", borderRadius: 999,
-            background: "transparent", border: "1px solid var(--clr-border-2)",
-            color: "var(--clr-text-5)", fontSize: "0.75rem", fontWeight: 500,
-            cursor: "pointer", fontFamily: "inherit",
-          }}>
-            New search
-          </button>
-        </div>
-
-        {/* Score + summary */}
-        <SpaceScoreCard score={a.score ?? 0} summary={a.summary ?? ""} label={a.label} />
-
-        {/* Google Trends chart */}
-        {console.log("TRENDS DATA:", JSON.stringify(data?.rawData?.trends))}
-        {raw.trends && (raw.trends.timeline?.length > 0 || raw.trends.timelineData?.length > 0) && (
-          <GoogleTrendsChart data={raw.trends} query={query} />
-        )}
-
-        {/* Analysis sections */}
-        {section("What's Rising", a.whatsRising)}
-        {section("What's Dying", a.whatsDying)}
-        {section("The Pattern to Bet On", a.patternToBetOn)}
-        {section("The Contrarian Take", a.contrarianTake)}
-        {section("Underexplored Niches", a.underexploredNiches)}
-        {section("Best Opportunity Right Now", a.bestOpportunity)}
-
-        {/* YouTube picks */}
-        {ytPicks.length > 0 && (
-          <div style={{ padding: "1.5rem", borderRadius: 12, background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-              <h3 style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
-                YouTube
-              </h3>
-              {a.youtube?.insight && (
-                <span style={{ fontSize: "0.75rem", color: "var(--clr-text-5)", fontWeight: 400 }}>
-                  {a.youtube.insight}
-                </span>
-              )}
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-              {ytPicks.map((v: any) => (
-                <a key={v.videoId} href={`https://youtube.com/watch?v=${v.videoId}`} target="_blank" rel="noopener noreferrer" style={{
-                  display: "flex", gap: "0.75rem", padding: "0.875rem 1rem", borderRadius: 12,
-                  background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
-                  textDecoration: "none", transition: "transform 0.15s, border-color 0.15s",
-                }}
-                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = "rgba(var(--clr-text-rgb),0.4)"; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = "var(--clr-border-2)"; }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <div style={{ width: 120, minWidth: 120, height: 68, borderRadius: 8, overflow: "hidden", background: "var(--clr-bg)", flexShrink: 0, position: "relative" }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={`https://i.ytimg.com/vi/${v.videoId}/mqdefault.jpg`} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    <div style={{ position: "absolute", bottom: 4, right: 4, background: "rgba(0,0,0,0.8)", borderRadius: 4, padding: "1px 5px", fontSize: "0.6rem", color: "#fff", fontWeight: 700 }}>
-                      {fmtNum(v.viewCount ?? 0)} views
-                    </div>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", minWidth: 0, flex: 1 }}>
-                    <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.35, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                      {v.title}
-                    </div>
-                    <div style={{ fontSize: "0.7rem", color: "var(--clr-text-5)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {v.channel}
-                    </div>
-                    {v.reason && (
-                      <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", fontStyle: "italic", marginTop: "auto" }}>
-                        {v.reason}
-                      </div>
-                    )}
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* HN picks */}
-        {hnPicks.length > 0 && (
-          <div style={{ padding: "1.5rem", borderRadius: 12, background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-              <h3 style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
-                Hacker News
-              </h3>
-              {a.hn?.insight && (
-                <span style={{ fontSize: "0.75rem", color: "var(--clr-text-5)", fontWeight: 400 }}>
-                  {a.hn.insight}
-                </span>
-              )}
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-              {hnPicks.map((h: any) => {
-                const hnUrl = `https://news.ycombinator.com/item?id=${h.objectID}`;
-                return (
-                  <a key={h.objectID} href={h.url || hnUrl} target="_blank" rel="noopener noreferrer" style={{
-                    display: "flex", flexDirection: "column", gap: "0.5rem",
-                    padding: "1rem 1.125rem", borderRadius: 12,
-                    background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
-                    textDecoration: "none", transition: "transform 0.15s, border-color 0.15s",
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = "rgba(var(--clr-text-rgb),0.4)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = "var(--clr-border-2)"; }}
-                  >
-                    <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                      {h.title}
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
-                      <span style={{
-                        display: "inline-flex", alignItems: "center", gap: 4,
-                        padding: "0.175rem 0.5rem", borderRadius: 999,
-                        background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
-                        fontSize: "0.7rem", fontWeight: 800, color: "var(--clr-text-2)",
-                      }}>
-                        {h.points ?? 0} pts
-                      </span>
-                      <span style={{ fontSize: "0.68rem", color: "var(--clr-text-6)" }}>
-                        {h.comments ?? 0} comments
-                      </span>
-                      <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", marginLeft: "auto" }}>
-                        {(h.daysAgo ?? 0) === 0 ? "today" : `${h.daysAgo ?? 0}d ago`}
-                      </span>
-                    </div>
-                    {h.reason && (
-                      <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", fontStyle: "italic" }}>
-                        {h.reason}
-                      </div>
-                    )}
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* GitHub picks */}
-        {ghPicks.length > 0 && (
-          <div style={{ padding: "1.5rem", borderRadius: 12, background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-              <h3 style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
-                GitHub
-              </h3>
-              {a.github?.insight && (
-                <span style={{ fontSize: "0.75rem", color: "var(--clr-text-5)", fontWeight: 400 }}>
-                  {a.github.insight}
-                </span>
-              )}
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-              {ghPicks.map((r: any) => (
-                <a key={r.name} href={r.url} target="_blank" rel="noopener noreferrer" style={{
-                  display: "flex", flexDirection: "column", gap: "0.5rem",
-                  padding: "1rem 1.125rem", borderRadius: 12,
-                  background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
-                  textDecoration: "none", transition: "transform 0.15s, border-color 0.15s",
-                }}
-                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = "rgba(var(--clr-text-rgb),0.4)"; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = "var(--clr-border-2)"; }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ fontSize: "0.875rem", fontWeight: 750, color: "var(--clr-text-2)", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {r.name}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "0.5rem" }}>
+            {(a.risingSubcategories ?? []).map((sub: any, i: number) => {
+              const dirColor = sub.direction === "rising" ? "#4ade80" : sub.direction === "falling" ? "#f87171" : "var(--clr-text-5)";
+              const dirIcon = sub.direction === "rising" ? "↑" : sub.direction === "falling" ? "↓" : "→";
+              return (
+                <div key={i} style={{
+                  padding: "0.875rem 1rem", borderRadius: 10,
+                  border: "1px solid var(--clr-border-2)",
+                  display: "flex", flexDirection: "column", gap: "0.375rem",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)" }}>
+                      {sub.name}
                     </span>
-                    {r.language && (
-                      <span style={{
-                        fontSize: "0.6rem", fontWeight: 700, padding: "0.15rem 0.5rem",
-                        borderRadius: 999, background: "rgba(var(--clr-text-rgb),0.1)",
-                        border: "1px solid rgba(var(--clr-text-rgb),0.25)", color: "var(--clr-text-2)",
-                      }}>
-                        {r.language}
-                      </span>
-                    )}
-                  </div>
-                  {r.description && (
-                    <p style={{ fontSize: "0.8rem", color: "var(--clr-text-4)", lineHeight: 1.5, margin: 0, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                      {r.description}
-                    </p>
-                  )}
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
                     <span style={{
-                      display: "inline-flex", alignItems: "center", gap: 4,
-                      padding: "0.175rem 0.5rem", borderRadius: 999,
-                      background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
-                      fontSize: "0.7rem", fontWeight: 800, color: "var(--clr-text-2)",
+                      display: "inline-flex", alignItems: "center", gap: 3,
+                      padding: "0.125rem 0.4rem", borderRadius: 999,
+                      background: `${dirColor}18`, border: `1px solid ${dirColor}40`,
+                      fontSize: "0.65rem", fontWeight: 700, color: dirColor,
                     }}>
-                      {(r.stars ?? 0).toLocaleString()} stars
-                    </span>
-                    <span style={{ fontSize: "0.68rem", color: "var(--clr-text-7)", marginLeft: "auto" }}>
-                      {(r.daysAgo ?? 0) === 0 ? "today" : `${r.daysAgo ?? 0}d ago`}
+                      {dirIcon} {sub.trendScore ?? 0}
                     </span>
                   </div>
-                  {r.reason && (
-                    <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", fontStyle: "italic" }}>
-                      {r.reason}
-                    </div>
-                  )}
-                </a>
+                  <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", lineHeight: 1.5 }}>
+                    {sub.why}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* App Store & Play Wins */}
+      {(a.appStoreWins ?? []).length > 0 && (
+        <div style={{
+          padding: "1.25rem 1.5rem", borderRadius: 12,
+          background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+        }}>
+          <h3 style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", margin: "0 0 0.75rem", letterSpacing: "-0.02em" }}>
+            App Store Winners
+          </h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {(a.appStoreWins ?? []).map((app: any, i: number) => (
+              <div key={i} style={{
+                padding: "0.875rem 1rem", borderRadius: 10,
+                border: "1px solid var(--clr-border-2)",
+                display: "flex", alignItems: "center", gap: "0.75rem",
+              }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)" }}>{app.name}</span>
+                    <span style={{
+                      fontSize: "0.6rem", fontWeight: 600, padding: "0.1rem 0.4rem",
+                      borderRadius: 999, background: "rgba(var(--clr-text-rgb),0.08)",
+                      color: "var(--clr-text-4)", textTransform: "uppercase",
+                    }}>
+                      {app.platform === "googleplay" ? "Google Play" : "App Store"}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: 4 }}>{app.why}</div>
+                </div>
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--clr-text)" }}>
+                    {"★".repeat(Math.round(app.rating ?? 0))} {(app.rating ?? 0).toFixed(1)}
+                  </div>
+                  <div style={{ fontSize: "0.65rem", color: "var(--clr-text-5)" }}>
+                    {(app.reviews ?? 0).toLocaleString()} reviews
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Product Hunt Wins */}
+      {(a.productHuntWins ?? []).length > 0 && (
+        <div style={{
+          padding: "1.25rem 1.5rem", borderRadius: 12,
+          background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+        }}>
+          <h3 style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", margin: "0 0 0.75rem", letterSpacing: "-0.02em" }}>
+            Product Hunt Wins
+          </h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {(a.productHuntWins ?? []).map((ph: any, i: number) => (
+              <div key={i} style={{
+                padding: "0.875rem 1rem", borderRadius: 10,
+                border: "1px solid var(--clr-border-2)",
+                display: "flex", alignItems: "center", gap: "0.75rem",
+              }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: 10, flexShrink: 0,
+                  background: "rgba(var(--clr-text-rgb),0.06)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "0.8rem", fontWeight: 800, color: "var(--clr-text-3)",
+                }}>
+                  ▲ {ph.votes}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)" }}>{ph.name}</div>
+                  <div style={{ fontSize: "0.72rem", color: "var(--clr-text-5)", marginTop: 2 }}>{ph.tagline}</div>
+                  <div style={{ fontSize: "0.72rem", color: "var(--clr-text-4)", marginTop: 4 }}>{ph.why}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Gap Opportunities */}
+      {(a.gapOpportunities ?? []).length > 0 && (
+        <div style={{
+          padding: "1.25rem 1.5rem", borderRadius: 12,
+          background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
+        }}>
+          <h3 style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", margin: "0 0 0.75rem", letterSpacing: "-0.02em" }}>
+            Gap Opportunities
+          </h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {(a.gapOpportunities ?? []).map((gap: any, i: number) => (
+              <div key={i} style={{
+                padding: "0.875rem 1rem", borderRadius: 10,
+                border: "1px solid var(--clr-border-2)",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)", flex: 1 }}>
+                    {renderBold(gap.gap)}
+                  </span>
+                  <span style={{
+                    fontSize: "0.6rem", fontWeight: 700, padding: "0.15rem 0.5rem",
+                    borderRadius: 999, color: difficultyColor(gap.difficulty),
+                    background: `${difficultyColor(gap.difficulty)}18`,
+                    border: `1px solid ${difficultyColor(gap.difficulty)}40`,
+                  }}>
+                    {gap.difficulty}
+                  </span>
+                </div>
+                <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", lineHeight: 1.5 }}>
+                  {gap.evidence}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Best Opportunity */}
+      {a.bestOpportunity && (
+        <div style={{
+          padding: "1.5rem", borderRadius: 12,
+          background: "rgba(var(--clr-text-rgb),0.03)",
+          border: "2px solid rgba(var(--clr-text-rgb),0.15)",
+          position: "relative", overflow: "hidden",
+        }}>
+          <div style={{
+            position: "absolute", top: -40, right: -40, width: 160, height: 160,
+            borderRadius: "50%", background: "rgba(var(--clr-text-rgb),0.03)",
+            filter: "blur(40px)", pointerEvents: "none",
+          }} />
+          <div style={{ position: "relative" }}>
+            <div style={{
+              fontSize: "0.6rem", fontWeight: 700, color: "var(--clr-text-5)",
+              textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem",
+            }}>
+              Best Opportunity
+            </div>
+            <h3 style={{
+              fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)",
+              margin: "0 0 1rem", letterSpacing: "-0.025em", lineHeight: 1.3,
+            }}>
+              {a.bestOpportunity.title}
+            </h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+              {[
+                { label: "Who", value: a.bestOpportunity.who },
+                { label: "What", value: a.bestOpportunity.what },
+                { label: "Why Now", value: a.bestOpportunity.why },
+                { label: "Distribution", value: a.bestOpportunity.distribution },
+              ].map((item, i) => (
+                <div key={i} style={{ padding: "0.625rem 0.75rem", borderRadius: 8, background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)" }}>
+                  <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--clr-text-5)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>
+                    {item.label}
+                  </div>
+                  <div style={{ fontSize: "0.8rem", color: "var(--clr-text-2)", lineHeight: 1.5 }}>
+                    {item.value}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-        )}
-      </div>
-    );
-  }
-
-  // ── Idle: search input ──
-  return (
-    <div style={{ maxWidth: 540, margin: "0 auto", padding: "2rem 0", width: "100%" }}>
-      <div style={{
-        display: "flex", gap: "0.5rem",
-        padding: "0.5rem", borderRadius: 12,
-        background: "var(--clr-surface)", border: "1px solid var(--clr-border-2)",
-      }}>
-        <input
-          type="text"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && search()}
-          placeholder='e.g. "B2B SaaS tools", "consumer health apps"'
-          style={{
-            flex: 1, padding: "0.625rem 0.875rem", borderRadius: 8,
-            border: "none", outline: "none",
-            background: "transparent", color: "var(--clr-text)",
-            fontSize: "0.9rem", fontFamily: "inherit",
-          }}
-        />
-        <button onClick={search} disabled={query.trim().length < 3} style={{
-          padding: "0.625rem 1.25rem", borderRadius: 8,
-          background: query.trim().length >= 3 ? "var(--clr-accent)" : "var(--clr-border)",
-          border: "none", color: query.trim().length >= 3 ? "#fff" : "var(--clr-text-6)",
-          fontSize: "0.8125rem", fontWeight: 600, cursor: query.trim().length >= 3 ? "pointer" : "default",
-          fontFamily: "inherit", transition: "background 0.15s",
-        }}>
-          Analyze
-        </button>
-      </div>
-      {error && (
-        <div style={{ marginTop: "0.75rem", padding: "0.75rem 1rem", borderRadius: 10, background: "rgba(var(--clr-text-rgb),0.04)", border: "1px solid var(--clr-border-2)", color: "var(--clr-text-2)", fontSize: "0.8125rem" }}>
-          {error}
         </div>
       )}
     </div>
@@ -2797,6 +2355,8 @@ export default function Home() {
   const [streamedContent, setStreamedContent] = useState("");
   const [error, setError] = useState("");
   const [hasResults, setHasResults] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [trendFeedData, setTrendFeedData] = useState<any>(null);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [githubRepos, setGithubRepos] = useState<GithubRepo[]>([]);
   const [githubLoading, setGithubLoading] = useState(false);
@@ -3129,12 +2689,32 @@ export default function Home() {
 
     // Clear any existing scan timers
     scanTimersRef.current.forEach(clearTimeout);
-
-    // Trend feed is handled by TrendFeedView component — skip here
-    if (selectedTool === "trend-feed") return;
+    setTrendFeedData(null);
 
     // Start scan animation
     setScanStep(0);
+
+    // Trend feed: single GET fetch, no SSE streaming
+    if (selectedTool === "trend-feed") {
+      const steps = scanStepCounts["trend-feed"] ?? 5;
+      scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
+        setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 800)
+      );
+      try {
+        const res = await fetch(`/api/trend-feed?q=${encodeURIComponent(idea.trim())}`);
+        if (!res.ok) {
+          const d = await res.json();
+          throw new Error(d.error || "Something went wrong");
+        }
+        const result = await res.json();
+        setTrendFeedData(result);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
 
     // ── Other tools: existing flow ──
     if (selectedTool === "stack-advisor") {
@@ -3240,6 +2820,7 @@ export default function Home() {
     setStreamedContent("");
     setError("");
     setResultCached(null);
+    setTrendFeedData(null);
     setGithubRepos([]);
     setGithubFetched(false);
     setHnPosts([]);
@@ -3343,7 +2924,7 @@ export default function Home() {
 
             {/* Right: Actions */}
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              {(hasResults || selectedTool === "trend-feed") && currentTool && (
+              {hasResults && currentTool && (
                 <button
                   onClick={backToTools}
                   style={{
@@ -3420,6 +3001,13 @@ export default function Home() {
                 { label: "Searching Google Play",  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.04c.29.12.62.18.97.18.49 0 .97-.14 1.42-.42l.02-.01 1.73-1.01L17.63 22c1.07 0 2.01-.56 2.56-1.43l-9.6-5.55-7.4 8.02zm-.63-1.73l7.22-7.83L2.35 8.7c-.22.44-.35.94-.35 1.48V19.82c0 .6.18 1.15.55 1.49zm17.8-3.38c.59-.36 1.03-.94 1.2-1.63l.01-.04.04-.18c.06-.3.1-.63.1-.97v-.52l-.01-.03c-.05-.63-.32-1.18-.72-1.59L17.7 11.3l-2.87 3.12 5.52 3.51zm-.3-10.2L7.36 1.37 4.57 2.99 14.83 11.3l5.22-3.57z"/></svg> },
                 { label: "Searching YouTube",      icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 00.5 6.19 31.6 31.6 0 000 12a31.6 31.6 0 00.5 5.81 3.02 3.02 0 002.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 002.12-2.14A31.6 31.6 0 0024 12a31.6 31.6 0 00-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg> },
                 { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
+              ],
+              "trend-feed": [
+                { label: "Generating sub-categories", icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
+                { label: "Searching Google Trends",  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> },
+                { label: "Searching App Store",      icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> },
+                { label: "Searching Product Hunt",   icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M13.604 8.4h-3.405V12h3.405a1.8 1.8 0 100-3.6zM12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm1.604 14.4h-3.405V18H8.4V6h5.204a4.2 4.2 0 110 8.4z"/></svg> },
+                { label: "Analyzing with AI",        icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
               ],
               "competitor-radar": [
                 { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
@@ -3572,7 +3160,7 @@ export default function Home() {
           })() : (
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
               {/* ── Hero ── */}
-              {!hasResults && selectedTool !== "trend-feed" && (
+              {!hasResults && (
               <div style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
                 justifyContent: "center", textAlign: "center", maxWidth: 720, margin: "0 auto",
@@ -3617,13 +3205,8 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* ── Trend Feed (self-contained component) ── */}
-              {selectedTool === "trend-feed" && (
-                <TrendFeedView onBack={backToTools} />
-              )}
-
-              {/* ── Input section (appears on tool selection, not for trend-feed) ── */}
-              {selectedTool && currentTool && selectedTool !== "trend-feed" && (
+              {/* ── Input section ── */}
+              {selectedTool && currentTool && (
                 <div ref={inputSectionRef}>
                   <InputSection
                     tool={currentTool}
@@ -3742,6 +3325,11 @@ export default function Home() {
                 }}>
                   {error}
                 </div>
+              )}
+
+              {/* Trend Feed: structured result */}
+              {selectedTool === "trend-feed" && !loading && trendFeedData && (
+                <TrendFeedResult data={trendFeedData} />
               )}
 
               {/* Gap Analysis: structured visual report */}
