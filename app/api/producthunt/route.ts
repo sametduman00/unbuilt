@@ -69,15 +69,10 @@ export async function GET(req: NextRequest) {
       console.error("PH GraphQL errors:", JSON.stringify(data.errors));
     }
     const edges = data?.data?.posts?.edges ?? [];
-
-    const terms = query.toLowerCase().split(/\s+/);
+    console.log("PH: total posts returned from API:", edges.length);
 
     const posts = edges
       .map((e: any) => e.node)
-      .filter((post: any) => {
-        const text = `${post.name ?? ""} ${post.tagline ?? ""}`.toLowerCase();
-        return terms.some((t: string) => text.includes(t));
-      })
       .slice(0, 10)
       .map((post: any) => ({
         name: post.name ?? "",
