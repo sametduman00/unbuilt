@@ -4,7 +4,9 @@
       "Bash(npx tsc:*)",
       "Bash(npx next:*)",
       "Bash(python3 -c \"\nlines = open\\('/Users/mac/unbuilt/unbuilt/app/page.tsx'\\).readlines\\(\\)\nfor i in range\\(1340, 1360\\):\n    print\\(f'{i+1}: {lines[i].rstrip\\(\\)[:80]}'\\)\n\")",
-      "Bash(python3 -c \"\nlines = open\\('/Users/mac/unbuilt/unbuilt/app/page.tsx'\\).readlines\\(\\)\nfor i in range\\(1340, len\\(lines\\)\\):\n    if 'Data Source Badges' in lines[i]:\n        print\\(f'Found DataSourceBadges at line {i+1}'\\)\n        break\n\")"
+      "Bash(python3 -c \"\nlines = open\\('/Users/mac/unbuilt/unbuilt/app/page.tsx'\\).readlines\\(\\)\nfor i in range\\(1340, len\\(lines\\)\\):\n    if 'Data Source Badges' in lines[i]:\n        print\\(f'Found DataSourceBadges at line {i+1}'\\)\n        break\n\")",
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ]
   }
 }

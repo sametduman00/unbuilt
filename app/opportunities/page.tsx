@@ -403,51 +403,55 @@ export default function OpportunitiesPage() {
                   return (
                     <div
                       key={i}
-                      onClick={() => setExpandedIndex(isExpanded ? null : i)}
                       style={{
                         background: "var(--clr-surface)",
                         border: `1px solid ${isExpanded ? typeColor + "60" : "var(--clr-border)"}`,
                         borderLeft: `3px solid ${typeColor}`,
                         borderRadius: 10,
                         padding: "1.5rem",
-                        cursor: "pointer",
                         transition: "border-color 0.2s",
                       }}
                     >
-                      {/* Badges + expand indicator */}
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem", flexWrap: "wrap" }}>
-                        <span style={{
-                          display: "inline-block", padding: "0.2rem 0.6rem",
-                          borderRadius: 4, fontSize: "0.75rem", fontWeight: 600,
-                          background: `${typeColor}18`, color: typeColor, letterSpacing: "0.01em",
-                        }}>
-                          {opp.type}
-                        </span>
-                        <span style={{
-                          display: "inline-block", padding: "0.2rem 0.6rem",
-                          borderRadius: 4, fontSize: "0.75rem", fontWeight: 500,
-                          background: `${diffColor}18`, color: diffColor,
-                        }}>
-                          {opp.difficulty}
-                        </span>
-                        <span style={{ marginLeft: "auto", fontSize: "0.75rem", color: "var(--clr-text-3)", transition: "transform 0.2s", transform: isExpanded ? "rotate(180deg)" : "none" }}>
-                          ▼
-                        </span>
+                      {/* Header area — clickable to toggle */}
+                      <div
+                        onClick={() => setExpandedIndex(isExpanded ? null : i)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {/* Badges + expand indicator */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem", flexWrap: "wrap" }}>
+                          <span style={{
+                            display: "inline-block", padding: "0.2rem 0.6rem",
+                            borderRadius: 4, fontSize: "0.75rem", fontWeight: 600,
+                            background: `${typeColor}18`, color: typeColor, letterSpacing: "0.01em",
+                          }}>
+                            {opp.type}
+                          </span>
+                          <span style={{
+                            display: "inline-block", padding: "0.2rem 0.6rem",
+                            borderRadius: 4, fontSize: "0.75rem", fontWeight: 500,
+                            background: `${diffColor}18`, color: diffColor,
+                          }}>
+                            {opp.difficulty}
+                          </span>
+                          <span style={{ marginLeft: "auto", fontSize: "0.75rem", color: "var(--clr-text-3)", transition: "transform 0.2s", transform: isExpanded ? "rotate(180deg)" : "none" }}>
+                            ▼
+                          </span>
+                        </div>
+
+                        {/* Title */}
+                        <h3 style={{ fontSize: "1.0625rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--clr-text)" }}>
+                          {opp.title}
+                        </h3>
+
+                        {/* Description (always visible) */}
+                        <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: isExpanded ? "1rem" : 0 }}>
+                          {opp.description}
+                        </p>
                       </div>
 
-                      {/* Title */}
-                      <h3 style={{ fontSize: "1.0625rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--clr-text)" }}>
-                        {opp.title}
-                      </h3>
-
-                      {/* Description (always visible) */}
-                      <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: isExpanded ? "1rem" : 0 }}>
-                        {opp.description}
-                      </p>
-
-                      {/* Expanded content */}
+                      {/* Expanded content — clicks don't toggle accordion */}
                       {isExpanded && (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                        <div onClick={(e) => e.stopPropagation()} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                           {/* Evidence */}
                           <div style={{
                             fontSize: "0.8125rem", color: "var(--clr-text-3)",
