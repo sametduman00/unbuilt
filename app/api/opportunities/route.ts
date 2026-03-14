@@ -115,7 +115,8 @@ HARD RULES:
 - Complaint ratings must be ≤ 4.20. Evidence must have numbers.
 - Skip types that don't qualify. Min 3 different types.
 - Cite specific app names and numbers. No generic ideas ("better UX", "senior-friendly", "all-in-one").
-- Each opportunity must reveal a non-obvious insight from the data.`;
+- Each opportunity must reveal a non-obvious insight from the data.
+- NEVER mention AI model names (Claude, GPT, Gemini, LLaMA etc.) in any field. Focus only on App Store data.`;
 
   // Claude call with 25-second timeout
   let raw: any[] = [];
@@ -466,6 +467,7 @@ ${JSON.stringify(phPosts.slice(0, 3).map(p => ({ n: p.name, t: p.tagline, v: p.v
 
 Types: Momentum(500+ reviews, new app) | Monopoly(5x ratio) | Gap(<5 apps or <10K reviews) | Complaint(rating 3.0-4.2 ONLY) | Price(all paid) | Bundle(3+ apps named)
 Complaint ratings must be ≤ 4.20. Cite specific app names and numbers.
+NEVER mention AI model names (Claude, GPT, Gemini, LLaMA etc.) in any field. Focus only on App Store data.
 
 Return ONLY JSON array:
 [{"title","type","difficulty","description","evidence","typeReason","targetAudience","difficultyReason","searchQuery"}]`;
@@ -550,10 +552,18 @@ export async function GET(req: NextRequest) {
       phPosts,
     );
 
+    // Truncate evidence at last complete sentence if over 200 chars
+    const cleanedOpportunities = opportunities.map((opp: any) => ({
+      ...opp,
+      evidence: opp.evidence?.length > 200
+        ? (opp.evidence.slice(0, 200).replace(/[^.]*$/, '').trim() || opp.evidence.slice(0, 200).trim())
+        : opp.evidence,
+    }));
+
     return NextResponse.json({
       category: categorySlug,
       subcategory,
-      opportunities,
+      opportunities: cleanedOpportunities,
       stats: {
         totalApps,
         avgRating,
