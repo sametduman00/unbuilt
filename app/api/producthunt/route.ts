@@ -2,43 +2,32 @@ import { NextRequest, NextResponse } from "next/server";
 
 const PH_API = "https://api.producthunt.com/v2/api/graphql";
 
-/* ── GraphQL queries ─────────────────────────────────────────── */
+/* ── GraphQL query builder ────────────────────────────────────── */
 
-const POSTS_BY_TOPIC = `
-query PostsByTopic($topic: String!, $postedAfter: DateTime!) {
-  posts(order: VOTES, topic: $topic, postedAfter: $postedAfter, first: 50) {
-    edges {
-      node {
-        name
-        tagline
-        votesCount
-        commentsCount
-        url
-        createdAt
-        topics { edges { node { name slug } } }
+function buildPostsQuery(topicSlug: string | null) {
+  const topicFilter = topicSlug ? `, topic: "${topicSlug}"` : "";
+  return `
+    query {
+      posts(order: VOTES${topicFilter}, first: 10) {
+        edges {
+          node {
+            name
+            tagline
+            votesCount
+            commentsCount
+            url
+            createdAt
+            topics {
+              edges {
+                node { name }
+              }
+            }
+          }
+        }
       }
     }
-  }
+  `;
 }
-`;
-
-const POSTS_ALL = `
-query PostsAll($postedAfter: DateTime!) {
-  posts(order: VOTES, postedAfter: $postedAfter, first: 50) {
-    edges {
-      node {
-        name
-        tagline
-        votesCount
-        commentsCount
-        url
-        createdAt
-        topics { edges { node { name slug } } }
-      }
-    }
-  }
-}
-`;
 
 /* ── Topic slug mapping ──────────────────────────────────────── */
 // Common query terms → PH topic slugs
@@ -138,16 +127,12 @@ export async function GET(req: NextRequest) {
   console.log("PH: using token:", token.slice(0, 10) + "...");
 
   try {
-    const postedAfter = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
-
-    const gqlQuery = topicSlug ? POSTS_BY_TOPIC : POSTS_ALL;
-    const variables: Record<string, string> = { postedAfter };
-    if (topicSlug) variables.topic = topicSlug;
+    const gqlQuery = buildPostsQuery(topicSlug);
 
     const res = await fetch(PH_API, {
       method: "POST",
       headers: phHeaders(token),
-      body: JSON.stringify({ query: gqlQuery, variables }),
+      body: JSON.stringify({ query: gqlQuery }),
       signal: AbortSignal.timeout(10000),
     });
 
