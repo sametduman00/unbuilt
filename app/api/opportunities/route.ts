@@ -242,7 +242,13 @@ COMPLAINT HARD RULE: I will programmatically reject any Complaint opportunity wh
 function generateFallbackOpportunities(subcategory: string, apps: any[], newReleases: any[]): any[] {
   const results: any[] = [];
   const sorted = [...apps].sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
-  const topAppNames = sorted.slice(0, 3).map(a => a.name).filter(Boolean);
+
+  console.log("FALLBACK called:", {
+    subcategory,
+    itunesAppsCount: apps.length,
+    newReleasesCount: newReleases.length,
+    topApps: sorted.slice(0, 3).map(a => ({ name: a.name, rating: a.rating, reviews: a.reviewCount })),
+  });
 
   // Gap opportunity if few apps
   if (apps.length < 10 && sorted.length > 0) {
@@ -310,7 +316,7 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
   }
 
   // GUARANTEED: Gap opportunity for larger markets
-  if (apps.length >= 10 && sorted.length > 0) {
+  if (sorted.length > 0) {
     const topApp = sorted[0];
     results.push({
       title: `Niche ${subcategory} for underserved users`,
@@ -322,6 +328,22 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
       targetAudience: `A specific underserved segment within the ${subcategory} space.`,
       difficultyReason: "Medium — requires identifying and deeply understanding a niche audience.",
       searchQuery: subcategory,
+    });
+  }
+
+  // GUARANTEED: Premium/power user Gap opportunity
+  if (sorted.length > 0) {
+    const topApp = sorted[0];
+    results.push({
+      title: `Premium ${subcategory} for Power Users`,
+      type: "Gap",
+      difficulty: "Hard",
+      description: `Existing ${subcategory} apps target casual users. There is no professional-grade app with advanced features for power users and experts.`,
+      evidence: `${topApp.name} leads with ${(topApp.reviewCount ?? 0).toLocaleString()} reviews but targets casual users — no app serves advanced/power users with professional-grade features in this space.`,
+      typeReason: "Top apps cater to general users, leaving power users and professionals without a dedicated solution.",
+      targetAudience: `Professional and power users who need advanced ${subcategory} features beyond what ${topApp.name} offers.`,
+      difficultyReason: "Hard — requires deep domain expertise and advanced feature development.",
+      searchQuery: `${subcategory} professional`,
     });
   }
 
