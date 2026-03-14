@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useAuth, UserButton, SignInButton } from "@clerk/nextjs";
+import { CATEGORIES, type Category } from "@/app/lib/categories";
 
 /* ── Types ───────────────────────────────────────────────────── */
 
@@ -9,349 +11,465 @@ interface Opportunity {
   title: string;
   type: string;
   difficulty: string;
-  targetAudience: string;
-  whyNow: string;
+  description: string;
+  evidence: string;
   searchQuery: string;
 }
 
-/* ── Categories ──────────────────────────────────────────────── */
+interface Stats {
+  totalApps: number;
+  avgRating: number;
+  newReleases: number;
+  phPosts: number;
+}
 
-const CATEGORIES = [
-  { id: "gaming", emoji: "\uD83C\uDFAE", label: "Gaming" },
-  { id: "health-fitness", emoji: "\uD83D\uDCAA", label: "Health & Fitness" },
-  { id: "finance-fintech", emoji: "\uD83D\uDCB0", label: "Finance & Fintech" },
-  { id: "education", emoji: "\uD83C\uDF93", label: "Education" },
-  { id: "developer-tools", emoji: "\uD83D\uDEE0\uFE0F", label: "Developer Tools" },
-  { id: "home-lifestyle", emoji: "\uD83C\uDFE0", label: "Home & Lifestyle" },
-  { id: "business-productivity", emoji: "\uD83D\uDCBC", label: "Business & Productivity" },
-  { id: "social-relationships", emoji: "\u2764\uFE0F", label: "Social & Relationships" },
-];
+/* ── Constants ───────────────────────────────────────────────── */
 
-/* ── Badge colors ────────────────────────────────────────────── */
-
-const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
-  "Mobile App": { bg: "#1a1a2e", fg: "#7c8cf8" },
-  "Web SaaS": { bg: "#1a2e1a", fg: "#7cf88c" },
-  "Developer Tool": { bg: "#2e1a2e", fg: "#c87cf8" },
-  "Marketplace": { bg: "#2e2a1a", fg: "#f8c87c" },
-  "Community": { bg: "#1a2e2e", fg: "#7cf8e8" },
+const TYPE_COLORS: Record<string, string> = {
+  Momentum: "#2ecc71",
+  Monopoly: "#e74c3c",
+  Gap: "#3498db",
+  Complaint: "#e67e22",
+  Price: "#9b59b6",
+  Geography: "#00bcd4",
+  Bundle: "#f1c40f",
 };
 
-const DIFF_COLORS: Record<string, { bg: string; fg: string }> = {
-  "Easy": { bg: "#1a2e1a", fg: "#6ec96e" },
-  "Medium": { bg: "#2e2a1a", fg: "#e0c04a" },
-  "Hard": { bg: "#2e1a1a", fg: "#e06a6a" },
+const DIFFICULTY_COLORS: Record<string, string> = {
+  Easy: "#2ecc71",
+  Medium: "#f1c40f",
+  Hard: "#e74c3c",
 };
 
 /* ── Page ────────────────────────────────────────────────────── */
 
 export default function OpportunitiesPage() {
-  const [selected, setSelected] = useState<string | null>(null);
+  const { isSignedIn } = useAuth();
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  // Drill-down state
+  const [view, setView] = useState<"categories" | "subcategories" | "opportunities">("categories");
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const selectedCategory = CATEGORIES.find(c => c.id === selected);
+  // Theme sync
+  useEffect(() => {
+    const saved = localStorage.getItem("theme") as "dark" | "light" | null;
+    if (saved) {
+      setTheme(saved);
+      if (saved === "light") document.documentElement.classList.add("light");
+    }
+  }, []);
 
-  async function handleSelect(categoryId: string) {
-    setSelected(categoryId);
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    localStorage.setItem("theme", next);
+    document.documentElement.classList.toggle("light");
+  };
+
+  // Fetch opportunities
+  const fetchOpportunities = useCallback(async (category: Category, subcategory: string) => {
     setLoading(true);
     setError(null);
     setOpportunities([]);
-
+    setStats(null);
     try {
-      const res = await fetch(`/api/opportunities?category=${categoryId}`);
-      if (!res.ok) throw new Error("Failed to fetch opportunities");
+      const res = await fetch(
+        `/api/opportunities?category=${encodeURIComponent(category.slug)}&subcategory=${encodeURIComponent(subcategory)}`,
+      );
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to fetch opportunities");
       setOpportunities(data.opportunities ?? []);
+      setStats(data.stats ?? null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  function handleBack() {
-    setSelected(null);
-    setOpportunities([]);
-    setError(null);
-  }
+  // Navigation handlers
+  const selectCategory = (cat: Category) => {
+    setSelectedCategory(cat);
+    setView("subcategories");
+  };
+
+  const selectSubcategory = (sub: string) => {
+    if (!selectedCategory) return;
+    setSelectedSubcategory(sub);
+    setView("opportunities");
+    fetchOpportunities(selectedCategory, sub);
+  };
+
+  const goBack = () => {
+    if (view === "opportunities") {
+      setView("subcategories");
+      setOpportunities([]);
+      setStats(null);
+      setError(null);
+      setSelectedSubcategory(null);
+    } else if (view === "subcategories") {
+      setView("categories");
+      setSelectedCategory(null);
+    }
+  };
+
+  /* ── Render ─────────────────────────────────────────────────── */
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#080808",
-      color: "#e5e5e5",
-      fontFamily: "var(--font-inter), system-ui, -apple-system, sans-serif",
-    }}>
-      {/* ── Navbar ── */}
-      <nav style={{
-        borderBottom: "1px solid #151515",
-        position: "sticky",
-        top: 0,
-        background: "rgba(8,8,8,0.85)",
-        backdropFilter: "blur(12px)",
-        zIndex: 100,
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--clr-bg)", color: "var(--clr-text)" }}>
+
+      {/* ── Header ── */}
+      <header style={{
+        borderBottom: "1px solid var(--clr-border-deep)",
+        backdropFilter: "blur(16px)",
+        background: "var(--clr-bg)",
+        position: "sticky", top: 0, zIndex: 50,
       }}>
         <div style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: "0 2rem",
-          height: 56,
-          display: "flex",
-          alignItems: "center",
-          gap: "1.5rem",
+          maxWidth: 1200, margin: "0 auto", padding: "0 2rem",
+          height: 56, display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
-          <Link href="/" style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            textDecoration: "none",
-          }}>
-            <svg width="20" height="20" viewBox="0 0 19 19" fill="none">
-              <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-            <span style={{ fontWeight: 700, fontSize: "1rem", color: "#fff", letterSpacing: "-0.02em" }}>
-              Unbuilt
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+              <svg width="20" height="20" viewBox="0 0 19 19" fill="none">
+                <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.02em" }}>Unbuilt</span>
+            </Link>
+            <Link href="/how-it-works" style={{
+              fontSize: "0.875rem", fontWeight: 400, color: "var(--clr-text-3)",
+              textDecoration: "none", transition: "color 0.15s", marginLeft: "1.5rem",
+            }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text-3)"; }}
+            >
+              How it works
+            </Link>
+            <span style={{
+              fontSize: "0.875rem", fontWeight: 500, color: "var(--clr-text)",
+              marginLeft: "1rem",
+            }}>
+              Opportunities
             </span>
-          </Link>
-          <Link href="/how-it-works" style={{ fontSize: "0.875rem", color: "#666", textDecoration: "none" }}>
-            How it works
-          </Link>
-          <span style={{ fontSize: "0.875rem", color: "#fff", fontWeight: 500 }}>
-            Opportunities
-          </span>
+          </div>
+
+          <div style={{ flex: 1 }} />
+
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              style={{
+                background: "none", border: "1px solid var(--clr-border-2)",
+                borderRadius: "50%", width: 32, height: 32,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", color: "var(--clr-text-3)",
+                transition: "border-color 0.15s, color 0.15s",
+              }}
+            >
+              {theme === "dark" ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              )}
+            </button>
+
+            {!isSignedIn ? (
+              <SignInButton mode="modal">
+                <button style={{
+                  padding: "0.375rem 1rem", borderRadius: 999,
+                  background: "transparent", border: "1px solid var(--clr-border-3)",
+                  color: "var(--clr-text)", fontSize: "0.875rem", fontWeight: 500,
+                  cursor: "pointer", fontFamily: "inherit", transition: "border-color 0.15s",
+                }}>
+                  Sign in
+                </button>
+              </SignInButton>
+            ) : (
+              <UserButton appearance={{ elements: { avatarBox: { width: 32, height: 32 } } }} />
+            )}
+          </div>
         </div>
-      </nav>
+      </header>
 
-      {/* ── Content ── */}
-      <div style={{ maxWidth: 960, margin: "0 auto", padding: "3rem 1.5rem 6rem" }}>
+      {/* ── Main ── */}
+      <main style={{ maxWidth: 1200, margin: "0 auto", width: "100%", padding: "2rem", flex: 1 }}>
 
-        {!selected ? (
-          /* ── Level 1: Category Grid ── */
+        {/* ── Breadcrumb ── */}
+        {view !== "categories" && (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.5rem" }}>
+            <button
+              onClick={goBack}
+              style={{
+                background: "none", border: "1px solid var(--clr-border-2)",
+                borderRadius: 6, padding: "0.25rem 0.75rem",
+                color: "var(--clr-text-3)", fontSize: "0.8125rem",
+                cursor: "pointer", fontFamily: "inherit",
+                transition: "border-color 0.15s, color 0.15s",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--clr-border-3)"; e.currentTarget.style.color = "var(--clr-text)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--clr-border-2)"; e.currentTarget.style.color = "var(--clr-text-3)"; }}
+            >
+              ← Back
+            </button>
+            <span style={{ color: "var(--clr-text-3)", fontSize: "0.8125rem" }}>
+              Categories
+              {selectedCategory && <> &rsaquo; {selectedCategory.emoji} {selectedCategory.label}</>}
+              {selectedSubcategory && <> &rsaquo; {selectedSubcategory}</>}
+            </span>
+          </div>
+        )}
+
+        {/* ── Level 1: Categories ── */}
+        {view === "categories" && (
           <>
-            <div style={{ marginBottom: "2.5rem" }}>
-              <h1 style={{
-                fontSize: 32,
-                fontWeight: 700,
-                color: "#fff",
-                letterSpacing: "-0.02em",
-                marginBottom: "0.5rem",
-              }}>
-                Opportunities
+            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+              <h1 style={{ fontSize: "2rem", fontWeight: 700, letterSpacing: "-0.03em", marginBottom: "0.5rem" }}>
+                Find Your Next Build
               </h1>
-              <p style={{ color: "#777", fontSize: 15, lineHeight: 1.5 }}>
-                AI-generated market opportunities for indie developers. Pick a category to explore.
+              <p style={{ color: "var(--clr-text-3)", fontSize: "1rem", maxWidth: 500, margin: "0 auto" }}>
+                Explore 18 App Store categories. Drill into subcategories. Discover data-driven opportunities.
               </p>
             </div>
 
             <div style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
               gap: "1rem",
             }}>
-              {CATEGORIES.map(cat => (
+              {CATEGORIES.map((cat) => (
                 <button
-                  key={cat.id}
-                  onClick={() => handleSelect(cat.id)}
+                  key={cat.slug}
+                  onClick={() => selectCategory(cat)}
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    gap: 8,
-                    padding: "1.5rem",
-                    background: "#111",
-                    border: "1px solid #1a1a1a",
-                    borderRadius: 12,
+                    background: "var(--clr-surface)",
+                    border: "1px solid var(--clr-border)",
+                    borderLeft: `3px solid ${cat.color}`,
+                    borderRadius: 10,
+                    padding: "1.25rem",
                     cursor: "pointer",
-                    transition: "border-color 0.15s, background 0.15s",
                     textAlign: "left",
                     fontFamily: "inherit",
+                    transition: "border-color 0.15s, transform 0.1s",
                   }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = "#333";
-                    e.currentTarget.style.background = "#161616";
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = "#1a1a1a";
-                    e.currentTarget.style.background = "#111";
-                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = cat.color; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--clr-border)"; e.currentTarget.style.borderLeftColor = cat.color; e.currentTarget.style.transform = "none"; }}
                 >
-                  <span style={{ fontSize: 28 }}>{cat.emoji}</span>
-                  <span style={{ fontSize: 15, fontWeight: 600, color: "#fff" }}>{cat.label}</span>
+                  <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>{cat.emoji}</div>
+                  <div style={{ fontWeight: 600, fontSize: "0.9375rem", color: "var(--clr-text)", marginBottom: "0.25rem" }}>
+                    {cat.label}
+                  </div>
+                  <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>
+                    {cat.subcategories.length} subcategories
+                  </div>
                 </button>
               ))}
             </div>
           </>
-        ) : (
-          /* ── Level 2: Opportunities List ── */
+        )}
+
+        {/* ── Level 2: Subcategories ── */}
+        {view === "subcategories" && selectedCategory && (
           <>
-            <button
-              onClick={handleBack}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                background: "none",
-                border: "none",
-                color: "#888",
-                fontSize: 14,
-                cursor: "pointer",
-                fontFamily: "inherit",
-                marginBottom: "1.5rem",
-                padding: 0,
-                transition: "color 0.15s",
-              }}
-              onMouseEnter={e => { e.currentTarget.style.color = "#fff"; }}
-              onMouseLeave={e => { e.currentTarget.style.color = "#888"; }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-              All categories
-            </button>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: "0.25rem" }}>
+              {selectedCategory.emoji} {selectedCategory.label}
+            </h2>
+            <p style={{ color: "var(--clr-text-3)", fontSize: "0.9375rem", marginBottom: "1.5rem" }}>
+              Pick a subcategory to discover opportunities
+            </p>
 
-            <div style={{ marginBottom: "2rem" }}>
-              <h1 style={{
-                fontSize: 28,
-                fontWeight: 700,
-                color: "#fff",
-                letterSpacing: "-0.02em",
-                marginBottom: "0.25rem",
-              }}>
-                {selectedCategory?.emoji} {selectedCategory?.label}
-              </h1>
-              <p style={{ color: "#666", fontSize: 14 }}>
-                {loading ? "Generating opportunities..." : `${opportunities.length} opportunities found`}
-              </p>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+              gap: "0.75rem",
+            }}>
+              {selectedCategory.subcategories.map((sub) => (
+                <button
+                  key={sub}
+                  onClick={() => selectSubcategory(sub)}
+                  style={{
+                    background: "var(--clr-surface)",
+                    border: "1px solid var(--clr-border)",
+                    borderRadius: 8,
+                    padding: "1rem 1.25rem",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    fontFamily: "inherit",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    transition: "border-color 0.15s",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = selectedCategory.color; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--clr-border)"; }}
+                >
+                  <span style={{ fontWeight: 500, fontSize: "0.9375rem", color: "var(--clr-text)" }}>
+                    {sub}
+                  </span>
+                  <span style={{ color: "var(--clr-text-3)", fontSize: "0.875rem" }}>→</span>
+                </button>
+              ))}
             </div>
+          </>
+        )}
 
+        {/* ── Level 3: Opportunities ── */}
+        {view === "opportunities" && selectedCategory && selectedSubcategory && (
+          <>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: "0.5rem" }}>
+              {selectedSubcategory}
+            </h2>
+
+            {/* Stats bar */}
+            {stats && (
+              <div style={{
+                display: "flex", gap: "1.5rem", flexWrap: "wrap",
+                marginBottom: "1.5rem", fontSize: "0.8125rem", color: "var(--clr-text-3)",
+              }}>
+                <span><strong style={{ color: "var(--clr-text)" }}>{stats.totalApps}</strong> apps found</span>
+                <span><strong style={{ color: "var(--clr-text)" }}>{stats.avgRating}</strong> avg rating</span>
+                <span><strong style={{ color: "var(--clr-text)" }}>{stats.newReleases}</strong> new releases</span>
+                <span><strong style={{ color: "var(--clr-text)" }}>{stats.phPosts}</strong> PH posts</span>
+              </div>
+            )}
+
+            {/* Loading skeleton */}
             {loading && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      background: "#111",
-                      border: "1px solid #1a1a1a",
-                      borderRadius: 12,
-                      padding: "1.5rem",
-                      animation: "pulse 1.5s ease-in-out infinite",
-                    }}
-                  >
-                    <div style={{ height: 20, width: "60%", background: "#1a1a1a", borderRadius: 6, marginBottom: 12 }} />
-                    <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-                      <div style={{ height: 22, width: 80, background: "#1a1a1a", borderRadius: 6 }} />
-                      <div style={{ height: 22, width: 60, background: "#1a1a1a", borderRadius: 6 }} />
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} style={{
+                    background: "var(--clr-surface)",
+                    border: "1px solid var(--clr-border)",
+                    borderRadius: 10,
+                    padding: "1.5rem",
+                    animation: "pulse 1.5s ease-in-out infinite",
+                  }}>
+                    <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                      <div style={{ width: 80, height: 22, borderRadius: 4, background: "var(--clr-border)" }} />
+                      <div style={{ width: 50, height: 22, borderRadius: 4, background: "var(--clr-border)" }} />
                     </div>
-                    <div style={{ height: 14, width: "80%", background: "#1a1a1a", borderRadius: 6, marginBottom: 8 }} />
-                    <div style={{ height: 14, width: "70%", background: "#1a1a1a", borderRadius: 6 }} />
+                    <div style={{ width: "60%", height: 18, borderRadius: 4, background: "var(--clr-border)", marginBottom: "0.5rem" }} />
+                    <div style={{ width: "90%", height: 14, borderRadius: 4, background: "var(--clr-border)", marginBottom: "0.25rem" }} />
+                    <div style={{ width: "75%", height: 14, borderRadius: 4, background: "var(--clr-border)" }} />
                   </div>
                 ))}
                 <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }`}</style>
               </div>
             )}
 
+            {/* Error */}
             {error && (
               <div style={{
-                background: "#1a1111",
-                border: "1px solid #331a1a",
-                borderRadius: 12,
-                padding: "1.5rem",
-                color: "#e06a6a",
-                fontSize: 14,
+                background: "#1a0000", border: "1px solid #330000", borderRadius: 8,
+                padding: "1rem 1.25rem", color: "#ff6b6b", marginBottom: "1rem",
               }}>
                 {error}
               </div>
             )}
 
-            {!loading && !error && opportunities.length > 0 && (
+            {/* Opportunity cards */}
+            {!loading && opportunities.length > 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 {opportunities.map((opp, i) => {
-                  const typeColor = TYPE_COLORS[opp.type] ?? { bg: "#1a1a1a", fg: "#999" };
-                  const diffColor = DIFF_COLORS[opp.difficulty] ?? { bg: "#1a1a1a", fg: "#999" };
-
+                  const typeColor = TYPE_COLORS[opp.type] || "#888";
+                  const diffColor = DIFFICULTY_COLORS[opp.difficulty] || "#888";
                   return (
-                    <div
-                      key={i}
-                      style={{
-                        background: "#111",
-                        border: "1px solid #1a1a1a",
-                        borderRadius: 12,
-                        padding: "1.5rem",
-                        transition: "border-color 0.15s",
-                      }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = "#2a2a2a"; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = "#1a1a1a"; }}
-                    >
-                      <h3 style={{
-                        fontSize: 17,
-                        fontWeight: 600,
-                        color: "#fff",
-                        marginBottom: "0.625rem",
-                        letterSpacing: "-0.01em",
-                      }}>
-                        {opp.title}
-                      </h3>
-
-                      <div style={{ display: "flex", gap: 8, marginBottom: "0.75rem", flexWrap: "wrap" }}>
+                    <div key={i} style={{
+                      background: "var(--clr-surface)",
+                      border: "1px solid var(--clr-border)",
+                      borderLeft: `3px solid ${typeColor}`,
+                      borderRadius: 10,
+                      padding: "1.5rem",
+                    }}>
+                      {/* Badges */}
+                      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem", flexWrap: "wrap" }}>
                         <span style={{
-                          fontSize: 12,
-                          fontWeight: 500,
-                          padding: "3px 10px",
-                          borderRadius: 6,
-                          background: typeColor.bg,
-                          color: typeColor.fg,
+                          display: "inline-block", padding: "0.2rem 0.6rem",
+                          borderRadius: 4, fontSize: "0.75rem", fontWeight: 600,
+                          background: `${typeColor}18`, color: typeColor, letterSpacing: "0.01em",
                         }}>
                           {opp.type}
                         </span>
                         <span style={{
-                          fontSize: 12,
-                          fontWeight: 500,
-                          padding: "3px 10px",
-                          borderRadius: 6,
-                          background: diffColor.bg,
-                          color: diffColor.fg,
+                          display: "inline-block", padding: "0.2rem 0.6rem",
+                          borderRadius: 4, fontSize: "0.75rem", fontWeight: 500,
+                          background: `${diffColor}18`, color: diffColor,
                         }}>
                           {opp.difficulty}
                         </span>
                       </div>
 
-                      <p style={{ color: "#aaa", fontSize: 14, marginBottom: "0.375rem", lineHeight: 1.5 }}>
-                        <span style={{ color: "#666" }}>For:</span> {opp.targetAudience}
-                      </p>
-                      <p style={{ color: "#999", fontSize: 13, marginBottom: "1rem", lineHeight: 1.5 }}>
-                        <span style={{ color: "#666" }}>Why now:</span> {opp.whyNow}
+                      {/* Title */}
+                      <h3 style={{ fontSize: "1.0625rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--clr-text)" }}>
+                        {opp.title}
+                      </h3>
+
+                      {/* Description */}
+                      <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: "0.75rem" }}>
+                        {opp.description}
                       </p>
 
+                      {/* Evidence */}
+                      <div style={{
+                        fontSize: "0.8125rem", color: "var(--clr-text-3)",
+                        background: "var(--clr-bg)", borderRadius: 6,
+                        padding: "0.625rem 0.875rem", marginBottom: "1rem",
+                        borderLeft: `2px solid ${typeColor}40`,
+                      }}>
+                        <span style={{ fontWeight: 500, color: "var(--clr-text-2)" }}>Evidence: </span>
+                        {opp.evidence}
+                      </div>
+
+                      {/* CTA */}
                       <Link
                         href={`/?tool=trend-feed&q=${encodeURIComponent(opp.searchQuery)}`}
                         style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 4,
-                          fontSize: 13,
-                          fontWeight: 500,
-                          color: "#888",
-                          textDecoration: "none",
-                          transition: "color 0.15s",
+                          display: "inline-flex", alignItems: "center", gap: 6,
+                          fontSize: "0.8125rem", fontWeight: 500,
+                          color: typeColor, textDecoration: "none",
+                          transition: "opacity 0.15s",
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.color = "#fff"; }}
-                        onMouseLeave={e => { e.currentTarget.style.color = "#888"; }}
+                        onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.8"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
                       >
-                        Analyze this
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
+                        Analyze this →
                       </Link>
                     </div>
                   );
                 })}
               </div>
             )}
+
+            {/* Empty state */}
+            {!loading && !error && opportunities.length === 0 && (
+              <div style={{ textAlign: "center", padding: "3rem 0", color: "var(--clr-text-3)" }}>
+                No opportunities found. Try a different subcategory.
+              </div>
+            )}
           </>
         )}
-      </div>
+      </main>
+
+      {/* ── Footer ── */}
+      <footer style={{
+        borderTop: "1px solid var(--clr-border)",
+        padding: "1.5rem 2rem",
+        textAlign: "center",
+        fontSize: "0.75rem",
+        color: "var(--clr-text-3)",
+      }}>
+        © {new Date().getFullYear()} Unbuilt. All rights reserved.
+      </footer>
     </div>
   );
 }

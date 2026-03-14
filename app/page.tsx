@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -2387,6 +2387,7 @@ export default function Home() {
   const scanTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const stackCheckTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const pendingAutoSubmit = useRef(false);
 
   const STACK_CHECK_TOOLS = [
     "Vercel", "Supabase", "Stripe", "Clerk", "Resend", "Anthropic API",
@@ -2433,6 +2434,21 @@ export default function Home() {
     const t = saved || "dark";
     setTheme(t);
     document.documentElement.classList.toggle("light", t === "light");
+  }, []);
+
+  // Auto-trigger analysis from URL params (e.g., from /opportunities page)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tool = params.get("tool") as ToolId | null;
+    const q = params.get("q");
+    if (tool && q && TOOLS.some(t => t.id === tool)) {
+      setSelectedTool(tool);
+      setIdea(q);
+      pendingAutoSubmit.current = true;
+      // Clean URL without reload
+      window.history.replaceState({}, "", "/");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleTheme = () => {
@@ -2809,6 +2825,15 @@ export default function Home() {
       setLoading(false);
     }
   };
+
+  // Auto-submit when selectedTool and idea are set from URL params
+  useEffect(() => {
+    if (pendingAutoSubmit.current && selectedTool && idea.trim().length >= 3) {
+      pendingAutoSubmit.current = false;
+      handleSubmit();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTool, idea]);
 
   const backToTools = () => {
     scanTimersRef.current.forEach(clearTimeout);
