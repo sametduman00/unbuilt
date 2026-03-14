@@ -215,7 +215,7 @@ const GEO_KEYWORDS = [
 ];
 
 function validateOpportunities(opportunities: any[]): any[] {
-  return opportunities.filter((opp) => {
+  const filtered = opportunities.filter((opp) => {
     // Complaint: reject if evidence cites a rating above 4.2
     if (opp.type === "Complaint") {
       const ratings = (opp.evidence || "").match(/\d+\.\d+/g);
@@ -235,8 +235,81 @@ function validateOpportunities(opportunities: any[]): any[] {
       }
     }
 
+    // Monopoly: reject if review ratio between #1 and #2 is less than 5x
+    if (opp.type === "Monopoly") {
+      const nums = (opp.evidence || "").match(/[\d,]+/g);
+      if (nums) {
+        const parsed = nums.map((n: string) => parseInt(n.replace(/,/g, ""), 10)).filter((n: number) => !isNaN(n) && n > 0);
+        parsed.sort((a: number, b: number) => b - a);
+        if (parsed.length >= 2) {
+          const ratio = parsed[0] / parsed[1];
+          if (ratio < 5.0) {
+            console.log("FILTERED Monopoly (ratio < 5x):", opp.title, `${parsed[0]} / ${parsed[1]} = ${ratio.toFixed(1)}x`);
+            return false;
+          }
+        }
+      }
+    }
+
+    // Price: reject if evidence uses speculative language
+    if (opp.type === "Price") {
+      const evidenceLower = (opp.evidence || "").toLowerCase();
+      if (evidenceLower.includes("likely") || evidenceLower.includes("appears to") || evidenceLower.includes("probably")) {
+        console.log("FILTERED Price (speculative evidence):", opp.title);
+        return false;
+      }
+    }
+
     return true;
   });
+
+  // Deduplication: remove near-duplicate titles, keep stronger evidence
+  return deduplicateOpportunities(filtered);
+}
+
+function deduplicateOpportunities(opportunities: any[]): any[] {
+  // Extract significant words from title (3+ chars, lowercased, skip common words)
+  const stopWords = new Set(["the", "and", "for", "with", "app", "tool", "new", "based", "more", "into", "that", "from"]);
+  const getKeywords = (title: string): string[] =>
+    (title || "").toLowerCase().split(/\s+/)
+      .filter((w: string) => w.length >= 3 && !stopWords.has(w));
+
+  const evidenceStrength = (opp: any): number => {
+    const ev = opp.evidence || "";
+    // Count specific data points: numbers, app names (capitalized words), percentages
+    const numbers = (ev.match(/[\d,]+/g) || []).length;
+    const percentages = (ev.match(/\d+%/g) || []).length;
+    return ev.length + numbers * 10 + percentages * 15;
+  };
+
+  const result: any[] = [];
+  for (const opp of opportunities) {
+    const keywords = getKeywords(opp.title);
+    const isDuplicate = result.some((existing) => {
+      const existingKeywords = getKeywords(existing.title);
+      // Check if they share 2+ significant keywords
+      const shared = keywords.filter((kw: string) => existingKeywords.includes(kw));
+      return shared.length >= 2;
+    });
+
+    if (isDuplicate) {
+      // Find the existing duplicate and keep whichever has stronger evidence
+      const dupeIdx = result.findIndex((existing) => {
+        const existingKeywords = getKeywords(existing.title);
+        const shared = keywords.filter((kw: string) => existingKeywords.includes(kw));
+        return shared.length >= 2;
+      });
+      if (dupeIdx !== -1 && evidenceStrength(opp) > evidenceStrength(result[dupeIdx])) {
+        console.log("DEDUP replaced:", result[dupeIdx].title, "→", opp.title);
+        result[dupeIdx] = opp;
+      } else {
+        console.log("DEDUP removed:", opp.title);
+      }
+    } else {
+      result.push(opp);
+    }
+  }
+  return result;
 }
 
 /* ── Backfill if too many filtered out ───────────────────────── */
