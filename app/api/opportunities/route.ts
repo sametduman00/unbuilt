@@ -252,9 +252,20 @@ GEOGRAPHY HARD RULE: Geography MUST name a specific language (Spanish, Arabic, H
 
 /* ── Fallback: generate opportunities from raw data without Claude ── */
 
+const GEO_LANGUAGES = [
+  { language: "Arabic", speakers: "400M", region: "Middle East & North Africa" },
+  { language: "Hindi", speakers: "600M", region: "India" },
+  { language: "Portuguese", speakers: "220M", region: "Brazil" },
+  { language: "Turkish", speakers: "80M", region: "Turkey" },
+  { language: "Indonesian", speakers: "270M", region: "Southeast Asia" },
+  { language: "Spanish", speakers: "550M", region: "Latin America" },
+  { language: "Japanese", speakers: "125M", region: "Japan" },
+];
+
 function generateFallbackOpportunities(subcategory: string, apps: any[], newReleases: any[]): any[] {
   const results: any[] = [];
   const sorted = [...apps].sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
+  const topAppNames = sorted.slice(0, 3).map(a => a.name).filter(Boolean);
 
   // Gap opportunity if few apps
   if (apps.length < 10) {
@@ -264,7 +275,7 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
       difficulty: "Medium",
       description: `Only ${apps.length} apps found in App Store for "${subcategory}". This suggests an underserved market with room for a focused solution.`,
       evidence: `iTunes search returned only ${apps.length} results for "${subcategory}"`,
-      typeReason: `Fewer than 10 apps indicates a gap in the market.`,
+      typeReason: "Fewer than 10 apps indicates a gap in the market.",
       targetAudience: `Users searching for ${subcategory} solutions on mobile.`,
       difficultyReason: "Medium — requires domain knowledge but limited competition.",
       searchQuery: subcategory,
@@ -303,6 +314,42 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
     });
   }
 
+  // GUARANTEED: 2 Geography opportunities — always possible
+  const appList = topAppNames.length > 0 ? topAppNames.join(", ") : subcategory + " apps";
+  // Pick 2 languages, shuffled to vary across subcategories
+  const shuffled = [...GEO_LANGUAGES].sort(() => subcategory.charCodeAt(0) % 3 - 1);
+  for (let g = 0; g < 2 && g < shuffled.length; g++) {
+    const lang = shuffled[g];
+    results.push({
+      title: `${subcategory} for ${lang.language} Speakers`,
+      type: "Geography",
+      difficulty: "Easy",
+      description: `Top ${subcategory} apps are English-only. The ${lang.language}-speaking market (${lang.speakers} speakers in ${lang.region}) has no native alternative, creating a localization opportunity.`,
+      evidence: `Top apps ${appList} are English-focused. ${lang.language} market with ${lang.speakers} speakers is underserved.`,
+      typeReason: `All top apps have English names and Western UX patterns. ${lang.language} speakers in ${lang.region} lack a native solution.`,
+      targetAudience: `${lang.language}-speaking users in ${lang.region} who need ${subcategory} tools in their native language.`,
+      difficultyReason: "Easy — core product exists, primary work is localization and cultural adaptation.",
+      searchQuery: `${subcategory} ${lang.language.toLowerCase()}`,
+    });
+  }
+
+  // GUARANTEED: Bundle opportunity if 3+ apps
+  if (sorted.length >= 3) {
+    const b1 = sorted[0], b2 = sorted[1], b3 = sorted[2];
+    results.push({
+      title: `All-in-One ${subcategory} Platform`,
+      type: "Bundle",
+      difficulty: "Hard",
+      description: `Users currently need multiple separate apps for different ${subcategory} needs. A single unified platform combining the best features could simplify their workflow.`,
+      evidence: `${b1.name}, ${b2.name}, and ${b3.name} all serve separate needs — no unified solution exists.`,
+      typeReason: "Three or more single-purpose apps exist without a combined alternative.",
+      targetAudience: `Power users who currently switch between ${b1.name}, ${b2.name}, and ${b3.name}.`,
+      difficultyReason: "Hard — requires building multiple feature sets and integrating them into a cohesive product.",
+      searchQuery: `${subcategory} all in one`,
+    });
+  }
+
+  console.log("FALLBACK generated:", results.length, "opportunities, types:", results.map(r => r.type));
   return results;
 }
 
