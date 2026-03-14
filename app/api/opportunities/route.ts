@@ -101,7 +101,7 @@ ${JSON.stringify(newReleases, null, 2)}
 ## Product Hunt Posts
 ${JSON.stringify(phPosts.slice(0, 10), null, 2)}
 
-Each opportunity MUST be one of these 7 types. Follow the STRICT qualification rules below — if the data does not meet a type's criteria, do NOT use that type.
+Each opportunity MUST be one of these 6 types. Follow the STRICT qualification rules below — if the data does not meet a type's criteria, do NOT use that type.
 
 ## STRICT TYPE QUALIFICATION RULES
 
@@ -136,20 +136,6 @@ PRICE - ONLY use this when:
 - All top apps are subscription-based with no one-time purchase
 - Evidence MUST include: price data from the app list
 
-GEOGRAPHY - ONLY use this when:
-- A proven solution exists in English/Western markets but is NOT available in other languages or regions
-- The opportunity is: localize or build a native alternative for an underserved language/region
-- Do NOT use Geography for age demographics or user types — those are Gap or Complaint
-- Evidence MUST include: names of English-only apps AND the specific underserved language/region
-- Do NOT always default to Spanish. Evaluate which language market is MOST underserved based on the app names in the data. Consider:
-  * Arabic (400M speakers, Middle East/North Africa)
-  * Hindi (600M speakers, India)
-  * Portuguese (220M speakers, Brazil)
-  * Turkish (80M speakers, Turkey)
-  * Indonesian (270M speakers, Southeast Asia)
-  * Japanese/Korean if apps are Western-focused
-  Pick the language that makes most sense for the subcategory context
-
 BUNDLE - ONLY use this when:
 - 3+ single-purpose apps exist that each do ONE narrow thing
 - A combined app covering all of them does NOT exist
@@ -159,7 +145,7 @@ Return ONLY valid JSON array (no markdown, no code fences):
 [
   {
     "title": "<max 8 words, specific and actionable>",
-    "type": "<exactly one of: Momentum | Monopoly | Gap | Complaint | Price | Geography | Bundle>",
+    "type": "<exactly one of: Momentum | Monopoly | Gap | Complaint | Price | Bundle>",
     "difficulty": "<exactly one of: Easy | Medium | Hard>",
     "description": "<2-3 sentences explaining the opportunity>",
     "evidence": "<specific data point from the provided data — MUST follow the evidence rules above for the chosen type>",
@@ -181,7 +167,7 @@ RULES:
 
 COMPLAINT HARD RULE: I will programmatically reject any Complaint opportunity where the cited rating is above 4.20. Do not cite apps with ratings above 4.20 for Complaint type. For Complaint type: evidence MUST include the specific app name, its exact rating (e.g. 3.2), AND its review count (e.g. 45,230 reviews). Evidence with no numbers will be rejected.
 
-GEOGRAPHY HARD RULE: Geography MUST name a specific language (Spanish, Arabic, Hindi, Turkish, French, Portuguese, German, Japanese, Korean, Chinese) or country (Brazil, India, Mexico, Turkey, Japan, etc.) in the evidence. "Senior users" or "older adults" are NOT geographic segments — use Gap type instead.`;
+`;
 
   // Claude call with 10-second timeout
   let raw: any[] = [];
@@ -252,15 +238,6 @@ GEOGRAPHY HARD RULE: Geography MUST name a specific language (Spanish, Arabic, H
 
 /* ── Fallback: generate opportunities from raw data without Claude ── */
 
-const GEO_LANGUAGES = [
-  { language: "Arabic", speakers: "400M", region: "Middle East & North Africa" },
-  { language: "Hindi", speakers: "600M", region: "India" },
-  { language: "Portuguese", speakers: "220M", region: "Brazil" },
-  { language: "Turkish", speakers: "80M", region: "Turkey" },
-  { language: "Indonesian", speakers: "270M", region: "Southeast Asia" },
-  { language: "Spanish", speakers: "550M", region: "Latin America" },
-  { language: "Japanese", speakers: "125M", region: "Japan" },
-];
 
 function generateFallbackOpportunities(subcategory: string, apps: any[], newReleases: any[]): any[] {
   const results: any[] = [];
@@ -314,25 +291,6 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
     });
   }
 
-  // GUARANTEED: 2 Geography opportunities — always possible
-  const appList = topAppNames.length > 0 ? topAppNames.join(", ") : subcategory + " apps";
-  // Pick 2 languages, shuffled to vary across subcategories
-  const shuffled = [...GEO_LANGUAGES].sort(() => subcategory.charCodeAt(0) % 3 - 1);
-  for (let g = 0; g < 2 && g < shuffled.length; g++) {
-    const lang = shuffled[g];
-    results.push({
-      title: `${subcategory} for ${lang.language} Speakers`,
-      type: "Geography",
-      difficulty: "Easy",
-      description: `Top ${subcategory} apps are English-only. The ${lang.language}-speaking market (${lang.speakers} speakers in ${lang.region}) has no native alternative, creating a localization opportunity.`,
-      evidence: `Top apps ${appList} are English-focused. ${lang.language} market with ${lang.speakers} speakers is underserved.`,
-      typeReason: `All top apps have English names and Western UX patterns. ${lang.language} speakers in ${lang.region} lack a native solution.`,
-      targetAudience: `${lang.language}-speaking users in ${lang.region} who need ${subcategory} tools in their native language.`,
-      difficultyReason: "Easy — core product exists, primary work is localization and cultural adaptation.",
-      searchQuery: `${subcategory} ${lang.language.toLowerCase()}`,
-    });
-  }
-
   // GUARANTEED: Bundle opportunity if 3+ apps
   if (sorted.length >= 3) {
     const b1 = sorted[0], b2 = sorted[1], b3 = sorted[2];
@@ -349,23 +307,33 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
     });
   }
 
+  // GUARANTEED: Gap opportunity — always possible
+  if (apps.length >= 10) {
+    // Even with many apps, there's always a niche gap
+    const avgRating = sorted.length > 0
+      ? Math.round((sorted.reduce((s: number, a: any) => s + (a.rating || 0), 0) / sorted.length) * 10) / 10
+      : 0;
+    results.push({
+      title: `Niche ${subcategory} for underserved users`,
+      type: "Gap",
+      difficulty: "Medium",
+      description: `While ${apps.length} apps exist, most target the same broad audience. A focused app for a specific user segment could differentiate.`,
+      evidence: `${apps.length} apps found with average rating ${avgRating}. Top apps: ${topAppNames.join(", ")} — all target the general market.`,
+      typeReason: "Existing apps serve a broad audience without specializing in underserved niches.",
+      targetAudience: `A specific underserved segment within the ${subcategory} space.`,
+      difficultyReason: "Medium — requires identifying and deeply understanding a niche audience.",
+      searchQuery: subcategory,
+    });
+  }
+
   console.log("FALLBACK generated:", results.length, "opportunities, types:", results.map(r => r.type));
   return results;
 }
 
 /* ── Post-generation validation ──────────────────────────────── */
 
-const GEO_KEYWORDS = [
-  "spanish", "arabic", "hindi", "turkish", "french", "portuguese", "german",
-  "japanese", "korean", "chinese", "mandarin", "cantonese", "russian", "italian",
-  "thai", "vietnamese", "indonesian", "malay", "swahili", "urdu", "persian", "farsi",
-  "brazil", "india", "mexico", "turkey", "japan", "china", "korea", "indonesia",
-  "egypt", "nigeria", "pakistan", "bangladesh", "philippines", "vietnam", "thailand",
-  "colombia", "argentina", "peru", "chile", "saudi", "emirates", "latin america",
-  "southeast asia", "middle east", "africa",
-];
 
-const VALID_TYPES = ["Momentum", "Monopoly", "Gap", "Complaint", "Price", "Geography", "Bundle"];
+const VALID_TYPES = ["Momentum", "Monopoly", "Gap", "Complaint", "Price", "Bundle"];
 
 interface ValidationOptions {
   momentumYearCutoff?: number; // default 2022: reject years <= this value
@@ -401,16 +369,6 @@ function validateOpportunities(opportunities: any[], opts: ValidationOptions = {
       }
       if (ratings && ratings.some((r: string) => parseFloat(r) > 4.2)) {
         console.log("FILTERED Complaint (rating > 4.2):", opp.title, "ratings found:", ratings);
-        return false;
-      }
-    }
-
-    // Geography: reject if evidence doesn't mention a language or country
-    if (opp.type === "Geography") {
-      const evidenceLower = (opp.evidence || "").toLowerCase();
-      const hasGeoRef = GEO_KEYWORDS.some((kw) => evidenceLower.includes(kw));
-      if (!hasGeoRef) {
-        console.log("FILTERED Geography (no language/country):", opp.title);
         return false;
       }
     }

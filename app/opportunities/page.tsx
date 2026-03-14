@@ -34,7 +34,6 @@ const TYPE_COLORS: Record<string, string> = {
   Gap: "#3498db",
   Complaint: "#e67e22",
   Price: "#9b59b6",
-  Geography: "#00bcd4",
   Bundle: "#f1c40f",
 };
 
