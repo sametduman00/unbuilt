@@ -112,9 +112,10 @@ MOMENTUM - ONLY use this when:
 - Do NOT use for established apps that are already dominant
 
 MONOPOLY - ONLY use this when:
-- ONE app has 5x or more reviews than the SECOND place app
-- Evidence MUST include: #1 app review count vs #2 app review count
-- The opportunity is: can this dominant player be disrupted?
+- ONE app has AT LEAST 5x more reviews than the SECOND place app (e.g. 500K vs 100K = 5x ✓, 270K vs 100K = 2.7x ✗)
+- 2x, 3x, or 4x is NOT enough — the ratio MUST be 5x or higher
+- If no app pair meets this 5x threshold, do NOT return a Monopoly opportunity
+- Evidence MUST include: #1 app name + review count vs #2 app name + review count, and the calculated ratio
 
 GAP - ONLY use this when:
 - Search returns fewer than 5 apps total OR
@@ -123,9 +124,10 @@ GAP - ONLY use this when:
 - Evidence MUST include: total app count or average review count
 
 COMPLAINT - ONLY use this when:
-- Multiple apps exist with ratings between 3.0-4.2
-- Evidence MUST include: specific app names and their ratings
-- Do NOT use for apps rated above 4.5
+- Multiple apps exist with ratings between 3.0 and 4.2 (maximum 4.2)
+- Any app rated 4.3 or above CANNOT be cited as a Complaint opportunity
+- If all top apps are rated 4.3+, do NOT return a Complaint opportunity
+- Evidence MUST include: specific app names and their exact ratings (all must be ≤ 4.2)
 
 PRICE - ONLY use this when:
 - All top apps are paid ($2.99+) with no free alternative OR

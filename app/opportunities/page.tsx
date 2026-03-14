@@ -108,6 +108,11 @@ export default function OpportunitiesPage() {
     if (!selectedCategory) return;
     setSelectedSubcategory(sub);
     setView("opportunities");
+    setLoading(true);
+    setError(null);
+    setOpportunities([]);
+    setStats(null);
+    setExpandedIndex(null);
     fetchOpportunities(selectedCategory, sub);
   };
 
@@ -351,21 +356,27 @@ export default function OpportunitiesPage() {
             {/* Loading skeleton */}
             {loading && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                {[1, 2, 3, 4].map((i) => (
+                {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div key={i} style={{
                     background: "var(--clr-surface)",
                     border: "1px solid var(--clr-border)",
+                    borderLeft: "3px solid var(--clr-border)",
                     borderRadius: 10,
                     padding: "1.5rem",
                     animation: "pulse 1.5s ease-in-out infinite",
+                    animationDelay: `${i * 0.1}s`,
                   }}>
+                    {/* Badge row */}
                     <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                      <div style={{ width: 80, height: 22, borderRadius: 4, background: "var(--clr-border)" }} />
-                      <div style={{ width: 50, height: 22, borderRadius: 4, background: "var(--clr-border)" }} />
+                      <div style={{ width: 82, height: 22, borderRadius: 4, background: "var(--clr-border)" }} />
+                      <div style={{ width: 52, height: 22, borderRadius: 4, background: "var(--clr-border)" }} />
                     </div>
-                    <div style={{ width: "60%", height: 18, borderRadius: 4, background: "var(--clr-border)", marginBottom: "0.5rem" }} />
-                    <div style={{ width: "90%", height: 14, borderRadius: 4, background: "var(--clr-border)", marginBottom: "0.25rem" }} />
-                    <div style={{ width: "75%", height: 14, borderRadius: 4, background: "var(--clr-border)" }} />
+                    {/* Title */}
+                    <div style={{ width: "55%", height: 19, borderRadius: 4, background: "var(--clr-border)", marginBottom: "0.625rem" }} />
+                    {/* Description lines */}
+                    <div style={{ width: "95%", height: 14, borderRadius: 4, background: "var(--clr-border)", marginBottom: "0.3rem" }} />
+                    <div style={{ width: "80%", height: 14, borderRadius: 4, background: "var(--clr-border)", marginBottom: "0.3rem" }} />
+                    <div style={{ width: "60%", height: 14, borderRadius: 4, background: "var(--clr-border)" }} />
                   </div>
                 ))}
                 <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }`}</style>
