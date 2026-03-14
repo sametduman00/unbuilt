@@ -245,13 +245,14 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
   const topAppNames = sorted.slice(0, 3).map(a => a.name).filter(Boolean);
 
   // Gap opportunity if few apps
-  if (apps.length < 10) {
+  if (apps.length < 10 && sorted.length > 0) {
+    const topApp = sorted[0];
     results.push({
       title: `Build a better ${subcategory} app`,
       type: "Gap",
       difficulty: "Medium",
       description: `Only ${apps.length} apps found in App Store for "${subcategory}". This suggests an underserved market with room for a focused solution.`,
-      evidence: `iTunes search returned only ${apps.length} results for "${subcategory}"`,
+      evidence: `Only ${apps.length} apps exist (top: ${topApp.name} with ${(topApp.reviewCount ?? 0).toLocaleString()} reviews) — limited competition indicates an underserved market.`,
       typeReason: "Fewer than 10 apps indicates a gap in the market.",
       targetAudience: `Users searching for ${subcategory} solutions on mobile.`,
       difficultyReason: "Medium — requires domain knowledge but limited competition.",
@@ -259,18 +260,19 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
     });
   }
 
-  // Complaint if low ratings
-  const lowRated = sorted.filter(a => a.rating > 0 && a.rating <= 4.2);
-  if (lowRated.length >= 2) {
+  // Complaint if low ratings exist
+  const lowRated = sorted.filter(a => a.rating > 0 && a.rating < 4.3);
+  if (lowRated.length >= 1) {
+    const lowApp = lowRated[0];
     results.push({
-      title: `Higher quality ${subcategory} alternative`,
+      title: `Better alternative to ${lowApp.name}`,
       type: "Complaint",
       difficulty: "Medium",
-      description: `Multiple apps in this space have mediocre ratings, suggesting user dissatisfaction. A well-designed alternative could capture share.`,
-      evidence: `${lowRated[0].name} (${lowRated[0].rating} rating, ${lowRated[0].reviewCount} reviews), ${lowRated[1].name} (${lowRated[1].rating} rating, ${lowRated[1].reviewCount} reviews)`,
-      typeReason: "Multiple apps rated below 4.2 indicate user complaints.",
-      targetAudience: `Users frustrated with existing ${subcategory} apps.`,
-      difficultyReason: "Medium — must address known pain points.",
+      description: `${lowApp.name} has a mediocre rating despite significant usage, suggesting user dissatisfaction. A well-designed alternative could capture frustrated users.`,
+      evidence: `${lowApp.name} has only ${lowApp.rating.toFixed(1)} rating with ${(lowApp.reviewCount ?? 0).toLocaleString()} reviews — users are dissatisfied and looking for alternatives.`,
+      typeReason: `${lowApp.name} is rated below 4.3, indicating common user complaints.`,
+      targetAudience: `Users frustrated with ${lowApp.name} who want a better ${subcategory} experience.`,
+      difficultyReason: "Medium — must address known pain points evident in low ratings.",
       searchQuery: subcategory,
     });
   }
@@ -279,14 +281,14 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
   if (newReleases.length > 0) {
     const nr = newReleases[0];
     results.push({
-      title: `Compete in growing ${subcategory} space`,
+      title: `Compete with rising ${nr.name}`,
       type: "Momentum",
       difficulty: "Hard",
-      description: `New apps are launching and gaining traction in this space, indicating active market growth and user demand.`,
-      evidence: `${nr.name} released ${nr.daysAgo} days ago with ${nr.reviewCount} reviews and ${nr.rating} rating`,
-      typeReason: "Recent releases with reviews indicate momentum.",
-      targetAudience: `Early adopters looking for ${subcategory} solutions.`,
-      difficultyReason: "Hard — competing with active new entrants.",
+      description: `${nr.name} launched recently and is gaining traction, validating market demand for new ${subcategory} solutions.`,
+      evidence: `${nr.name} launched ${nr.daysAgo} days ago and already has ${(nr.reviewCount ?? 0).toLocaleString()} reviews with a ${nr.rating} rating — proving active demand in this space.`,
+      typeReason: `${nr.name} is a recent release gaining rapid traction, indicating momentum.`,
+      targetAudience: `Users exploring new ${subcategory} apps alongside ${nr.name}.`,
+      difficultyReason: "Hard — competing with active new entrants in a growing space.",
       searchQuery: subcategory,
     });
   }
@@ -299,7 +301,7 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
       type: "Bundle",
       difficulty: "Hard",
       description: `Users currently need multiple separate apps for different ${subcategory} needs. A single unified platform combining the best features could simplify their workflow.`,
-      evidence: `${b1.name}, ${b2.name}, and ${b3.name} all serve separate needs — no unified solution exists.`,
+      evidence: `${b1.name} (${(b1.reviewCount ?? 0).toLocaleString()} reviews), ${b2.name}, and ${b3.name} all focus on different aspects — no unified solution exists combining their best features.`,
       typeReason: "Three or more single-purpose apps exist without a combined alternative.",
       targetAudience: `Power users who currently switch between ${b1.name}, ${b2.name}, and ${b3.name}.`,
       difficultyReason: "Hard — requires building multiple feature sets and integrating them into a cohesive product.",
@@ -307,18 +309,15 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
     });
   }
 
-  // GUARANTEED: Gap opportunity — always possible
-  if (apps.length >= 10) {
-    // Even with many apps, there's always a niche gap
-    const avgRating = sorted.length > 0
-      ? Math.round((sorted.reduce((s: number, a: any) => s + (a.rating || 0), 0) / sorted.length) * 10) / 10
-      : 0;
+  // GUARANTEED: Gap opportunity for larger markets
+  if (apps.length >= 10 && sorted.length > 0) {
+    const topApp = sorted[0];
     results.push({
       title: `Niche ${subcategory} for underserved users`,
       type: "Gap",
       difficulty: "Medium",
       description: `While ${apps.length} apps exist, most target the same broad audience. A focused app for a specific user segment could differentiate.`,
-      evidence: `${apps.length} apps found with average rating ${avgRating}. Top apps: ${topAppNames.join(", ")} — all target the general market.`,
+      evidence: `${apps.length} apps exist (top: ${topApp.name} with ${(topApp.reviewCount ?? 0).toLocaleString()} reviews) but all target the same broad audience — specific niches remain underserved.`,
       typeReason: "Existing apps serve a broad audience without specializing in underserved niches.",
       targetAudience: `A specific underserved segment within the ${subcategory} space.`,
       difficultyReason: "Medium — requires identifying and deeply understanding a niche audience.",
