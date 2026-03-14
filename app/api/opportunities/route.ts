@@ -222,8 +222,16 @@ const GEO_KEYWORDS = [
   "southeast asia", "middle east", "africa",
 ];
 
+const VALID_TYPES = ["Momentum", "Monopoly", "Gap", "Complaint", "Price", "Geography", "Bundle"];
+
 function validateOpportunities(opportunities: any[]): any[] {
   const filtered = opportunities.filter((opp) => {
+    // Type whitelist: reject unknown types
+    if (!VALID_TYPES.includes(opp.type)) {
+      console.log("FILTERED invalid type:", opp.type, opp.title);
+      return false;
+    }
+
     // Complaint: reject if evidence cites a rating above 4.2
     if (opp.type === "Complaint") {
       const ratings = (opp.evidence || "").match(/\d+\.\d+/g);
@@ -272,7 +280,18 @@ function validateOpportunities(opportunities: any[]): any[] {
   });
 
   // Deduplication: remove near-duplicate titles, keep stronger evidence
-  return deduplicateOpportunities(filtered);
+  const deduped = deduplicateOpportunities(filtered);
+
+  // Max 2 per type: keep the 2 with strongest evidence for each type
+  return enforceMaxPerType(deduped, 2);
+}
+
+function evidenceStrength(opp: any): number {
+  const ev = opp.evidence || "";
+  // Count specific data points: numbers, app names (capitalized words), percentages
+  const numbers = (ev.match(/[\d,]+/g) || []).length;
+  const percentages = (ev.match(/\d+%/g) || []).length;
+  return ev.length + numbers * 10 + percentages * 15;
 }
 
 function deduplicateOpportunities(opportunities: any[]): any[] {
@@ -281,14 +300,6 @@ function deduplicateOpportunities(opportunities: any[]): any[] {
   const getKeywords = (title: string): string[] =>
     (title || "").toLowerCase().split(/\s+/)
       .filter((w: string) => w.length >= 3 && !stopWords.has(w));
-
-  const evidenceStrength = (opp: any): number => {
-    const ev = opp.evidence || "";
-    // Count specific data points: numbers, app names (capitalized words), percentages
-    const numbers = (ev.match(/[\d,]+/g) || []).length;
-    const percentages = (ev.match(/\d+%/g) || []).length;
-    return ev.length + numbers * 10 + percentages * 15;
-  };
 
   const result: any[] = [];
   for (const opp of opportunities) {
@@ -315,6 +326,30 @@ function deduplicateOpportunities(opportunities: any[]): any[] {
       }
     } else {
       result.push(opp);
+    }
+  }
+  return result;
+}
+
+function enforceMaxPerType(opportunities: any[], max: number): any[] {
+  const typeCounts: Record<string, any[]> = {};
+  for (const opp of opportunities) {
+    (typeCounts[opp.type] ??= []).push(opp);
+  }
+
+  const result: any[] = [];
+  for (const [type, opps] of Object.entries(typeCounts)) {
+    if (opps.length <= max) {
+      result.push(...opps);
+    } else {
+      // Sort by evidence strength (most specific numbers), keep top `max`
+      opps.sort((a: any, b: any) => evidenceStrength(b) - evidenceStrength(a));
+      const kept = opps.slice(0, max);
+      const dropped = opps.slice(max);
+      for (const d of dropped) {
+        console.log(`MAX-PER-TYPE removed (3rd+ ${type}):`, d.title);
+      }
+      result.push(...kept);
     }
   }
   return result;
