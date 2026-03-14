@@ -123,7 +123,7 @@ HARD RULES:
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 25000);
     const response = await client.messages.create(
-      { model: "claude-haiku-4-5-20251001", max_tokens: 1500, messages: [{ role: "user", content: prompt }] },
+      { model: "claude-sonnet-4-20250514", max_tokens: 1500, messages: [{ role: "user", content: prompt }] },
       { signal: controller.signal as any },
     );
     clearTimeout(timeout);
@@ -309,20 +309,15 @@ function validateOpportunities(opportunities: any[], opts: ValidationOptions = {
         console.log("FILTERED Momentum (year <=", yearCutoff, "):", opp.title, "years found:", years);
         return false;
       }
-      // Momentum: reject if no review count >= 500 in evidence
-      const allNums = (opp.evidence || "").match(/[\d,]+/g);
-      if (!allNums) {
-        console.log("FILTERED Momentum (no numbers in evidence):", opp.title);
-        return false;
-      }
-      const parsed = allNums
-        .map((n: string) => parseInt(n.replace(/,/g, ""), 10))
-        .filter((n: number) => !isNaN(n) && n > 0);
-      // Filter out years (2000-2099) and ratings (1.0-5.9 → integers 1-5)
-      const reviewCandidates = parsed.filter((n: number) => !(n >= 2000 && n <= 2099) && n >= 6);
-      console.log("MOMENTUM review check: numbers found:", parsed, "review candidates:", reviewCandidates);
-      if (reviewCandidates.length === 0 || reviewCandidates.every((n: number) => n < 500)) {
-        console.log("FILTERED Momentum (all review counts < 500):", opp.title, "candidates:", reviewCandidates);
+      // Momentum: reject if no review count >= 500 in evidence or typeReason
+      const evidenceAndReason = `${opp.evidence || ""} ${opp.typeReason || ""}`;
+      const reviewNums = evidenceAndReason
+        .match(/\b(\d{1,3}(?:,\d{3})*|\d+)\b/g)
+        ?.map((n: string) => parseInt(n.replace(/,/g, ""), 10))
+        ?.filter((n: number) => n >= 500 && n < 2000000) || [];
+      console.log("MOMENTUM review check:", opp.title, "nums >= 500:", reviewNums);
+      if (reviewNums.length === 0) {
+        console.log("FILTERED Momentum (no review count >= 500):", opp.title);
         return false;
       }
     }
@@ -476,7 +471,7 @@ Return ONLY JSON array:
 [{"title","type","difficulty","description","evidence","typeReason","targetAudience","difficultyReason","searchQuery"}]`;
 
   const response = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
+    model: "claude-sonnet-4-20250514",
     max_tokens: 1000,
     messages: [{ role: "user", content: prompt }],
   });
