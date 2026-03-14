@@ -173,6 +173,77 @@ async function fetchProductHunt(query: string) {
   }
 }
 
+/* ── Score & Label calculation ────────────────────────────────── */
+
+function calculateScore(
+  appStoreData: any[],
+  trendsData: any,
+  phData: any[],
+  subCategoryTrends: any[]
+) {
+  let score = 30;
+
+  // 1. MARKET SIZE (how many people use this?)
+  const maxReviews = Math.max(...(appStoreData?.map(a => a.reviewCount || 0) || [0]));
+  if (maxReviews > 10000000) score += 15;
+  else if (maxReviews > 1000000) score += 10;
+  else if (maxReviews > 100000) score += 6;
+  else if (maxReviews > 10000) score += 3;
+
+  // 2. MOMENTUM (growing or shrinking?)
+  const trendPercent = trendsData?.trendPercent || 0;
+  const currentScore = trendsData?.currentScore || 0;
+  if (trendPercent > 30) score += 20;
+  else if (trendPercent > 10) score += 12;
+  else if (trendPercent > 0) score += 6;
+  else if (trendPercent < -50) score -= 15;
+  else if (trendPercent < -20) score -= 8;
+  else if (trendPercent < 0) score -= 3;
+
+  // Bonus if search interest itself is high
+  if (currentScore > 60) score += 10;
+  else if (currentScore > 30) score += 5;
+
+  // 3. GAP (is there room?)
+  const risingSubCats = (subCategoryTrends || [])
+    .filter((s: any) => s.direction === "rising" || s.trendPercent > 5).length;
+  score += risingSubCats * 4;
+
+  // Product Hunt innovation signal
+  const phTopVotes = Math.max(...(phData?.map(p => p.votesCount) || [0]));
+  if (phTopVotes > 500) score += 8;
+  else if (phTopVotes > 100) score += 4;
+  else if (phTopVotes > 20) score += 2;
+
+  // If ALL sub-categories are 0, penalize
+  const allSubCatsZero = (subCategoryTrends || []).every((s: any) => s.currentScore === 0);
+  if (allSubCatsZero) score -= 10;
+
+  return Math.min(92, Math.max(8, Math.round(score)));
+}
+
+function calculateLabel(score: number, trendsData: any, appStoreData: any[]) {
+  const maxReviews = Math.max(...(appStoreData?.map(a => a.reviewCount || 0) || [0]));
+  const trendPercent = trendsData?.trendPercent || 0;
+
+  // Large active markets (500K+ reviews) can NEVER be Fading or Dead Zone
+  if (maxReviews > 500000) {
+    if (score >= 72) return "Explosive";
+    if (score >= 58) return "Growing";
+    return "Crowded";
+  }
+
+  if (score >= 75) return "Explosive";
+  if (score >= 60) return "Growing";
+  if (score >= 45) return "Warming Up";
+  if (score >= 32) {
+    if (trendPercent < -40) return "Fading";
+    return "Crowded";
+  }
+  if (trendPercent < -50 && maxReviews < 5000) return "Dead Zone";
+  return "Uncharted";
+}
+
 /* ── Step 2: Fetch all data for sub-categories in parallel ───── */
 async function fetchAllData(query: string, subCategories: { name: string; trendQuery: string }[]) {
   // Fetch trends using short trendQuery for each sub-category + main query
@@ -198,9 +269,14 @@ async function fetchAllData(query: string, subCategories: { name: string; trendQ
 async function analyzeWithClaude(
   query: string,
   subCategories: { name: string; trendQuery: string }[],
-  data: Awaited<ReturnType<typeof fetchAllData>>
+  data: Awaited<ReturnType<typeof fetchAllData>>,
+  score: number,
+  label: string
 ) {
   const prompt = `You are a market analyst. Analyze this data for the space "${query}" and return ONLY valid JSON (no markdown, no code fences).
+
+Market score: ${score}/100. Label: ${label}.
+Use these values as context for your analysis — reference them in your verdict and summary.
 
 ## Sub-categories and their Google Trends data
 ${JSON.stringify(data.subTrends.map(s => ({
@@ -220,27 +296,6 @@ ${JSON.stringify(data.gplay.slice(0, 10), null, 2)}
 ## Product Hunt recent top posts
 ${JSON.stringify(data.ph.slice(0, 10), null, 2)}
 
-SCORE CALIBRATION — YOU MUST FOLLOW THESE:
-Score must reflect BOTH market size AND growth opportunity:
-- Apps with 10M+ reviews in the space = score minimum 55 (massive proven demand)
-- Apps with 1M+ reviews = score minimum 45
-- Apps with 100K+ reviews = score minimum 35
-- Google Trends score 50+ AND rising = add 10-20 points
-- Google Trends score below 20 AND no significant app store presence = score max 30
-- Multiple PH products with 500+ votes = add 5-10 points
-- Score 80+ requires: strong trends AND large app store presence AND active PH launches
-
-LABEL RULES — MUST REFLECT MARKET REALITY:
-Label must reflect MARKET REALITY not just search trends:
-- "Dead Zone": literally no products, no users, no search interest. NEVER use for spaces with apps that have reviews.
-- "Uncharted": search interest exists but very few products built. Opportunity to be first.
-- "Fading": was once popular but declining — apps exist but trends dropping 30%+
-- "Warming Up": small but growing — trends rising, few competitors, early stage
-- "Growing": clear upward trajectory — rising trends, new entrants, increasing reviews
-- "Crowded": many competitors with high ratings and reviews — hard to differentiate
-- "Explosive": rapid growth across all signals — trends surging, new apps launching weekly, PH activity high
-- If App Store shows apps with 1M+ reviews, the space is AT MINIMUM "Crowded" — it cannot be Dead Zone or Uncharted
-
 BEST OPPORTUNITY RULES:
 - Must be something that NO existing app in the data already does well
 - Never suggest a feature that an existing top app could easily add
@@ -254,10 +309,8 @@ GAP OPPORTUNITY RULES:
 - Never include generic gaps like "better UX" or "AI-powered features" without specific context
 - At least one gap must reference an underserved sub-category from the trends data
 
-Return this exact JSON structure:
+Return this exact JSON structure (do NOT include "score" or "label" fields — they are calculated separately):
 {
-  "score": <integer 0-100>,
-  "label": "<exactly one of: Dead Zone | Uncharted | Fading | Crowded | Warming Up | Growing | Explosive>",
   "verdict": "<max 12 words, direct assessment>",
   "summary": "<3-4 sentences with specific numbers from the data>",
   "relevantPlatforms": ["appstore", "googleplay", "producthunt"],
@@ -283,6 +336,7 @@ Return this exact JSON structure:
 }
 
 IMPORTANT:
+- Do NOT include "score" or "label" in your JSON output.
 - relevantPlatforms: include "appstore" and "googleplay" ONLY if the space is consumer/mobile. Exclude for B2B, SaaS, developer tools, services.
 - appStoreWins: max 3 items, ONLY from platforms in relevantPlatforms. Pick the most interesting/dominant apps. If appstore/googleplay not in relevantPlatforms, return empty array [].
 - productHuntWins: max 3 items. ALWAYS include productHuntWins if "producthunt" is in relevantPlatforms. Pick the most relevant products from the PH data provided. If no PH data was provided, return empty array [].
@@ -302,6 +356,11 @@ IMPORTANT:
     .join("");
   const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
   const parsed = JSON.parse(cleaned);
+
+  // Inject backend-calculated score and label
+  parsed.score = score;
+  parsed.label = label;
+
   console.log("TREND-FEED ANALYSIS:", JSON.stringify({
     score: parsed.score,
     label: parsed.label,
@@ -332,8 +391,15 @@ export async function GET(req: NextRequest) {
     // Step 2: Fetch all data in parallel
     const data = await fetchAllData(query, subCategories);
 
-    // Step 3: Analyze with Claude
-    const analysis = await analyzeWithClaude(query, subCategories, data);
+    // Step 2.5: Calculate score and label from raw data
+    const allApps = [...data.itunes, ...data.gplay];
+    const subTrendData = data.subTrends.map(s => s.trend).filter(Boolean);
+    const score = calculateScore(allApps, data.mainTrend, data.ph, subTrendData);
+    const label = calculateLabel(score, data.mainTrend, allApps);
+    console.log("CALCULATED:", { score, label, apps: allApps.length, subTrends: subTrendData.length });
+
+    // Step 3: Analyze with Claude (score/label pre-calculated)
+    const analysis = await analyzeWithClaude(query, subCategories, data, score, label);
 
     return NextResponse.json({ query, analysis });
   } catch (err) {
