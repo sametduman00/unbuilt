@@ -167,7 +167,11 @@ RULES:
 - No generic ideas like "better UX" or "AI-powered version"
 - Each opportunity must be something a solo developer could start building this week
 - Include at least 3 different opportunity types in your response
-- "searchQuery" should be suitable for searching App Store trends`;
+- "searchQuery" should be suitable for searching App Store trends
+
+COMPLAINT HARD RULE: I will programmatically reject any Complaint opportunity where the cited rating is above 4.20. Do not cite apps with ratings above 4.20 for Complaint type.
+
+GEOGRAPHY HARD RULE: Geography MUST name a specific language (Spanish, Arabic, Hindi, Turkish, French, Portuguese, German, Japanese, Korean, Chinese) or country (Brazil, India, Mexico, Turkey, Japan, etc.) in the evidence. "Senior users" or "older adults" are NOT geographic segments — use Gap type instead.`;
 
   const response = await client.messages.create({
     model: "claude-sonnet-4-20250514",
@@ -180,7 +184,110 @@ RULES:
     .map((b) => b.text)
     .join("");
   const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-  return JSON.parse(cleaned);
+  const raw: any[] = JSON.parse(cleaned);
+
+  // Validate and filter
+  let filtered = validateOpportunities(raw);
+
+  // If too few remain, backfill with a second Claude call
+  if (filtered.length < 4) {
+    const removedCount = raw.length - filtered.length;
+    const backfill = await backfillOpportunities(
+      subcategory, categoryLabel, itunesApps, newReleases, phPosts,
+      filtered, removedCount,
+    );
+    filtered = [...filtered, ...validateOpportunities(backfill)];
+  }
+
+  return filtered;
+}
+
+/* ── Post-generation validation ──────────────────────────────── */
+
+const GEO_KEYWORDS = [
+  "spanish", "arabic", "hindi", "turkish", "french", "portuguese", "german",
+  "japanese", "korean", "chinese", "mandarin", "cantonese", "russian", "italian",
+  "thai", "vietnamese", "indonesian", "malay", "swahili", "urdu", "persian", "farsi",
+  "brazil", "india", "mexico", "turkey", "japan", "china", "korea", "indonesia",
+  "egypt", "nigeria", "pakistan", "bangladesh", "philippines", "vietnam", "thailand",
+  "colombia", "argentina", "peru", "chile", "saudi", "emirates", "latin america",
+  "southeast asia", "middle east", "africa",
+];
+
+function validateOpportunities(opportunities: any[]): any[] {
+  return opportunities.filter((opp) => {
+    // Complaint: reject if evidence cites a rating above 4.2
+    if (opp.type === "Complaint") {
+      const ratings = (opp.evidence || "").match(/\d+\.\d+/g);
+      if (ratings && ratings.some((r: string) => parseFloat(r) > 4.2)) {
+        console.log("FILTERED Complaint (rating > 4.2):", opp.title, "ratings found:", ratings);
+        return false;
+      }
+    }
+
+    // Geography: reject if evidence doesn't mention a language or country
+    if (opp.type === "Geography") {
+      const evidenceLower = (opp.evidence || "").toLowerCase();
+      const hasGeoRef = GEO_KEYWORDS.some((kw) => evidenceLower.includes(kw));
+      if (!hasGeoRef) {
+        console.log("FILTERED Geography (no language/country):", opp.title);
+        return false;
+      }
+    }
+
+    return true;
+  });
+}
+
+/* ── Backfill if too many filtered out ───────────────────────── */
+
+async function backfillOpportunities(
+  subcategory: string,
+  categoryLabel: string,
+  itunesApps: any[],
+  newReleases: any[],
+  phPosts: any[],
+  existing: any[],
+  needed: number,
+) {
+  const existingTypes = existing.map((o) => o.type).join(", ");
+  const prompt = `You are a market opportunity analyst. I need ${needed} MORE opportunities for "${subcategory}" in "${categoryLabel}".
+
+## App Store Data (top apps by reviews)
+${JSON.stringify(itunesApps.slice(0, 15), null, 2)}
+
+## New Releases (last 180 days)
+${JSON.stringify(newReleases, null, 2)}
+
+## Product Hunt Posts
+${JSON.stringify(phPosts.slice(0, 10), null, 2)}
+
+I already have these types covered: ${existingTypes || "none"}
+Generate ${needed} NEW opportunities using DIFFERENT types from what I already have.
+
+COMPLAINT HARD RULE: Do NOT cite apps with ratings above 4.20. All cited ratings must be ≤ 4.2.
+GEOGRAPHY HARD RULE: MUST name a specific language or country in the evidence.
+
+Return ONLY valid JSON array (no markdown, no code fences) with the same schema:
+[{ "title", "type", "difficulty", "description", "evidence", "typeReason", "targetAudience", "difficultyReason", "searchQuery" }]`;
+
+  const response = await client.messages.create({
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 2000,
+    messages: [{ role: "user", content: prompt }],
+  });
+
+  const text = response.content
+    .filter((b): b is Anthropic.TextBlock => b.type === "text")
+    .map((b) => b.text)
+    .join("");
+  const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    console.error("Backfill parse error:", cleaned.slice(0, 200));
+    return [];
+  }
 }
 
 /* ── GET handler ──────────────────────────────────────────────── */
