@@ -10,10 +10,13 @@ async function generateSubCategories(query: string): Promise<string[]> {
     max_tokens: 500,
     messages: [{
       role: "user",
-      content: `For the market space "${query}", generate exactly 6 specific sub-categories that represent distinct segments within this space. These should work for any type of business (B2B SaaS, consumer apps, developer tools, services, hardware, etc.) — do NOT assume mobile apps.
+      content: `Generate 6 sub-categories that are DIRECT sub-niches within the space "${query}". These must be specific market segments a founder could build a product IN, not adjacent industries or tools for the space.
 
-Return ONLY a JSON array of 6 strings, no markdown, no explanation.
-Example: ["Sub-category 1", "Sub-category 2", "Sub-category 3", "Sub-category 4", "Sub-category 5", "Sub-category 6"]`,
+Example: "mobile gaming" → ["hyper-casual mobile games", "mobile battle royale games", "mobile puzzle games", "mobile RPG games", "mobile sports games", "mobile strategy games"]
+
+Example: "fitness app" → ["strength training tracker", "running and cardio app", "yoga and flexibility app", "nutrition tracking app", "HIIT workout app", "recovery and sleep app"]
+
+Return ONLY a JSON array of 6 strings, nothing else.`,
     }],
   });
 
