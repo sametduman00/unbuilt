@@ -20,6 +20,7 @@ async function fetchITunes(query: string) {
       reviewCount: r.userRatingCount ?? 0,
       releaseDate: r.releaseDate ?? "",
       price: r.formattedPrice ?? "Free",
+      description: r.description ?? "",
     }));
   } catch {
     return [];
@@ -523,10 +524,19 @@ export async function GET(req: NextRequest) {
 
   try {
     // Fetch data in parallel
-    const [itunesApps, phPosts] = await Promise.all([
+    const [rawItunesApps, phPosts] = await Promise.all([
       fetchITunes(subcategory),
       fetchProductHunt(subcategory),
     ]);
+
+    // Relevance filter: keep only apps matching subcategory keywords
+    const subcategoryWords = subcategory.toLowerCase().split(/\s+/).filter((w: string) => w.length > 3);
+    const relevantApps = rawItunesApps.filter((app: any) => {
+      const appText = `${app.name} ${app.description || ""}`.toLowerCase();
+      return subcategoryWords.some((word: string) => appText.includes(word));
+    });
+    const itunesApps = relevantApps.length >= 3 ? relevantApps : rawItunesApps;
+    console.log("RELEVANCE FILTER:", { raw: rawItunesApps.length, relevant: relevantApps.length, using: itunesApps.length, keywords: subcategoryWords });
 
     const newReleases = filterNewReleases(itunesApps);
 
