@@ -173,6 +173,7 @@ SCORE RULES — YOU MUST FOLLOW THESE:
 - When score below 30 and data sparse: label must be "Uncharted" or "Dead Zone"
 - "Fading": has competitors but search interest declining more than 50%
 - "Crowded": many competitors, high competition — NEVER use for score below 30
+- Market size overrides trend data for labeling. If the space has apps with 1M+ reviews on App Store, this is a LARGE ACTIVE MARKET — label must be "Crowded" minimum, never "Dead Zone" or "Uncharted". Dead Zone is only for spaces with zero or near-zero user activity.
 
 BEST OPPORTUNITY RULES:
 - Must be hyper-specific: exact customer, exact pain point, exact distribution channel
@@ -210,7 +211,7 @@ Return this exact JSON structure:
 IMPORTANT:
 - relevantPlatforms: include "appstore" and "googleplay" ONLY if the space is consumer/mobile. Exclude for B2B, SaaS, developer tools, services.
 - appStoreWins: max 3 items, ONLY from platforms in relevantPlatforms. Pick the most interesting/dominant apps. If appstore/googleplay not in relevantPlatforms, return empty array [].
-- productHuntWins: max 3 items. If no relevant PH posts, return empty array [].
+- productHuntWins: max 3 items. ALWAYS include productHuntWins if "producthunt" is in relevantPlatforms. Pick the most relevant products from the PH data provided. If no PH data was provided, return empty array [].
 - gapOpportunities: minimum 3 items. Based on what users search for but is underbuilt.
 - risingSubcategories: include ALL 6 sub-categories with their trend data.
 - Even if external data is sparse, produce full analysis using your training knowledge.`;
@@ -226,7 +227,17 @@ IMPORTANT:
     .map((b) => b.text)
     .join("");
   const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-  return JSON.parse(cleaned);
+  const parsed = JSON.parse(cleaned);
+  console.log("TREND-FEED ANALYSIS:", JSON.stringify({
+    score: parsed.score,
+    label: parsed.label,
+    relevantPlatforms: parsed.relevantPlatforms,
+    productHuntWins: parsed.productHuntWins?.length ?? 0,
+    appStoreWins: parsed.appStoreWins?.length ?? 0,
+    gapOpportunities: parsed.gapOpportunities?.length ?? 0,
+    keys: Object.keys(parsed),
+  }));
+  return parsed;
 }
 
 /* ── GET handler ──────────────────────────────────────────────── */
