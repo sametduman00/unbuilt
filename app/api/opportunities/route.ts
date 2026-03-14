@@ -121,7 +121,9 @@ GAP - ONLY use this when:
 - Search returns fewer than 5 apps total OR
 - All apps have fewer than 10,000 reviews OR
 - Average rating is below 4.0
-- Evidence MUST include: total app count or average review count
+- Evidence MUST include specific app names from the data AND their review counts
+- Example good evidence: "Only 3 apps exist: AppX (1,200 reviews), AppY (800 reviews), AppZ (200 reviews) — all under 10K reviews"
+- Do NOT write generic statements like "current apps focus on X but lack Y" without citing specific apps and numbers
 
 COMPLAINT - ONLY use this when:
 - Multiple apps exist with ratings between 3.0 and 4.2 (maximum 4.2)
@@ -196,15 +198,24 @@ GEOGRAPHY HARD RULE: Geography MUST name a specific language (Spanish, Arabic, H
 
   // Validate and filter
   let filtered = validateOpportunities(raw);
+  console.log("VALIDATION:", {
+    rawCount: raw.length,
+    passedCount: filtered.length,
+    removedCount: raw.length - filtered.length,
+    passedTypes: filtered.map((o: any) => o.type),
+  });
 
   // If too few remain, backfill with a second Claude call
   if (filtered.length < 4) {
-    const removedCount = raw.length - filtered.length;
+    const needed = Math.max(4 - filtered.length, raw.length - filtered.length);
+    console.log("BACKFILL triggered: only", filtered.length, "passed, requesting", needed, "more");
     const backfill = await backfillOpportunities(
       subcategory, categoryLabel, itunesApps, newReleases, phPosts,
-      filtered, removedCount,
+      filtered, needed,
     );
-    filtered = [...filtered, ...validateOpportunities(backfill)];
+    const validBackfill = validateOpportunities(backfill);
+    console.log("BACKFILL result:", { requested: needed, received: backfill.length, passedValidation: validBackfill.length });
+    filtered = [...filtered, ...validBackfill];
   }
 
   return filtered;
