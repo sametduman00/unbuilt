@@ -179,22 +179,33 @@ RULES:
 - Include at least 3 different opportunity types in your response
 - "searchQuery" should be suitable for searching App Store trends
 
-COMPLAINT HARD RULE: I will programmatically reject any Complaint opportunity where the cited rating is above 4.20. Do not cite apps with ratings above 4.20 for Complaint type.
+COMPLAINT HARD RULE: I will programmatically reject any Complaint opportunity where the cited rating is above 4.20. Do not cite apps with ratings above 4.20 for Complaint type. For Complaint type: evidence MUST include the specific app name, its exact rating (e.g. 3.2), AND its review count (e.g. 45,230 reviews). Evidence with no numbers will be rejected.
 
 GEOGRAPHY HARD RULE: Geography MUST name a specific language (Spanish, Arabic, Hindi, Turkish, French, Portuguese, German, Japanese, Korean, Chinese) or country (Brazil, India, Mexico, Turkey, Japan, etc.) in the evidence. "Senior users" or "older adults" are NOT geographic segments — use Gap type instead.`;
 
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 2500,
-    messages: [{ role: "user", content: prompt }],
-  });
+  // Claude call with 10-second timeout
+  let raw: any[] = [];
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    const response = await client.messages.create(
+      { model: "claude-sonnet-4-20250514", max_tokens: 2500, messages: [{ role: "user", content: prompt }] },
+      { signal: controller.signal as any },
+    );
+    clearTimeout(timeout);
 
-  const text = response.content
-    .filter((b): b is Anthropic.TextBlock => b.type === "text")
-    .map((b) => b.text)
-    .join("");
-  const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-  const raw: any[] = JSON.parse(cleaned);
+    const text = response.content
+      .filter((b): b is Anthropic.TextBlock => b.type === "text")
+      .map((b) => b.text)
+      .join("");
+    const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    raw = JSON.parse(cleaned);
+  } catch (err) {
+    console.log("Claude analysis timeout/error:", err instanceof Error ? err.message : err);
+    // Return fallback opportunities from raw data
+    console.log("FALLBACK: generating opportunities from raw iTunes data");
+    return generateFallbackOpportunities(subcategory, itunesApps, newReleases);
+  }
 
   // Validate and filter
   let filtered = validateOpportunities(raw);
@@ -205,25 +216,94 @@ GEOGRAPHY HARD RULE: Geography MUST name a specific language (Spanish, Arabic, H
     passedTypes: filtered.map((o: any) => o.type),
   });
 
-  // If too few remain, backfill with a second Claude call
+  // Guarantee minimum 3: backfill with relaxed rules, retry if needed
   console.log("POST-VALIDATION:", filtered.length, "opportunities passed");
+  let attempt = 0;
+  while (filtered.length < 3 && attempt < 2) {
+    attempt++;
+    const needed = Math.max(3 - filtered.length, 3);
+    console.log(`BACKFILL attempt ${attempt}: ${filtered.length} passed, requesting ${needed} more`);
+    try {
+      const backfill = await backfillOpportunities(
+        subcategory, categoryLabel, itunesApps, newReleases, phPosts,
+        filtered, needed,
+      );
+      // Progressively relax: attempt 1 = year cutoff 2020, attempt 2 = no year check
+      const validBackfill = validateOpportunities(backfill, { momentumYearCutoff: attempt === 1 ? 2020 : 2015 });
+      console.log(`BACKFILL attempt ${attempt} result:`, { requested: needed, received: backfill.length, passedValidation: validBackfill.length });
+      filtered = [...filtered, ...validBackfill];
+    } catch (err) {
+      console.log(`BACKFILL attempt ${attempt} failed:`, err instanceof Error ? err.message : err);
+      break;
+    }
+  }
+
+  // Last resort: generate from raw data if still under 3
   if (filtered.length < 3) {
-    const needed = Math.max(3 - filtered.length, raw.length - filtered.length);
-    console.log("BACKFILL triggered:", filtered.length, "passed (minimum 3), requesting", needed, "more");
-    const backfill = await backfillOpportunities(
-      subcategory, categoryLabel, itunesApps, newReleases, phPosts,
-      filtered, needed,
-    );
-    // Relaxed validation for backfill: allow Momentum with years 2021+
-    const validBackfill = validateOpportunities(backfill, { momentumYearCutoff: 2020 });
-    console.log("BACKFILL result:", { requested: needed, received: backfill.length, passedValidation: validBackfill.length });
-    filtered = [...filtered, ...validBackfill];
-  } else {
-    console.log("BACKFILL skipped:", filtered.length, "passed validation (minimum 3)");
+    console.log("LAST RESORT: generating from raw data, have", filtered.length);
+    const fallback = generateFallbackOpportunities(subcategory, itunesApps, newReleases);
+    // Only add enough to reach 3
+    filtered = [...filtered, ...fallback.slice(0, 3 - filtered.length)];
   }
 
   console.log("FINAL COUNT:", filtered.length, "opportunities returned");
   return filtered;
+}
+
+/* ── Fallback: generate opportunities from raw data without Claude ── */
+
+function generateFallbackOpportunities(subcategory: string, apps: any[], newReleases: any[]): any[] {
+  const results: any[] = [];
+  const sorted = [...apps].sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
+
+  // Gap opportunity if few apps
+  if (apps.length < 10) {
+    results.push({
+      title: `Build a better ${subcategory} app`,
+      type: "Gap",
+      difficulty: "Medium",
+      description: `Only ${apps.length} apps found in App Store for "${subcategory}". This suggests an underserved market with room for a focused solution.`,
+      evidence: `iTunes search returned only ${apps.length} results for "${subcategory}"`,
+      typeReason: `Fewer than 10 apps indicates a gap in the market.`,
+      targetAudience: `Users searching for ${subcategory} solutions on mobile.`,
+      difficultyReason: "Medium — requires domain knowledge but limited competition.",
+      searchQuery: subcategory,
+    });
+  }
+
+  // Complaint if low ratings
+  const lowRated = sorted.filter(a => a.rating > 0 && a.rating <= 4.2);
+  if (lowRated.length >= 2) {
+    results.push({
+      title: `Higher quality ${subcategory} alternative`,
+      type: "Complaint",
+      difficulty: "Medium",
+      description: `Multiple apps in this space have mediocre ratings, suggesting user dissatisfaction. A well-designed alternative could capture share.`,
+      evidence: `${lowRated[0].name} (${lowRated[0].rating} rating, ${lowRated[0].reviewCount} reviews), ${lowRated[1].name} (${lowRated[1].rating} rating, ${lowRated[1].reviewCount} reviews)`,
+      typeReason: "Multiple apps rated below 4.2 indicate user complaints.",
+      targetAudience: `Users frustrated with existing ${subcategory} apps.`,
+      difficultyReason: "Medium — must address known pain points.",
+      searchQuery: subcategory,
+    });
+  }
+
+  // Momentum if new releases exist
+  if (newReleases.length > 0) {
+    const nr = newReleases[0];
+    results.push({
+      title: `Compete in growing ${subcategory} space`,
+      type: "Momentum",
+      difficulty: "Hard",
+      description: `New apps are launching and gaining traction in this space, indicating active market growth and user demand.`,
+      evidence: `${nr.name} released ${nr.daysAgo} days ago with ${nr.reviewCount} reviews and ${nr.rating} rating`,
+      typeReason: "Recent releases with reviews indicate momentum.",
+      targetAudience: `Early adopters looking for ${subcategory} solutions.`,
+      difficultyReason: "Hard — competing with active new entrants.",
+      searchQuery: subcategory,
+    });
+  }
+
+  return results;
 }
 
 /* ── Post-generation validation ──────────────────────────────── */
@@ -263,9 +343,15 @@ function validateOpportunities(opportunities: any[], opts: ValidationOptions = {
       }
     }
 
-    // Complaint: reject if evidence cites a rating above 4.2
+    // Complaint: reject if evidence cites a rating above 4.2 OR has no numbers at all
     if (opp.type === "Complaint") {
-      const ratings = (opp.evidence || "").match(/\d+\.\d+/g);
+      const evidence = opp.evidence || "";
+      const ratings = evidence.match(/\d+\.\d+/g);
+      const anyNumbers = evidence.match(/\d+/g);
+      if (!anyNumbers || anyNumbers.length === 0) {
+        console.log("FILTERED Complaint (no numbers in evidence):", opp.title);
+        return false;
+      }
       if (ratings && ratings.some((r: string) => parseFloat(r) > 4.2)) {
         console.log("FILTERED Complaint (rating > 4.2):", opp.title, "ratings found:", ratings);
         return false;
