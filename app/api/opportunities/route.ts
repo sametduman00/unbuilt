@@ -301,15 +301,21 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
 
   // GUARANTEED: Bundle opportunity if 3+ apps
   if (sorted.length >= 3) {
-    const b1 = sorted[0], b2 = sorted[1], b3 = sorted[2];
+    const top3 = sorted.slice(0, 3);
+    const n1 = top3[0]?.name || "App1";
+    const n2 = top3[1]?.name || "App2";
+    const n3 = top3[2]?.name || "App3";
+    const r1 = (top3[0]?.reviewCount || 0).toLocaleString();
+    const bundleEvidence = `${n1} (${r1} reviews), ${n2}, and ${n3} all focus on different aspects — no unified solution combines their best features.`;
+    console.log("BUNDLE evidence:", bundleEvidence);
     results.push({
       title: `All-in-One ${subcategory} Platform`,
       type: "Bundle",
       difficulty: "Hard",
       description: `Users currently need multiple separate apps for different ${subcategory} needs. A single unified platform combining the best features could simplify their workflow.`,
-      evidence: `${b1.name} (${(b1.reviewCount ?? 0).toLocaleString()} reviews), ${b2.name}, and ${b3.name} all focus on different aspects — no unified solution exists combining their best features.`,
+      evidence: bundleEvidence,
       typeReason: "Three or more single-purpose apps exist without a combined alternative.",
-      targetAudience: `Power users who currently switch between ${b1.name}, ${b2.name}, and ${b3.name}.`,
+      targetAudience: `Power users who currently switch between ${n1}, ${n2}, and ${n3}.`,
       difficultyReason: "Hard — requires building multiple feature sets and integrating them into a cohesive product.",
       searchQuery: `${subcategory} all in one`,
     });
