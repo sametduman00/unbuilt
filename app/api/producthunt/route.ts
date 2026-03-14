@@ -38,6 +38,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "PRODUCTHUNT_API_KEY not configured" }, { status: 500 });
   }
 
+  console.log("PH: using token:", token.slice(0, 10) + "...");
+
   try {
     const postedAfter = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
 
@@ -52,10 +54,20 @@ export async function GET(req: NextRequest) {
     });
 
     if (!res.ok) {
-      return NextResponse.json({ error: "Product Hunt API error" }, { status: res.status });
+      const body = await res.text();
+      console.error("PH API error:", {
+        status: res.status,
+        statusText: res.statusText,
+        headers: Object.fromEntries(res.headers.entries()),
+        body,
+      });
+      return NextResponse.json({ error: `Product Hunt API error: ${res.status} ${res.statusText}`, detail: body }, { status: res.status });
     }
 
     const data = await res.json();
+    if (data.errors) {
+      console.error("PH GraphQL errors:", JSON.stringify(data.errors));
+    }
     const edges = data?.data?.posts?.edges ?? [];
 
     const terms = query.toLowerCase().split(/\s+/);
