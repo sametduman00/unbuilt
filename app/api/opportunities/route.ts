@@ -88,94 +88,33 @@ async function analyzeOpportunities(
   newReleases: any[],
   phPosts: any[],
 ) {
-  const prompt = `You are a market opportunity analyst for indie developers and small teams.
+  const prompt = `Market opportunity analyst for indie devs. Analyze "${subcategory}" in "${categoryLabel}". Generate 5-6 data-driven opportunities.
 
-Analyze the "${subcategory}" subcategory within "${categoryLabel}" and generate 6-8 specific, data-driven opportunities.
+## Apps (top by reviews)
+${JSON.stringify(itunesApps.slice(0, 5).map(a => ({ n: a.name, r: a.rating, rc: a.reviewCount, p: a.price })), null, 1)}
 
-## App Store Data (top 10 apps by reviews)
-${JSON.stringify(itunesApps.slice(0, 10), null, 2)}
+## New Releases (180 days)
+${JSON.stringify(newReleases.map(a => ({ n: a.name, r: a.rating, rc: a.reviewCount, d: a.daysAgo })), null, 1)}
 
-## New Releases (last 180 days)
-${JSON.stringify(newReleases, null, 2)}
+## Product Hunt
+${JSON.stringify(phPosts.slice(0, 3).map(p => ({ n: p.name, t: p.tagline, v: p.votesCount })), null, 1)}
 
-## Product Hunt Posts
-${JSON.stringify(phPosts.slice(0, 10), null, 2)}
+Types (use ONLY if data qualifies):
+- MOMENTUM: New app (180 days) with 500+ reviews, no prior dominant player. Evidence: release date + review count.
+- MONOPOLY: #1 app has 5x+ reviews vs #2. Evidence: both counts + ratio.
+- GAP: <5 apps OR all <10K reviews OR avg rating <4.0. Evidence: app names + review counts.
+- COMPLAINT: Apps rated 3.0-4.2 ONLY. Never cite apps rated 4.3+. Evidence: app name + exact rating + review count.
+- PRICE: All top apps paid/$2.99+ or subscription-only. Evidence: price data.
+- BUNDLE: 3+ single-purpose apps. Evidence: "[App1] does X, [App2] does Y, [App3] does Z — no combined solution."
 
-Each opportunity MUST be one of these 6 types. Follow the STRICT qualification rules below — if the data does not meet a type's criteria, do NOT use that type.
+Return ONLY JSON array:
+[{"title":"<8 words>","type":"Momentum|Monopoly|Gap|Complaint|Price|Bundle","difficulty":"Easy|Medium|Hard","description":"<2 sentences>","evidence":"<data from above>","typeReason":"<1 sentence>","targetAudience":"<1 sentence>","difficultyReason":"<1 sentence>","searchQuery":"<2-4 words>"}]
 
-## STRICT TYPE QUALIFICATION RULES
-
-MOMENTUM - ONLY use this when:
-- A NEW app (released in last 180 days) has RAPIDLY growing reviews (500+ reviews minimum)
-- AND no dominant player existed before it
-- Evidence MUST include: release date + review count + days since release
-- Do NOT use for established apps that are already dominant
-- Momentum requires at least 500+ reviews to qualify as real traction. Do not cite apps with fewer than 500 reviews
-
-MONOPOLY - ONLY use this when:
-- ONE app has AT LEAST 5x more reviews than the SECOND place app (e.g. 500K vs 100K = 5x ✓, 270K vs 100K = 2.7x ✗)
-- 2x, 3x, or 4x is NOT enough — the ratio MUST be 5x or higher
-- If no app pair meets this 5x threshold, do NOT return a Monopoly opportunity
-- Evidence MUST include: #1 app name + review count vs #2 app name + review count, and the calculated ratio
-
-GAP - ONLY use this when:
-- Search returns fewer than 5 apps total OR
-- All apps have fewer than 10,000 reviews OR
-- Average rating is below 4.0
-- Evidence MUST include specific app names from the data AND their review counts
-- Example good evidence: "Only 3 apps exist: AppX (1,200 reviews), AppY (800 reviews), AppZ (200 reviews) — all under 10K reviews"
-- Do NOT write generic statements like "current apps focus on X but lack Y" without citing specific apps and numbers
-
-COMPLAINT - ONLY use this when:
-- Multiple apps exist with ratings between 3.0 and 4.2 (maximum 4.2)
-- Any app rated 4.3 or above CANNOT be cited as a Complaint opportunity
-- If all top apps are rated 4.3+, do NOT return a Complaint opportunity
-- Evidence MUST include: specific app names and their exact ratings (all must be ≤ 4.2)
-
-PRICE - ONLY use this when:
-- All top apps are paid ($2.99+) with no free alternative OR
-- All top apps are subscription-based with no one-time purchase
-- Evidence MUST include: price data from the app list
-
-BUNDLE - ONLY use this when:
-- 3+ single-purpose apps exist that each do ONE narrow thing
-- A combined app covering all of them does NOT exist
-- Evidence MUST name 3 specific apps from the data AND explain exactly what each one does separately
-- Format: "[App1] handles X, [App2] handles Y, [App3] handles Z — no single app combines all three."
-- NEVER write "users need multiple apps" without naming the specific apps
-
-Return ONLY valid JSON array (no markdown, no code fences):
-[
-  {
-    "title": "<max 8 words, specific and actionable>",
-    "type": "<exactly one of: Momentum | Monopoly | Gap | Complaint | Price | Bundle>",
-    "difficulty": "<exactly one of: Easy | Medium | Hard>",
-    "description": "<2-3 sentences explaining the opportunity>",
-    "evidence": "<specific data point from the provided data — MUST follow the evidence rules above for the chosen type>",
-    "typeReason": "<1-2 sentences: why this specific type was chosen over others, citing the qualification criteria met>",
-    "targetAudience": "<1-2 sentences: who exactly would use this, be specific about demographics/behavior>",
-    "difficultyReason": "<1 sentence: why this is Easy/Medium/Hard — reference technical scope, APIs needed, content requirements>",
-    "searchQuery": "<2-4 words for trend analysis>"
-  }
-]
-
-RULES:
-- ONLY use a type if the data meets that type's qualification criteria above
-- If the data doesn't qualify for a type, skip it — do NOT force-fit
-- Each opportunity must cite specific data from the apps/releases/PH data provided
-- No generic ideas like "better UX" or "AI-powered version"
-- Each opportunity must be something a solo developer could start building this week
-- Include at least 3 different opportunity types in your response
-- "searchQuery" should be suitable for searching App Store trends
-
-COMPLAINT HARD RULE: I will programmatically reject any Complaint opportunity where the cited rating is above 4.20. Do not cite apps with ratings above 4.20 for Complaint type. For Complaint type: evidence MUST include the specific app name, its exact rating (e.g. 3.2), AND its review count (e.g. 45,230 reviews). Evidence with no numbers will be rejected.
-
-NON-OBVIOUS RULE: Each opportunity must provide a NON-OBVIOUS insight that a developer wouldn't think of in 5 minutes. AVOID these generic ideas:
-- "Build a senior-friendly version"
-- "Build an alternative with better UX"
-- "Build for underserved niche"
-- "All-in-one platform"
-Instead cite specific data that reveals a hidden gap: a surprising rating pattern, an unexpected user segment from reviews, a sub-category growing while the main category declines, or a pricing anomaly.`;
+HARD RULES:
+- Complaint ratings must be ≤ 4.20. Evidence must have numbers.
+- Skip types that don't qualify. Min 3 different types.
+- Cite specific app names and numbers. No generic ideas ("better UX", "senior-friendly", "all-in-one").
+- Each opportunity must reveal a non-obvious insight from the data.`;
 
   // Claude call with 25-second timeout
   let raw: any[] = [];
@@ -183,7 +122,7 @@ Instead cite specific data that reveals a hidden gap: a surprising rating patter
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 25000);
     const response = await client.messages.create(
-      { model: "claude-sonnet-4-20250514", max_tokens: 2500, messages: [{ role: "user", content: prompt }] },
+      { model: "claude-haiku-4-5-20251001", max_tokens: 1500, messages: [{ role: "user", content: prompt }] },
       { signal: controller.signal as any },
     );
     clearTimeout(timeout);
@@ -518,29 +457,26 @@ async function backfillOpportunities(
   needed: number,
 ) {
   const existingTypes = existing.map((o) => o.type).join(", ");
-  const prompt = `You are a market opportunity analyst. I need ${needed} MORE opportunities for "${subcategory}" in "${categoryLabel}".
+  const prompt = `Need ${needed} MORE opportunities for "${subcategory}" in "${categoryLabel}". Types already covered: ${existingTypes || "none"}. Use DIFFERENT types.
 
-## App Store Data (top 10 apps by reviews)
-${JSON.stringify(itunesApps.slice(0, 10), null, 2)}
+## Apps
+${JSON.stringify(itunesApps.slice(0, 5).map(a => ({ n: a.name, r: a.rating, rc: a.reviewCount, p: a.price })), null, 1)}
 
-## New Releases (last 180 days)
-${JSON.stringify(newReleases, null, 2)}
+## New Releases
+${JSON.stringify(newReleases.map(a => ({ n: a.name, r: a.rating, rc: a.reviewCount, d: a.daysAgo })), null, 1)}
 
-## Product Hunt Posts
-${JSON.stringify(phPosts.slice(0, 10), null, 2)}
+## PH
+${JSON.stringify(phPosts.slice(0, 3).map(p => ({ n: p.name, t: p.tagline, v: p.votesCount })), null, 1)}
 
-I already have these types covered: ${existingTypes || "none"}
-Generate ${needed} NEW opportunities using DIFFERENT types from what I already have.
+Types: Momentum(500+ reviews, new app) | Monopoly(5x ratio) | Gap(<5 apps or <10K reviews) | Complaint(rating 3.0-4.2 ONLY) | Price(all paid) | Bundle(3+ apps named)
+Complaint ratings must be ≤ 4.20. Cite specific app names and numbers.
 
-COMPLAINT HARD RULE: Do NOT cite apps with ratings above 4.20. All cited ratings must be ≤ 4.2.
-GEOGRAPHY HARD RULE: MUST name a specific language or country in the evidence.
-
-Return ONLY valid JSON array (no markdown, no code fences) with the same schema:
-[{ "title", "type", "difficulty", "description", "evidence", "typeReason", "targetAudience", "difficultyReason", "searchQuery" }]`;
+Return ONLY JSON array:
+[{"title","type","difficulty","description","evidence","typeReason","targetAudience","difficultyReason","searchQuery"}]`;
 
   const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 2000,
+    model: "claude-haiku-4-5-20251001",
+    max_tokens: 1000,
     messages: [{ role: "user", content: prompt }],
   });
 
