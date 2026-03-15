@@ -141,7 +141,8 @@ async function fetchProductHunt(): Promise<Signal[]> {
     }
 
     return signals;
-  } catch {
+  } catch (err) {
+    console.log("[PULSE] PH fetch FAILED:", err instanceof Error ? err.message : err);
     return [];
   }
 }
@@ -360,14 +361,39 @@ function generateFallbackSignals(snapshots: AppSnapshot[]): Signal[] {
 export async function GET() {
   try {
     // 1. Fetch current data from all sources in parallel
-    const [appStoreSnaps, playStoreSnaps, phSignals] = await Promise.all([
-      fetchAppStore(),
-      fetchPlayStore(),
-      fetchProductHunt(),
-    ]);
+    console.log("[PULSE] Starting parallel fetch: AppStore + PlayStore + PH");
 
-    console.log(`[PULSE] Results — App Store: ${appStoreSnaps.length}, Play Store: ${playStoreSnaps.length}`);
-    console.log("PH signals:", phSignals.length);
+    let appStoreSnaps: AppSnapshot[] = [];
+    let playStoreSnaps: AppSnapshot[] = [];
+    let phSignals: Signal[] = [];
+
+    try {
+      const results = await Promise.allSettled([
+        fetchAppStore(),
+        fetchPlayStore(),
+        fetchProductHunt(),
+      ]);
+
+      if (results[0].status === "fulfilled") {
+        appStoreSnaps = results[0].value;
+      } else {
+        console.log("[PULSE] AppStore fetch REJECTED:", results[0].reason);
+      }
+      if (results[1].status === "fulfilled") {
+        playStoreSnaps = results[1].value;
+      } else {
+        console.log("[PULSE] PlayStore fetch REJECTED:", results[1].reason);
+      }
+      if (results[2].status === "fulfilled") {
+        phSignals = results[2].value;
+      } else {
+        console.log("[PULSE] PH fetch REJECTED:", results[2].reason);
+      }
+    } catch (err) {
+      console.log("[PULSE] Promise.allSettled threw (should not happen):", err);
+    }
+
+    console.log(`[PULSE] Fetch results — AppStore: ${appStoreSnaps.length}, PlayStore: ${playStoreSnaps.length}, PH: ${phSignals.length}`);
 
     const allSnapshots = [...appStoreSnaps, ...playStoreSnaps];
 
@@ -388,18 +414,20 @@ export async function GET() {
       const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
       const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
 
+      console.log("[PULSE] Loading comparison snapshots from Supabase...");
       const [hourlySnaps, weeklySnaps, monthlySnaps] = await Promise.all([
-        loadPreviousSnapshots(),
-        loadSnapshotsAt(SEVEN_DAYS, 30 * 60 * 1000),
-        loadSnapshotsAt(THIRTY_DAYS, 30 * 60 * 1000),
+        loadPreviousSnapshots().catch(e => { console.log("[PULSE] hourly load error:", e); return null; }),
+        loadSnapshotsAt(SEVEN_DAYS, 30 * 60 * 1000).catch(e => { console.log("[PULSE] weekly load error:", e); return null; }),
+        loadSnapshotsAt(THIRTY_DAYS, 30 * 60 * 1000).catch(e => { console.log("[PULSE] monthly load error:", e); return null; }),
       ]);
+      console.log(`[PULSE] Snapshots loaded — hourly: ${hourlySnaps?.length ?? 0}, weekly: ${weeklySnaps?.length ?? 0}, monthly: ${monthlySnaps?.length ?? 0}`);
 
       if (hourlySnaps && hourlySnaps.length > 0) {
         hasMovementData = true;
         hourlySignals = detectMovements(allSnapshots, hourlySnaps);
         console.log(`[PULSE] Hourly: ${hourlySignals.length} signals from ${hourlySnaps.length} snapshots`);
       } else {
-        console.log(`[PULSE] No hourly snapshots — using fallback`);
+        console.log(`[PULSE] No hourly snapshots found — will use fallback`);
       }
 
       if (weeklySnaps && weeklySnaps.length > 0) {

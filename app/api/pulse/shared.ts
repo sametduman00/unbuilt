@@ -80,19 +80,26 @@ async function fetchAppStoreCategory(cat: { name: string; genreId: number }): Pr
 }
 
 export async function fetchAppStore(): Promise<AppSnapshot[]> {
-  console.log("APP STORE: fetching", ITUNES_CATEGORIES.length, "categories via iTunes RSS");
+  try {
+    console.log("APP STORE: fetching", ITUNES_CATEGORIES.length, "categories via iTunes RSS");
 
-  const batch1 = ITUNES_CATEGORIES.slice(0, 9);
-  const batch2 = ITUNES_CATEGORIES.slice(9);
+    const batch1 = ITUNES_CATEGORIES.slice(0, 9);
+    const batch2 = ITUNES_CATEGORIES.slice(9);
 
-  const results1 = await Promise.all(batch1.map(fetchAppStoreCategory));
-  const results2 = await Promise.all(batch2.map(fetchAppStoreCategory));
-  const results = [...results1, ...results2];
+    const results1 = await Promise.all(batch1.map(fetchAppStoreCategory));
+    console.log("APP STORE: batch1 done,", results1.flat().length, "apps from", results1.filter(r => r.length > 0).length, "categories");
+    const results2 = await Promise.all(batch2.map(fetchAppStoreCategory));
+    console.log("APP STORE: batch2 done,", results2.flat().length, "apps from", results2.filter(r => r.length > 0).length, "categories");
+    const results = [...results1, ...results2];
 
-  const flat = results.flat();
-  const successCount = results.filter((r) => r.length > 0).length;
-  console.log("APP STORE: got", flat.length, "total apps from", successCount, "/", ITUNES_CATEGORIES.length, "categories");
-  return flat;
+    const flat = results.flat();
+    const successCount = results.filter((r) => r.length > 0).length;
+    console.log("APP STORE: got", flat.length, "total apps from", successCount, "/", ITUNES_CATEGORIES.length, "categories");
+    return flat;
+  } catch (err) {
+    console.log("APP STORE: top-level fetch FAILED:", err instanceof Error ? err.message : err);
+    return [];
+  }
 }
 
 /* ── Fetch Google Play (top 50 free) ──────────────────────────── */
