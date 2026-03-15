@@ -3,8 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { CATEGORIES } from "@/app/lib/categories";
 import { getSupabase } from "@/app/lib/supabase";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
 /* ── Validation (shared with on-demand route) ─────────────────── */
 
 const VALID_TYPES = ["Momentum", "Monopoly", "Gap", "Complaint", "Price", "Bundle"];
@@ -130,6 +128,7 @@ async function fetchITunesBulk(subcategory: string, categoryLabel: string): Prom
 /* ── Analyze with Haiku ────────────────────────────────────────── */
 
 async function analyzeWithHaiku(
+  client: Anthropic,
   subcategory: string,
   categoryLabel: string,
   apps: any[],
@@ -231,6 +230,8 @@ HARD RULES:
 /* ── POST handler (cron / manual trigger) ──────────────────────── */
 
 export async function POST(req: NextRequest) {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
   // Auth: check cron secret
   const cronSecret = process.env.CRON_SECRET;
   const headerSecret = req.headers.get("x-cron-secret");
@@ -270,7 +271,7 @@ export async function POST(req: NextRequest) {
         const finalApps = relevant.length >= 3 ? relevant : apps;
 
         // Analyze
-        const opportunities = await analyzeWithHaiku(subcategory, category.label, finalApps);
+        const opportunities = await analyzeWithHaiku(client, subcategory, category.label, finalApps);
 
         // Upsert to Supabase
         await getSupabase().from("opportunity_cache").upsert({
