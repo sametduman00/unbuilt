@@ -97,7 +97,7 @@ async function fetchAppStore(): Promise<AppSnapshot[]> {
 /* ── Fetch Google Play (top 50 free) ──────────────────────────── */
 
 async function fetchPlayStore(): Promise<AppSnapshot[]> {
-  // Try real Play Store HTML scrape first
+  // Try real Play Store HTML scrape
   try {
     const res = await fetch(
       "https://play.google.com/store/apps/collection/topselling_free?hl=en&gl=US",
@@ -107,73 +107,48 @@ async function fetchPlayStore(): Promise<AppSnapshot[]> {
       },
     );
     console.log(`[PULSE] Play Store HTML: HTTP ${res.status}`);
-    if (res.ok) {
-      const html = await res.text();
-      console.log(`[PULSE] Play Store HTML length: ${html.length} chars`);
-
-      const snapshots: AppSnapshot[] = [];
-      const appMatches = html.matchAll(/\/store\/apps\/details\?id=([a-zA-Z0-9._]+)/g);
-      const seen = new Set<string>();
-      let rank = 0;
-
-      for (const match of appMatches) {
-        const appId = match[1];
-        if (seen.has(appId)) continue;
-        seen.add(appId);
-        rank++;
-        if (rank > 50) break;
-
-        const idx = match.index ?? 0;
-        const context = html.slice(idx, idx + 500);
-        const nameMatch = context.match(/aria-label="([^"]+)"/);
-        const appName = nameMatch?.[1] ?? appId.split(".").pop() ?? appId;
-
-        snapshots.push({
-          source: "playstore",
-          category: "Overall",
-          app_id: appId,
-          app_name: appName,
-          rank,
-          review_count: null,
-          rating: null,
-          url: `https://play.google.com/store/apps/details?id=${appId}`,
-        });
-      }
-
-      console.log(`[PULSE] Play Store HTML parsed: ${snapshots.length} apps`);
-      if (snapshots.length >= 10) return snapshots;
-      console.log(`[PULSE] Play Store HTML too few results, falling back to iTunes proxy`);
-    }
-  } catch (err) {
-    console.log(`[PULSE] Play Store HTML scrape failed:`, err instanceof Error ? err.message : err);
-  }
-
-  // Fallback: use iTunes top-free as a "cross-platform" proxy labeled as Play Store
-  try {
-    const res = await fetch(
-      "https://rss.applemarketingtools.com/api/v2/us/apps/top-free/50/apps.json",
-      { signal: AbortSignal.timeout(15000) },
-    );
     if (!res.ok) {
-      console.log(`[PULSE] Play Store fallback (iTunes proxy): HTTP ${res.status}`);
+      console.log(`[PULSE] Play Store: HTTP error, skipping (no fake data)`);
       return [];
     }
-    const data = await res.json();
-    const apps = data?.feed?.results ?? [];
-    console.log(`[PULSE] Play Store fallback (iTunes proxy): ${apps.length} apps`);
 
-    return apps.map((app: any, i: number): AppSnapshot => ({
-      source: "playstore",
-      category: "Overall",
-      app_id: app.id ?? app.name ?? `unknown-${i}`,
-      app_name: app.name ?? "Unknown",
-      rank: i + 1,
-      review_count: null,
-      rating: null,
-      url: app.url ?? "",
-    }));
+    const html = await res.text();
+    console.log(`[PULSE] Play Store HTML length: ${html.length} chars`);
+
+    const snapshots: AppSnapshot[] = [];
+    const appMatches = html.matchAll(/\/store\/apps\/details\?id=([a-zA-Z0-9._]+)/g);
+    const seen = new Set<string>();
+    let rank = 0;
+
+    for (const match of appMatches) {
+      const appId = match[1];
+      if (seen.has(appId)) continue;
+      seen.add(appId);
+      rank++;
+      if (rank > 50) break;
+
+      const idx = match.index ?? 0;
+      const context = html.slice(idx, idx + 500);
+      const nameMatch = context.match(/aria-label="([^"]+)"/);
+      const appName = nameMatch?.[1] ?? appId.split(".").pop() ?? appId;
+
+      snapshots.push({
+        source: "playstore",
+        category: "Overall",
+        app_id: appId,
+        app_name: appName,
+        rank,
+        review_count: null,
+        rating: null,
+        url: `https://play.google.com/store/apps/details?id=${appId}`,
+      });
+    }
+
+    console.log(`[PULSE] Play Store parsed: ${snapshots.length} apps`);
+    return snapshots;
   } catch (err) {
-    console.log(`[PULSE] Play Store fallback also failed:`, err instanceof Error ? err.message : err);
+    console.log(`[PULSE] Play Store scrape failed:`, err instanceof Error ? err.message : err);
+    console.log(`[PULSE] Play Store: returning empty (no fake data)`);
     return [];
   }
 }
@@ -411,7 +386,8 @@ function detectMovements(
 
 function generateFallbackSignals(snapshots: AppSnapshot[]): Signal[] {
   const now = new Date().toISOString();
-  // Show top 5 from each unique source+category combo, but limit total
+
+  // Group by source:category
   const byCat = new Map<string, AppSnapshot[]>();
   for (const snap of snapshots) {
     const key = `${snap.source}:${snap.category}`;
@@ -420,36 +396,31 @@ function generateFallbackSignals(snapshots: AppSnapshot[]): Signal[] {
   }
 
   const signals: Signal[] = [];
-  // Pick top 3 from 6 most popular categories
-  const priorityCats = ["Overall", "Games", "Productivity", "Social Networking", "Finance", "Health & Fitness"];
-  const usedCats = new Set<string>();
 
-  for (const catName of priorityCats) {
-    for (const [key, apps] of byCat) {
-      if (!key.endsWith(`:${catName}`)) continue;
-      if (usedCats.has(key)) continue;
-      usedCats.add(key);
-      const source = key.split(":")[0];
-      const sourceLabel = source === "appstore" ? "App Store" : "Google Play";
+  // Show top 5 from EVERY category (20 categories × 5 = 100 signals)
+  for (const [key, apps] of byCat) {
+    const source = key.split(":")[0];
+    const catName = key.split(":").slice(1).join(":");
+    const sourceLabel = source === "appstore" ? "App Store" : "Google Play";
 
-      for (const app of apps.slice(0, 3)) {
-        signals.push({
-          source,
-          sourceLabel,
-          emoji: "\u{1F4F1}",
-          title: app.app_name,
-          subtitle: `#${app.rank} in ${catName}`,
-          signal: `Currently #${app.rank} in ${sourceLabel} ${catName}`,
-          url: app.url,
-          timestamp: now,
-          movementType: "trending",
-          newRank: app.rank,
-        });
-      }
+    for (const app of apps.slice(0, 5)) {
+      signals.push({
+        source,
+        sourceLabel,
+        emoji: "\u{1F4F1}",
+        title: app.app_name,
+        subtitle: `#${app.rank} in ${catName}`,
+        signal: `Currently #${app.rank} in ${sourceLabel} ${catName}`,
+        url: app.url,
+        timestamp: now,
+        movementType: "trending",
+        newRank: app.rank,
+      });
     }
   }
 
-  return signals.slice(0, 30);
+  console.log(`[PULSE] Fallback signals: ${signals.length} from ${byCat.size} categories`);
+  return signals;
 }
 
 /* ── Cleanup old snapshots (keep 48 hours) ────────────────────── */
@@ -496,14 +467,18 @@ export async function GET() {
       if (previous && previous.length > 0) {
         hasMovementData = true;
         movementSignals = detectMovements(allSnapshots, previous);
+        console.log(`[PULSE] Movement detection: ${movementSignals.length} signals from ${previous.length} previous snapshots`);
+      } else {
+        console.log(`[PULSE] No previous snapshots found — first run, using fallback`);
       }
-    } catch {
-      // Continue without movement data
+    } catch (err) {
+      console.log(`[PULSE] Supabase load error:`, err instanceof Error ? err.message : err);
     }
 
-    // 4. If no movement data, generate fallback signals
+    // 4. If no movement data, generate fallback signals (top 5 from each category)
     if (!hasMovementData) {
       movementSignals = generateFallbackSignals(allSnapshots);
+      console.log(`[PULSE] Using fallback: ${movementSignals.length} trending signals`);
     }
 
     // 5. Combine: rank jumps first, then new entries, then top movers, then PH, then fallback

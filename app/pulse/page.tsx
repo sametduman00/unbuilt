@@ -34,7 +34,6 @@ const MOVEMENT_COLORS: Record<string, string> = {
 const FILTERS = [
   { key: "all", label: "All" },
   { key: "appstore", label: "App Store" },
-  { key: "playstore", label: "Google Play" },
   { key: "producthunt", label: "Product Hunt" },
 ];
 
