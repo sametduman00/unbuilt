@@ -2942,17 +2942,6 @@ export default function Home() {
             >
               How it works
             </Link>
-            <Link href="/pulse" style={{
-              fontSize: "0.875rem", fontWeight: 400, color: "var(--clr-text-3)",
-              textDecoration: "none",
-              transition: "color 0.15s",
-              marginLeft: "1rem",
-            }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text)"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text-3)"; }}
-            >
-              Pulse
-            </Link>
             </div>
 
             <div style={{ flex: 1 }} />
@@ -3229,15 +3218,6 @@ export default function Home() {
                 maxWidth: "54rem",
                 margin: "0 auto",
               }}>
-                {TOOLS.filter((t) => t.id !== "competitor-radar" && t.id !== "trend-feed").map((tool) => (
-                  <ToolSelectorCard
-                    key={tool.id}
-                    tool={tool}
-                    isSelected={selectedTool === tool.id}
-                    isOtherSelected={selectedTool !== null && selectedTool !== tool.id}
-                    onClick={() => handleSelectTool(tool.id)}
-                  />
-                ))}
                 {/* Pulse card — links to /pulse instead of triggering tool flow */}
                 <Link href="/pulse" style={{ textDecoration: "none", color: "inherit" }}>
                   <div
@@ -3277,6 +3257,15 @@ export default function Home() {
                     </div>
                   </div>
                 </Link>
+                {TOOLS.filter((t) => t.id !== "competitor-radar" && t.id !== "trend-feed").map((tool) => (
+                  <ToolSelectorCard
+                    key={tool.id}
+                    tool={tool}
+                    isSelected={selectedTool === tool.id}
+                    isOtherSelected={selectedTool !== null && selectedTool !== tool.id}
+                    onClick={() => handleSelectTool(tool.id)}
+                  />
+                ))}
               </div>
 
               {/* ── Input section ── */}
