@@ -3229,7 +3229,7 @@ export default function Home() {
                 maxWidth: "54rem",
                 margin: "0 auto",
               }}>
-                {TOOLS.filter((t) => t.id !== "competitor-radar").map((tool) => (
+                {TOOLS.filter((t) => t.id !== "competitor-radar" && t.id !== "trend-feed").map((tool) => (
                   <ToolSelectorCard
                     key={tool.id}
                     tool={tool}
@@ -3238,6 +3238,45 @@ export default function Home() {
                     onClick={() => handleSelectTool(tool.id)}
                   />
                 ))}
+                {/* Pulse card — links to /pulse instead of triggering tool flow */}
+                <Link href="/pulse" style={{ textDecoration: "none", color: "inherit" }}>
+                  <div
+                    style={{
+                      position: "relative",
+                      borderRadius: 12,
+                      padding: "1rem",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 0,
+                      overflow: "hidden",
+                      cursor: "pointer",
+                      transition: "all 0.18s ease",
+                      background: "var(--clr-surface)",
+                      border: "1px solid var(--clr-border-2)",
+                      opacity: selectedTool ? 0.35 : 1,
+                      userSelect: "none",
+                      height: "100%",
+                    }}
+                    onMouseEnter={(e) => { if (!selectedTool) { e.currentTarget.style.border = "1px solid var(--clr-text-6)"; e.currentTarget.style.transform = "translateY(-1px)"; } }}
+                    onMouseLeave={(e) => { e.currentTarget.style.border = "1px solid var(--clr-border-2)"; e.currentTarget.style.transform = "none"; }}
+                  >
+                    <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--clr-accent)", marginBottom: "0.5rem" }}>
+                      WHAT&apos;S RISING
+                    </div>
+                    <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(var(--clr-accent-rgb),0.08)", border: "1px solid rgba(var(--clr-accent-rgb),0.15)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "0.5rem", flexShrink: 0 }}>
+                      {TOOL_ICONS["trend-feed"]("var(--clr-accent)")}
+                    </div>
+                    <div style={{ fontSize: "1rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--clr-text)", marginBottom: "0.25rem" }}>Pulse</div>
+                    <div style={{ fontSize: "0.75rem", fontWeight: 500, color: "var(--clr-text-3)", marginBottom: "0.5rem" }}>Live market signals</div>
+                    <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)", lineHeight: 1.6, flex: 1, margin: 0 }}>
+                      See what apps are exploding right now. Real-time signals from App Store, Google Play, Product Hunt and GitHub — before Twitter even notices.
+                    </p>
+                    <div style={{ marginTop: "0.875rem", display: "flex", alignItems: "center", gap: 5, fontSize: "0.8125rem", fontWeight: 600, color: "var(--clr-accent)" }}>
+                      Explore Pulse
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9.5 4.5M13 8l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </div>
+                  </div>
+                </Link>
               </div>
 
               {/* ── Input section ── */}
