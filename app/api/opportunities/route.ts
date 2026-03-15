@@ -1,14 +1,15 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import { getCategoryBySlug } from "@/app/lib/categories";
+import { redis } from "@/app/lib/redis";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 /* ── Data fetchers ───────────────────────────────────────────── */
 
 const SEARCH_MAP: Record<string, string> = {
-  "Streaming & Video": "video streaming app",
-  "Recipe & Cooking": "recipe cooking app",
+  "Streaming & Video": "video streaming watch app",
+  "Recipe & Cooking": "recipe cooking food app",
   "Community Building": "community app social",
   "Note Taking": "notes productivity app",
   "Meditation & Mindfulness": "meditation mindfulness app",
@@ -16,11 +17,13 @@ const SEARCH_MAP: Record<string, string> = {
   "Casual Games": "casual games mobile",
   "Puzzle Games": "puzzle games mobile",
   "Strategy Games": "strategy games mobile",
+  "Secondhand & Resale": "thrift resale buy sell app",
 };
 
 async function fetchITunes(query: string) {
   try {
     const searchTerm = SEARCH_MAP[query] || query + " app";
+    console.log("SEARCH TERM:", searchTerm);
     const url = `https://itunes.apple.com/search?term=${encodeURIComponent(searchTerm)}&entity=software&limit=50`;
     console.log("iTunes search URL:", url);
     const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
@@ -113,7 +116,7 @@ ${JSON.stringify(newReleases.map(a => ({ n: a.name, r: a.rating, rc: a.reviewCou
 ${JSON.stringify(phPosts.slice(0, 3).map(p => ({ n: p.name, t: p.tagline, v: p.votesCount })), null, 1)}
 
 Types (use ONLY if data qualifies):
-- MOMENTUM: New app (180 days) with 1,000+ reviews. Evidence MUST show 1,000+ reviews. Never cite apps with fewer than 1,000 reviews for Momentum type.
+- MOMENTUM: New app (180 days) with 1,000+ reviews. For Momentum type: ONLY cite apps with reviewCount >= 1000. If no app has 1000+ reviews, do NOT generate a Momentum opportunity.
 - MONOPOLY: #1 app has 5x+ reviews vs #2. Evidence: both counts + ratio.
 - GAP: <5 apps OR all <10K reviews OR avg rating <4.0. Evidence: app names + review counts.
 - COMPLAINT: Apps rated 3.0-4.2 ONLY. Never cite apps rated 4.3+. Evidence: app name + exact rating + review count.
@@ -206,11 +209,12 @@ function validateOpportunities(opportunities: any[]): any[] {
       }
       // Momentum: reject if no review count >= 1000 in evidence or typeReason
       const evidenceAndReason = `${opp.evidence || ""} ${opp.typeReason || ""}`;
-      const reviewNums = evidenceAndReason
+      const allNums = evidenceAndReason
         .match(/\b(\d{1,3}(?:,\d{3})*|\d+)\b/g)
-        ?.map((n: string) => parseInt(n.replace(/,/g, ""), 10))
-        ?.filter((n: number) => n >= 1000 && n < 2000000) || [];
-      console.log("MOMENTUM review check:", opp.title, "nums >= 1000:", reviewNums);
+        ?.map((n: string) => parseInt(n.replace(/,/g, ""), 10)) || [];
+      // Exclude year-like numbers (2000-2099) and ratings (1-5 range with decimal context)
+      const reviewNums = allNums.filter((n: number) => n >= 1000 && n < 2000000 && !(n >= 2000 && n <= 2099));
+      console.log("MOMENTUM CHECK - all numbers found:", allNums, "review candidates (>=1000, not years):", reviewNums, "max:", reviewNums.length > 0 ? Math.max(...reviewNums) : 0);
       if (reviewNums.length === 0) {
         console.log("FILTERED Momentum (no review count >= 1000):", opp.title);
         return false;
@@ -287,17 +291,22 @@ function deduplicateOpportunities(opportunities: any[]): any[] {
 
   const result: any[] = [];
   for (const opp of opportunities) {
+    // Never deduplicate Monopoly cards — they are unique insights
+    if (opp.type === "Monopoly") {
+      result.push(opp);
+      continue;
+    }
     const keywords = getKeywords(opp.title);
     const isDuplicate = result.some((existing) => {
+      if (existing.type === "Monopoly") return false; // don't match against Monopoly
       const existingKeywords = getKeywords(existing.title);
-      // Check if they share 2+ significant keywords
       const shared = keywords.filter((kw: string) => existingKeywords.includes(kw));
       return shared.length >= 2;
     });
 
     if (isDuplicate) {
-      // Find the existing duplicate and keep whichever has stronger evidence
       const dupeIdx = result.findIndex((existing) => {
+        if (existing.type === "Monopoly") return false;
         const existingKeywords = getKeywords(existing.title);
         const shared = keywords.filter((kw: string) => existingKeywords.includes(kw));
         return shared.length >= 2;
@@ -336,14 +345,14 @@ function deduplicateGapsByAppNames(opportunities: any[]): any[] {
       if (existingNames.length === 0 || names.length === 0) return false;
       const smaller = Math.min(names.length, existingNames.length);
       const overlap = names.filter((n) => existingNames.includes(n)).length;
-      return overlap / smaller > 0.6;
+      return overlap / smaller > 0.8;
     });
     if (isDupe) {
       // Keep whichever cites more app names
       const dupeIdx = kept.findIndex((existing) => {
         const existingNames = extractAppNames(existing.evidence || "");
         const overlap = names.filter((n) => existingNames.includes(n)).length;
-        return overlap / Math.min(names.length, existingNames.length) > 0.6;
+        return overlap / Math.min(names.length, existingNames.length) > 0.8;
       });
       if (dupeIdx !== -1 && names.length > extractAppNames(kept[dupeIdx].evidence || "").length) {
         console.log("GAP DEDUP replaced:", kept[dupeIdx].title, "→", gap.title);
@@ -411,6 +420,21 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    // Check Redis cache first
+    const cacheKey = `opps:v1:${categorySlug}:${subcategory}`;
+    try {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        const data = typeof cached === "string" ? JSON.parse(cached) : cached;
+        console.log("CACHE HIT:", cacheKey, data.opportunities?.length, "opportunities");
+        return NextResponse.json(data, { headers: { "X-Cache": "HIT" } });
+      }
+    } catch (cacheErr) {
+      console.log("Cache read error (falling back to live):", cacheErr instanceof Error ? cacheErr.message : cacheErr);
+    }
+
+    console.log("CACHE MISS:", cacheKey, "— generating live");
+
     // Fetch data in parallel
     const [rawItunesApps, phPosts] = await Promise.all([
       fetchITunes(subcategory),
@@ -454,7 +478,7 @@ export async function GET(req: NextRequest) {
         : opp.evidence,
     }));
 
-    return NextResponse.json({
+    const responseData = {
       category: categorySlug,
       subcategory,
       opportunities: cleanedOpportunities,
@@ -464,7 +488,17 @@ export async function GET(req: NextRequest) {
         newReleases: newReleases.length,
         phPosts: phPosts.length,
       },
-    });
+    };
+
+    // Save to cache for next time (TTL 2 hours)
+    try {
+      await redis.set(cacheKey, JSON.stringify(responseData), { ex: 7200 });
+      console.log("CACHE SET:", cacheKey);
+    } catch (cacheErr) {
+      console.log("Cache write error:", cacheErr instanceof Error ? cacheErr.message : cacheErr);
+    }
+
+    return NextResponse.json(responseData, { headers: { "X-Cache": "MISS" } });
   } catch (err) {
     console.error("opportunities error:", err);
     return NextResponse.json(
