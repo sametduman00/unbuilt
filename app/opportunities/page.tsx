@@ -514,7 +514,7 @@ export default function OpportunitiesPage() {
             {/* Empty state */}
             {!loading && !error && opportunities.length === 0 && (
               <div style={{ textAlign: "center", padding: "3rem 0", color: "var(--clr-text-3)" }}>
-                No opportunities found. Try a different subcategory.
+                No clear opportunities found in this subcategory. Try another one.
               </div>
             )}
           </>

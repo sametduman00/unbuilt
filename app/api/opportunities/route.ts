@@ -6,9 +6,16 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 /* ── Data fetchers ───────────────────────────────────────────── */
 
+const SEARCH_MAP: Record<string, string> = {
+  "Recipe & Cooking": "cooking recipes app",
+  "Community Building": "community social app",
+  "Streaming & Video": "video streaming app",
+  "Note Taking": "notes productivity app",
+};
+
 async function fetchITunes(query: string) {
   try {
-    const searchTerm = query + " app";
+    const searchTerm = SEARCH_MAP[query] || query + " app";
     const url = `https://itunes.apple.com/search?term=${encodeURIComponent(searchTerm)}&entity=software&limit=50`;
     console.log("iTunes search URL:", url);
     const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
@@ -101,7 +108,7 @@ ${JSON.stringify(newReleases.map(a => ({ n: a.name, r: a.rating, rc: a.reviewCou
 ${JSON.stringify(phPosts.slice(0, 3).map(p => ({ n: p.name, t: p.tagline, v: p.votesCount })), null, 1)}
 
 Types (use ONLY if data qualifies):
-- MOMENTUM: New app (180 days) with 500+ reviews, no prior dominant player. Evidence: release date + review count.
+- MOMENTUM: New app (180 days) with 1000+ reviews, no prior dominant player. Evidence: release date + review count.
 - MONOPOLY: #1 app has 5x+ reviews vs #2. Evidence: both counts + ratio.
 - GAP: <5 apps OR all <10K reviews OR avg rating <4.0. Evidence: app names + review counts.
 - COMPLAINT: Apps rated 3.0-4.2 ONLY. Never cite apps rated 4.3+. Evidence: app name + exact rating + review count.
@@ -137,13 +144,11 @@ HARD RULES:
     raw = JSON.parse(cleaned);
   } catch (err) {
     console.log("Claude analysis timeout/error:", err instanceof Error ? err.message : err);
-    // Return fallback opportunities from raw data
-    console.log("FALLBACK: generating opportunities from raw iTunes data");
-    return generateFallbackOpportunities(subcategory, itunesApps, newReleases);
+    return [];
   }
 
-  // Validate and filter
-  let filtered = validateOpportunities(raw);
+  // Validate and filter — return only what passes
+  const filtered = validateOpportunities(raw);
   console.log("VALIDATION:", {
     rawCount: raw.length,
     passedCount: filtered.length,
@@ -151,137 +156,7 @@ HARD RULES:
     passedTypes: filtered.map((o: any) => o.type),
   });
 
-  // Guarantee minimum 3: backfill with relaxed rules, retry if needed
-  console.log("POST-VALIDATION:", filtered.length, "opportunities passed");
-  let attempt = 0;
-  while (filtered.length < 3 && attempt < 2) {
-    attempt++;
-    const needed = Math.max(3 - filtered.length, 3);
-    console.log(`BACKFILL attempt ${attempt}: ${filtered.length} passed, requesting ${needed} more`);
-    try {
-      const backfill = await backfillOpportunities(
-        subcategory, categoryLabel, itunesApps, newReleases, phPosts,
-        filtered, needed,
-      );
-      // Progressively relax: attempt 1 = year cutoff 2020, attempt 2 = no year check
-      const validBackfill = validateOpportunities(backfill, { momentumYearCutoff: attempt === 1 ? 2020 : 2015 });
-      console.log(`BACKFILL attempt ${attempt} result:`, { requested: needed, received: backfill.length, passedValidation: validBackfill.length });
-      filtered = [...filtered, ...validBackfill];
-    } catch (err) {
-      console.log(`BACKFILL attempt ${attempt} failed:`, err instanceof Error ? err.message : err);
-      break;
-    }
-  }
-
-  // Last resort: generate from raw data if still under 3
-  if (filtered.length < 3) {
-    console.log("LAST RESORT: generating from raw data, have", filtered.length);
-    const fallback = generateFallbackOpportunities(subcategory, itunesApps, newReleases);
-    // Only add enough to reach 3
-    filtered = [...filtered, ...fallback.slice(0, 3 - filtered.length)];
-  }
-
-  console.log("FINAL COUNT:", filtered.length, "opportunities returned");
   return filtered;
-}
-
-/* ── Fallback: generate opportunities from raw data without Claude ── */
-
-
-function generateFallbackOpportunities(subcategory: string, apps: any[], newReleases: any[]): any[] {
-  const results: any[] = [];
-  const sorted = [...apps].sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
-
-  console.log("FALLBACK called:", {
-    subcategory,
-    itunesAppsCount: apps.length,
-    newReleasesCount: newReleases.length,
-    topApps: sorted.slice(0, 3).map(a => ({ name: a.name, rating: a.rating, reviews: a.reviewCount })),
-  });
-
-  // Gap opportunity if few apps
-  if (apps.length < 10 && sorted.length > 0) {
-    const topApp = sorted[0];
-    results.push({
-      title: `Build a better ${subcategory} app`,
-      type: "Gap",
-      difficulty: "Medium",
-      description: `Only ${apps.length} apps found in App Store for "${subcategory}". This suggests an underserved market with room for a focused solution.`,
-      evidence: `Only ${apps.length} apps exist (top: ${topApp.name} with ${(topApp.reviewCount ?? 0).toLocaleString()} reviews) — limited competition indicates an underserved market.`,
-      typeReason: "Fewer than 10 apps indicates a gap in the market.",
-      targetAudience: `Users searching for ${subcategory} solutions on mobile.`,
-      difficultyReason: "Medium — requires domain knowledge but limited competition.",
-      searchQuery: subcategory,
-    });
-  }
-
-  // Complaint if low ratings exist
-  const lowRated = sorted.filter(a => a.rating > 0 && a.rating < 4.3);
-  if (lowRated.length >= 1) {
-    const lowApp = lowRated[0];
-    results.push({
-      title: `Better alternative to ${lowApp.name}`,
-      type: "Complaint",
-      difficulty: "Medium",
-      description: `${lowApp.name} has a mediocre rating despite significant usage, suggesting user dissatisfaction. A well-designed alternative could capture frustrated users.`,
-      evidence: `${lowApp.name} has only ${lowApp.rating.toFixed(1)} rating with ${(lowApp.reviewCount ?? 0).toLocaleString()} reviews — users are dissatisfied and looking for alternatives.`,
-      typeReason: `${lowApp.name} is rated below 4.3, indicating common user complaints.`,
-      targetAudience: `Users frustrated with ${lowApp.name} who want a better ${subcategory} experience.`,
-      difficultyReason: "Medium — must address known pain points evident in low ratings.",
-      searchQuery: subcategory,
-    });
-  }
-
-  // Momentum if new releases exist
-  if (newReleases.length > 0) {
-    const nr = newReleases[0];
-    results.push({
-      title: `Compete with rising ${nr.name}`,
-      type: "Momentum",
-      difficulty: "Hard",
-      description: `${nr.name} launched recently and is gaining traction, validating market demand for new ${subcategory} solutions.`,
-      evidence: `${nr.name} launched ${nr.daysAgo} days ago and already has ${(nr.reviewCount ?? 0).toLocaleString()} reviews with a ${nr.rating} rating — proving active demand in this space.`,
-      typeReason: `${nr.name} is a recent release gaining rapid traction, indicating momentum.`,
-      targetAudience: `Users exploring new ${subcategory} apps alongside ${nr.name}.`,
-      difficultyReason: "Hard — competing with active new entrants in a growing space.",
-      searchQuery: subcategory,
-    });
-  }
-
-  // GUARANTEED: Gap opportunity for larger markets
-  if (sorted.length > 0) {
-    const topApp = sorted[0];
-    results.push({
-      title: `Niche ${subcategory} for underserved users`,
-      type: "Gap",
-      difficulty: "Medium",
-      description: `While ${apps.length} apps exist, most target the same broad audience. A focused app for a specific user segment could differentiate.`,
-      evidence: `${apps.length} apps exist (top: ${topApp.name} with ${(topApp.reviewCount ?? 0).toLocaleString()} reviews) but all target the same broad audience — specific niches remain underserved.`,
-      typeReason: "Existing apps serve a broad audience without specializing in underserved niches.",
-      targetAudience: `A specific underserved segment within the ${subcategory} space.`,
-      difficultyReason: "Medium — requires identifying and deeply understanding a niche audience.",
-      searchQuery: subcategory,
-    });
-  }
-
-  // GUARANTEED: Premium/power user Gap opportunity
-  if (sorted.length > 0) {
-    const topApp = sorted[0];
-    results.push({
-      title: `Premium ${subcategory} for Power Users`,
-      type: "Gap",
-      difficulty: "Hard",
-      description: `Existing ${subcategory} apps target casual users. There is no professional-grade app with advanced features for power users and experts.`,
-      evidence: `${topApp.name} leads with ${(topApp.reviewCount ?? 0).toLocaleString()} reviews but targets casual users — no app serves advanced/power users with professional-grade features in this space.`,
-      typeReason: "Top apps cater to general users, leaving power users and professionals without a dedicated solution.",
-      targetAudience: `Professional and power users who need advanced ${subcategory} features beyond what ${topApp.name} offers.`,
-      difficultyReason: "Hard — requires deep domain expertise and advanced feature development.",
-      searchQuery: `${subcategory} professional`,
-    });
-  }
-
-  console.log("FALLBACK generated:", results.length, "opportunities, types:", results.map(r => r.type));
-  return results;
 }
 
 /* ── Post-generation validation ──────────────────────────────── */
@@ -289,16 +164,19 @@ function generateFallbackOpportunities(subcategory: string, apps: any[], newRele
 
 const VALID_TYPES = ["Momentum", "Monopoly", "Gap", "Complaint", "Price", "Bundle"];
 
-interface ValidationOptions {
-  momentumYearCutoff?: number; // default 2022: reject years <= this value
-}
-
-function validateOpportunities(opportunities: any[], opts: ValidationOptions = {}): any[] {
-  const yearCutoff = opts.momentumYearCutoff ?? 2022;
+function validateOpportunities(opportunities: any[]): any[] {
+  const yearCutoff = 2022;
   const filtered = opportunities.filter((opp) => {
     // Type whitelist: reject unknown types
     if (!VALID_TYPES.includes(opp.type)) {
       console.log("FILTERED invalid type:", opp.type, opp.title);
+      return false;
+    }
+
+    // Reject evidence citing negligible review counts
+    const evidenceLow = (opp.evidence || "").toLowerCase();
+    if (/\b[0-3]\s+reviews?\b/.test(evidenceLow)) {
+      console.log("FILTERED (low review count in evidence):", opp.title);
       return false;
     }
 
@@ -315,10 +193,10 @@ function validateOpportunities(opportunities: any[], opts: ValidationOptions = {
       const reviewNums = evidenceAndReason
         .match(/\b(\d{1,3}(?:,\d{3})*|\d+)\b/g)
         ?.map((n: string) => parseInt(n.replace(/,/g, ""), 10))
-        ?.filter((n: number) => n >= 500 && n < 2000000) || [];
-      console.log("MOMENTUM review check:", opp.title, "nums >= 500:", reviewNums);
+        ?.filter((n: number) => n >= 1000 && n < 2000000) || [];
+      console.log("MOMENTUM review check:", opp.title, "nums >= 1000:", reviewNums);
       if (reviewNums.length === 0) {
-        console.log("FILTERED Momentum (no review count >= 500):", opp.title);
+        console.log("FILTERED Momentum (no review count >= 1000):", opp.title);
         return false;
       }
     }
@@ -442,55 +320,6 @@ function enforceMaxPerType(opportunities: any[], max: number): any[] {
   return result;
 }
 
-/* ── Backfill if too many filtered out ───────────────────────── */
-
-async function backfillOpportunities(
-  subcategory: string,
-  categoryLabel: string,
-  itunesApps: any[],
-  newReleases: any[],
-  phPosts: any[],
-  existing: any[],
-  needed: number,
-) {
-  const existingTypes = existing.map((o) => o.type).join(", ");
-  const prompt = `Need ${needed} MORE opportunities for "${subcategory}" in "${categoryLabel}". Types already covered: ${existingTypes || "none"}. Use DIFFERENT types.
-
-## Apps
-${JSON.stringify(itunesApps.slice(0, 5).map(a => ({ n: a.name, r: a.rating, rc: a.reviewCount, p: a.price })), null, 1)}
-
-## New Releases
-${JSON.stringify(newReleases.map(a => ({ n: a.name, r: a.rating, rc: a.reviewCount, d: a.daysAgo })), null, 1)}
-
-## PH
-${JSON.stringify(phPosts.slice(0, 3).map(p => ({ n: p.name, t: p.tagline, v: p.votesCount })), null, 1)}
-
-Types: Momentum(500+ reviews, new app) | Monopoly(5x ratio) | Gap(<5 apps or <10K reviews) | Complaint(rating 3.0-4.2 ONLY) | Price(all paid) | Bundle(3+ apps named)
-Complaint ratings must be ≤ 4.20. Cite specific app names and numbers.
-NEVER mention AI model names (Claude, GPT, Gemini, LLaMA etc.) in any field. Focus only on App Store data.
-
-Return ONLY JSON array:
-[{"title","type","difficulty","description","evidence","typeReason","targetAudience","difficultyReason","searchQuery"}]`;
-
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 1000,
-    messages: [{ role: "user", content: prompt }],
-  });
-
-  const text = response.content
-    .filter((b): b is Anthropic.TextBlock => b.type === "text")
-    .map((b) => b.text)
-    .join("");
-  const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-  try {
-    return JSON.parse(cleaned);
-  } catch {
-    console.error("Backfill parse error:", cleaned.slice(0, 200));
-    return [];
-  }
-}
-
 /* ── GET handler ──────────────────────────────────────────────── */
 
 export async function GET(req: NextRequest) {
@@ -555,11 +384,11 @@ export async function GET(req: NextRequest) {
       phPosts,
     );
 
-    // Truncate evidence at last complete sentence if over 200 chars
+    // Truncate evidence at last complete sentence if over 300 chars
     const cleanedOpportunities = opportunities.map((opp: any) => ({
       ...opp,
-      evidence: opp.evidence?.length > 200
-        ? (opp.evidence.slice(0, 200).replace(/[^.]*$/, '').trim() || opp.evidence.slice(0, 200).trim())
+      evidence: opp.evidence?.length > 300
+        ? (opp.evidence.slice(0, 300).replace(/[^.]*$/, '').trim() || opp.evidence.slice(0, 300).trim())
         : opp.evidence,
     }));
 
