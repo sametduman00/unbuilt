@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import { CATEGORIES } from "@/app/lib/categories";
-import { redis } from "@/app/lib/redis";
+import { getSupabase } from "@/app/lib/supabase";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -252,7 +252,6 @@ export async function POST(req: NextRequest) {
   for (const category of CATEGORIES) {
     for (const subcategory of category.subcategories) {
       total++;
-      const key = `opps:v1:${category.slug}:${subcategory}`;
 
       try {
         console.log(`[GENERATE] ${category.label} > ${subcategory}...`);
@@ -270,36 +269,25 @@ export async function POST(req: NextRequest) {
         });
         const finalApps = relevant.length >= 3 ? relevant : apps;
 
-        // Stats
-        const totalApps = finalApps.length;
-        const avgRating = totalApps > 0
-          ? Math.round((finalApps.reduce((s: number, a: any) => s + (a.rating || 0), 0) / totalApps) * 10) / 10
-          : 0;
-        const newReleases = finalApps.filter((a: any) => {
-          if (!a.releaseDate) return false;
-          return Date.now() - new Date(a.releaseDate).getTime() <= 180 * 24 * 60 * 60 * 1000;
-        }).length;
-
         // Analyze
         const opportunities = await analyzeWithHaiku(subcategory, category.label, finalApps);
 
-        // Cache
-        const cacheData = {
+        // Upsert to Supabase
+        await getSupabase().from("opportunity_cache").upsert({
           category: category.slug,
           subcategory,
           opportunities,
-          stats: { totalApps, avgRating, newReleases, phPosts: 0 },
-          generatedAt: new Date().toISOString(),
-        };
-        await redis.set(key, JSON.stringify(cacheData), { ex: 7200 });
+          generated_at: new Date().toISOString(),
+          app_count: finalApps.length,
+        });
 
         successful++;
         totalOpportunities += opportunities.length;
         details.push({ category: category.slug, subcategory, count: opportunities.length });
-        console.log(`[GENERATE] ✓ ${subcategory}: ${opportunities.length} opportunities cached`);
+        console.log(`[GENERATE] ${category.slug}/${subcategory}: ${opportunities.length} opps`);
 
-        // Small delay to avoid rate limiting
-        await new Promise((r) => setTimeout(r, 500));
+        // Small delay to avoid iTunes rate limiting
+        await new Promise((r) => setTimeout(r, 300));
       } catch (err) {
         failed++;
         details.push({ category: category.slug, subcategory, count: 0 });

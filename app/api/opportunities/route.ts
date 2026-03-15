@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import { getCategoryBySlug } from "@/app/lib/categories";
-import { redis } from "@/app/lib/redis";
+import { getSupabase } from "@/app/lib/supabase";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -420,20 +420,28 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Check Redis cache first
-    const cacheKey = `opps:v1:${categorySlug}:${subcategory}`;
+    // Check Supabase cache first
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
     try {
-      const cached = await redis.get(cacheKey);
-      if (cached) {
-        const data = typeof cached === "string" ? JSON.parse(cached) : cached;
-        console.log("CACHE HIT:", cacheKey, data.opportunities?.length, "opportunities");
-        return NextResponse.json(data, { headers: { "X-Cache": "HIT" } });
+      const { data: cached } = await getSupabase()
+        .from("opportunity_cache")
+        .select("opportunities, generated_at")
+        .eq("category", categorySlug)
+        .eq("subcategory", subcategory)
+        .single();
+
+      if (cached && cached.generated_at && cached.generated_at > twoHoursAgo) {
+        console.log("CACHE HIT:", categorySlug, subcategory, cached.opportunities?.length, "opportunities");
+        return NextResponse.json(
+          { category: categorySlug, subcategory, opportunities: cached.opportunities },
+          { headers: { "X-Cache": "HIT" } },
+        );
       }
     } catch (cacheErr) {
       console.log("Cache read error (falling back to live):", cacheErr instanceof Error ? cacheErr.message : cacheErr);
     }
 
-    console.log("CACHE MISS:", cacheKey, "— generating live");
+    console.log("CACHE MISS:", categorySlug, subcategory, "— generating live");
 
     // Fetch data in parallel
     const [rawItunesApps, phPosts] = await Promise.all([
@@ -478,27 +486,24 @@ export async function GET(req: NextRequest) {
         : opp.evidence,
     }));
 
-    const responseData = {
-      category: categorySlug,
-      subcategory,
-      opportunities: cleanedOpportunities,
-      stats: {
-        totalApps,
-        avgRating,
-        newReleases: newReleases.length,
-        phPosts: phPosts.length,
-      },
-    };
-
-    // Save to cache for next time (TTL 2 hours)
+    // Cache to Supabase
     try {
-      await redis.set(cacheKey, JSON.stringify(responseData), { ex: 7200 });
-      console.log("CACHE SET:", cacheKey);
+      await getSupabase().from("opportunity_cache").upsert({
+        category: categorySlug,
+        subcategory,
+        opportunities: cleanedOpportunities,
+        generated_at: new Date().toISOString(),
+        app_count: totalApps,
+      });
+      console.log("CACHE SET:", categorySlug, subcategory);
     } catch (cacheErr) {
       console.log("Cache write error:", cacheErr instanceof Error ? cacheErr.message : cacheErr);
     }
 
-    return NextResponse.json(responseData, { headers: { "X-Cache": "MISS" } });
+    return NextResponse.json(
+      { category: categorySlug, subcategory, opportunities: cleanedOpportunities, stats: { totalApps, avgRating, newReleases: newReleases.length, phPosts: phPosts.length } },
+      { headers: { "X-Cache": "MISS" } },
+    );
   } catch (err) {
     console.error("opportunities error:", err);
     return NextResponse.json(

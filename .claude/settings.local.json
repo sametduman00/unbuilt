@@ -7,7 +7,9 @@
       "Bash(python3 -c \"\nlines = open\\('/Users/mac/unbuilt/unbuilt/app/page.tsx'\\).readlines\\(\\)\nfor i in range\\(1340, len\\(lines\\)\\):\n    if 'Data Source Badges' in lines[i]:\n        print\\(f'Found DataSourceBadges at line {i+1}'\\)\n        break\n\")",
       "Bash(git add:*)",
       "Bash(git push:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }
