@@ -29,11 +29,19 @@ const MOVEMENT_COLORS: Record<string, string> = {
   new_entry: "#3b82f6",
   review_spike: "#f59e0b",
   top_mover: "#8b5cf6",
+  weekly_mover: "#06b6d4",
+  monthly_mover: "#ec4899",
 };
+
+const HOURLY_TYPES = new Set(["rank_jump", "new_entry", "review_spike", "top_mover"]);
+const WEEKLY_TYPES = new Set(["weekly_mover"]);
+const MONTHLY_TYPES = new Set(["monthly_mover"]);
 
 const FILTERS = [
   { key: "all", label: "All" },
-  { key: "appstore", label: "App Store" },
+  { key: "hourly", label: "Hourly" },
+  { key: "weekly", label: "Weekly" },
+  { key: "monthly", label: "Monthly" },
   { key: "producthunt", label: "Product Hunt" },
 ];
 
@@ -76,7 +84,15 @@ export default function PulsePage() {
     return () => clearInterval(interval);
   }, [fetchSignals]);
 
-  const filtered = filter === "all" ? signals : signals.filter((s) => s.source === filter);
+  const filtered = filter === "all"
+    ? signals
+    : filter === "hourly"
+      ? signals.filter((s) => HOURLY_TYPES.has(s.movementType ?? "") || s.movementType === "trending")
+      : filter === "weekly"
+        ? signals.filter((s) => WEEKLY_TYPES.has(s.movementType ?? ""))
+        : filter === "monthly"
+          ? signals.filter((s) => MONTHLY_TYPES.has(s.movementType ?? ""))
+          : signals.filter((s) => s.source === filter);
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--clr-bg)", color: "var(--clr-text)" }}>
@@ -264,6 +280,8 @@ export default function PulsePage() {
                           {s.movementType === "new_entry" && "NEW ENTRY"}
                           {s.movementType === "review_spike" && "REVIEW SPIKE"}
                           {s.movementType === "top_mover" && "TOP MOVER"}
+                          {s.movementType === "weekly_mover" && "WEEKLY"}
+                          {s.movementType === "monthly_mover" && "MONTHLY"}
                         </span>
                       )}
                       <span style={{ fontSize: "0.6875rem", color: "var(--clr-text-4)" }}>

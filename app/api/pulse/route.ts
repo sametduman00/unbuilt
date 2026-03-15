@@ -6,6 +6,7 @@ import {
   fetchPlayStore,
   saveSnapshots,
   loadPreviousSnapshots,
+  loadSnapshotsAt,
   cleanupOldSnapshots,
 } from "./shared";
 
@@ -189,6 +190,56 @@ function detectMovements(
   return signals;
 }
 
+/* ── Detect weekly/monthly movements ──────────────────────────── */
+
+function detectLongTermMovements(
+  current: AppSnapshot[],
+  previous: AppSnapshot[],
+  period: "weekly" | "monthly",
+): Signal[] {
+  const signals: Signal[] = [];
+  const now = new Date().toISOString();
+  const emoji = period === "weekly" ? "\u{1F4C5}" : "\u{1F4C6}";
+  const movementType = period === "weekly" ? "weekly_mover" : "monthly_mover";
+  const label = period === "weekly" ? "Last week" : "Last month";
+
+  const prevMap = new Map<string, AppSnapshot>();
+  for (const snap of previous) {
+    prevMap.set(`${snap.source}:${snap.category}:${snap.app_id}`, snap);
+  }
+
+  for (const snap of current) {
+    const key = `${snap.source}:${snap.category}:${snap.app_id}`;
+    const prev = prevMap.get(key);
+    if (!prev) continue;
+
+    const rankDiff = prev.rank - snap.rank;
+    if (Math.abs(rankDiff) < 5) continue;
+
+    const sourceLabel = snap.source === "appstore" ? "App Store" : "Google Play";
+    const direction = rankDiff > 0 ? "\u25B2" : "\u25BC";
+
+    signals.push({
+      source: snap.source,
+      sourceLabel,
+      emoji,
+      title: snap.app_name,
+      subtitle: `${label} #${prev.rank} \u2192 now #${snap.rank} in ${snap.category}`,
+      signal: `${label} #${prev.rank} \u2192 now #${snap.rank} in ${snap.category} (${direction}${Math.abs(rankDiff)})`,
+      url: snap.url,
+      timestamp: now,
+      movementType,
+      prevRank: prev.rank,
+      newRank: snap.rank,
+      rankChange: rankDiff,
+    });
+  }
+
+  // Sort by absolute rank change, take top 10
+  signals.sort((a, b) => Math.abs(b.rankChange ?? 0) - Math.abs(a.rankChange ?? 0));
+  return signals.slice(0, 10);
+}
+
 /* ── Generate fallback signals (first run, no history) ────────── */
 
 function generateFallbackSignals(snapshots: AppSnapshot[]): Signal[] {
@@ -252,44 +303,73 @@ export async function GET() {
       console.log("[PULSE] Supabase save threw:", err instanceof Error ? err.message : err);
     }
 
-    // 3. Load previous snapshots and detect movements
-    let movementSignals: Signal[] = [];
+    // 3. Load previous snapshots and detect movements (all 3 windows in parallel)
+    let hourlySignals: Signal[] = [];
+    let weeklySignals: Signal[] = [];
+    let monthlySignals: Signal[] = [];
     let hasMovementData = false;
 
     try {
-      const previous = await loadPreviousSnapshots();
-      if (previous && previous.length > 0) {
+      const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+      const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+
+      const [hourlySnaps, weeklySnaps, monthlySnaps] = await Promise.all([
+        loadPreviousSnapshots(),
+        loadSnapshotsAt(SEVEN_DAYS, 30 * 60 * 1000),
+        loadSnapshotsAt(THIRTY_DAYS, 30 * 60 * 1000),
+      ]);
+
+      if (hourlySnaps && hourlySnaps.length > 0) {
         hasMovementData = true;
-        movementSignals = detectMovements(allSnapshots, previous);
-        console.log(`[PULSE] Movement detection: ${movementSignals.length} signals from ${previous.length} previous snapshots`);
+        hourlySignals = detectMovements(allSnapshots, hourlySnaps);
+        console.log(`[PULSE] Hourly: ${hourlySignals.length} signals from ${hourlySnaps.length} snapshots`);
       } else {
-        console.log(`[PULSE] No previous snapshots found — using fallback`);
+        console.log(`[PULSE] No hourly snapshots — using fallback`);
+      }
+
+      if (weeklySnaps && weeklySnaps.length > 0) {
+        weeklySignals = detectLongTermMovements(allSnapshots, weeklySnaps, "weekly");
+        console.log(`[PULSE] Weekly: ${weeklySignals.length} signals from ${weeklySnaps.length} snapshots`);
+      }
+
+      if (monthlySnaps && monthlySnaps.length > 0) {
+        monthlySignals = detectLongTermMovements(allSnapshots, monthlySnaps, "monthly");
+        console.log(`[PULSE] Monthly: ${monthlySignals.length} signals from ${monthlySnaps.length} snapshots`);
       }
     } catch (err) {
       console.log(`[PULSE] Supabase load error:`, err instanceof Error ? err.message : err);
     }
 
-    // 4. If no movement data, generate fallback signals
+    // 4. If no hourly movement data, generate fallback signals
+    let fallbackSignals: Signal[] = [];
     if (!hasMovementData) {
-      movementSignals = generateFallbackSignals(allSnapshots);
-      console.log(`[PULSE] Using fallback: ${movementSignals.length} trending signals`);
+      fallbackSignals = generateFallbackSignals(allSnapshots);
+      console.log(`[PULSE] Using fallback: ${fallbackSignals.length} trending signals`);
     }
 
-    // 5. Sort: rank jumps first, then new entries, then top movers, then PH, then fallback
+    // 5. Combine all signals and sort by priority
     const movementOrder: Record<string, number> = {
       rank_jump: 0,
       new_entry: 1,
       review_spike: 2,
       top_mover: 3,
-      ph_trending: 4,
-      trending: 5,
+      weekly_mover: 4,
+      monthly_mover: 5,
+      ph_trending: 6,
+      trending: 7,
     };
 
-    const signals = [...movementSignals, ...phSignals].sort((a, b) => {
-      const orderA = movementOrder[a.movementType ?? "trending"] ?? 5;
-      const orderB = movementOrder[b.movementType ?? "trending"] ?? 5;
+    const signals = [
+      ...hourlySignals,
+      ...weeklySignals,
+      ...monthlySignals,
+      ...phSignals,
+      ...fallbackSignals,
+    ].sort((a, b) => {
+      const orderA = movementOrder[a.movementType ?? "trending"] ?? 7;
+      const orderB = movementOrder[b.movementType ?? "trending"] ?? 7;
       if (orderA !== orderB) return orderA - orderB;
-      return (b.rankChange ?? 0) - (a.rankChange ?? 0);
+      return Math.abs(b.rankChange ?? 0) - Math.abs(a.rankChange ?? 0);
     });
 
     // 6. Cleanup old snapshots (non-blocking)

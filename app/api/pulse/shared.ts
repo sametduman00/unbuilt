@@ -184,12 +184,13 @@ export async function saveSnapshots(snapshots: AppSnapshot[]): Promise<{ ok: boo
   return { ok: true, count: totalInserted };
 }
 
-/* ── Cleanup old snapshots (keep 48 hours) ────────────────────── */
+/* ── Cleanup old snapshots (keep 6 months) ────────────────────── */
 
 export async function cleanupOldSnapshots(): Promise<number> {
   try {
     const sb = getSupabase();
-    const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+    const sixMonthsMs = 6 * 30 * 24 * 60 * 60 * 1000;
+    const cutoff = new Date(Date.now() - sixMonthsMs).toISOString();
     const { count } = await sb
       .from("pulse_snapshots")
       .delete({ count: "exact" })
@@ -202,34 +203,48 @@ export async function cleanupOldSnapshots(): Promise<number> {
   }
 }
 
-/* ── Load previous snapshots from Supabase ────────────────────── */
+/* ── Load snapshots from Supabase at a given time offset ──────── */
 
-export async function loadPreviousSnapshots(): Promise<AppSnapshot[] | null> {
+/**
+ * Load snapshots from approximately `offsetMs` ago.
+ * Searches within ±windowMs of the target time for the closest batch.
+ */
+export async function loadSnapshotsAt(
+  offsetMs: number,
+  windowMs: number = 30 * 60 * 1000,
+): Promise<AppSnapshot[] | null> {
   const sb = getSupabase();
-  const oneHourAgo = new Date(Date.now() - 90 * 60 * 1000).toISOString();
-  const twoHoursAgo = new Date(Date.now() - 150 * 60 * 1000).toISOString();
+  const targetTime = new Date(Date.now() - offsetMs);
+  const searchStart = new Date(targetTime.getTime() - windowMs).toISOString();
+  const searchEnd = new Date(targetTime.getTime() + windowMs).toISOString();
 
+  // Find the closest snapshot batch to our target time
   const { data: latestRow } = await sb
     .from("pulse_snapshots")
     .select("captured_at")
-    .lt("captured_at", oneHourAgo)
-    .gte("captured_at", twoHoursAgo)
+    .gte("captured_at", searchStart)
+    .lte("captured_at", searchEnd)
     .order("captured_at", { ascending: false })
     .limit(1);
 
   if (!latestRow || latestRow.length === 0) return null;
 
-  const targetTime = latestRow[0].captured_at;
-  const windowStart = new Date(new Date(targetTime).getTime() - 5 * 60 * 1000).toISOString();
-  const windowEnd = new Date(new Date(targetTime).getTime() + 5 * 60 * 1000).toISOString();
+  const batchTime = latestRow[0].captured_at;
+  const batchStart = new Date(new Date(batchTime).getTime() - 5 * 60 * 1000).toISOString();
+  const batchEnd = new Date(new Date(batchTime).getTime() + 5 * 60 * 1000).toISOString();
 
   const { data } = await sb
     .from("pulse_snapshots")
     .select("*")
-    .gte("captured_at", windowStart)
-    .lte("captured_at", windowEnd)
+    .gte("captured_at", batchStart)
+    .lte("captured_at", batchEnd)
     .order("rank", { ascending: true });
 
   if (!data || data.length === 0) return null;
   return data as AppSnapshot[];
+}
+
+/** Convenience: load snapshots from ~1 hour ago */
+export async function loadPreviousSnapshots(): Promise<AppSnapshot[] | null> {
+  return loadSnapshotsAt(60 * 60 * 1000, 30 * 60 * 1000);
 }
