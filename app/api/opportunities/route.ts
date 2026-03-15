@@ -7,10 +7,15 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 /* ── Data fetchers ───────────────────────────────────────────── */
 
 const SEARCH_MAP: Record<string, string> = {
-  "Recipe & Cooking": "cooking recipes app",
-  "Community Building": "community social app",
   "Streaming & Video": "video streaming app",
+  "Recipe & Cooking": "recipe cooking app",
+  "Community Building": "community app social",
   "Note Taking": "notes productivity app",
+  "Meditation & Mindfulness": "meditation mindfulness app",
+  "Action Games": "action games mobile",
+  "Casual Games": "casual games mobile",
+  "Puzzle Games": "puzzle games mobile",
+  "Strategy Games": "strategy games mobile",
 };
 
 async function fetchITunes(query: string) {
@@ -108,7 +113,7 @@ ${JSON.stringify(newReleases.map(a => ({ n: a.name, r: a.rating, rc: a.reviewCou
 ${JSON.stringify(phPosts.slice(0, 3).map(p => ({ n: p.name, t: p.tagline, v: p.votesCount })), null, 1)}
 
 Types (use ONLY if data qualifies):
-- MOMENTUM: New app (180 days) with 1000+ reviews, no prior dominant player. Evidence: release date + review count.
+- MOMENTUM: New app (180 days) with 1,000+ reviews. Evidence MUST show 1,000+ reviews. Never cite apps with fewer than 1,000 reviews for Momentum type.
 - MONOPOLY: #1 app has 5x+ reviews vs #2. Evidence: both counts + ratio.
 - GAP: <5 apps OR all <10K reviews OR avg rating <4.0. Evidence: app names + review counts.
 - COMPLAINT: Apps rated 3.0-4.2 ONLY. Never cite apps rated 4.3+. Evidence: app name + exact rating + review count.
@@ -145,6 +150,17 @@ HARD RULES:
   } catch (err) {
     console.log("Claude analysis timeout/error:", err instanceof Error ? err.message : err);
     return [];
+  }
+
+  // Clean raw data format leaking into evidence
+  for (const opp of raw) {
+    if (opp.evidence) {
+      opp.evidence = opp.evidence
+        .replace(/\[\s*\]/g, "none")
+        .replace(/New Releases \(180 days\):\s*/gi, "")
+        .replace(/\s{2,}/g, " ")
+        .trim();
+    }
   }
 
   // Validate and filter — return only what passes
@@ -188,7 +204,7 @@ function validateOpportunities(opportunities: any[]): any[] {
         console.log("FILTERED Momentum (year <=", yearCutoff, "):", opp.title, "years found:", years);
         return false;
       }
-      // Momentum: reject if no review count >= 500 in evidence or typeReason
+      // Momentum: reject if no review count >= 1000 in evidence or typeReason
       const evidenceAndReason = `${opp.evidence || ""} ${opp.typeReason || ""}`;
       const reviewNums = evidenceAndReason
         .match(/\b(\d{1,3}(?:,\d{3})*|\d+)\b/g)
@@ -247,8 +263,11 @@ function validateOpportunities(opportunities: any[]): any[] {
   // Deduplication: remove near-duplicate titles, keep stronger evidence
   const deduped = deduplicateOpportunities(filtered);
 
+  // Gap deduplication: remove Gap pairs with >60% overlapping app names
+  const gapDeduped = deduplicateGapsByAppNames(deduped);
+
   // Max 2 per type: keep the 2 with strongest evidence for each type
-  return enforceMaxPerType(deduped, 2);
+  return enforceMaxPerType(gapDeduped, 2);
 }
 
 function evidenceStrength(opp: any): number {
@@ -294,6 +313,49 @@ function deduplicateOpportunities(opportunities: any[]): any[] {
     }
   }
   return result;
+}
+
+function extractAppNames(evidence: string): string[] {
+  // Match capitalized words/phrases that look like app names (2+ chars, starts with uppercase)
+  const matches = evidence.match(/\b[A-Z][a-zA-Z0-9]+(?:\s+[A-Z][a-zA-Z0-9]+)*/g) || [];
+  // Filter out common non-app words
+  const skip = new Set(["The", "This", "That", "With", "From", "Only", "App", "Apps", "Store", "Free", "All", "New", "No", "Evidence", "Score", "Rating"]);
+  return matches.filter((m) => !skip.has(m)).map((m) => m.toLowerCase());
+}
+
+function deduplicateGapsByAppNames(opportunities: any[]): any[] {
+  const gaps = opportunities.filter((o) => o.type === "Gap");
+  const nonGaps = opportunities.filter((o) => o.type !== "Gap");
+  if (gaps.length <= 1) return opportunities;
+
+  const kept: any[] = [];
+  for (const gap of gaps) {
+    const names = extractAppNames(gap.evidence || "");
+    const isDupe = kept.some((existing) => {
+      const existingNames = extractAppNames(existing.evidence || "");
+      if (existingNames.length === 0 || names.length === 0) return false;
+      const smaller = Math.min(names.length, existingNames.length);
+      const overlap = names.filter((n) => existingNames.includes(n)).length;
+      return overlap / smaller > 0.6;
+    });
+    if (isDupe) {
+      // Keep whichever cites more app names
+      const dupeIdx = kept.findIndex((existing) => {
+        const existingNames = extractAppNames(existing.evidence || "");
+        const overlap = names.filter((n) => existingNames.includes(n)).length;
+        return overlap / Math.min(names.length, existingNames.length) > 0.6;
+      });
+      if (dupeIdx !== -1 && names.length > extractAppNames(kept[dupeIdx].evidence || "").length) {
+        console.log("GAP DEDUP replaced:", kept[dupeIdx].title, "→", gap.title);
+        kept[dupeIdx] = gap;
+      } else {
+        console.log("GAP DEDUP removed:", gap.title);
+      }
+    } else {
+      kept.push(gap);
+    }
+  }
+  return [...nonGaps, ...kept];
 }
 
 function enforceMaxPerType(opportunities: any[], max: number): any[] {
