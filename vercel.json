@@ -1,15 +1,6 @@
 {
-  "crons": [
-    {
-      "path": "/api/generate-opportunities",
-      "schedule": "0 2 * * *"
-    }
-  ],
   "functions": {
-    "app/api/generate-opportunities/route.ts": {
-      "maxDuration": 300
-    },
-    "app/api/opportunities/route.ts": {
+    "app/api/pulse/route.ts": {
       "maxDuration": 60
     }
   }
