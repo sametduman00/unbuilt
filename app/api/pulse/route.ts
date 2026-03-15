@@ -29,54 +29,67 @@ interface AppSnapshot {
   url: string;
 }
 
-/* ── App Store Categories ─────────────────────────────────────── */
+/* ── iTunes Genre IDs ─────────────────────────────────────────── */
 
-const APP_STORE_CATEGORIES = [
-  { id: "apps", name: "Overall" },
-  { id: "games", name: "Games" },
-  { id: "business", name: "Business" },
-  { id: "education", name: "Education" },
-  { id: "entertainment", name: "Entertainment" },
-  { id: "finance", name: "Finance" },
-  { id: "food-drink", name: "Food & Drink" },
-  { id: "health-fitness", name: "Health & Fitness" },
-  { id: "lifestyle", name: "Lifestyle" },
-  { id: "medical", name: "Medical" },
-  { id: "music", name: "Music" },
-  { id: "navigation", name: "Navigation" },
-  { id: "news", name: "News" },
-  { id: "photo-video", name: "Photo & Video" },
-  { id: "productivity", name: "Productivity" },
-  { id: "shopping", name: "Shopping" },
-  { id: "social-networking", name: "Social Networking" },
-  { id: "sports", name: "Sports" },
-  { id: "travel", name: "Travel" },
-  { id: "utilities", name: "Utilities" },
+const ITUNES_CATEGORIES: { name: string; genreId: number }[] = [
+  { name: "Overall", genreId: 36 },
+  { name: "Games", genreId: 6014 },
+  { name: "Business", genreId: 6000 },
+  { name: "Education", genreId: 6017 },
+  { name: "Entertainment", genreId: 6016 },
+  { name: "Finance", genreId: 6015 },
+  { name: "Food & Drink", genreId: 6023 },
+  { name: "Health & Fitness", genreId: 6013 },
+  { name: "Lifestyle", genreId: 6012 },
+  { name: "Music", genreId: 6011 },
+  { name: "News", genreId: 6009 },
+  { name: "Photo & Video", genreId: 6008 },
+  { name: "Productivity", genreId: 6007 },
+  { name: "Shopping", genreId: 6024 },
+  { name: "Social Networking", genreId: 6005 },
+  { name: "Sports", genreId: 6004 },
+  { name: "Travel", genreId: 6003 },
+  { name: "Utilities", genreId: 6002 },
 ];
 
-/* ── Fetch App Store (all categories in parallel) ─────────────── */
+const FETCH_HEADERS = { "User-Agent": "Mozilla/5.0" };
 
-async function fetchAppStoreCategory(cat: { id: string; name: string }): Promise<AppSnapshot[]> {
+/* ── Fetch App Store via iTunes RSS feed ──────────────────────── */
+
+async function fetchAppStoreCategory(cat: { name: string; genreId: number }): Promise<AppSnapshot[]> {
   try {
-    const url = `https://rss.applemarketingtools.com/api/v2/us/apps/top-free/100/${cat.id}.json`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    // iTunes RSS feed — works reliably from Vercel
+    const url = `https://itunes.apple.com/us/rss/topfreeapplications/limit=50/genre=${cat.genreId}/json`;
+    const res = await fetch(url, {
+      headers: FETCH_HEADERS,
+      signal: AbortSignal.timeout(10000),
+    });
     if (!res.ok) {
       console.log(`APPSTORE ${cat.name}: HTTP ${res.status}`);
       return [];
     }
     const data = await res.json();
-    const apps = data?.feed?.results ?? [];
-    console.log(`APPSTORE ${cat.name}: ${apps.length} apps`);
-    return apps.map((app: any, i: number): AppSnapshot => ({
-      source: "appstore",
-      category: cat.name,
-      app_id: app.id ?? app.name ?? `unknown-${i}`,
-      app_name: app.name ?? "Unknown",
-      rank: i + 1,
-      review_count: null,
-      rating: null,
-      url: app.url ?? "",
-    }));
+    const entries = data?.feed?.entry ?? [];
+    console.log(`APPSTORE ${cat.name}: ${entries.length} apps`);
+
+    return entries.map((entry: any, i: number): AppSnapshot => {
+      const appId = entry.id?.attributes?.["im:id"] ?? entry["im:name"]?.label ?? `unknown-${i}`;
+      const appName = entry["im:name"]?.label ?? "Unknown";
+      const rating = parseFloat(entry["im:rating"]?.label) || null;
+      const reviewCount = parseInt(entry["im:ratingCount"]?.label) || null;
+      const appUrl = entry.link?.attributes?.href ?? "";
+
+      return {
+        source: "appstore",
+        category: cat.name,
+        app_id: String(appId),
+        app_name: appName,
+        rank: i + 1,
+        review_count: reviewCount,
+        rating,
+        url: appUrl,
+      };
+    });
   } catch (err) {
     console.log(`APPSTORE ${cat.name}: ERROR ${err instanceof Error ? err.message : err}`);
     return [];
@@ -84,11 +97,11 @@ async function fetchAppStoreCategory(cat: { id: string; name: string }): Promise
 }
 
 async function fetchAppStore(): Promise<AppSnapshot[]> {
-  console.log("APP STORE: fetching", APP_STORE_CATEGORIES.length, "categories");
+  console.log("APP STORE: fetching", ITUNES_CATEGORIES.length, "categories via iTunes RSS");
 
-  // Fetch in 2 batches of 10 to avoid overwhelming the API
-  const batch1 = APP_STORE_CATEGORIES.slice(0, 10);
-  const batch2 = APP_STORE_CATEGORIES.slice(10);
+  // Fetch in 2 sequential batches of 9 to avoid overwhelming iTunes
+  const batch1 = ITUNES_CATEGORIES.slice(0, 9);
+  const batch2 = ITUNES_CATEGORIES.slice(9);
 
   const results1 = await Promise.all(batch1.map(fetchAppStoreCategory));
   const results2 = await Promise.all(batch2.map(fetchAppStoreCategory));
@@ -96,7 +109,7 @@ async function fetchAppStore(): Promise<AppSnapshot[]> {
 
   const flat = results.flat();
   const successCount = results.filter((r) => r.length > 0).length;
-  console.log("APP STORE: got", flat.length, "total apps from", successCount, "categories");
+  console.log("APP STORE: got", flat.length, "total apps from", successCount, "/", ITUNES_CATEGORIES.length, "categories");
   return flat;
 }
 
@@ -108,7 +121,7 @@ async function fetchPlayStore(): Promise<AppSnapshot[]> {
     const res = await fetch(
       "https://play.google.com/store/apps/collection/topselling_free?hl=en&gl=US",
       {
-        headers: { "Accept": "text/html", "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36" },
+        headers: { "Accept": "text/html", ...FETCH_HEADERS },
         signal: AbortSignal.timeout(15000),
       },
     );
@@ -170,7 +183,7 @@ async function fetchProductHunt(): Promise<Signal[]> {
     const query = `query($postedAfter: DateTime!) { posts(order: VOTES, first: 20, postedAfter: $postedAfter) { edges { node { name tagline votesCount url createdAt } } } }`;
     const res = await fetch("https://api.producthunt.com/v2/api/graphql", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...FETCH_HEADERS },
       body: JSON.stringify({ query, variables: { postedAfter: sevenDaysAgo } }),
       signal: AbortSignal.timeout(10000),
     });
@@ -419,13 +432,15 @@ function generateFallbackSignals(snapshots: AppSnapshot[]): Signal[] {
     const sourceLabel = source === "appstore" ? "App Store" : "Google Play";
 
     for (const app of apps.slice(0, 3)) {
+      const ratingStr = app.rating ? ` \u2022 ${app.rating.toFixed(1)}\u2605` : "";
+      const reviewStr = app.review_count ? ` \u2022 ${app.review_count.toLocaleString()} reviews` : "";
       signals.push({
         source,
         sourceLabel,
         emoji: "\u{1F4F1}",
         title: app.app_name,
-        subtitle: `#${app.rank} in ${catName}`,
-        signal: `Currently #${app.rank} in ${sourceLabel} ${catName}`,
+        subtitle: `#${app.rank} in ${catName}${ratingStr}`,
+        signal: `Currently #${app.rank} in ${sourceLabel} ${catName}${ratingStr}${reviewStr}`,
         url: app.url,
         timestamp: now,
         movementType: "trending",

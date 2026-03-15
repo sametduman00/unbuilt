@@ -10,7 +10,8 @@
       "Bash(npm run:*)",
       "Bash(npm install:*)",
       "Bash(npm uninstall:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(curl -s \"https://itunes.apple.com/us/rss/topfreeapplications/limit=5/genre=6007/json\" | python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); entries=d.get\\('feed',{}\\).get\\('entry',[]\\); print\\(f'{len\\(entries\\)} apps'\\); [print\\(f'  {e[\\\\\"im:name\\\\\"][\\\\\"label\\\\\"]}'\\) for e in entries[:3]]\" 2>&1)"
     ]
   }
 }
