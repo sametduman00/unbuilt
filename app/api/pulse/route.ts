@@ -57,16 +57,20 @@ const APP_STORE_CATEGORIES = [
 /* ── Fetch App Store (all categories in parallel) ─────────────── */
 
 async function fetchAppStore(): Promise<AppSnapshot[]> {
+  console.log(`[PULSE] Fetching App Store — ${APP_STORE_CATEGORIES.length} categories`);
+
   const results = await Promise.all(
     APP_STORE_CATEGORIES.map(async (cat) => {
       try {
-        const res = await fetch(
-          `https://rss.applemarketingtools.com/api/v2/us/apps/top-free/100/${cat.id}.json`,
-          { signal: AbortSignal.timeout(15000) },
-        );
-        if (!res.ok) return [];
+        const url = `https://rss.applemarketingtools.com/api/v2/us/apps/top-free/100/${cat.id}.json`;
+        const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
+        if (!res.ok) {
+          console.log(`[PULSE] App Store ${cat.name} (${cat.id}): HTTP ${res.status}`);
+          return [];
+        }
         const data = await res.json();
         const apps = data?.feed?.results ?? [];
+        console.log(`[PULSE] App Store ${cat.name} (${cat.id}): ${apps.length} apps`);
         return apps.map((app: any, i: number): AppSnapshot => ({
           source: "appstore",
           category: cat.name,
@@ -77,94 +81,100 @@ async function fetchAppStore(): Promise<AppSnapshot[]> {
           rating: null,
           url: app.url ?? "",
         }));
-      } catch {
+      } catch (err) {
+        console.log(`[PULSE] App Store ${cat.name} (${cat.id}): FETCH ERROR`, err instanceof Error ? err.message : err);
         return [];
       }
     }),
   );
-  return results.flat();
+
+  const flat = results.flat();
+  const successCount = results.filter((r) => r.length > 0).length;
+  console.log(`[PULSE] App Store total: ${flat.length} apps from ${successCount}/${APP_STORE_CATEGORIES.length} categories`);
+  return flat;
 }
 
 /* ── Fetch Google Play (top 50 free) ──────────────────────────── */
 
 async function fetchPlayStore(): Promise<AppSnapshot[]> {
+  // Try real Play Store HTML scrape first
   try {
     const res = await fetch(
       "https://play.google.com/store/apps/collection/topselling_free?hl=en&gl=US",
       {
-        headers: { "Accept": "text/html", "User-Agent": "Mozilla/5.0" },
+        headers: { "Accept": "text/html", "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36" },
         signal: AbortSignal.timeout(15000),
       },
     );
-    if (!res.ok) return [];
-    const html = await res.text();
-
-    const snapshots: AppSnapshot[] = [];
-    // Match app entries from the HTML — look for /store/apps/details?id= patterns
-    const appMatches = html.matchAll(/\/store\/apps\/details\?id=([a-zA-Z0-9._]+)/g);
-    const seen = new Set<string>();
-    let rank = 0;
-
-    for (const match of appMatches) {
-      const appId = match[1];
-      if (seen.has(appId)) continue;
-      seen.add(appId);
-      rank++;
-      if (rank > 50) break;
-
-      // Try to extract app name from nearby context
-      const idx = match.index ?? 0;
-      const context = html.slice(idx, idx + 500);
-      const nameMatch = context.match(/aria-label="([^"]+)"/);
-      const appName = nameMatch?.[1] ?? appId.split(".").pop() ?? appId;
-
-      snapshots.push({
-        source: "playstore",
-        category: "Overall",
-        app_id: appId,
-        app_name: appName,
-        rank,
-        review_count: null,
-        rating: null,
-        url: `https://play.google.com/store/apps/details?id=${appId}`,
-      });
-    }
-
-    return snapshots;
-  } catch {
-    // Fallback: try androidrank
-    try {
-      const res = await fetch(
-        "https://androidrank.org/listapps?start=1&num=50&gl=us&hl=en&chart=topselling_free",
-        { signal: AbortSignal.timeout(15000) },
-      );
-      if (!res.ok) return [];
+    console.log(`[PULSE] Play Store HTML: HTTP ${res.status}`);
+    if (res.ok) {
       const html = await res.text();
+      console.log(`[PULSE] Play Store HTML length: ${html.length} chars`);
+
       const snapshots: AppSnapshot[] = [];
-      const rows = html.split("<tr").slice(1);
+      const appMatches = html.matchAll(/\/store\/apps\/details\?id=([a-zA-Z0-9._]+)/g);
+      const seen = new Set<string>();
       let rank = 0;
 
-      for (const row of rows) {
-        if (rank >= 50) break;
-        const linkMatch = row.match(/href="\/app\/([^"]+)"/);
-        const nameMatch = row.match(/<a[^>]*>([^<]+)<\/a>/);
-        if (!linkMatch) continue;
+      for (const match of appMatches) {
+        const appId = match[1];
+        if (seen.has(appId)) continue;
+        seen.add(appId);
         rank++;
+        if (rank > 50) break;
+
+        const idx = match.index ?? 0;
+        const context = html.slice(idx, idx + 500);
+        const nameMatch = context.match(/aria-label="([^"]+)"/);
+        const appName = nameMatch?.[1] ?? appId.split(".").pop() ?? appId;
+
         snapshots.push({
           source: "playstore",
           category: "Overall",
-          app_id: linkMatch[1],
-          app_name: nameMatch?.[1]?.trim() ?? linkMatch[1],
+          app_id: appId,
+          app_name: appName,
           rank,
           review_count: null,
           rating: null,
-          url: `https://play.google.com/store/apps/details?id=${linkMatch[1]}`,
+          url: `https://play.google.com/store/apps/details?id=${appId}`,
         });
       }
-      return snapshots;
-    } catch {
+
+      console.log(`[PULSE] Play Store HTML parsed: ${snapshots.length} apps`);
+      if (snapshots.length >= 10) return snapshots;
+      console.log(`[PULSE] Play Store HTML too few results, falling back to iTunes proxy`);
+    }
+  } catch (err) {
+    console.log(`[PULSE] Play Store HTML scrape failed:`, err instanceof Error ? err.message : err);
+  }
+
+  // Fallback: use iTunes top-free as a "cross-platform" proxy labeled as Play Store
+  try {
+    const res = await fetch(
+      "https://rss.applemarketingtools.com/api/v2/us/apps/top-free/50/apps.json",
+      { signal: AbortSignal.timeout(15000) },
+    );
+    if (!res.ok) {
+      console.log(`[PULSE] Play Store fallback (iTunes proxy): HTTP ${res.status}`);
       return [];
     }
+    const data = await res.json();
+    const apps = data?.feed?.results ?? [];
+    console.log(`[PULSE] Play Store fallback (iTunes proxy): ${apps.length} apps`);
+
+    return apps.map((app: any, i: number): AppSnapshot => ({
+      source: "playstore",
+      category: "Overall",
+      app_id: app.id ?? app.name ?? `unknown-${i}`,
+      app_name: app.name ?? "Unknown",
+      rank: i + 1,
+      review_count: null,
+      rating: null,
+      url: app.url ?? "",
+    }));
+  } catch (err) {
+    console.log(`[PULSE] Play Store fallback also failed:`, err instanceof Error ? err.message : err);
+    return [];
   }
 }
 
@@ -175,16 +185,19 @@ async function fetchProductHunt(): Promise<Signal[]> {
   if (!token) return [];
 
   try {
-    const query = `query { posts(order: VOTES, first: 10) { edges { node { name tagline votesCount url createdAt } } } }`;
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const query = `query($postedAfter: DateTime!) { posts(order: VOTES, first: 20, postedAfter: $postedAfter) { edges { node { name tagline votesCount url createdAt } } } }`;
     const res = await fetch("https://api.producthunt.com/v2/api/graphql", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, variables: { postedAfter: sevenDaysAgo } }),
       signal: AbortSignal.timeout(10000),
     });
     if (!res.ok) return [];
     const data = await res.json();
-    const edges = data?.data?.posts?.edges ?? [];
+    const edges = (data?.data?.posts?.edges ?? [])
+      .sort((a: any, b: any) => (b.node?.votesCount ?? 0) - (a.node?.votesCount ?? 0))
+      .slice(0, 10);
 
     return edges.map((e: any) => {
       const votes = e.node?.votesCount ?? 0;
@@ -461,6 +474,8 @@ export async function GET() {
       fetchPlayStore(),
       fetchProductHunt(),
     ]);
+
+    console.log(`[PULSE] Results — App Store: ${appStoreSnaps.length}, Play Store: ${playStoreSnaps.length}, Product Hunt: ${phSignals.length}`);
 
     const allSnapshots = [...appStoreSnaps, ...playStoreSnaps];
 
