@@ -2942,7 +2942,7 @@ export default function Home() {
             >
               How it works
             </Link>
-            <Link href="/opportunities" style={{
+            <Link href="/pulse" style={{
               fontSize: "0.875rem", fontWeight: 400, color: "var(--clr-text-3)",
               textDecoration: "none",
               transition: "color 0.15s",
@@ -2951,7 +2951,7 @@ export default function Home() {
               onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text)"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--clr-text-3)"; }}
             >
-              Opportunities
+              Pulse
             </Link>
             </div>
 
