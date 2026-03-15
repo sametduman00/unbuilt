@@ -2,6 +2,9 @@
   "functions": {
     "app/api/pulse/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/pulse/snapshot/route.ts": {
+      "maxDuration": 60
     }
   }
 }
