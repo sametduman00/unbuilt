@@ -56,41 +56,47 @@ const APP_STORE_CATEGORIES = [
 
 /* ── Fetch App Store (all categories in parallel) ─────────────── */
 
-async function fetchAppStore(): Promise<AppSnapshot[]> {
-  console.log(`[PULSE] Fetching App Store — ${APP_STORE_CATEGORIES.length} categories`);
+async function fetchAppStoreCategory(cat: { id: string; name: string }): Promise<AppSnapshot[]> {
+  try {
+    const url = `https://rss.applemarketingtools.com/api/v2/us/apps/top-free/100/${cat.id}.json`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) {
+      console.log(`APPSTORE ${cat.name}: HTTP ${res.status}`);
+      return [];
+    }
+    const data = await res.json();
+    const apps = data?.feed?.results ?? [];
+    console.log(`APPSTORE ${cat.name}: ${apps.length} apps`);
+    return apps.map((app: any, i: number): AppSnapshot => ({
+      source: "appstore",
+      category: cat.name,
+      app_id: app.id ?? app.name ?? `unknown-${i}`,
+      app_name: app.name ?? "Unknown",
+      rank: i + 1,
+      review_count: null,
+      rating: null,
+      url: app.url ?? "",
+    }));
+  } catch (err) {
+    console.log(`APPSTORE ${cat.name}: ERROR ${err instanceof Error ? err.message : err}`);
+    return [];
+  }
+}
 
-  const results = await Promise.all(
-    APP_STORE_CATEGORIES.map(async (cat) => {
-      try {
-        const url = `https://rss.applemarketingtools.com/api/v2/us/apps/top-free/100/${cat.id}.json`;
-        const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
-        if (!res.ok) {
-          console.log(`[PULSE] App Store ${cat.name} (${cat.id}): HTTP ${res.status}`);
-          return [];
-        }
-        const data = await res.json();
-        const apps = data?.feed?.results ?? [];
-        console.log(`[PULSE] App Store ${cat.name} (${cat.id}): ${apps.length} apps`);
-        return apps.map((app: any, i: number): AppSnapshot => ({
-          source: "appstore",
-          category: cat.name,
-          app_id: app.id ?? app.name ?? `unknown-${i}`,
-          app_name: app.name ?? "Unknown",
-          rank: i + 1,
-          review_count: null,
-          rating: null,
-          url: app.url ?? "",
-        }));
-      } catch (err) {
-        console.log(`[PULSE] App Store ${cat.name} (${cat.id}): FETCH ERROR`, err instanceof Error ? err.message : err);
-        return [];
-      }
-    }),
-  );
+async function fetchAppStore(): Promise<AppSnapshot[]> {
+  console.log("APP STORE: fetching", APP_STORE_CATEGORIES.length, "categories");
+
+  // Fetch in 2 batches of 10 to avoid overwhelming the API
+  const batch1 = APP_STORE_CATEGORIES.slice(0, 10);
+  const batch2 = APP_STORE_CATEGORIES.slice(10);
+
+  const results1 = await Promise.all(batch1.map(fetchAppStoreCategory));
+  const results2 = await Promise.all(batch2.map(fetchAppStoreCategory));
+  const results = [...results1, ...results2];
 
   const flat = results.flat();
   const successCount = results.filter((r) => r.length > 0).length;
-  console.log(`[PULSE] App Store total: ${flat.length} apps from ${successCount}/${APP_STORE_CATEGORIES.length} categories`);
+  console.log("APP STORE: got", flat.length, "total apps from", successCount, "categories");
   return flat;
 }
 
@@ -200,10 +206,11 @@ async function fetchProductHunt(): Promise<Signal[]> {
 
 /* ── Save snapshots to Supabase ───────────────────────────────── */
 
-async function saveSnapshots(snapshots: AppSnapshot[]): Promise<void> {
-  if (snapshots.length === 0) return;
+async function saveSnapshots(snapshots: AppSnapshot[]): Promise<boolean> {
+  if (snapshots.length === 0) return false;
   const sb = getSupabase();
   const now = new Date().toISOString();
+  let totalInserted = 0;
 
   // Insert in batches of 500
   for (let i = 0; i < snapshots.length; i += 500) {
@@ -218,8 +225,16 @@ async function saveSnapshots(snapshots: AppSnapshot[]): Promise<void> {
       url: s.url,
       captured_at: now,
     }));
-    await sb.from("pulse_snapshots").insert(batch);
+    const { error } = await sb.from("pulse_snapshots").insert(batch);
+    if (error) {
+      console.log("SUPABASE INSERT ERROR:", error.message, "| batch:", i, "-", i + batch.length);
+      return false;
+    }
+    totalInserted += batch.length;
   }
+
+  console.log(`[PULSE] Supabase: inserted ${totalInserted} snapshots`);
+  return true;
 }
 
 /* ── Load previous snapshots from Supabase ────────────────────── */
@@ -397,13 +412,13 @@ function generateFallbackSignals(snapshots: AppSnapshot[]): Signal[] {
 
   const signals: Signal[] = [];
 
-  // Show top 5 from EVERY category (20 categories × 5 = 100 signals)
+  // Show top 3 from EVERY successfully fetched category
   for (const [key, apps] of byCat) {
     const source = key.split(":")[0];
     const catName = key.split(":").slice(1).join(":");
     const sourceLabel = source === "appstore" ? "App Store" : "Google Play";
 
-    for (const app of apps.slice(0, 5)) {
+    for (const app of apps.slice(0, 3)) {
       signals.push({
         source,
         sourceLabel,
@@ -451,11 +466,11 @@ export async function GET() {
     const allSnapshots = [...appStoreSnaps, ...playStoreSnaps];
 
     // 2. Save current snapshots to Supabase
-    let saveError = false;
+    let saveOk = false;
     try {
-      await saveSnapshots(allSnapshots);
-    } catch {
-      saveError = true;
+      saveOk = await saveSnapshots(allSnapshots);
+    } catch (err) {
+      console.log("[PULSE] Supabase save threw:", err instanceof Error ? err.message : err);
     }
 
     // 3. Load previous snapshots and detect movements
