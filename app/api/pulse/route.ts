@@ -359,20 +359,22 @@ function generateFallbackSignals(snapshots: AppSnapshot[]): Signal[] {
 /* ── GET handler ──────────────────────────────────────────────── */
 
 export async function GET() {
+  console.log("PULSE GET: starting");
   try {
-    // 1. Fetch current data from all sources in parallel
-    console.log("[PULSE] Starting parallel fetch: AppStore + PlayStore + PH");
+    console.log("PULSE GET: inside try block");
 
     let appStoreSnaps: AppSnapshot[] = [];
     let playStoreSnaps: AppSnapshot[] = [];
     let phSignals: Signal[] = [];
 
+    console.log("PULSE GET: about to fetch");
     try {
       const results = await Promise.allSettled([
         fetchAppStore(),
         fetchPlayStore(),
         fetchProductHunt(),
       ]);
+      console.log("PULSE GET: fetch done", results.map(r => r.status));
 
       if (results[0].status === "fulfilled") {
         appStoreSnaps = results[0].value;
@@ -390,7 +392,7 @@ export async function GET() {
         console.log("[PULSE] PH fetch REJECTED:", results[2].reason);
       }
     } catch (err) {
-      console.log("[PULSE] Promise.allSettled threw (should not happen):", err);
+      console.log("[PULSE] Promise.allSettled threw:", err instanceof Error ? err.message : err);
     }
 
     console.log(`[PULSE] Fetch results — AppStore: ${appStoreSnaps.length}, PlayStore: ${playStoreSnaps.length}, PH: ${phSignals.length}`);
@@ -492,7 +494,8 @@ export async function GET() {
       },
     });
   } catch (err) {
-    console.error("Pulse error:", err);
+    console.log("PULSE GET ERROR:", err instanceof Error ? err.message : err);
+    console.log("PULSE GET ERROR stack:", err instanceof Error ? err.stack : "no stack");
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Internal server error" },
       { status: 500 },
