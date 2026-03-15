@@ -419,23 +419,32 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  console.log("SUPABASE ENV:", {
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL ? "SET" : "MISSING",
+    key: process.env.SUPABASE_SERVICE_ROLE_KEY ? "SET" : "MISSING",
+  });
+
   try {
     // Check Supabase cache first
     const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
     try {
-      const { data: cached } = await getSupabase()
+      const { data: cached, error: cacheError } = await getSupabase()
         .from("opportunity_cache")
         .select("opportunities, generated_at")
         .eq("category", categorySlug)
         .eq("subcategory", subcategory)
         .single();
 
-      if (cached && cached.generated_at && cached.generated_at > twoHoursAgo) {
+      if (cacheError) {
+        console.log("Supabase cache query error:", cacheError.message, cacheError.code);
+      } else if (cached && cached.generated_at && cached.generated_at > twoHoursAgo) {
         console.log("CACHE HIT:", categorySlug, subcategory, cached.opportunities?.length, "opportunities");
         return NextResponse.json(
           { category: categorySlug, subcategory, opportunities: cached.opportunities },
           { headers: { "X-Cache": "HIT" } },
         );
+      } else {
+        console.log("CACHE STALE:", categorySlug, subcategory, "generated_at:", cached?.generated_at);
       }
     } catch (cacheErr) {
       console.log("Cache read error (falling back to live):", cacheErr instanceof Error ? cacheErr.message : cacheErr);
