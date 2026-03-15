@@ -42,7 +42,10 @@ interface Signal {
 
 async function fetchProductHunt(): Promise<Signal[]> {
   const token = process.env.PRODUCTHUNT_API_KEY;
-  if (!token) return [];
+  if (!token) {
+    console.log("[PULSE] PH: no PRODUCTHUNT_API_KEY set, skipping");
+    return [];
+  }
 
   try {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -69,11 +72,18 @@ async function fetchProductHunt(): Promise<Signal[]> {
       body: JSON.stringify({ query, variables: { postedAfter: sevenDaysAgo } }),
       signal: AbortSignal.timeout(10000),
     });
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.log("[PULSE] PH: HTTP", res.status);
+      return [];
+    }
     const data = await res.json();
+    if (data?.errors) {
+      console.log("[PULSE] PH GraphQL errors:", JSON.stringify(data.errors).slice(0, 200));
+    }
     const edges = (data?.data?.posts?.edges ?? [])
       .sort((a: any, b: any) => (b.node?.votesCount ?? 0) - (a.node?.votesCount ?? 0))
       .slice(0, 30);
+    console.log("[PULSE] PH: got", edges.length, "posts");
 
     const signals: Signal[] = edges.map((e: any) => {
       const n = e.node;
@@ -150,11 +160,10 @@ function detectMovements(
     prevMap.set(`${snap.source}:${snap.category}:${snap.app_id}`, snap);
   }
 
-  const prevAppsPerCat = new Map<string, Set<string>>();
+  // Build set of ALL app_ids that existed anywhere in previous snapshot
+  const allPrevAppIds = new Set<string>();
   for (const snap of previous) {
-    const key = `${snap.source}:${snap.category}`;
-    if (!prevAppsPerCat.has(key)) prevAppsPerCat.set(key, new Set());
-    prevAppsPerCat.get(key)!.add(snap.app_id);
+    allPrevAppIds.add(`${snap.source}:${snap.app_id}`);
   }
 
   let biggestMover: { snap: AppSnapshot; prevRank: number; diff: number } | null = null;
@@ -162,8 +171,6 @@ function detectMovements(
   for (const snap of current) {
     const key = `${snap.source}:${snap.category}:${snap.app_id}`;
     const prev = prevMap.get(key);
-    const catKey = `${snap.source}:${snap.category}`;
-    const prevApps = prevAppsPerCat.get(catKey);
     const sourceLabel = snap.source === "appstore" ? "App Store" : "Google Play";
 
     if (prev) {
@@ -210,14 +217,15 @@ function detectMovements(
       if (rankDiff > 0 && (!biggestMover || rankDiff > biggestMover.diff)) {
         biggestMover = { snap, prevRank: prev.rank, diff: rankDiff };
       }
-    } else if (prevApps && !prevApps.has(snap.app_id) && snap.rank <= 20) {
+    } else if (snap.rank <= 10 && !allPrevAppIds.has(`${snap.source}:${snap.app_id}`)) {
+      // Truly new: not in ANY category of previous snapshot, and now in top 10
       signals.push({
         source: snap.source,
         sourceLabel,
         emoji: "\u{1F195}",
         title: snap.app_name,
         subtitle: `New entry at #${snap.rank} in ${snap.category}`,
-        signal: `New entry at #${snap.rank} in ${snap.category} \u2014 wasn't in top 100 last hour`,
+        signal: `New entry at #${snap.rank} in ${snap.category} \u2014 wasn't in any top 50 last hour`,
         url: snap.url,
         timestamp: now,
         movementType: "new_entry",
@@ -232,7 +240,7 @@ function detectMovements(
     const alreadySignaled = signals.some(
       (s) => s.movementType === "rank_jump" && s.title === snap.app_name && s.source === snap.source,
     );
-    if (!alreadySignaled && diff >= 5) {
+    if (!alreadySignaled && diff >= 10) {
       const sourceLabel = snap.source === "appstore" ? "App Store" : "Google Play";
       signals.push({
         source: snap.source,
@@ -358,7 +366,8 @@ export async function GET() {
       fetchProductHunt(),
     ]);
 
-    console.log(`[PULSE] Results — App Store: ${appStoreSnaps.length}, Play Store: ${playStoreSnaps.length}, Product Hunt: ${phSignals.length}`);
+    console.log(`[PULSE] Results — App Store: ${appStoreSnaps.length}, Play Store: ${playStoreSnaps.length}`);
+    console.log("PH signals:", phSignals.length);
 
     const allSnapshots = [...appStoreSnaps, ...playStoreSnaps];
 
@@ -437,6 +446,8 @@ export async function GET() {
       if (orderA !== orderB) return orderA - orderB;
       return Math.abs(b.rankChange ?? 0) - Math.abs(a.rankChange ?? 0);
     });
+
+    console.log(`[PULSE] Final: ${signals.length} signals (hourly=${hourlySignals.length} weekly=${weeklySignals.length} monthly=${monthlySignals.length} ph=${phSignals.length} fallback=${fallbackSignals.length})`);
 
     // 6. Cleanup old snapshots (non-blocking)
     cleanupOldSnapshots();
