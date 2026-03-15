@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import Anthropic from "@anthropic-ai/sdk";
 import {
   AppSnapshot,
   FETCH_HEADERS,
@@ -25,6 +26,16 @@ interface Signal {
   prevRank?: number;
   newRank?: number;
   rankChange?: number;
+  // PH-specific fields
+  imageUrl?: string;
+  topics?: string[];
+  tagline?: string;
+  makerName?: string;
+  externalUrl?: string;
+  claudeGap?: string;
+  // App Store fields
+  rating?: number;
+  reviewCount?: number;
 }
 
 /* ── Fetch Product Hunt ───────────────────────────────────────── */
@@ -35,7 +46,23 @@ async function fetchProductHunt(): Promise<Signal[]> {
 
   try {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const query = `query($postedAfter: DateTime!) { posts(order: VOTES, first: 20, postedAfter: $postedAfter) { edges { node { name tagline votesCount url createdAt } } } }`;
+    const query = `query($postedAfter: DateTime!) {
+      posts(order: VOTES, first: 50, postedAfter: $postedAfter) {
+        edges {
+          node {
+            name
+            tagline
+            votesCount
+            url
+            website
+            createdAt
+            thumbnail { url }
+            topics(first: 3) { edges { node { name } } }
+            makers(first: 1) { name headline }
+          }
+        }
+      }
+    }`;
     const res = await fetch("https://api.producthunt.com/v2/api/graphql", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...FETCH_HEADERS },
@@ -46,27 +73,64 @@ async function fetchProductHunt(): Promise<Signal[]> {
     const data = await res.json();
     const edges = (data?.data?.posts?.edges ?? [])
       .sort((a: any, b: any) => (b.node?.votesCount ?? 0) - (a.node?.votesCount ?? 0))
-      .slice(0, 10);
+      .slice(0, 30);
 
-    return edges.map((e: any) => {
-      const votes = e.node?.votesCount ?? 0;
-      const createdAt = e.node?.createdAt ?? new Date().toISOString();
+    const signals: Signal[] = edges.map((e: any) => {
+      const n = e.node;
+      const votes = n?.votesCount ?? 0;
+      const createdAt = n?.createdAt ?? new Date().toISOString();
       const diff = Date.now() - new Date(createdAt).getTime();
       const hours = Math.floor(diff / 3600000);
       const timeAgo = hours < 1 ? "just now" : hours < 24 ? `${hours}h ago` : `${Math.floor(hours / 24)}d ago`;
+      const topicEdges = n?.topics?.edges ?? [];
+      const topics = topicEdges.map((t: any) => t.node?.name).filter(Boolean).slice(0, 3);
+      const maker = n?.makers?.[0];
 
       return {
         source: "producthunt",
         sourceLabel: "Product Hunt",
         emoji: "\u{1F680}",
-        title: e.node?.name ?? "",
-        subtitle: `${votes} upvotes — launched ${timeAgo}`,
-        signal: `${votes} upvotes — launched ${timeAgo}. ${e.node?.tagline ?? ""}`,
-        url: e.node?.url ?? "",
+        title: n?.name ?? "",
+        subtitle: `${votes} upvotes \u2014 launched ${timeAgo}`,
+        signal: `${votes} upvotes \u2014 launched ${timeAgo}. ${n?.tagline ?? ""}`,
+        url: n?.url ?? "",
         timestamp: createdAt,
         movementType: "ph_trending",
+        imageUrl: n?.thumbnail?.url ?? undefined,
+        topics: topics.length > 0 ? topics : undefined,
+        tagline: n?.tagline ?? undefined,
+        makerName: maker?.name ?? undefined,
+        externalUrl: n?.website || n?.url || "",
       };
     });
+
+    // Claude gap analysis for top 5
+    try {
+      const top5 = signals.slice(0, 5);
+      const productList = top5.map((s) => `${s.title}: ${s.tagline ?? s.subtitle}`).join("\n");
+      const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+      const msg = await client.messages.create({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 300,
+        messages: [{
+          role: "user",
+          content: `For each product, write max 12 words about what feature or user segment is missing. Be specific.\nReturn JSON array only: [{"name":"...","gap":"..."}]\nProducts:\n${productList}`,
+        }],
+      });
+      const text = msg.content[0]?.type === "text" ? msg.content[0].text : "";
+      const jsonMatch = text.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        const gaps: { name: string; gap: string }[] = JSON.parse(jsonMatch[0]);
+        for (const g of gaps) {
+          const sig = top5.find((s) => s.title === g.name);
+          if (sig) sig.claudeGap = g.gap;
+        }
+      }
+    } catch (err) {
+      console.log("[PULSE] Claude gap analysis failed:", err instanceof Error ? err.message : err);
+    }
+
+    return signals;
   } catch {
     return [];
   }
@@ -273,6 +337,8 @@ function generateFallbackSignals(snapshots: AppSnapshot[]): Signal[] {
         timestamp: now,
         movementType: "trending",
         newRank: app.rank,
+        rating: app.rating ?? undefined,
+        reviewCount: app.review_count ?? undefined,
       });
     }
   }

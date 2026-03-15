@@ -16,6 +16,14 @@ interface Signal {
   prevRank?: number;
   newRank?: number;
   rankChange?: number;
+  imageUrl?: string;
+  topics?: string[];
+  tagline?: string;
+  makerName?: string;
+  externalUrl?: string;
+  claudeGap?: string;
+  rating?: number;
+  reviewCount?: number;
 }
 
 const SOURCE_COLORS: Record<string, string> = {
@@ -33,17 +41,7 @@ const MOVEMENT_COLORS: Record<string, string> = {
   monthly_mover: "#ec4899",
 };
 
-const HOURLY_TYPES = new Set(["rank_jump", "new_entry", "review_spike", "top_mover"]);
-const WEEKLY_TYPES = new Set(["weekly_mover"]);
-const MONTHLY_TYPES = new Set(["monthly_mover"]);
-
-const FILTERS = [
-  { key: "all", label: "All" },
-  { key: "hourly", label: "Hourly" },
-  { key: "weekly", label: "Weekly" },
-  { key: "monthly", label: "Monthly" },
-  { key: "producthunt", label: "Product Hunt" },
-];
+const TOPIC_COLORS = ["#6366f1", "#06b6d4", "#f59e0b", "#ec4899", "#22c55e", "#8b5cf6"];
 
 function relativeTime(timestamp: string): string {
   const diff = Date.now() - new Date(timestamp).getTime();
@@ -56,10 +54,15 @@ function relativeTime(timestamp: string): string {
   return `${days}d ago`;
 }
 
+function renderStars(rating: number): string {
+  const full = Math.floor(rating);
+  const half = rating - full >= 0.5 ? 1 : 0;
+  return "\u2605".repeat(full) + (half ? "\u00BD" : "") + "\u2606".repeat(5 - full - half);
+}
+
 export default function PulsePage() {
   const [signals, setSignals] = useState<Signal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("all");
   const [error, setError] = useState<string | null>(null);
   const [hasMovementData, setHasMovementData] = useState(false);
 
@@ -83,16 +86,6 @@ export default function PulsePage() {
     const interval = setInterval(fetchSignals, 60 * 60 * 1000);
     return () => clearInterval(interval);
   }, [fetchSignals]);
-
-  const filtered = filter === "all"
-    ? signals
-    : filter === "hourly"
-      ? signals.filter((s) => HOURLY_TYPES.has(s.movementType ?? "") || s.movementType === "trending")
-      : filter === "weekly"
-        ? signals.filter((s) => WEEKLY_TYPES.has(s.movementType ?? ""))
-        : filter === "monthly"
-          ? signals.filter((s) => MONTHLY_TYPES.has(s.movementType ?? ""))
-          : signals.filter((s) => s.source === filter);
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--clr-bg)", color: "var(--clr-text)" }}>
@@ -152,33 +145,8 @@ export default function PulsePage() {
           <p style={{ color: "var(--clr-text-3)", fontSize: "0.9375rem", margin: "0.25rem 0 0" }}>
             {hasMovementData
               ? "Tracking rank movements, new entries, and review spikes"
-              : "Collecting first snapshot — movement detection starts next hour"}
+              : "Collecting first snapshot \u2014 movement detection starts next hour"}
           </p>
-        </div>
-
-        {/* Filter pills */}
-        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
-              style={{
-                padding: "0.375rem 0.875rem",
-                borderRadius: 999,
-                fontSize: "0.8125rem",
-                fontWeight: 500,
-                fontFamily: "inherit",
-                cursor: "pointer",
-                transition: "all 0.15s",
-                border: "1px solid",
-                borderColor: filter === f.key ? "transparent" : "var(--clr-border-2)",
-                background: filter === f.key ? "var(--clr-text)" : "transparent",
-                color: filter === f.key ? "var(--clr-bg)" : "var(--clr-text-3)",
-              }}
-            >
-              {f.label}
-            </button>
-          ))}
         </div>
 
         {/* Loading skeleton */}
@@ -194,7 +162,7 @@ export default function PulsePage() {
                 animationDelay: `${i * 0.1}s`,
               }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 8, background: "var(--clr-border)", flexShrink: 0 }} />
+                  <div style={{ width: 48, height: 48, borderRadius: 10, background: "var(--clr-border)", flexShrink: 0 }} />
                   <div style={{ flex: 1 }}>
                     <div style={{ width: "60%", height: 14, borderRadius: 4, background: "var(--clr-border)", marginBottom: 6 }} />
                     <div style={{ width: "40%", height: 12, borderRadius: 4, background: "var(--clr-border)" }} />
@@ -216,29 +184,30 @@ export default function PulsePage() {
         )}
 
         {/* Empty state */}
-        {!loading && !error && filtered.length === 0 && (
+        {!loading && !error && signals.length === 0 && (
           <div style={{ textAlign: "center", padding: "3rem 0", color: "var(--clr-text-3)" }}>
             No signals right now. Check back soon.
           </div>
         )}
 
         {/* Signal cards */}
-        {!loading && filtered.length > 0 && (
+        {!loading && signals.length > 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            {filtered.map((s, i) => {
+            {signals.map((s, i) => {
               const sourceColor = SOURCE_COLORS[s.source] || "#888";
               const movementColor = MOVEMENT_COLORS[s.movementType ?? ""] ?? undefined;
               const showRankChange = s.rankChange && s.rankChange > 0 && s.movementType !== "trending";
+              const isPH = s.source === "producthunt";
 
               return (
                 <a
                   key={`${s.source}-${s.movementType}-${i}`}
-                  href={s.url}
+                  href={s.externalUrl || s.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
                     display: "flex",
-                    alignItems: "center",
+                    alignItems: "flex-start",
                     gap: "0.875rem",
                     padding: "0.875rem 1rem",
                     background: "var(--clr-surface)",
@@ -252,10 +221,20 @@ export default function PulsePage() {
                   onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(var(--clr-text-rgb),0.03)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = "var(--clr-surface)"; }}
                 >
-                  {/* Emoji */}
-                  <span style={{ fontSize: "1.5rem", flexShrink: 0, width: 36, textAlign: "center" }}>
-                    {s.emoji}
-                  </span>
+                  {/* Left: Image or Emoji */}
+                  {isPH && s.imageUrl ? (
+                    <img
+                      src={s.imageUrl}
+                      alt=""
+                      width={48}
+                      height={48}
+                      style={{ borderRadius: 10, flexShrink: 0, objectFit: "cover" }}
+                    />
+                  ) : (
+                    <span style={{ fontSize: "1.5rem", flexShrink: 0, width: 48, height: 48, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      {s.emoji}
+                    </span>
+                  )}
 
                   {/* Content */}
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -314,6 +293,29 @@ export default function PulsePage() {
                       )}
                     </div>
 
+                    {/* PH: maker name */}
+                    {isPH && s.makerName && (
+                      <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: "0.125rem" }}>
+                        by {s.makerName}
+                      </div>
+                    )}
+
+                    {/* PH: topic pills */}
+                    {isPH && s.topics && s.topics.length > 0 && (
+                      <div style={{ display: "flex", gap: "0.25rem", marginTop: "0.25rem", flexWrap: "wrap" }}>
+                        {s.topics.map((topic, ti) => (
+                          <span key={topic} style={{
+                            fontSize: "0.5625rem", fontWeight: 600, letterSpacing: "0.03em",
+                            padding: "0.1rem 0.375rem", borderRadius: 999,
+                            background: `${TOPIC_COLORS[ti % TOPIC_COLORS.length]}18`,
+                            color: TOPIC_COLORS[ti % TOPIC_COLORS.length],
+                          }}>
+                            {topic}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
                     {/* Rank movement display */}
                     {s.prevRank && s.newRank && s.movementType !== "trending" && (
                       <div style={{
@@ -327,14 +329,36 @@ export default function PulsePage() {
                       </div>
                     )}
 
+                    {/* App Store: rating + reviews */}
+                    {s.source === "appstore" && s.rating && (
+                      <div style={{ fontSize: "0.75rem", color: "#f59e0b", marginTop: "0.125rem", display: "flex", alignItems: "center", gap: "0.375rem" }}>
+                        <span>{renderStars(s.rating)}</span>
+                        <span style={{ color: "var(--clr-text-4)" }}>
+                          {s.rating.toFixed(1)}
+                          {s.reviewCount ? ` \u2022 ${s.reviewCount.toLocaleString()} reviews` : ""}
+                        </span>
+                      </div>
+                    )}
+
                     {/* Signal text */}
                     <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", marginTop: "0.125rem" }}>
                       {s.signal}
                     </div>
+
+                    {/* Claude gap analysis */}
+                    {s.claudeGap && (
+                      <div style={{
+                        fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: "0.375rem",
+                        fontStyle: "italic", display: "flex", alignItems: "flex-start", gap: "0.25rem",
+                      }}>
+                        <span style={{ flexShrink: 0 }}>{"\u{1F4A1}"}</span>
+                        <span>Missing: {s.claudeGap}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Arrow */}
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, color: "var(--clr-text-4)" }}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, color: "var(--clr-text-4)", marginTop: 4 }}>
                     <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </a>
