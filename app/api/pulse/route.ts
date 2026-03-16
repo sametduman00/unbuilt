@@ -236,9 +236,9 @@ async function fetchProductHunt(fetchHeaders: Record<string, string>): Promise<S
     }
 
     const data = await res.json();
-    if (data?.errors) {
-      console.log("[PULSE] PH GraphQL errors:", JSON.stringify(data.errors).slice(0, 200));
-    }
+    console.log("[PULSE] PH response status:", res.status);
+    console.log("[PULSE] PH data errors:", JSON.stringify(data?.errors));
+    console.log("[PULSE] PH edges count:", data?.data?.posts?.edges?.length ?? 0);
 
     const edges = (data?.data?.posts?.edges ?? [])
       .sort((a: any, b: any) => (b.node?.votesCount ?? 0) - (a.node?.votesCount ?? 0))
