@@ -1,0 +1,17 @@
+name: App Store Daily
+
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+jobs:
+  appstore-daily:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger App Store Daily Cron
+        run: |
+          curl -f -X GET \
+            "https://www.unbuilt.me/api/pulse/appstore-daily" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "User-Agent: GitHub-Actions-Cron"
