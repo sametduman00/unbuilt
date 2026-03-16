@@ -195,6 +195,7 @@ async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promis
   let cursor: string | null = null;
   let hasNextPage = true;
   let page = 0;
+  let totalCount: number | undefined;
 
   while (hasNextPage && page < 10) {
     page++;
@@ -218,11 +219,11 @@ async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promis
 
     const postsData = data?.data?.posts;
     allEdges = [...allEdges, ...(postsData?.edges ?? [])];
+    if (totalCount === undefined) totalCount = postsData?.totalCount;
     hasNextPage = postsData?.pageInfo?.hasNextPage ?? false;
     cursor = postsData?.pageInfo?.endCursor ?? null;
   }
 
-  const totalCount = data?.data?.posts?.totalCount;
   console.log(`[CRON] PH: ${allEdges.length} products fetched (PH totalCount today: ${totalCount ?? 'unknown'})`);
 
   return allEdges.map((e: any) => {
