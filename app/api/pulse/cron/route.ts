@@ -62,6 +62,7 @@ export async function GET(req: NextRequest) {
 
     // 4. PH analizini yap (burada yapıyoruz, müşteri beklemiyor)
     const analyzedPH = await analyzePHSignals(phSignals);
+    console.log("[CRON] phSignals[0]:", JSON.stringify(phSignals[0]).slice(0, 200));
     console.log("[CRON] analyzedPH claudeGap örnek:", analyzedPH[0]?.claudeGap);
 
     // 5. Tüm sinyalleri birleştir ve sırala
@@ -230,10 +231,7 @@ ${productList}`,
           for (const a of analyses) {
             const idx = analyzed.findIndex(s => s.title === a.name);
             if (idx !== -1) {
-              analyzed[idx] = {
-                ...analyzed[idx],
-                claudeGap: `\u2726 Different: ${a.different} \u2726 Missing: ${a.missing}`,
-              };
+              analyzed[idx].claudeGap = `\u2726 Different: ${a.different} \u2726 Missing: ${a.missing}`;
             }
           }
         }
