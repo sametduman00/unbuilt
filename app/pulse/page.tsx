@@ -397,16 +397,13 @@ export default function PulsePage() {
             })}
           </div>
         )}
-      </main>
-
-        )}
 
         {/* ── App Store Tab ── */}
         {activeTab === "appstore" && (
           <div>
             <div style={{ marginBottom: "1.5rem" }}>
               <h1 style={{ fontSize: "1.75rem", fontWeight: 700, letterSpacing: "-0.03em", margin: 0, display: "flex", alignItems: "center", gap: 10 }}>
-                New & Rising
+                New &amp; Rising
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.6875rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: 999, background: "rgba(0,122,255,0.12)", color: "#007AFF", letterSpacing: "0.02em" }}>
                   APP STORE
                 </span>
@@ -420,45 +417,25 @@ export default function PulsePage() {
                 </p>
               )}
             </div>
-
-            {/* Category filter */}
             <div style={{ display: "flex", gap: "0.375rem", flexWrap: "wrap", marginBottom: "1.25rem" }}>
               {["all","Business","Productivity","Finance","Health & Fitness","Education","Utilities","Developer Tools","Social Networking"].map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setAsFilter(cat)}
-                  style={{
-                    background: asFilter === cat ? "rgba(0,122,255,0.12)" : "var(--clr-surface)",
-                    border: asFilter === cat ? "1px solid rgba(0,122,255,0.3)" : "1px solid var(--clr-border)",
-                    color: asFilter === cat ? "#007AFF" : "var(--clr-text-3)",
-                    borderRadius: 999, padding: "0.25rem 0.75rem",
-                    fontSize: "0.75rem", fontWeight: asFilter === cat ? 600 : 400,
-                    cursor: "pointer", transition: "all 0.15s",
-                  }}
-                >
+                <button key={cat} onClick={() => setAsFilter(cat)} style={{ background: asFilter === cat ? "rgba(0,122,255,0.12)" : "var(--clr-surface)", border: asFilter === cat ? "1px solid rgba(0,122,255,0.3)" : "1px solid var(--clr-border)", color: asFilter === cat ? "#007AFF" : "var(--clr-text-3)", borderRadius: 999, padding: "0.25rem 0.75rem", fontSize: "0.75rem", fontWeight: asFilter === cat ? 600 : 400, cursor: "pointer", transition: "all 0.15s" }}>
                   {cat === "all" ? "All" : cat}
                 </button>
               ))}
             </div>
-
-            {/* Loading skeleton */}
             {asLoading && (
               <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 {[1,2,3,4,5].map((i) => (
-                  <div key={i} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "1rem 1.25rem", animation: "pulse 1.5s ease-in-out infinite", animationDelay: `${i * 0.1}s` }}>
+                  <div key={i} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "1rem 1.25rem", animation: "pulse 1.5s ease-in-out infinite" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                       <div style={{ width: 48, height: 48, borderRadius: 10, background: "var(--clr-border)", flexShrink: 0 }} />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ width: "60%", height: 14, borderRadius: 4, background: "var(--clr-border)", marginBottom: 6 }} />
-                        <div style={{ width: "40%", height: 12, borderRadius: 4, background: "var(--clr-border)" }} />
-                      </div>
+                      <div style={{ flex: 1 }}><div style={{ width: "60%", height: 14, borderRadius: 4, background: "var(--clr-border)", marginBottom: 6 }} /><div style={{ width: "40%", height: 12, borderRadius: 4, background: "var(--clr-border)" }} /></div>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-
-            {/* Empty state */}
             {!asLoading && asApps.length === 0 && (
               <div style={{ textAlign: "center", padding: "4rem 0", color: "var(--clr-text-3)" }}>
                 <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>🔄</div>
@@ -466,83 +443,41 @@ export default function PulsePage() {
                 <div style={{ fontSize: "0.875rem" }}>Check back tomorrow — new apps will appear here daily.</div>
               </div>
             )}
-
-            {/* App list */}
             {!asLoading && asApps.length > 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                {asApps
-                  .filter((app) => asFilter === "all" || app.category === asFilter)
-                  .map((app) => (
-                    <a
-                      key={app.app_id}
-                      href={app.store_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: "flex", alignItems: "flex-start", gap: "0.875rem",
-                        padding: "0.875rem 1rem",
-                        background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-                        borderLeft: "3px solid #007AFF",
-                        borderRadius: 10, textDecoration: "none", color: "inherit",
-                        transition: "border-color 0.15s, background 0.15s",
-                      }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(var(--clr-text-rgb),0.03)"; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = "var(--clr-surface)"; }}
-                    >
-                      {app.icon_url ? (
-                        <img src={app.icon_url} alt="" width={48} height={48} style={{ borderRadius: 10, flexShrink: 0, objectFit: "cover" }} />
-                      ) : (
-                        <span style={{ fontSize: "1.5rem", flexShrink: 0, width: 48, height: 48, display: "flex", alignItems: "center", justifyContent: "center" }}>📱</span>
-                      )}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem", flexWrap: "wrap" }}>
-                          <span style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", padding: "0.125rem 0.5rem", borderRadius: 999, background: "rgba(0,122,255,0.12)", color: "#007AFF" }}>
-                            App Store
-                          </span>
-                          {app.category && (
-                            <span style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", padding: "0.1rem 0.4rem", borderRadius: 999, background: "rgba(99,102,241,0.12)", color: "#6366f1" }}>
-                              {app.category}
-                            </span>
-                          )}
-                          <span style={{ fontSize: "0.6875rem", color: "var(--clr-text-4)" }}>
-                            {relativeTime(app.first_seen_at)}
-                          </span>
-                          {app.price && app.price !== "Free" && (
-                            <span style={{ fontSize: "0.6875rem", fontWeight: 600, color: "#22c55e" }}>{app.price}</span>
-                          )}
-                        </div>
-                        <div style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--clr-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                          {app.app_name}
-                        </div>
-                        {app.developer && (
-                          <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: "0.125rem" }}>by {app.developer}</div>
-                        )}
-                        {app.rating != null && (
-                          <div style={{ fontSize: "0.75rem", color: "#f59e0b", marginTop: "0.125rem", display: "flex", alignItems: "center", gap: "0.375rem" }}>
-                            <span>{renderStars(app.rating)}</span>
-                            <span style={{ color: "var(--clr-text-4)" }}>{app.rating.toFixed(1)}{app.review_count ? ` • ${app.review_count.toLocaleString()} reviews` : ""}</span>
-                          </div>
-                        )}
-                        {(app.claude_what || app.claude_different || app.claude_missing) ? (
-                          <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: "0.375rem", fontStyle: "italic", display: "flex", alignItems: "flex-start", gap: "0.25rem" }}>
-                            <span style={{ flexShrink: 0 }}>💡</span>
-                            <span>{app.claude_what} ✦ Different: {app.claude_different} ✦ Missing: {app.claude_missing}</span>
-                          </div>
-                        ) : (
-                          <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: "0.375rem", fontStyle: "italic", opacity: 0.5 }}>Analyzing...</div>
-                        )}
+                {asApps.filter((app) => asFilter === "all" || app.category === asFilter).map((app) => (
+                  <a key={app.app_id} href={app.store_url} target="_blank" rel="noopener noreferrer"
+                    style={{ display: "flex", alignItems: "flex-start", gap: "0.875rem", padding: "0.875rem 1rem", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderLeft: "3px solid #007AFF", borderRadius: 10, textDecoration: "none", color: "inherit", transition: "border-color 0.15s, background 0.15s" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(var(--clr-text-rgb),0.03)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "var(--clr-surface)"; }}
+                  >
+                    {app.icon_url ? (<img src={app.icon_url} alt="" width={48} height={48} style={{ borderRadius: 10, flexShrink: 0, objectFit: "cover" }} />) : (<span style={{ fontSize: "1.5rem", flexShrink: 0, width: 48, height: 48, display: "flex", alignItems: "center", justifyContent: "center" }}>📱</span>)}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem", flexWrap: "wrap" }}>
+                        <span style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", padding: "0.125rem 0.5rem", borderRadius: 999, background: "rgba(0,122,255,0.12)", color: "#007AFF" }}>App Store</span>
+                        {app.category && (<span style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", padding: "0.1rem 0.4rem", borderRadius: 999, background: "rgba(99,102,241,0.12)", color: "#6366f1" }}>{app.category}</span>)}
+                        <span style={{ fontSize: "0.6875rem", color: "var(--clr-text-4)" }}>{relativeTime(app.first_seen_at)}</span>
+                        {app.price && app.price !== "Free" && (<span style={{ fontSize: "0.6875rem", fontWeight: 600, color: "#22c55e" }}>{app.price}</span>)}
                       </div>
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, color: "var(--clr-text-4)", marginTop: 4 }}>
-                        <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </a>
-                  ))}
+                      <div style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--clr-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{app.app_name}</div>
+                      {app.developer && (<div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: "0.125rem" }}>by {app.developer}</div>)}
+                      {app.rating != null && (<div style={{ fontSize: "0.75rem", color: "#f59e0b", marginTop: "0.125rem", display: "flex", alignItems: "center", gap: "0.375rem" }}><span>{renderStars(app.rating)}</span><span style={{ color: "var(--clr-text-4)" }}>{app.rating.toFixed(1)}{app.review_count ? ` • ${app.review_count.toLocaleString()} reviews` : ""}</span></div>)}
+                      {(app.claude_what || app.claude_different || app.claude_missing) ? (
+                        <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: "0.375rem", fontStyle: "italic", display: "flex", alignItems: "flex-start", gap: "0.25rem" }}>
+                          <span style={{ flexShrink: 0 }}>💡</span>
+                          <span>{app.claude_what} ✦ Different: {app.claude_different} ✦ Missing: {app.claude_missing}</span>
+                        </div>
+                      ) : (<div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: "0.375rem", fontStyle: "italic", opacity: 0.5 }}>Analyzing...</div>)}
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, color: "var(--clr-text-4)", marginTop: 4 }}><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </a>
+                ))}
               </div>
             )}
           </div>
         )}
-
-            <style>{`
+      </main>
+      <style>{`
         @keyframes livePulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
       `}</style>
