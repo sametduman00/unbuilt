@@ -78,6 +78,7 @@ export default function PulsePage() {
       // Önce sinyalleri göster (hızlı)
       setSignals(signals);
       setError(null);
+      setLoading(false);
 
       // Sonra PH analizini arka planda yükle
       const phSignals = signals.filter((s) => s.source === "producthunt");
@@ -109,7 +110,6 @@ export default function PulsePage() {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
       setLoading(false);
     }
   }, []);
