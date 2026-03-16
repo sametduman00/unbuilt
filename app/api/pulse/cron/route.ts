@@ -62,22 +62,8 @@ export async function GET(req: NextRequest) {
 
     // 4. Önceki cache'den mevcut PH analizlerini al
     const sb = getSupabase();
-    const { data: prevCache } = await sb
-      .from("pulse_feed_cache")
-      .select("signals")
-      .order("generated_at", { ascending: false })
-      .limit(1)
-      .single();
-
     const prevPHMap = new Map<string, string>();
-    if (prevCache?.signals) {
-      for (const s of prevCache.signals as any[]) {
-        if (s.source === "producthunt" && s.claudeGap) {
-          prevPHMap.set(s.title?.trim(), s.claudeGap);
-        }
-      }
-    }
-    console.log("[CRON] Önceki cache'den", prevPHMap.size, "PH analizi bulundu");
+    // bypass: tüm PH ürünleri yeniden analiz edilecek
 
     // Sadece yeni (analiz edilmemiş) ürünleri analiz et
     const alreadyAnalyzed = phSignals
