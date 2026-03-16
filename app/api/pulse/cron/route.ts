@@ -209,7 +209,7 @@ async function analyzePHSignals(signals: any[]): Promise<any[]> {
         console.log("[CRON] PH analiz batch", Math.floor(i/BATCH_SIZE)+1, "gönderiliyor,", batch.length, "ürün");
         const msg = await client.messages.create({
           model: "claude-haiku-4-5-20251001",
-          max_tokens: 800,
+          max_tokens: 2000,
           messages: [{
             role: "user",
             content: `Analyze each Product Hunt product. For each, answer 2 things in English:
@@ -228,6 +228,7 @@ ${productList}`,
         const match = text.match(/\[[\s\S]*\]/);
         if (match) {
           const analyses = JSON.parse(match[0]);
+          console.log("[CRON] PH batch analiz örnek:", JSON.stringify(analyses[0]));
           for (const a of analyses) {
             const idx = analyzed.findIndex(s => s.title === a.name);
             if (idx !== -1) {
