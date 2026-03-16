@@ -60,9 +60,34 @@ export async function GET(req: NextRequest) {
 
     const fallbackSignals = !hasMovementData ? generateFallbackSignals(allSnapshots) : [];
 
-    // 4. PH analizini yap (burada yapıyoruz, müşteri beklemiyor)
-    const analyzedPH = await analyzePHSignals(phSignals);
-    console.log("[CRON] phSignals[0]:", JSON.stringify(phSignals[0]).slice(0, 200));
+    // 4. Önceki cache'den mevcut PH analizlerini al
+    const sb = getSupabase();
+    const { data: prevCache } = await sb
+      .from("pulse_feed_cache")
+      .select("signals")
+      .order("generated_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    const prevPHMap = new Map<string, string>();
+    if (prevCache?.signals) {
+      for (const s of prevCache.signals as any[]) {
+        if (s.source === "producthunt" && s.claudeGap) {
+          prevPHMap.set(s.title, s.claudeGap);
+        }
+      }
+    }
+    console.log("[CRON] Önceki cache'den", prevPHMap.size, "PH analizi bulundu");
+
+    // Sadece yeni (analiz edilmemiş) ürünleri analiz et
+    const newPHSignals = phSignals.filter((s: any) => !prevPHMap.has(s.title));
+    const alreadyAnalyzed = phSignals.filter((s: any) => prevPHMap.has(s.title))
+      .map((s: any) => ({ ...s, claudeGap: prevPHMap.get(s.title) }));
+
+    console.log("[CRON] Yeni PH:", newPHSignals.length, "ürün analiz edilecek, mevcut:", alreadyAnalyzed.length);
+
+    const freshlyAnalyzed = await analyzePHSignals(newPHSignals);
+    const analyzedPH = [...freshlyAnalyzed, ...alreadyAnalyzed];
     console.log("[CRON] analyzedPH claudeGap örnek:", analyzedPH[0]?.claudeGap);
 
     // 5. Tüm sinyalleri birleştir ve sırala
@@ -83,7 +108,6 @@ export async function GET(req: NextRequest) {
     });
 
     // 6. Hazır feed'i Supabase'e kaydet
-    const sb = getSupabase();
     const { error } = await sb.from("pulse_feed_cache").insert({
       signals,
       has_movement_data: hasMovementData,
