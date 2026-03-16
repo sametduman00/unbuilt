@@ -195,8 +195,9 @@ async function analyzePHSignals(signals: any[]): Promise<any[]> {
     const BATCH_SIZE = 25;
     const analyzed = [...signals];
 
-    for (let i = 0; i < signals.length; i += BATCH_SIZE) {
-      const batch = signals.slice(i, i + BATCH_SIZE);
+    const capped = signals.slice(0, 60);
+    for (let i = 0; i < capped.length; i += BATCH_SIZE) {
+      const batch = capped.slice(i, i + BATCH_SIZE);
       const productList = batch
         .map((s: any) => `Product: ${s.title}\nTagline: ${s.signal}\nTopics: ${(s.topics ?? []).join(", ")}`)
         .join("\n\n---\n\n");
@@ -204,7 +205,7 @@ async function analyzePHSignals(signals: any[]): Promise<any[]> {
       try {
         const msg = await client.messages.create({
           model: "claude-haiku-4-5-20251001",
-          max_tokens: 2000,
+          max_tokens: 800,
           messages: [{
             role: "user",
             content: `Analyze each Product Hunt product. For each, answer 2 things in English:

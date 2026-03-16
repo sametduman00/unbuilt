@@ -20,11 +20,11 @@ export const ITUNES_CATEGORIES: { name: string; genreId: number }[] = [
   { name: "Games", genreId: 6014 },
   { name: "Business", genreId: 6000 },
   { name: "Education", genreId: 6017 },
-  { name: "Entertainment", genreId: 6016 },
-  { name: "Finance", genreId: 6015 },
   { name: "Health & Fitness", genreId: 6013 },
+  { name: "Finance", genreId: 6015 },
   { name: "Productivity", genreId: 6007 },
   { name: "Social Networking", genreId: 6005 },
+  { name: "Entertainment", genreId: 6016 },
 ];
 
 export const FETCH_HEADERS = { "User-Agent": "Mozilla/5.0" };
