@@ -260,7 +260,9 @@ ${productList}`,
           const analyses = JSON.parse(match[0]);
           console.log("[CRON] PH batch analiz örnek:", JSON.stringify(analyses[0]));
           for (const a of analyses) {
-            const idx = analyzed.findIndex(s => s.title === a.name);
+            const idx = analyzed.findIndex(s =>
+              s.title?.trim().toLowerCase() === a.name?.trim().toLowerCase()
+            );
             if (idx !== -1) {
               analyzed[idx].claudeGap = `\u2726 Different: ${a.different} \u2726 Missing: ${a.missing}`;
             }
