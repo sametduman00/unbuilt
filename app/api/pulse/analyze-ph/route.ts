@@ -8,9 +8,8 @@ export async function POST(req: Request) {
     const { default: Anthropic } = await import("@anthropic-ai/sdk");
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-    // 20'şerli batch'ler halinde analiz et
     const BATCH_SIZE = 20;
-    let allAnalyses: { name: string; different: string; missing: string }[] = [];
+    let allAnalyses: { name: string; what: string; different: string; missing: string }[] = [];
 
     for (let i = 0; i < signals.length; i += BATCH_SIZE) {
       const batch = signals.slice(i, i + BATCH_SIZE);
@@ -24,12 +23,13 @@ export async function POST(req: Request) {
           max_tokens: 2000,
           messages: [{
             role: "user",
-            content: `Analyze each Product Hunt product. For each, answer 2 things in English:
-1. "different": What makes it genuinely different from alternatives? (1 sharp sentence, be specific — not generic like "uses AI")
-2. "missing": The most obvious gap or missing feature? (1 sharp sentence, be specific)
+            content: `Analyze each Product Hunt product. For each, answer 3 things in English (max 10 words each):
+1. "what": What it does and who it's for (be concrete)
+2. "different": What makes it genuinely different from alternatives (be specific, not "uses AI")
+3. "missing": The most obvious gap or missing feature (be specific)
 
-Return ONLY JSON array, no other text:
-[{"name":"...","different":"...","missing":"..."}]
+Return ONLY a JSON array, no other text:
+[{"name":"...","what":"...","different":"...","missing":"..."}]
 
 Products:
 ${productList}`,
@@ -37,18 +37,20 @@ ${productList}`,
         });
 
         const text = msg.content[0]?.type === "text" ? msg.content[0].text : "";
-        const match = text.match(/\[[\s\S]*\]/);
+        // Strip markdown fences if present
+        const clean = text.replace(/```json|\n```|```/g, "").trim();
+        const match = clean.match(/\[[\s\S]*\]/);
         if (match) {
-          const batch_analyses = JSON.parse(match[0]);
-          allAnalyses = [...allAnalyses, ...batch_analyses];
+          const batchAnalyses = JSON.parse(match[0]);
+          allAnalyses = [...allAnalyses, ...batchAnalyses];
         }
-        console.log(`[ANALYZE-PH] batch ${Math.floor(i/BATCH_SIZE)+1}: ${batch.length} ürün analiz edildi`);
+        console.log(`[ANALYZE-PH] batch ${Math.floor(i / BATCH_SIZE) + 1}: ${batch.length} products analyzed`);
       } catch (err) {
-        console.log(`[ANALYZE-PH] batch ${Math.floor(i/BATCH_SIZE)+1} failed:`, err instanceof Error ? err.message : err);
+        console.log(`[ANALYZE-PH] batch ${Math.floor(i / BATCH_SIZE) + 1} failed:`, err instanceof Error ? err.message : err);
       }
     }
 
-    console.log("[ANALYZE-PH] toplam analiz:", allAnalyses.length);
+    console.log("[ANALYZE-PH] total analyses:", allAnalyses.length);
     return NextResponse.json({ analyses: allAnalyses });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
