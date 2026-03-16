@@ -73,16 +73,20 @@ export async function GET(req: NextRequest) {
     if (prevCache?.signals) {
       for (const s of prevCache.signals as any[]) {
         if (s.source === "producthunt" && s.claudeGap) {
-          prevPHMap.set(s.title, s.claudeGap);
+          prevPHMap.set(s.title?.trim(), s.claudeGap);
         }
       }
     }
     console.log("[CRON] Önceki cache'den", prevPHMap.size, "PH analizi bulundu");
 
     // Sadece yeni (analiz edilmemiş) ürünleri analiz et
-    const newPHSignals = phSignals.filter((s: any) => !prevPHMap.has(s.title));
-    const alreadyAnalyzed = phSignals.filter((s: any) => prevPHMap.has(s.title))
-      .map((s: any) => ({ ...s, claudeGap: prevPHMap.get(s.title) }));
+    const alreadyAnalyzed = phSignals
+      .filter((s: any) => prevPHMap.has(s.title?.trim()))
+      .map((s: any) => ({
+        ...s,  // taze PH verisini kullan (upvote dahil)
+        claudeGap: prevPHMap.get(s.title?.trim()),
+      }));
+    const newPHSignals = phSignals.filter((s: any) => !prevPHMap.has(s.title?.trim()));
 
     console.log("[CRON] Yeni PH:", newPHSignals.length, "ürün analiz edilecek, mevcut:", alreadyAnalyzed.length);
 
