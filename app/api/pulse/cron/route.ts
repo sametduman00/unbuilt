@@ -179,6 +179,7 @@ async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promis
   const query = `query($postedAfter: DateTime!, $after: String) {
     posts(order: NEWEST, first: 50, postedAfter: $postedAfter, after: $after) {
       pageInfo { hasNextPage endCursor }
+      totalCount
       edges {
         node {
           name tagline description votesCount url website createdAt
@@ -195,7 +196,7 @@ async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promis
   let hasNextPage = true;
   let page = 0;
 
-  while (hasNextPage && page < 5) {
+  while (hasNextPage && page < 10) {
     page++;
     const res: Response = await fetch("https://api.producthunt.com/v2/api/graphql", {
       method: "POST",
@@ -221,7 +222,8 @@ async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promis
     cursor = postsData?.pageInfo?.endCursor ?? null;
   }
 
-  console.log(`[CRON] PH: ${allEdges.length} products fetched`);
+  const totalCount = data?.data?.posts?.totalCount;
+  console.log(`[CRON] PH: ${allEdges.length} products fetched (PH totalCount today: ${totalCount ?? 'unknown'})`);
 
   return allEdges.map((e: any) => {
     const n = e.node;
