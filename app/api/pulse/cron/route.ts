@@ -239,15 +239,15 @@ async function analyzePHSignals(signals: any[]): Promise<any[]> {
         console.log("[CRON] PH analiz batch", Math.floor(i/BATCH_SIZE)+1, "gönderiliyor,", batch.length, "ürün");
         const msg = await client.messages.create({
           model: "claude-haiku-4-5-20251001",
-          max_tokens: 5000,
+          max_tokens: 1000,
           messages: [{
             role: "user",
-            content: `Analyze each Product Hunt product. For each, answer 3 things in English:
-1. "what": What does this app do and who is it for? (max 2 sentences, plain and clear)
-2. "different": What makes it genuinely different from alternatives? (1 sharp sentence, be specific)
-3. "missing": The most obvious gap or missing feature? (1 sharp sentence, be specific)
+            content: `Analyze each Product Hunt product. Answer 3 things in English, MAX 10 WORDS EACH:
+1. "what": What it does and who for
+2. "different": Key differentiator vs alternatives
+3. "missing": Most obvious gap
 
-Return ONLY JSON array, no other text:
+Return ONLY JSON array:
 [{"name":"...","what":"...","different":"...","missing":"..."}]
 
 Products:
