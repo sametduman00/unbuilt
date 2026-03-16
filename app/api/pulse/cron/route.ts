@@ -188,6 +188,7 @@ async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promis
 /* ── Claude ile PH analizi (20'şerli batch) ──────────────────── */
 
 async function analyzePHSignals(signals: any[]): Promise<any[]> {
+  console.log("[CRON] analyzePHSignals başlıyor, sinyal sayısı:", signals.length);
   if (signals.length === 0) return [];
   try {
     const { default: Anthropic } = await import("@anthropic-ai/sdk");
@@ -203,6 +204,7 @@ async function analyzePHSignals(signals: any[]): Promise<any[]> {
         .join("\n\n---\n\n");
 
       try {
+        console.log("[CRON] PH analiz batch", Math.floor(i/BATCH_SIZE)+1, "gönderiliyor,", batch.length, "ürün");
         const msg = await client.messages.create({
           model: "claude-haiku-4-5-20251001",
           max_tokens: 800,
