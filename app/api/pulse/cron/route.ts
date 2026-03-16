@@ -192,7 +192,7 @@ async function analyzePHSignals(signals: any[]): Promise<any[]> {
   try {
     const { default: Anthropic } = await import("@anthropic-ai/sdk");
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-    const BATCH_SIZE = 20;
+    const BATCH_SIZE = 25;
     const analyzed = [...signals];
 
     for (let i = 0; i < signals.length; i += BATCH_SIZE) {
