@@ -108,16 +108,25 @@ export async function GET(req: NextRequest) {
       trending: 7,
     };
 
+    // Sort PH signals by votes descending before merging
+    const sortedPH = [...analyzedPH].sort((a, b) => {
+      const aVotes = parseInt(a.subtitle?.match(/^(\d+)/)?.[1] ?? "0");
+      const bVotes = parseInt(b.subtitle?.match(/^(\d+)/)?.[1] ?? "0");
+      return bVotes - aVotes;
+    });
+
     const signals = [
       ...hourlySignals,
       ...weeklySignals,
       ...monthlySignals,
-      ...analyzedPH,
+      ...sortedPH,
       ...fallbackSignals,
     ].sort((a, b) => {
       const pa = priority[a.movementType ?? "trending"] ?? 7;
       const pb = priority[b.movementType ?? "trending"] ?? 7;
       if (pa !== pb) return pa - pb;
+      // Within same type: PH sorted by votes (already pre-sorted), others by rankChange
+      if (a.movementType === "ph_trending") return 0;
       return Math.abs(b.rankChange ?? 0) - Math.abs(a.rankChange ?? 0);
     });
 
