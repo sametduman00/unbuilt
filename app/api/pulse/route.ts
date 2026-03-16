@@ -213,7 +213,7 @@ async function fetchProductHunt(fetchHeaders: Record<string, string>): Promise<S
             createdAt
             thumbnail { url }
             topics(first: 3) { edges { node { name } } }
-            makers(first: 1) { name headline }
+            makers { name headline }
           }
         }
       }
