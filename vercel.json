@@ -3,7 +3,7 @@
     "app/api/pulse/route.ts": {
       "maxDuration": 60
     },
-    "app/api/pulse/snapshot/route.ts": {
+    "app/api/pulse/cron/route.ts": {
       "maxDuration": 60
     }
   }

@@ -128,55 +128,27 @@ export async function fetchAppStore(): Promise<AppSnapshot[]> {
 
 export async function fetchPlayStore(): Promise<AppSnapshot[]> {
   try {
-    const res = await fetch(
-      "https://play.google.com/store/apps/collection/topselling_free?hl=en&gl=US",
-      {
-        headers: { "Accept": "text/html", ...FETCH_HEADERS },
-        signal: AbortSignal.timeout(15000),
-      },
-    );
-    console.log(`[PULSE] Play Store HTML: HTTP ${res.status}`);
-    if (!res.ok) {
-      console.log(`[PULSE] Play Store: HTTP error, skipping`);
-      return [];
-    }
-
-    const html = await res.text();
-    console.log(`[PULSE] Play Store HTML length: ${html.length} chars`);
-
-    const snapshots: AppSnapshot[] = [];
-    const appMatches = html.matchAll(/\/store\/apps\/details\?id=([a-zA-Z0-9._]+)/g);
-    const seen = new Set<string>();
-    let rank = 0;
-
-    for (const match of appMatches) {
-      const appId = match[1];
-      if (seen.has(appId)) continue;
-      seen.add(appId);
-      rank++;
-      if (rank > 50) break;
-
-      const idx = match.index ?? 0;
-      const context = html.slice(idx, idx + 500);
-      const nameMatch = context.match(/aria-label="([^"]+)"/);
-      const appName = nameMatch?.[1] ?? appId.split(".").pop() ?? appId;
-
-      snapshots.push({
-        source: "playstore",
-        category: "Overall",
-        app_id: appId,
-        app_name: appName,
-        rank,
-        review_count: null,
-        rating: null,
-        url: `https://play.google.com/store/apps/details?id=${appId}`,
-      });
-    }
-
-    console.log(`[PULSE] Play Store parsed: ${snapshots.length} apps`);
-    return snapshots;
+    const gplay = (await import("google-play-scraper")).default as any;
+    const results = await gplay.list({
+      collection: gplay.collection.TOP_FREE,
+      num: 50,
+      country: "us",
+      lang: "en",
+      fullDetail: false,
+    });
+    console.log(`[PULSE] Play Store: ${results.length} apps`);
+    return results.map((app: any, i: number): AppSnapshot => ({
+      source: "playstore",
+      category: "Overall",
+      app_id: app.appId,
+      app_name: app.title,
+      rank: i + 1,
+      review_count: app.ratings ?? null,
+      rating: app.score ?? null,
+      url: app.url ?? `https://play.google.com/store/apps/details?id=${app.appId}`,
+    }));
   } catch (err) {
-    console.log(`[PULSE] Play Store scrape failed:`, err instanceof Error ? err.message : err);
+    console.log(`[PULSE] Play Store FAILED:`, err instanceof Error ? err.message : err);
     return [];
   }
 }
