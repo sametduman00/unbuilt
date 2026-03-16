@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import {
   AppSnapshot,
   FETCH_HEADERS,
@@ -118,6 +117,7 @@ async function fetchProductHunt(): Promise<Signal[]> {
     try {
       const top5 = signals.slice(0, 5);
       const productList = top5.map((s) => `${s.title}: ${s.tagline ?? s.subtitle}`).join("\n");
+      const { default: Anthropic } = await import("@anthropic-ai/sdk");
       const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
       const msg = await client.messages.create({
         model: "claude-haiku-4-5-20251001",
@@ -494,11 +494,14 @@ export async function GET() {
       },
     });
   } catch (err) {
-    console.log("PULSE GET ERROR:", err instanceof Error ? err.message : err);
-    console.log("PULSE GET ERROR stack:", err instanceof Error ? err.stack : "no stack");
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Internal server error" },
-      { status: 500 },
-    );
+    const msg = err instanceof Error ? err.message : String(err);
+    console.log("FATAL ERROR:", msg);
+    console.log("FATAL ERROR stack:", err instanceof Error ? err.stack : "no stack");
+    return NextResponse.json({
+      signals: [],
+      count: 0,
+      hasMovementData: false,
+      error: msg,
+    });
   }
 }
