@@ -352,7 +352,7 @@ export default function PulsePage() {
                         fontStyle: "italic", display: "flex", alignItems: "flex-start", gap: "0.25rem",
                       }}>
                         <span style={{ flexShrink: 0 }}>{"\u{1F4A1}"}</span>
-                        <span>Missing: {s.claudeGap}</span>
+                        <span>{s.claudeGap}</span>
                       </div>
                     )}
                   </div>
