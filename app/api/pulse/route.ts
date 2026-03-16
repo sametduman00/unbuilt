@@ -200,13 +200,23 @@ async function fetchProductHunt(fetchHeaders: Record<string, string>): Promise<S
   }
 
   try {
-    const sevenDaysAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
+    // Bugünün başından itibaren launch olanları çek (UTC gece yarısı)
+    const todayStart = new Date();
+    todayStart.setUTCHours(0, 0, 0, 0);
+
+    // Son 2 saatteki yeni ürünler (feed'i canlı tutmak için)
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+
+    // Önce son 2 saate bak, yoksa bugünün tamamına genişlet
+    const postedAfter = twoHoursAgo > todayStart ? twoHoursAgo : todayStart;
+
     const query = `query($postedAfter: DateTime!) {
-      posts(order: VOTES, first: 50, postedAfter: $postedAfter) {
+      posts(order: NEWEST, first: 30, postedAfter: $postedAfter) {
         edges {
           node {
             name
             tagline
+            description
             votesCount
             url
             website
@@ -226,7 +236,7 @@ async function fetchProductHunt(fetchHeaders: Record<string, string>): Promise<S
         Authorization: `Bearer ${token}`,
         ...fetchHeaders,
       },
-      body: JSON.stringify({ query, variables: { postedAfter: sevenDaysAgo } }),
+      body: JSON.stringify({ query, variables: { postedAfter: postedAfter.toISOString() } }),
       signal: AbortSignal.timeout(10_000),
     });
 
@@ -236,15 +246,76 @@ async function fetchProductHunt(fetchHeaders: Record<string, string>): Promise<S
     }
 
     const data = await res.json();
-    console.log("[PULSE] PH response status:", res.status);
-    console.log("[PULSE] PH data errors:", JSON.stringify(data?.errors));
-    console.log("[PULSE] PH edges count:", data?.data?.posts?.edges?.length ?? 0);
+    if (data?.errors) {
+      console.log("[PULSE] PH GraphQL errors:", JSON.stringify(data.errors).slice(0, 200));
+      return [];
+    }
 
-    const edges = (data?.data?.posts?.edges ?? [])
-      .sort((a: any, b: any) => (b.node?.votesCount ?? 0) - (a.node?.votesCount ?? 0))
-      .slice(0, 30);
+    let edges = data?.data?.posts?.edges ?? [];
+    console.log("[PULSE] PH:", edges.length, "ürün bulundu (postedAfter:", postedAfter.toISOString(), ")");
 
-    console.log("[PULSE] PH:", edges.length, "posts");
+    // Hiç ürün yoksa bugünün tamamına genişlet (gün başında feed boş kalmasın)
+    if (edges.length === 0 && postedAfter > todayStart) {
+      console.log("[PULSE] PH: son 2 saatte ürün yok, bugünün tamamına genişleniyor");
+      const fallbackRes = await fetch("https://api.producthunt.com/v2/api/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          ...fetchHeaders,
+        },
+        body: JSON.stringify({ query, variables: { postedAfter: todayStart.toISOString() } }),
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (fallbackRes.ok) {
+        const fallbackData = await fallbackRes.json();
+        edges = fallbackData?.data?.posts?.edges ?? [];
+        console.log("[PULSE] PH fallback: bugün toplam", edges.length, "ürün");
+      }
+    }
+
+    if (edges.length === 0) return [];
+
+    // Claude ile her ürünü analiz et — 2 odak nokta: farkı ne + neyi eksik
+    let analyses: { name: string; different: string; missing: string }[] = [];
+    try {
+      const productList = edges
+        .slice(0, 15) // max 15 ürün analiz et (maliyet/hız dengesi)
+        .map((e: any) => {
+          const n = e.node;
+          return `Product: ${n?.name}\nTagline: ${n?.tagline}\nDescription: ${n?.description ?? "N/A"}\nVotes: ${n?.votesCount ?? 0}\nTopics: ${(n?.topics?.edges ?? []).map((t: any) => t.node?.name).join(", ")}`;
+        })
+        .join("\n\n---\n\n");
+
+      const { default: Anthropic } = await import("@anthropic-ai/sdk");
+      const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+      const msg = await client.messages.create({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 1200,
+        messages: [{
+          role: "user",
+          content: `Analyze each Product Hunt product below. For each one, answer exactly 2 things in English:
+1. "different": What makes this product genuinely different from existing alternatives? (1-2 sharp sentences, be specific)
+2. "missing": What is the most obvious gap, missing feature, or underserved user segment? (1-2 sharp sentences, be specific)
+
+Return ONLY a JSON array, no other text:
+[{"name":"...","different":"...","missing":"..."}]
+
+Products:
+${productList}`,
+        }],
+      });
+
+      const text = msg.content[0]?.type === "text" ? msg.content[0].text : "";
+      const jsonMatch = text.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        analyses = JSON.parse(jsonMatch[0]);
+      }
+      console.log("[PULSE] PH Claude analiz OK:", analyses.length, "ürün");
+    } catch (err) {
+      console.log("[PULSE] PH Claude analiz failed:", err instanceof Error ? err.message : err);
+    }
 
     const signals: Signal[] = edges.map((e: any) => {
       const n = e.node;
@@ -254,6 +325,12 @@ async function fetchProductHunt(fetchHeaders: Record<string, string>): Promise<S
       const timeAgo = hours < 1 ? "just now" : hours < 24 ? `${hours}h ago` : `${Math.floor(hours / 24)}d ago`;
       const topics = (n?.topics?.edges ?? []).map((t: any) => t.node?.name).filter(Boolean).slice(0, 3);
       const maker = n?.makers?.[0];
+      const analysis = analyses.find((a) => a.name === n?.name);
+
+      // claudeGap alanına her iki analizi birleştir
+      const claudeGap = analysis
+        ? `Different: ${analysis.different} | Missing: ${analysis.missing}`
+        : undefined;
 
       return {
         source: "producthunt",
@@ -270,36 +347,9 @@ async function fetchProductHunt(fetchHeaders: Record<string, string>): Promise<S
         tagline: n?.tagline ?? undefined,
         makerName: maker?.name ?? undefined,
         externalUrl: n?.website || n?.url || "",
+        claudeGap,
       };
     });
-
-    // Claude gap analysis for top 5 (best-effort)
-    try {
-      const top5 = signals.slice(0, 5);
-      const productList = top5.map((s) => `${s.title}: ${s.tagline ?? s.subtitle}`).join("\n");
-      const { default: Anthropic } = await import("@anthropic-ai/sdk");
-      const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-      const msg = await client.messages.create({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 300,
-        messages: [{
-          role: "user",
-          content: `For each product, write max 12 words about what feature or user segment is missing. Be specific.\nReturn JSON array only: [{"name":"...","gap":"..."}]\nProducts:\n${productList}`,
-        }],
-      });
-      const text = msg.content[0]?.type === "text" ? msg.content[0].text : "";
-      const jsonMatch = text.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        const gaps: { name: string; gap: string }[] = JSON.parse(jsonMatch[0]);
-        for (const g of gaps) {
-          const sig = top5.find((s) => s.title === g.name);
-          if (sig) sig.claudeGap = g.gap;
-        }
-      }
-      console.log("[PULSE] PH Claude gaps OK");
-    } catch (err) {
-      console.log("[PULSE] PH Claude gap failed:", err instanceof Error ? err.message : err);
-    }
 
     return signals;
   } catch (err) {
