@@ -99,7 +99,7 @@ export default function PulsePage() {
           if (!match) return s;
           return {
             ...s,
-            claudeGap: `${match.different} \u2726 Missing: ${match.missing}`,
+            claudeGap: `${match.what} \u2726 Different: ${match.different} \u2726 Missing: ${match.missing}`,
           };
         })
       );
