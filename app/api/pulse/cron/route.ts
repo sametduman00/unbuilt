@@ -76,8 +76,13 @@ export async function GET(req: NextRequest) {
 
     console.log("[CRON] Yeni PH:", newPHSignals.length, "ürün analiz edilecek, mevcut:", alreadyAnalyzed.length);
 
-    const freshlyAnalyzed = await analyzePHSignals(newPHSignals);
-    const analyzedPH = [...freshlyAnalyzed, ...alreadyAnalyzed];
+    // Bypass modunda max 60 ürün analiz et (timeout önlemi)
+    const cappedSignals = newPHSignals.slice(0, 60);
+    const freshlyAnalyzed = await analyzePHSignals(cappedSignals);
+
+    // Geri kalan ürünleri claudeGap olmadan ekle
+    const remaining = newPHSignals.slice(60);
+    const analyzedPH = [...freshlyAnalyzed, ...remaining, ...alreadyAnalyzed];
     console.log("[CRON] analyzedPH claudeGap örnek:", analyzedPH[0]?.claudeGap);
 
     // 5. Tüm sinyalleri birleştir ve sırala
@@ -211,7 +216,7 @@ async function analyzePHSignals(signals: any[]): Promise<any[]> {
     const { default: Anthropic } = await import("@anthropic-ai/sdk");
     console.log("[CRON] Anthropic OK:", !!process.env.ANTHROPIC_API_KEY);
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-    const BATCH_SIZE = 25;
+    const BATCH_SIZE = 20;
     const analyzed = [...signals];
 
     const capped = signals.slice(0, 60);
@@ -259,6 +264,8 @@ ${productList}`,
       } catch (err) {
         console.log(`[CRON] PH analiz batch ${Math.floor(i / BATCH_SIZE) + 1} failed:`, err instanceof Error ? err.message : err);
       }
+      // Batch'ler arası gecikme (rate limit önlemi)
+      await new Promise(r => setTimeout(r, 500));
     }
     return analyzed;
   } catch (err) {
