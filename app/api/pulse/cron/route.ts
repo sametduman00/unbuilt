@@ -242,12 +242,13 @@ async function analyzePHSignals(signals: any[]): Promise<any[]> {
           max_tokens: 2000,
           messages: [{
             role: "user",
-            content: `Analyze each Product Hunt product. For each, answer 2 things in English:
-1. "different": What makes it genuinely different from alternatives? (1 sharp sentence, be specific)
-2. "missing": The most obvious gap or missing feature? (1 sharp sentence, be specific)
+            content: `Analyze each Product Hunt product. For each, answer 3 things in English:
+1. "what": What does this app do and who is it for? (max 2 sentences, plain and clear)
+2. "different": What makes it genuinely different from alternatives? (1 sharp sentence, be specific)
+3. "missing": The most obvious gap or missing feature? (1 sharp sentence, be specific)
 
 Return ONLY JSON array, no other text:
-[{"name":"...","different":"...","missing":"..."}]
+[{"name":"...","what":"...","different":"...","missing":"..."}]
 
 Products:
 ${productList}`,
@@ -264,7 +265,7 @@ ${productList}`,
               s.title?.trim().toLowerCase() === a.name?.trim().toLowerCase()
             );
             if (idx !== -1) {
-              analyzed[idx].claudeGap = `\u2726 Different: ${a.different} \u2726 Missing: ${a.missing}`;
+              analyzed[idx].claudeGap = `${a.what} \u2726 Different: ${a.different} \u2726 Missing: ${a.missing}`;
             }
           }
         }
