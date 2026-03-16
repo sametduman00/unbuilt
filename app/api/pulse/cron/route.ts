@@ -29,9 +29,9 @@ export async function GET(req: NextRequest) {
 
     const appSnaps = appRes.status === "fulfilled" ? appRes.value : [];
     const playSnaps = playRes.status === "fulfilled" ? playRes.value : [];
-    const phSignals = phRes.status === "fulfilled" ? phRes.value : [];
+    const freshPHSignals = phRes.status === "fulfilled" ? phRes.value : [];
 
-    console.log(`[CRON] AppStore: ${appSnaps.length}, PlayStore: ${playSnaps.length}, PH: ${phSignals.length}`);
+    console.log(`[CRON] AppStore: ${appSnaps.length}, PlayStore: ${playSnaps.length}, PH fresh: ${freshPHSignals.length}`);
 
     // 2. Save snapshots (App Store + Play Store)
     const allSnapshots = [...appSnaps, ...playSnaps];
@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
 
     const fallbackSignals = !hasMovementData ? generateFallbackSignals(allSnapshots) : [];
 
-    // 4. Reuse previous claudeGap analyses — always use FRESH upvote counts from PH
+    // 4. Load previous cache to preserve all historical PH products
     const sb = getSupabase();
     const { data: prevCache } = await sb
       .from("pulse_feed_cache")
@@ -74,29 +74,46 @@ export async function GET(req: NextRequest) {
       .limit(1)
       .single();
 
-    const prevPHMap = new Map<string, string>();
+    // Build maps from previous cache
+    const prevPHByTitle = new Map<string, any>();
     if (prevCache?.signals) {
       for (const s of prevCache.signals as any[]) {
-        if (s.source === "producthunt" && s.claudeGap) {
-          prevPHMap.set(s.title?.trim(), s.claudeGap);
+        if (s.source === "producthunt") {
+          prevPHByTitle.set(s.title?.trim(), s);
         }
       }
     }
 
-    console.log("[CRON] Previous cache has", prevPHMap.size, "PH analyses");
+    console.log("[CRON] Previous cache has", prevPHByTitle.size, "PH products (all-time)");
 
-    // Merge: fresh upvotes + reuse old claudeGap
-    // New products have no claudeGap — frontend analyze-ph endpoint handles them async
-    const analyzedPH = phSignals.map((s: any) => {
-      const prevGap = prevPHMap.get(s.title?.trim());
-      return prevGap ? { ...s, claudeGap: prevGap } : s;
+    // 5. Merge strategy:
+    //    - Fresh PH products (today): use fresh upvotes, keep old claudeGap if exists
+    //    - Historical PH products (previous days): keep exactly as-is, no update
+    const freshTitles = new Set(freshPHSignals.map((s: any) => s.title?.trim()));
+
+    // Update today's products with fresh upvotes, preserving their claudeGap
+    const mergedTodayPH = freshPHSignals.map((s: any) => {
+      const prev = prevPHByTitle.get(s.title?.trim());
+      return prev?.claudeGap ? { ...s, claudeGap: prev.claudeGap } : s;
     });
 
-    const reusedCount = analyzedPH.filter((s: any) => s.claudeGap).length;
-    const newCount = analyzedPH.length - reusedCount;
-    console.log(`[CRON] PH: ${reusedCount} reused analyses, ${newCount} new (frontend will analyze)`);
+    // Keep historical products (previous days) exactly as-is
+    const historicalPH = Array.from(prevPHByTitle.values()).filter(
+      (s: any) => !freshTitles.has(s.title?.trim())
+    );
 
-    // 5. Combine and sort all signals
+    console.log(`[CRON] Today: ${mergedTodayPH.length} products, Historical: ${historicalPH.length} products`);
+
+    // Sort today's PH by upvotes desc, then append historical
+    const sortedTodayPH = [...mergedTodayPH].sort((a, b) => {
+      const av = parseInt(a.subtitle?.match(/^(\d+)/)?.[1] ?? "0");
+      const bv = parseInt(b.subtitle?.match(/^(\d+)/)?.[1] ?? "0");
+      return bv - av;
+    });
+
+    const allPHSignals = [...sortedTodayPH, ...historicalPH];
+
+    // 6. Combine and sort all signals
     const priority: Record<string, number> = {
       rank_jump: 0,
       new_entry: 1,
@@ -108,58 +125,51 @@ export async function GET(req: NextRequest) {
       trending: 7,
     };
 
-    // Sort PH signals by votes descending before merging
-    const sortedPH = [...analyzedPH].sort((a, b) => {
-      const aVotes = parseInt(a.subtitle?.match(/^(\d+)/)?.[1] ?? "0");
-      const bVotes = parseInt(b.subtitle?.match(/^(\d+)/)?.[1] ?? "0");
-      return bVotes - aVotes;
-    });
-
     const signals = [
       ...hourlySignals,
       ...weeklySignals,
       ...monthlySignals,
-      ...sortedPH,
+      ...allPHSignals,
       ...fallbackSignals,
     ].sort((a, b) => {
       const pa = priority[a.movementType ?? "trending"] ?? 7;
       const pb = priority[b.movementType ?? "trending"] ?? 7;
       if (pa !== pb) return pa - pb;
-      // Within same type: PH sorted by votes (already pre-sorted), others by rankChange
-      if (a.movementType === "ph_trending") return 0;
+      if (a.movementType === "ph_trending") return 0; // PH already sorted above
       return Math.abs(b.rankChange ?? 0) - Math.abs(a.rankChange ?? 0);
     });
 
-    // 6. Save feed cache
+    // 7. Save updated feed cache
     const { error } = await sb.from("pulse_feed_cache").insert({
       signals,
       has_movement_data: hasMovementData,
       sources: {
         appStore: appSnaps.length,
         playStore: playSnaps.length,
-        productHunt: phSignals.length,
+        productHunt: allPHSignals.length,
+        productHuntToday: mergedTodayPH.length,
+        productHuntHistorical: historicalPH.length,
       },
       generated_at: new Date().toISOString(),
     });
 
     if (error) console.log("[CRON] cache insert error:", error.message);
 
-    // 7. Clean up old cache entries (keep 48h)
+    // 8. Clean up old cache entries (keep 48h) — but NOT the PH products, they live in signals
     const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
     await sb.from("pulse_feed_cache").delete().lt("generated_at", cutoff);
     cleanupOldSnapshots();
 
-    console.log(`[CRON] DONE: ${signals.length} signals cached`);
+    console.log(`[CRON] DONE: ${signals.length} signals (${mergedTodayPH.length} today + ${historicalPH.length} historical PH)`);
 
     return NextResponse.json({
       ok: true,
       signals: signals.length,
       appStore: appSnaps.length,
       playStore: playSnaps.length,
-      productHunt: phSignals.length,
+      phToday: mergedTodayPH.length,
+      phHistorical: historicalPH.length,
       hasMovementData,
-      phReused: reusedCount,
-      phNew: newCount,
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -168,13 +178,41 @@ export async function GET(req: NextRequest) {
   }
 }
 
-/* ── PH: fetch today's products ─────────────────────────────── */
+/* ── PH midnight = Pacific Time (UTC-8 winter / UTC-7 summer) ── */
+function getPHTodayStart(): Date {
+  const now = new Date();
+  // Detect US DST: second Sunday of March through first Sunday of November
+  const year = now.getUTCFullYear();
+  const dstStart = getNthSundayUTC(year, 2, 2); // March (month=2), 2nd Sunday, 2:00 AM = 10:00 UTC
+  const dstEnd   = getNthSundayUTC(year, 10, 1); // November (month=10), 1st Sunday, 2:00 AM = 9:00 UTC (was 10:00 PST)
+  const isDST    = now >= dstStart && now < dstEnd;
+  const offsetHours = isDST ? 7 : 8; // PDT=UTC-7, PST=UTC-8
+
+  // PH "today" starts at midnight Pacific = offsetHours UTC
+  const utcNow = now.getTime();
+  const utcMidnightPH = Math.floor((utcNow + offsetHours * 3600000) / 86400000) * 86400000 - offsetHours * 3600000;
+  return new Date(utcMidnightPH);
+}
+
+function getNthSundayUTC(year: number, month: number, n: number): Date {
+  // Find nth Sunday of month, at 10:00 UTC (= 2:00 AM Pacific standard)
+  const d = new Date(Date.UTC(year, month, 1));
+  let count = 0;
+  while (d.getUTCMonth() === month) {
+    if (d.getUTCDay() === 0) { count++; if (count === n) break; }
+    d.setUTCDate(d.getUTCDate() + 1);
+  }
+  d.setUTCHours(10, 0, 0, 0);
+  return d;
+}
+
+/* ── PH: fetch today's products (since PH midnight Pacific) ──── */
 async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promise<any[]> {
   const token = process.env.PRODUCTHUNT_API_KEY;
   if (!token) return [];
 
-  const todayStart = new Date();
-  todayStart.setUTCHours(0, 0, 0, 0);
+  const todayStart = getPHTodayStart();
+  console.log(`[CRON] PH today start: ${todayStart.toISOString()} (Pacific midnight)`);
 
   const query = `query($postedAfter: DateTime!, $after: String) {
     posts(order: NEWEST, first: 50, postedAfter: $postedAfter, after: $after) {
@@ -224,7 +262,7 @@ async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promis
     cursor = postsData?.pageInfo?.endCursor ?? null;
   }
 
-  console.log(`[CRON] PH: ${allEdges.length} products fetched (PH totalCount today: ${totalCount ?? 'unknown'})`);
+  console.log(`[CRON] PH: ${allEdges.length} products fetched (PH total today: ${totalCount ?? "unknown"})`);
 
   return allEdges.map((e: any) => {
     const n = e.node;
