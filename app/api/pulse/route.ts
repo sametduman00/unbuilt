@@ -14,13 +14,14 @@ export async function GET() {
       .single();
 
     if (error || !data) {
-      // Cache henüz yok — ilk kurulum mesajı
+      console.log("[PULSE GET] cache read error:", error?.message, "| data:", !!data);
       return NextResponse.json({
         signals: [],
         count: 0,
         hasMovementData: false,
         generatedAt: null,
         cached: false,
+        debug: error?.message ?? "no data",
       });
     }
 
