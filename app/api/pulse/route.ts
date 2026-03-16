@@ -73,7 +73,9 @@ export async function GET() {
       console.log("[PULSE] PH REJECTED:", phRes.reason);
     }
 
-    console.log(`[PULSE] fetched — AppStore: ${appStoreSnaps.length}, PlayStore: ${playStoreSnaps.length}, PH: ${phSignals.length}`);
+    // Debug: App Store breakdown
+    const successCategories = new Set(appStoreSnaps.map(s => s.category)).size;
+    console.log("APPSTORE result:", appStoreSnaps.length, "apps from", successCategories, "categories");
 
     const allSnapshots = [...appStoreSnaps, ...playStoreSnaps];
 
@@ -102,6 +104,9 @@ export async function GET() {
       ]);
       console.log(`[PULSE] loaded — hourly: ${hourlySnaps?.length ?? 0}, weekly: ${weeklySnaps?.length ?? 0}, monthly: ${monthlySnaps?.length ?? 0}`);
 
+      // Debug: snapshot comparison counts
+      console.log("SNAPSHOTS previous:", hourlySnaps?.length ?? 0, "current:", allSnapshots.length);
+
       if (hourlySnaps && hourlySnaps.length > 0) {
         hasMovementData = true;
         hourlySignals = detectMovements(allSnapshots, hourlySnaps);
@@ -127,6 +132,9 @@ export async function GET() {
       fallbackSignals = generateFallbackSignals(allSnapshots);
       console.log(`[PULSE] fallback: ${fallbackSignals.length} signals`);
     }
+
+    // Debug: signal breakdown
+    console.log("SIGNALS detected:", hourlySignals.length, "hourly,", phSignals.length, "PH,", fallbackSignals.length, "fallback");
 
     // ── Step 6: Combine & sort ─────────────────────────────────
     const priority: Record<string, number> = {

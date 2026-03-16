@@ -16,7 +16,7 @@ export interface AppSnapshot {
 /* ── iTunes Genre IDs ─────────────────────────────────────────── */
 
 export const ITUNES_CATEGORIES: { name: string; genreId: number }[] = [
-  { name: "Overall", genreId: 36 },
+  { name: "Overall", genreId: 0 },       // 0 = no genre param
   { name: "Games", genreId: 6014 },
   { name: "Business", genreId: 6000 },
   { name: "Education", genreId: 6017 },
@@ -42,18 +42,21 @@ export const FETCH_HEADERS = { "User-Agent": "Mozilla/5.0" };
 
 async function fetchAppStoreCategory(cat: { name: string; genreId: number }): Promise<AppSnapshot[]> {
   try {
-    const url = `https://itunes.apple.com/us/rss/topfreeapplications/limit=50/genre=${cat.genreId}/json`;
+    // Overall = no genre param; others get /genre=ID/
+    const url = cat.genreId === 0
+      ? "https://itunes.apple.com/us/rss/topfreeapplications/limit=50/json"
+      : `https://itunes.apple.com/us/rss/topfreeapplications/limit=50/genre=${cat.genreId}/json`;
     const res = await fetch(url, {
       headers: FETCH_HEADERS,
       signal: AbortSignal.timeout(10000),
     });
     if (!res.ok) {
-      console.log(`APPSTORE ${cat.name}: HTTP ${res.status}`);
+      console.log(`APPSTORE ${cat.name}: HTTP ${res.status} url=${url}`);
       return [];
     }
     const data = await res.json();
     const entries = data?.feed?.entry ?? [];
-    console.log(`APPSTORE ${cat.name}: ${entries.length} apps`);
+    console.log(`APPSTORE ${cat.name}: ${entries.length} apps (url=${url})`);
 
     return entries.map((entry: any, i: number): AppSnapshot => {
       const appId = entry.id?.attributes?.["im:id"] ?? entry["im:name"]?.label ?? `unknown-${i}`;
@@ -82,6 +85,25 @@ async function fetchAppStoreCategory(cat: { name: string; genreId: number }): Pr
 export async function fetchAppStore(): Promise<AppSnapshot[]> {
   try {
     console.log("APP STORE: fetching", ITUNES_CATEGORIES.length, "categories via iTunes RSS");
+
+    // Probe: fetch ONE category first and log raw response shape
+    try {
+      const probeUrl = "https://itunes.apple.com/us/rss/topfreeapplications/limit=50/json";
+      const probeRes = await fetch(probeUrl, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(10000) });
+      console.log("APP STORE PROBE: HTTP", probeRes.status, "url=", probeUrl);
+      if (probeRes.ok) {
+        const probeData = await probeRes.json();
+        const probeEntries = probeData?.feed?.entry;
+        console.log("APP STORE PROBE: feed.entry is", Array.isArray(probeEntries) ? `array[${probeEntries.length}]` : typeof probeEntries);
+        if (Array.isArray(probeEntries) && probeEntries.length > 0) {
+          const first = probeEntries[0];
+          console.log("APP STORE PROBE: first entry keys:", Object.keys(first).join(", "));
+          console.log("APP STORE PROBE: first app:", first["im:name"]?.label, "| id:", first.id?.attributes?.["im:id"]);
+        }
+      }
+    } catch (probeErr) {
+      console.log("APP STORE PROBE FAILED:", probeErr instanceof Error ? probeErr.message : probeErr);
+    }
 
     const batch1 = ITUNES_CATEGORIES.slice(0, 9);
     const batch2 = ITUNES_CATEGORIES.slice(9);
