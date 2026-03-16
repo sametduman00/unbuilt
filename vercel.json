@@ -1,10 +1,7 @@
 {
   "functions": {
-    "app/api/pulse/route.ts": {
-      "maxDuration": 60
-    },
-    "app/api/pulse/cron/route.ts": {
-      "maxDuration": 60
-    }
+    "app/api/pulse/route.ts": { "maxDuration": 60 },
+    "app/api/pulse/cron/route.ts": { "maxDuration": 60 },
+    "app/api/pulse/analyze-ph/route.ts": { "maxDuration": 60 }
   }
 }

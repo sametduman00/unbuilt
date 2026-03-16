@@ -194,143 +194,65 @@ export async function GET() {
 
 async function fetchProductHunt(fetchHeaders: Record<string, string>): Promise<Signal[]> {
   const token = process.env.PRODUCTHUNT_API_KEY;
-  if (!token) {
-    console.log("[PULSE] PH: no API key, skipping");
-    return [];
-  }
+  if (!token) { console.log("[PULSE] PH: no API key"); return []; }
 
   try {
-    // Bugünün başından itibaren launch olanları çek (UTC gece yarısı)
     const todayStart = new Date();
     todayStart.setUTCHours(0, 0, 0, 0);
 
-    // Son 2 saatteki yeni ürünler (feed'i canlı tutmak için)
-    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
-
-    // Önce son 2 saate bak, yoksa bugünün tamamına genişlet
-    const postedAfter = twoHoursAgo > todayStart ? twoHoursAgo : todayStart;
-
-    const query = `query($postedAfter: DateTime!) {
-      posts(order: NEWEST, first: 30, postedAfter: $postedAfter) {
+    // Pagination ile bugünün TÜM ürünlerini çek
+    const query = `query($postedAfter: DateTime!, $after: String) {
+      posts(order: NEWEST, first: 50, postedAfter: $postedAfter, after: $after) {
+        pageInfo { hasNextPage endCursor }
         edges {
           node {
-            name
-            tagline
-            description
-            votesCount
-            url
-            website
-            createdAt
+            name tagline description votesCount url website createdAt
             thumbnail { url }
             topics(first: 3) { edges { node { name } } }
-            makers { name headline }
+            makers { name }
           }
         }
       }
     }`;
 
-    const res = await fetch("https://api.producthunt.com/v2/api/graphql", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-        ...fetchHeaders,
-      },
-      body: JSON.stringify({ query, variables: { postedAfter: postedAfter.toISOString() } }),
-      signal: AbortSignal.timeout(10_000),
-    });
+    let allEdges: any[] = [];
+    let cursor: string | null = null;
+    let hasNextPage = true;
+    let page = 0;
 
-    if (!res.ok) {
-      console.log("[PULSE] PH HTTP", res.status);
-      return [];
-    }
-
-    const data = await res.json();
-    if (data?.errors) {
-      console.log("[PULSE] PH GraphQL errors:", JSON.stringify(data.errors).slice(0, 200));
-      return [];
-    }
-
-    let edges = data?.data?.posts?.edges ?? [];
-    console.log("[PULSE] PH:", edges.length, "ürün bulundu (postedAfter:", postedAfter.toISOString(), ")");
-
-    // Hiç ürün yoksa bugünün tamamına genişlet (gün başında feed boş kalmasın)
-    if (edges.length === 0 && postedAfter > todayStart) {
-      console.log("[PULSE] PH: son 2 saatte ürün yok, bugünün tamamına genişleniyor");
-      const fallbackRes = await fetch("https://api.producthunt.com/v2/api/graphql", {
+    while (hasNextPage && page < 5) { // max 250 ürün (5 sayfa x 50)
+      page++;
+      const phRes: Response = await fetch("https://api.producthunt.com/v2/api/graphql", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          ...fetchHeaders,
-        },
-        body: JSON.stringify({ query, variables: { postedAfter: todayStart.toISOString() } }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...fetchHeaders },
+        body: JSON.stringify({ query, variables: { postedAfter: todayStart.toISOString(), after: cursor } }),
         signal: AbortSignal.timeout(10_000),
       });
-      if (fallbackRes.ok) {
-        const fallbackData = await fallbackRes.json();
-        edges = fallbackData?.data?.posts?.edges ?? [];
-        console.log("[PULSE] PH fallback: bugün toplam", edges.length, "ürün");
-      }
+
+      if (!phRes.ok) { console.log("[PULSE] PH HTTP", phRes.status); break; }
+      const data = await phRes.json();
+      if (data?.errors) { console.log("[PULSE] PH errors:", JSON.stringify(data.errors).slice(0, 200)); break; }
+
+      const postsData = data?.data?.posts;
+      const edges = postsData?.edges ?? [];
+      allEdges = [...allEdges, ...edges];
+      hasNextPage = postsData?.pageInfo?.hasNextPage ?? false;
+      cursor = postsData?.pageInfo?.endCursor ?? null;
+      console.log(`[PULSE] PH page ${page}: ${edges.length} ürün, toplam: ${allEdges.length}`);
     }
 
-    if (edges.length === 0) return [];
+    console.log("[PULSE] PH: bugün toplam", allEdges.length, "ürün");
+    if (allEdges.length === 0) return [];
 
-    // Claude ile her ürünü analiz et — 2 odak nokta: farkı ne + neyi eksik
-    let analyses: { name: string; different: string; missing: string }[] = [];
-    try {
-      const productList = edges
-        .slice(0, 15) // max 15 ürün analiz et (maliyet/hız dengesi)
-        .map((e: any) => {
-          const n = e.node;
-          return `Product: ${n?.name}\nTagline: ${n?.tagline}\nDescription: ${n?.description ?? "N/A"}\nVotes: ${n?.votesCount ?? 0}\nTopics: ${(n?.topics?.edges ?? []).map((t: any) => t.node?.name).join(", ")}`;
-        })
-        .join("\n\n---\n\n");
-
-      const { default: Anthropic } = await import("@anthropic-ai/sdk");
-      const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-      const msg = await client.messages.create({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 1200,
-        messages: [{
-          role: "user",
-          content: `Analyze each Product Hunt product below. For each one, answer exactly 2 things in English:
-1. "different": What makes this product genuinely different from existing alternatives? (1-2 sharp sentences, be specific)
-2. "missing": What is the most obvious gap, missing feature, or underserved user segment? (1-2 sharp sentences, be specific)
-
-Return ONLY a JSON array, no other text:
-[{"name":"...","different":"...","missing":"..."}]
-
-Products:
-${productList}`,
-        }],
-      });
-
-      const text = msg.content[0]?.type === "text" ? msg.content[0].text : "";
-      const jsonMatch = text.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        analyses = JSON.parse(jsonMatch[0]);
-      }
-      console.log("[PULSE] PH Claude analiz OK:", analyses.length, "ürün");
-    } catch (err) {
-      console.log("[PULSE] PH Claude analiz failed:", err instanceof Error ? err.message : err);
-    }
-
-    const signals: Signal[] = edges.map((e: any) => {
+    // Sinyalleri oluştur (claudeGap şimdilik boş — analyze-ph ayrı çalışır)
+    const signals: Signal[] = allEdges.map((e: any) => {
       const n = e.node;
       const votes = n?.votesCount ?? 0;
       const createdAt = n?.createdAt ?? new Date().toISOString();
       const hours = Math.floor((Date.now() - new Date(createdAt).getTime()) / 3_600_000);
-      const timeAgo = hours < 1 ? "just now" : hours < 24 ? `${hours}h ago` : `${Math.floor(hours / 24)}d ago`;
+      const timeAgo = hours < 1 ? "just now" : `${hours}h ago`;
       const topics = (n?.topics?.edges ?? []).map((t: any) => t.node?.name).filter(Boolean).slice(0, 3);
       const maker = n?.makers?.[0];
-      const analysis = analyses.find((a) => a.name === n?.name);
-
-      // claudeGap alanına her iki analizi birleştir
-      const claudeGap = analysis
-        ? `Different: ${analysis.different} | Missing: ${analysis.missing}`
-        : undefined;
 
       return {
         source: "producthunt",
@@ -347,13 +269,13 @@ ${productList}`,
         tagline: n?.tagline ?? undefined,
         makerName: maker?.name ?? undefined,
         externalUrl: n?.website || n?.url || "",
-        claudeGap,
+        claudeGap: undefined,
       };
     });
 
     return signals;
   } catch (err) {
-    console.log("[PULSE] PH fetch FAILED:", err instanceof Error ? err.message : err);
+    console.log("[PULSE] PH FAILED:", err instanceof Error ? err.message : err);
     return [];
   }
 }

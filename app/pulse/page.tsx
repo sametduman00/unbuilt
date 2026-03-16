@@ -71,9 +71,42 @@ export default function PulsePage() {
       const res = await fetch("/api/pulse");
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to fetch");
-      setSignals(data.signals ?? []);
+
+      let signals: Signal[] = data.signals ?? [];
       setHasMovementData(data.hasMovementData ?? false);
+
+      // Önce sinyalleri göster (hızlı)
+      setSignals(signals);
       setError(null);
+
+      // Sonra PH analizini arka planda yükle
+      const phSignals = signals.filter((s) => s.source === "producthunt");
+      if (phSignals.length > 0) {
+        try {
+          const analyzeRes = await fetch("/api/pulse/analyze-ph", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ signals: phSignals }),
+          });
+          const analyzeData = await analyzeRes.json();
+          const analyses: { name: string; different: string; missing: string }[] = analyzeData.analyses ?? [];
+
+          // Analizleri sinyallere ekle ve state'i güncelle
+          setSignals((prev) =>
+            prev.map((s) => {
+              if (s.source !== "producthunt") return s;
+              const analysis = analyses.find((a) => a.name === s.title);
+              if (!analysis) return s;
+              return {
+                ...s,
+                claudeGap: `\u2726 Different: ${analysis.different} \u2726 Missing: ${analysis.missing}`,
+              };
+            })
+          );
+        } catch (e) {
+          console.log("analyze-ph failed:", e);
+        }
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
