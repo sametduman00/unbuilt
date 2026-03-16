@@ -62,6 +62,7 @@ export async function GET(req: NextRequest) {
 
     // 4. PH analizini yap (burada yapıyoruz, müşteri beklemiyor)
     const analyzedPH = await analyzePHSignals(phSignals);
+    console.log("[CRON] analyzedPH claudeGap örnek:", analyzedPH[0]?.claudeGap);
 
     // 5. Tüm sinyalleri birleştir ve sırala
     const priority: Record<string, number> = {
