@@ -239,7 +239,7 @@ async function analyzePHSignals(signals: any[]): Promise<any[]> {
         console.log("[CRON] PH analiz batch", Math.floor(i/BATCH_SIZE)+1, "gönderiliyor,", batch.length, "ürün");
         const msg = await client.messages.create({
           model: "claude-haiku-4-5-20251001",
-          max_tokens: 2000,
+          max_tokens: 5000,
           messages: [{
             role: "user",
             content: `Analyze each Product Hunt product. For each, answer 3 things in English:
