@@ -1,0 +1,15 @@
+name: Pulse Hourly Snapshot
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Pulse Cron
+        run: |
+          curl -f -X GET \
+            "https://www.unbuilt.me/api/pulse/cron" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "User-Agent: GitHub-Actions-Cron"
