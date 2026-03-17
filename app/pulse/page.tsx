@@ -123,7 +123,7 @@ function AiBlock({ what, diff, gap }: { what:string|null; diff:string|null; gap:
       <div style={{display:"flex",flexDirection:"column",gap:"0.4rem"}}>
         {what && <div style={{display:"flex",gap:"0.5rem",alignItems:"flex-start"}}><span style={{fontSize:"0.625rem",fontWeight:700,color:"#6366f1",background:"rgba(99,102,241,0.12)",padding:"0.1rem 0.45rem",borderRadius:5,flexShrink:0,marginTop:1,whiteSpace:"nowrap"}}>WHAT</span><span style={{fontSize:"0.8125rem",color:"var(--clr-text-3)",lineHeight:1.5}}>{what}</span></div>}
         {diff && <div style={{display:"flex",gap:"0.5rem",alignItems:"flex-start"}}><span style={{fontSize:"0.625rem",fontWeight:700,color:"#06b6d4",background:"rgba(6,182,212,0.12)",padding:"0.1rem 0.45rem",borderRadius:5,flexShrink:0,marginTop:1,whiteSpace:"nowrap"}}>DIFF</span><span style={{fontSize:"0.8125rem",color:"var(--clr-text-3)",lineHeight:1.5}}>{diff}</span></div>}
-        {gap && <div style={{display:"flex",gap:"0.5rem",alignItems:"flex-start"}}><span style={{fontSize:"0.625rem",fontWeight:700,color:"#f59e0b",background:"rgba(245,158,11,0.12)",padding:"0.1rem 0.45rem",borderRadius:5,flexShrink:0,marginTop:1,whiteSpace:"nowrap"}}>GAP</span><span style={{fontSize:"0.8125rem",color:"var(--clr-text-3)",lineHeight:1.5}}>{gap}</span></div>}
+        {gap && <div style={{display:"flex",gap:"0.5rem",alignItems:"flex-start"}}><span style={{fontSize:"0.625rem",fontWeight:700,color:"#ef4444",background:"rgba(239,68,68,0.1)",padding:"0.1rem 0.45rem",borderRadius:5,flexShrink:0,marginTop:1,whiteSpace:"nowrap"}}>MISS</span><span style={{fontSize:"0.8125rem",color:"var(--clr-text-3)",lineHeight:1.5}}>{gap}</span></div>}
       </div>
     </div>
   );
