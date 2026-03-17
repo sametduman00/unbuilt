@@ -1,19 +1,15 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, SignInButton, UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import Link from "next/link";
 import CookieConsent from "./components/CookieConsent";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
   title: "Unbuilt — Market Gap Finder",
-  description:
-    "Enter any niche or app idea and instantly discover what competitors are missing. Find your edge before you build.",
+  description: "Enter any niche or app idea and instantly discover what competitors are missing. Find your edge before you build.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -39,15 +35,62 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           userButtonPopoverActionButton: { color: "#ffffff" },
           userButtonPopoverActionButtonText: { color: "#ffffff" },
           userButtonPopoverFooter: { display: "none" },
+          userButtonPopoverMain__manageAccount: { display: "none" },
         },
       }}
     >
       <html lang="en" className={inter.variable}>
         <body>
+          <GlobalHeader />
           {children}
           <CookieConsent />
         </body>
       </html>
     </ClerkProvider>
+  );
+}
+
+function GlobalHeader() {
+  return (
+    <header style={{
+      position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+      height: 52,
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+      padding: "0 1.5rem",
+      background: "var(--clr-bg)",
+      borderBottom: "1px solid var(--clr-border)",
+      backdropFilter: "blur(12px)",
+    }}>
+      <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+        <svg width="18" height="18" viewBox="0 0 19 19" fill="none">
+          <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+        <span style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--clr-text)", letterSpacing: "-0.02em" }}>
+          Unbuilt
+        </span>
+      </Link>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <SignedOut>
+          <SignInButton mode="modal">
+            <button style={{
+              padding: "0.375rem 1rem",
+              background: "none",
+              border: "1px solid var(--clr-border-3)",
+              borderRadius: "0.5rem",
+              color: "var(--clr-text)",
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              cursor: "pointer",
+              fontFamily: "inherit",
+            }}>
+              Sign in
+            </button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn>
+      </div>
+    </header>
   );
 }
