@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/app/lib/supabase";
 import type { AppSnapshot } from "../shared";
 
-// Helper: get vote count from signal (votesCount field or parse from subtitle)
 function getVoteCount(s: any): number {
   if (s.votesCount && s.votesCount > 0) return s.votesCount;
   const m = s.subtitle?.match(/^(\d+)/);
@@ -18,7 +17,6 @@ export async function GET(req: NextRequest) {
     const { fetchAppStore, fetchPlayStore, saveSnapshots, loadPreviousSnapshots, loadSnapshotsAt, cleanupOldSnapshots } = await import("../shared");
     const FETCH_HEADERS = { "User-Agent": "Mozilla/5.0" };
 
-    // 1. Fetch all sources
     const [appRes, playRes, phRes] = await Promise.allSettled([
       fetchAppStore(), fetchPlayStore(), fetchProductHuntLast24h(FETCH_HEADERS),
     ]);
@@ -30,63 +28,29 @@ export async function GET(req: NextRequest) {
     const allSnapshots = [...appSnaps, ...playSnaps];
     await saveSnapshots(allSnapshots);
 
-    // 2. Movement detection
     const [hourlySnaps, weeklySnaps, monthlySnaps] = await Promise.all([
       loadPreviousSnapshots().catch(() => null),
       loadSnapshotsAt(7 * 24 * 3600 * 1000, 30 * 60 * 1000).catch(() => null),
       loadSnapshotsAt(30 * 24 * 3600 * 1000, 30 * 60 * 1000).catch(() => null),
     ]);
-    let hourlySignals: any[] = [];
-    let weeklySignals: any[] = [];
-    let monthlySignals: any[] = [];
-    let hasMovementData = false;
+    let hourlySignals: any[] = [], weeklySignals: any[] = [], monthlySignals: any[] = [], hasMovementData = false;
     if (hourlySnaps?.length) { hasMovementData = true; hourlySignals = detectMovements(allSnapshots, hourlySnaps); }
     if (weeklySnaps?.length) weeklySignals = detectLongTermMovements(allSnapshots, weeklySnaps, "weekly");
     if (monthlySnaps?.length) monthlySignals = detectLongTermMovements(allSnapshots, monthlySnaps, "monthly");
     const fallbackSignals = !hasMovementData ? generateFallbackSignals(allSnapshots) : [];
 
-    // 3. Load existing analyses from ph_analyses table (permanent store)
     const sb = getSupabase();
-    const freshUrls = freshPHSignals.map((s: any) => s.url).filter(Boolean);
 
+    // Load existing analyses
+    const freshUrls = freshPHSignals.map((s: any) => s.url).filter(Boolean);
     let analysisMap = new Map<string, { what: string; different: string; missing: string }>();
     if (freshUrls.length > 0) {
-      const { data: existingAnalyses } = await sb
-        .from("ph_analyses")
-        .select("product_url, what, different, missing")
-        .in("product_url", freshUrls);
-      for (const a of existingAnalyses ?? []) {
-        analysisMap.set(a.product_url, { what: a.what, different: a.different, missing: a.missing });
-      }
+      const { data: existing } = await sb.from("ph_analyses").select("product_url, what, different, missing").in("product_url", freshUrls);
+      for (const a of existing ?? []) analysisMap.set(a.product_url, a);
     }
-    console.log(`[CRON] Found ${analysisMap.size} existing analyses for ${freshUrls.length} live products`);
+    console.log(`[CRON] Analyses loaded: ${analysisMap.size}/${freshUrls.length}`);
 
-    // 4. Analyze only NEW products not yet in ph_analyses (max 60 per run)
-    const needsAnalysis = freshPHSignals
-      .filter((s: any) => s.url && !analysisMap.has(s.url))
-      .slice(0, 60);
-
-    if (needsAnalysis.length > 0) {
-      console.log(`[CRON] Analyzing ${needsAnalysis.length} new products...`);
-      const newAnalyses = await analyzeProducts(needsAnalysis);
-      if (newAnalyses.length > 0) {
-        const rows = newAnalyses.map((a: any) => {
-          const sig = needsAnalysis.find((s: any) => s.title?.trim().toLowerCase() === a.name?.trim().toLowerCase());
-          return { product_url: sig?.url ?? "", product_name: a.name, what: a.what, different: a.different, missing: a.missing };
-        }).filter((r: any) => r.product_url);
-        if (rows.length > 0) {
-          const { error: insertErr } = await sb.from("ph_analyses").upsert(rows, { onConflict: "product_url" });
-          if (insertErr) console.log("[CRON] ph_analyses insert error:", insertErr.message);
-        }
-        for (const a of newAnalyses) {
-          const sig = needsAnalysis.find((s: any) => s.title?.trim().toLowerCase() === a.name?.trim().toLowerCase());
-          if (sig?.url) analysisMap.set(sig.url, { what: a.what, different: a.different, missing: a.missing });
-        }
-        console.log(`[CRON] Saved ${newAnalyses.length} new analyses`);
-      }
-    }
-
-    // 5. Load previous cache for frozen PH products
+    // Load previous cache for frozen products
     const { data: prevCache } = await sb.from("pulse_feed_cache").select("signals").order("generated_at", { ascending: false }).limit(1).single();
     const prevPHByTitle = new Map<string, any>();
     if (prevCache?.signals) {
@@ -96,24 +60,16 @@ export async function GET(req: NextRequest) {
     }
     const freshTitles = new Set(freshPHSignals.map((s: any) => s.title?.trim()));
 
-    // 6. Build live PH signals with analyses
+    // Build live signals with existing analyses
     const mergedLivePH = freshPHSignals.map((s: any) => {
-      const analysis = analysisMap.get(s.url);
-      const claudeGap = analysis
-        ? `${analysis.what} \u2726 Different: ${analysis.different} \u2726 Missing: ${analysis.missing}`
-        : undefined;
+      const a = analysisMap.get(s.url);
+      const claudeGap = a ? `${a.what} \u2726 Different: ${a.different} \u2726 Missing: ${a.missing}` : undefined;
       return { ...s, isLive: true, claudeGap };
     });
-
-    // 7. Frozen products (>24h): keep from previous cache
     const frozenPH = Array.from(prevPHByTitle.values())
       .filter((s: any) => !freshTitles.has(s.title?.trim()))
       .map((s: any) => ({ ...s, isLive: false }));
 
-    const liveAnalyzed = mergedLivePH.filter((s: any) => s.claudeGap).length;
-    console.log(`[CRON] Live: ${mergedLivePH.length} (${liveAnalyzed} analyzed), Frozen: ${frozenPH.length}`);
-
-    // 8. Sort by votes desc (use subtitle fallback if votesCount missing)
     const sortedLivePH = [...mergedLivePH].sort((a, b) => getVoteCount(b) - getVoteCount(a));
     const sortedFrozenPH = [...frozenPH].sort((a, b) => getVoteCount(b) - getVoteCount(a));
     const allPHSignals = [...sortedLivePH, ...sortedFrozenPH];
@@ -127,21 +83,54 @@ export async function GET(req: NextRequest) {
       return Math.abs(b.rankChange ?? 0) - Math.abs(a.rankChange ?? 0);
     });
 
-    // 9. Save cache
-    const { error } = await sb.from("pulse_feed_cache").insert({
+    // *** SAVE CACHE FIRST — before analysis, so cache is always fresh ***
+    const { error: cacheErr } = await sb.from("pulse_feed_cache").insert({
       signals, has_movement_data: hasMovementData,
       sources: { appStore: appSnaps.length, playStore: playSnaps.length, productHunt: allPHSignals.length, productHuntLive: mergedLivePH.length, productHuntFrozen: frozenPH.length },
       generated_at: new Date().toISOString(),
     });
-    if (error) console.log("[CRON] cache insert error:", error.message);
+    if (cacheErr) console.log("[CRON] cache insert error:", cacheErr.message);
+    else console.log(`[CRON] Cache saved: ${signals.length} signals`);
 
-    const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
-    await sb.from("pulse_feed_cache").delete().lt("generated_at", cutoff);
+    await sb.from("pulse_feed_cache").delete().lt("generated_at", new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString());
     cleanupOldSnapshots();
 
-    const totalAnalyzed = signals.filter((s: any) => s.source === "producthunt" && s.claudeGap).length;
-    console.log(`[CRON] DONE: ${signals.length} signals | PH analyzed: ${totalAnalyzed}/${allPHSignals.length}`);
-    return NextResponse.json({ ok: true, signals: signals.length, phLive: mergedLivePH.length, phFrozen: frozenPH.length, phAnalyzed: totalAnalyzed, hasMovementData });
+    // Analyze NEW products (max 20 per run — safe within 60s timeout)
+    const needsAnalysis = freshPHSignals.filter((s: any) => s.url && !analysisMap.has(s.url)).slice(0, 20);
+    if (needsAnalysis.length > 0) {
+      console.log(`[CRON] Analyzing ${needsAnalysis.length} new products...`);
+      const newAnalyses = await analyzeProducts(needsAnalysis);
+      if (newAnalyses.length > 0) {
+        const rows = newAnalyses.map((a: any) => {
+          const sig = needsAnalysis.find((s: any) => s.title?.trim().toLowerCase() === a.name?.trim().toLowerCase());
+          return { product_url: sig?.url ?? "", product_name: a.name, what: a.what, different: a.different, missing: a.missing };
+        }).filter((r: any) => r.product_url);
+        if (rows.length > 0) await sb.from("ph_analyses").upsert(rows, { onConflict: "product_url" });
+
+        // Patch cache with new analyses
+        const gapMap = new Map<string, string>();
+        for (const a of newAnalyses) {
+          const sig = needsAnalysis.find((s: any) => s.title?.trim().toLowerCase() === a.name?.trim().toLowerCase());
+          if (sig?.url) gapMap.set(sig.url, `${a.what} \u2726 Different: ${a.different} \u2726 Missing: ${a.missing}`);
+        }
+        const { data: latest } = await sb.from("pulse_feed_cache").select("id, signals").order("generated_at", { ascending: false }).limit(1).single();
+        if (latest) {
+          const patched = (latest.signals as any[]).map((s: any) => {
+            if (s.source !== "producthunt" || s.claudeGap || !s.url) return s;
+            const gap = gapMap.get(s.url);
+            return gap ? { ...s, claudeGap: gap } : s;
+          });
+          await sb.from("pulse_feed_cache").update({ signals: patched }).eq("id", latest.id);
+        }
+        console.log(`[CRON] Analyzed & patched ${newAnalyses.length} products`);
+      }
+    }
+
+    const analyzed = signals.filter((s: any) => s.source === "producthunt" && s.claudeGap).length;
+    const total = signals.filter((s: any) => s.source === "producthunt").length;
+    console.log(`[CRON] DONE: ${signals.length} signals | PH: ${analyzed}/${total} analyzed`);
+    return NextResponse.json({ ok: true, signals: signals.length, phLive: mergedLivePH.length, phFrozen: frozenPH.length, phAnalyzed: analyzed, hasMovementData });
+
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[CRON] FAILED:", msg);
@@ -153,33 +142,27 @@ async function analyzeProducts(signals: any[]): Promise<any[]> {
   try {
     const { default: Anthropic } = await import("@anthropic-ai/sdk");
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-    const BATCH = 20;
-    let all: any[] = [];
-    for (let i = 0; i < signals.length; i += BATCH) {
-      const batch = signals.slice(i, i + BATCH);
-      const list = batch.map((s: any) => `Product: ${s.title}\nTagline: ${s.tagline || s.signal}\nTopics: ${(s.topics ?? []).join(", ")}`).join("\n\n---\n\n");
-      try {
-        const msg = await client.messages.create({
-          model: "claude-haiku-4-5-20251001", max_tokens: 2000,
-          messages: [{ role: "user", content: `Analyze each Product Hunt product. For each answer 3 things in English (max 12 words each):
-1. "what": What it does and who it's for (concrete)
-2. "different": What genuinely differentiates it (no generic "uses AI")
-3. "missing": Most obvious gap or missing feature (specific)
+    const list = signals.map((s: any) => `Product: ${s.title}\nTagline: ${s.tagline || s.signal}\nTopics: ${(s.topics ?? []).join(", ")}`).join("\n\n---\n\n");
+    const msg = await client.messages.create({
+      model: "claude-haiku-4-5-20251001", max_tokens: 2000,
+      messages: [{ role: "user", content: `Analyze each Product Hunt product. For each answer 3 things in English (max 12 words each):
+1. "what": What it does and who it's for
+2. "different": What genuinely differentiates it (not generic "uses AI")
+3. "missing": Most obvious gap or missing feature
 
 Return ONLY a JSON array, no markdown:
 [{"name":"...","what":"...","different":"...","missing":"..."}]
 
 Products:
 ${list}` }],
-        });
-        const text = msg.content[0]?.type === "text" ? msg.content[0].text : "";
-        const match = text.replace(/```json|\n```|```/g,"").trim().match(/\[[\s\S]*\]/);
-        if (match) all = [...all, ...JSON.parse(match[0])];
-        console.log(`[CRON ANALYZE] batch ${Math.floor(i/BATCH)+1}: ${batch.length} done`);
-      } catch(e) { console.log(`[CRON ANALYZE] batch ${Math.floor(i/BATCH)+1} failed:`, e instanceof Error ? e.message : e); }
-    }
-    return all;
-  } catch(e) { return []; }
+    });
+    const text = msg.content[0]?.type === "text" ? msg.content[0].text : "";
+    const match = text.replace(/```json|\n```|```/g, "").trim().match(/\[[\s\S]*\]/);
+    return match ? JSON.parse(match[0]) : [];
+  } catch(e) {
+    console.log("[CRON ANALYZE] failed:", e instanceof Error ? e.message : e);
+    return [];
+  }
 }
 
 async function fetchProductHuntLast24h(headers: Record<string, string>): Promise<any[]> {
@@ -226,11 +209,11 @@ function detectMovements(current: AppSnapshot[], previous: AppSnapshot[]): any[]
     const lbl = snap.source === "appstore" ? "App Store" : "Google Play";
     if (prev) {
       const d = prev.rank - snap.rank;
-      if (prev.rank >= 20 && snap.rank <= 10 && d >= 10) signals.push({ source: snap.source, sourceLabel: lbl, emoji: "\u{1F4C8}", title: snap.app_name, subtitle: `#${prev.rank}\u2192#${snap.rank} in ${snap.category}`, signal: `Jumped #${prev.rank}\u2192#${snap.rank} (\u25B2${d})`, url: snap.url, timestamp: now, movementType: "rank_jump", prevRank: prev.rank, newRank: snap.rank, rankChange: d });
-      if (prev.review_count && snap.review_count) { const g = snap.review_count - prev.review_count; if (g >= 500) signals.push({ source: snap.source, sourceLabel: lbl, emoji: "\u{1F4AC}", title: snap.app_name, subtitle: `${g.toLocaleString()} new reviews`, signal: `${g.toLocaleString()} new reviews (+${Math.round(g/prev.review_count*100)}%)`, url: snap.url, timestamp: now, movementType: "review_spike", prevRank: prev.rank, newRank: snap.rank, rankChange: prev.rank - snap.rank }); }
+      if (prev.rank >= 20 && snap.rank <= 10 && d >= 10) signals.push({ source: snap.source, sourceLabel: lbl, emoji: "\u{1F4C8}", title: snap.app_name, subtitle: `#${prev.rank}\u2192#${snap.rank}`, signal: `Jumped #${prev.rank}\u2192#${snap.rank} (\u25B2${d})`, url: snap.url, timestamp: now, movementType: "rank_jump", prevRank: prev.rank, newRank: snap.rank, rankChange: d });
+      if (prev.review_count && snap.review_count) { const g = snap.review_count - prev.review_count; if (g >= 500) signals.push({ source: snap.source, sourceLabel: lbl, emoji: "\u{1F4AC}", title: snap.app_name, subtitle: `${g.toLocaleString()} new reviews`, signal: `${g.toLocaleString()} new reviews`, url: snap.url, timestamp: now, movementType: "review_spike", prevRank: prev.rank, newRank: snap.rank, rankChange: prev.rank - snap.rank }); }
       if (d > 0 && (!top || d > top.diff)) top = { snap, prevRank: prev.rank, diff: d };
     } else if (snap.rank <= 10 && !prevIds.has(`${snap.source}:${snap.app_id}`)) {
-      signals.push({ source: snap.source, sourceLabel: lbl, emoji: "\u{1F195}", title: snap.app_name, subtitle: `New at #${snap.rank} in ${snap.category}`, signal: `New entry #${snap.rank} in ${snap.category}`, url: snap.url, timestamp: now, movementType: "new_entry", newRank: snap.rank, rankChange: 0 });
+      signals.push({ source: snap.source, sourceLabel: lbl, emoji: "\u{1F195}", title: snap.app_name, subtitle: `New at #${snap.rank}`, signal: `New entry #${snap.rank}`, url: snap.url, timestamp: now, movementType: "new_entry", newRank: snap.rank, rankChange: 0 });
     }
   }
   if (top && top.diff >= 10 && !signals.some(s => s.movementType === "rank_jump" && s.title === top!.snap.app_name)) {
@@ -252,21 +235,21 @@ function detectLongTermMovements(current: AppSnapshot[], previous: AppSnapshot[]
     const d = prev.rank - snap.rank;
     if (Math.abs(d) < 5) continue;
     const lbl = snap.source === "appstore" ? "App Store" : "Google Play";
-    signals.push({ source: snap.source, sourceLabel: lbl, emoji, title: snap.app_name, subtitle: `${label} #${prev.rank}\u2192#${snap.rank}`, signal: `${label} #${prev.rank}\u2192#${snap.rank} (${d>0?"\u25B2":"\u25BC"}${Math.abs(d)})`, url: snap.url, timestamp: now, movementType: period==="weekly"?"weekly_mover":"monthly_mover", prevRank: prev.rank, newRank: snap.rank, rankChange: d });
+    signals.push({ source: snap.source, sourceLabel: lbl, emoji, title: snap.app_name, subtitle: `${label} #${prev.rank}\u2192#${snap.rank}`, signal: `${label} #${prev.rank}\u2192#${snap.rank}`, url: snap.url, timestamp: now, movementType: period === "weekly" ? "weekly_mover" : "monthly_mover", prevRank: prev.rank, newRank: snap.rank, rankChange: d });
   }
-  return signals.sort((a,b) => Math.abs(b.rankChange)-Math.abs(a.rankChange)).slice(0,10);
+  return signals.sort((a, b) => Math.abs(b.rankChange) - Math.abs(a.rankChange)).slice(0, 10);
 }
 
 function generateFallbackSignals(snapshots: AppSnapshot[]): any[] {
   const now = new Date().toISOString();
   const byCat = new Map<string, AppSnapshot[]>();
-  for (const s of snapshots) { const k=`${s.source}:${s.category}`; if(!byCat.has(k))byCat.set(k,[]); byCat.get(k)!.push(s); }
+  for (const s of snapshots) { const k = `${s.source}:${s.category}`; if (!byCat.has(k)) byCat.set(k, []); byCat.get(k)!.push(s); }
   const signals: any[] = [];
   for (const [key, apps] of byCat) {
-    const src=key.split(":")[0], cat=key.split(":").slice(1).join(":"), lbl=src==="appstore"?"App Store":"Google Play";
-    for (const app of apps.slice(0,3)) {
-      const r=app.rating?` \u2022 ${app.rating.toFixed(1)}\u2605`:"";
-      signals.push({ source:src, sourceLabel:lbl, emoji:"\u{1F4F1}", title:app.app_name, subtitle:`#${app.rank} in ${cat}${r}`, signal:`#${app.rank} in ${lbl} ${cat}${r}`, url:app.url, timestamp:now, movementType:"trending", newRank:app.rank, rating:app.rating??undefined, reviewCount:app.review_count??undefined });
+    const src = key.split(":")[0], cat = key.split(":").slice(1).join(":"), lbl = src === "appstore" ? "App Store" : "Google Play";
+    for (const app of apps.slice(0, 3)) {
+      const r = app.rating ? ` \u2022 ${app.rating.toFixed(1)}\u2605` : "";
+      signals.push({ source: src, sourceLabel: lbl, emoji: "\u{1F4F1}", title: app.app_name, subtitle: `#${app.rank} in ${cat}${r}`, signal: `#${app.rank} in ${lbl} ${cat}${r}`, url: app.url, timestamp: now, movementType: "trending", newRank: app.rank, rating: app.rating ?? undefined, reviewCount: app.review_count ?? undefined });
     }
   }
   return signals;
