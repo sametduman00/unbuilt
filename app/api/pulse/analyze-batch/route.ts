@@ -36,6 +36,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "No results from Claude" });
   }
 
+  const SEPARATOR = " ✦ Different: ";
+  const MISSING_SEP = " ✦ Missing: ";
+
   const rows = analyses.map((a: any) => {
     const sig = batch.find((s: any) => s.title?.trim().toLowerCase() === a.name?.trim().toLowerCase());
     return { product_url: sig?.url ?? "", product_name: a.name, what: a.what, different: a.different, missing: a.missing };
@@ -44,9 +47,6 @@ export async function GET(req: NextRequest) {
   if (rows.length > 0) {
     await sb.from("ph_analyses").upsert(rows, { onConflict: "product_url" });
   }
-
-  const SEPARATOR = " ✦ Different: ";
-  const MISSING_SEP = " ✦ Missing: ";
 
   const gapMap = new Map<string, string>();
   for (const a of analyses) {
@@ -83,7 +83,18 @@ async function analyzeBatch(signals: any[]): Promise<any[]> {
       max_tokens: 2000,
       messages: [{
         role: "user",
-        content: "Analyze each Product Hunt product. For each answer 3 things in English (max 12 words):\n1. \"what\": What it does and who it's for (concrete)\n2. \"different\": What genuinely differentiates it (not \"uses AI\")\n3. \"missing\": Most obvious gap or missing feature (specific)\nReturn ONLY a JSON array, no markdown:\n[{\"name\":\"...\",\"what\":\"...\",\"different\":\"...\",\"missing\":\"...\"}]\nProducts:\n" + list
+        content: `Analyze each Product Hunt product. Answer 3 things in English (max 12 words each):
+1. "what": What it does and who it's for (be concrete, not vague)
+2. "different": What genuinely sets it apart from existing tools (avoid "uses AI" — be specific)
+3. "missing": One specific feature users would clearly want but it lacks (must be a concrete missing feature, not a positive statement)
+
+IMPORTANT for "missing": Always name something that is absent or underdeveloped. Never write something positive. Examples of good answers: "No offline mode", "Lacks team collaboration features", "No export to PDF or CSV". Bad answers: "Nothing obvious" or "Seems comprehensive".
+
+Return ONLY a JSON array, no markdown:
+[{"name":"...","what":"...","different":"...","missing":"..."}]
+
+Products:
+${list}`
       }],
     });
 
