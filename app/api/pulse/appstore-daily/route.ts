@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/app/lib/supabase";
 
-const TARGET_CATEGORIES = new Set([
-  "Business","Productivity","Finance","Health & Fitness",
-  "Education","Utilities","Developer Tools","Social Networking",
-  "Medical","News","Reference","Travel","Food & Drink","Lifestyle",
-]);
-
 export async function GET(req: NextRequest) {
   const secret = req.headers.get("x-cron-secret");
   if (secret !== process.env.CRON_SECRET) {
@@ -14,154 +8,175 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // 1. Fetch new apps from iTunes RSS
+    const today = new Date().toISOString().substring(0, 10);
+    const sb = getSupabase();
+
+    // Skip if already ran today
+    const { data: existing } = await sb
+      .from("appstore_daily_cache")
+      .select("id, app_count")
+      .eq("fetch_date", today)
+      .single();
+    if (existing) {
+      console.log("[APPSTORE] Already ran today, skipping");
+      return NextResponse.json({ ok: true, skipped: true, appCount: existing.app_count });
+    }
+
+    // 1. iTunes RSS — ALL new apps today (no category filter)
     const rss = await fetch(
       "https://itunes.apple.com/us/rss/newapplications/limit=200/json",
       { signal: AbortSignal.timeout(15_000) }
     );
     const rssData = await rss.json();
     const entries: any[] = rssData?.feed?.entry ?? [];
+    console.log("[APPSTORE] RSS: " + entries.length + " new apps today");
 
-    const targetEntries = entries.filter((e) =>
-      TARGET_CATEGORIES.has(e?.category?.attributes?.label ?? "")
-    );
-
-    console.log(`[APPSTORE-DAILY] RSS: ${entries.length} total, ${targetEntries.length} target`);
-
-    if (targetEntries.length === 0) {
+    if (entries.length === 0) {
       return NextResponse.json({ ok: true, fetched: 0, saved: 0 });
     }
 
-    // 2. iTunes Lookup for full details
-    const ids = targetEntries
-      .map((e) => e?.id?.attributes?.["im:id"])
-      .filter(Boolean);
-
+    // 2. Lookup API — full details + screenshots
+    const ids = entries.map(e => e?.id?.attributes?.["im:id"]).filter(Boolean);
     const lookup = await fetch(
-      `https://itunes.apple.com/lookup?id=${ids.join(",")}&country=us`,
-      { signal: AbortSignal.timeout(15_000) }
+      "https://itunes.apple.com/lookup?id=" + ids.join(",") + "&country=us",
+      { signal: AbortSignal.timeout(20_000) }
     );
     const lookupData = await lookup.json();
-    const apps: any[] = (lookupData.results ?? []).filter(
-      (a: any) => a.wrapperType === "software"
-    );
+    const apps: any[] = (lookupData.results ?? []).filter((a: any) => a.wrapperType === "software");
 
-    // 3. Filter non-English apps
-    const englishApps = apps.filter((a) => {
+    // 3. Filter: English only (description mostly ASCII, min 100 chars)
+    const englishApps = apps.filter((a: any) => {
       const desc = a.description ?? "";
       const ratio = desc.replace(/[^\x00-\x7F]/g, "").length / (desc.length || 1);
-      return ratio > 0.7 && desc.length > 50;
+      return ratio > 0.7 && desc.length > 100;
     });
+    console.log("[APPSTORE] After English filter: " + englishApps.length + " apps");
 
-    console.log(`[APPSTORE-DAILY] After filter: ${englishApps.length} apps`);
+    // 4. Analyze each app with Claude Vision (screenshots + description)
+    const analyzed = await analyzeAppsWithVision(englishApps);
 
-    // 4. Upsert into DB
-    const sb = getSupabase();
-    const rows = englishApps.map((a) => ({
-      app_id: String(a.trackId),
-      app_name: a.trackName,
-      developer: a.artistName,
-      category: a.primaryGenreName,
-      description: a.description?.substring(0, 1000),
-      icon_url: a.artworkUrl100,
-      store_url: a.trackViewUrl,
-      price: a.formattedPrice ?? "Free",
-      release_date: a.releaseDate?.substring(0, 10),
-      rating: a.averageUserRating ?? null,
-      review_count: a.userRatingCount ?? 0,
-      last_checked_at: new Date().toISOString(),
-    }));
-
-    const { error: upsertErr } = await sb
-      .from("appstore_new_apps")
-      .upsert(rows, { onConflict: "app_id", ignoreDuplicates: true });
-
-    if (upsertErr) console.error("[APPSTORE-DAILY] Upsert error:", upsertErr.message);
-
-    // 5. Claude analysis for unanalyzed apps
-    const appIds = rows.map((r) => r.app_id);
-    const { data: needsAnalysis } = await sb
-      .from("appstore_new_apps")
-      .select("app_id,app_name,description,category")
-      .in("app_id", appIds)
-      .is("claude_what", null)
-      .limit(30);
-
-    if (needsAnalysis && needsAnalysis.length > 0) {
-      await analyzeApps(needsAnalysis, sb);
-      console.log(`[APPSTORE-DAILY] Analyzed ${needsAnalysis.length} apps`);
-    }
-
-    // 6. Rebuild feed cache — last 90 days
-    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
-    const { data: feedApps } = await sb
-      .from("appstore_new_apps")
-      .select("*")
-      .gte("first_seen_at", ninetyDaysAgo)
-      .order("first_seen_at", { ascending: false })
-      .limit(500);
-
-    if (feedApps && feedApps.length > 0) {
-      await sb.from("appstore_feed_cache").insert({
-        apps: feedApps,
-        app_count: feedApps.length,
-        generated_at: new Date().toISOString(),
-      });
-      const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
-      await sb.from("appstore_feed_cache").delete().lt("generated_at", cutoff);
-    }
-
-    console.log(`[APPSTORE-DAILY] DONE: ${rows.length} saved, feed: ${feedApps?.length ?? 0}`);
-
-    return NextResponse.json({
-      ok: true,
-      fetched: apps.length,
-      saved: rows.length,
-      analyzed: needsAnalysis?.length ?? 0,
-      feedTotal: feedApps?.length ?? 0,
+    // 5. Save to appstore_daily_cache
+    const { error } = await sb.from("appstore_daily_cache").insert({
+      fetch_date: today,
+      apps: analyzed,
+      app_count: analyzed.length,
+      generated_at: new Date().toISOString(),
     });
+    if (error) console.error("[APPSTORE] Insert error:", error.message);
+
+    // 6. Keep only last 7 days
+    const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+    await sb.from("appstore_daily_cache").delete().lt("fetch_date", cutoff);
+
+    console.log("[APPSTORE] DONE: " + analyzed.length + " apps saved for " + today);
+    return NextResponse.json({ ok: true, fetched: apps.length, english: englishApps.length, saved: analyzed.length });
+
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("[APPSTORE-DAILY] FAILED:", msg);
+    console.error("[APPSTORE] FAILED:", msg);
     return NextResponse.json({ ok: false, error: msg }, { status: 500 });
   }
 }
 
-async function analyzeApps(apps: any[], sb: any) {
+async function analyzeAppsWithVision(apps: any[]): Promise<any[]> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return;
+  if (!apiKey) return apps.map(formatApp);
 
-  await Promise.all(
-    apps.map(async (app) => {
+  const results: any[] = [];
+
+  // 5 parallel at a time
+  for (let i = 0; i < apps.length; i += 5) {
+    const batch = apps.slice(i, i + 5);
+    const batchResults = await Promise.all(batch.map(app => analyzeOne(app, apiKey)));
+    results.push(...batchResults);
+    console.log("[APPSTORE VISION] batch " + (Math.floor(i / 5) + 1) + "/" + Math.ceil(apps.length / 5) + " done");
+  }
+
+  return results;
+}
+
+async function analyzeOne(app: any, apiKey: string): Promise<any> {
+  const base = formatApp(app);
+
+  try {
+    const screenshots: string[] = (app.screenshotUrls ?? []).slice(0, 3);
+    const content: any[] = [];
+
+    // Fetch screenshots and encode as base64 for Vision
+    for (const url of screenshots) {
       try {
-        const res = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": apiKey,
-            "anthropic-version": "2023-06-01",
-          },
-          body: JSON.stringify({
-            model: "claude-haiku-4-5-20251001",
-            max_tokens: 150,
-            messages: [{
-              role: "user",
-              content: `App: ${app.app_name}\nCategory: ${app.category}\nDescription: ${app.description?.substring(0, 300)}\n\nRespond ONLY with JSON (max 10 words each):\n{"what":"what it does","different":"key differentiator","missing":"biggest gap"}`
-            }],
-          }),
-          signal: AbortSignal.timeout(10_000),
-        });
-        const data = await res.json();
-        const text = data?.content?.[0]?.text ?? "";
-        const clean = text.replace(/```json|```/g, "").trim();
-        const parsed = JSON.parse(clean);
-        await sb.from("appstore_new_apps").update({
-          claude_what: parsed.what,
-          claude_different: parsed.different,
-          claude_missing: parsed.missing,
-          claude_analyzed_at: new Date().toISOString(),
-        }).eq("app_id", app.app_id);
-      } catch (_) { /* skip */ }
-    })
-  );
+        const imgRes = await fetch(url, { signal: AbortSignal.timeout(8_000) });
+        if (imgRes.ok) {
+          const buffer = await imgRes.arrayBuffer();
+          const b64 = Buffer.from(buffer).toString("base64");
+          const ct = (imgRes.headers.get("content-type") || "image/jpeg").split(";")[0];
+          content.push({ type: "image", source: { type: "base64", media_type: ct, data: b64 } });
+        }
+      } catch { /* skip failed image */ }
+    }
+
+    content.push({
+      type: "text",
+      text: "App: " + app.trackName +
+        "\nCategory: " + app.primaryGenreName +
+        "\nPrice: " + (app.formattedPrice || "Free") +
+        "\nDescription: " + (app.description?.substring(0, 400) ?? "") +
+        "\n\nBased on the screenshots and description, answer in English (max 12 words each):\n{\"what\": \"what it does and who it's for\",\"different\": \"what genuinely sets it apart\",\"missing\": \"most obvious gap or missing feature\"}\n\nReturn ONLY the JSON object, no markdown."
+    });
+
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 200,
+        messages: [{ role: "user", content }],
+      }),
+      signal: AbortSignal.timeout(30_000),
+    });
+
+    const data = await res.json();
+    const text = data?.content?.[0]?.text ?? "";
+    const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
+
+    return {
+      ...base,
+      claude_what: parsed.what ?? null,
+      claude_different: parsed.different ?? null,
+      claude_missing: parsed.missing ?? null,
+      claude_analyzed_at: new Date().toISOString(),
+    };
+  } catch (e) {
+    console.log("[APPSTORE VISION] " + app.trackName + " failed: " + (e instanceof Error ? e.message : String(e)));
+    return base;
+  }
+}
+
+function formatApp(app: any) {
+  return {
+    app_id: String(app.trackId),
+    app_name: app.trackName,
+    developer: app.artistName,
+    category: app.primaryGenreName,
+    price: app.formattedPrice ?? "Free",
+    icon_url: app.artworkUrl512 || app.artworkUrl100,
+    store_url: app.trackViewUrl,
+    release_date: app.releaseDate?.substring(0, 10),
+    description: app.description?.substring(0, 500),
+    rating: app.averageUserRating ?? null,
+    review_count: app.userRatingCount ?? 0,
+    min_os: app.minimumOsVersion,
+    age_rating: app.contentAdvisoryRating,
+    languages: app.languageCodesISO2A ?? [],
+    screenshot_urls: (app.screenshotUrls ?? []).slice(0, 5),
+    file_size_mb: app.fileSizeBytes ? Math.round(parseInt(app.fileSizeBytes) / 1024 / 1024) : null,
+    claude_what: null,
+    claude_different: null,
+    claude_missing: null,
+    claude_analyzed_at: null,
+  };
 }
