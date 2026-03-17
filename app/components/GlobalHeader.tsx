@@ -32,16 +32,7 @@ export default function GlobalHeader() {
             }}>Sign in</button>
           </SignInButton>
         )}
-        {isLoaded && isSignedIn && (
-          <UserButton
-            afterSignOutUrl="/"
-            appearance={{
-              elements: {
-                userButtonPopoverActionButton__manageAccount: { display: "none" },
-              }
-            }}
-          />
-        )}
+        {isLoaded && isSignedIn && <UserButton />}
       </div>
     </header>
   );
