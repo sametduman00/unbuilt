@@ -20,11 +20,10 @@ export async function GET(req: NextRequest) {
 
     const FETCH_HEADERS = { "User-Agent": "Mozilla/5.0" };
 
-    // 1. Fetch all sources in parallel
     const [appRes, playRes, phRes] = await Promise.allSettled([
       fetchAppStore(),
       fetchPlayStore(),
-      fetchProductHuntAll(FETCH_HEADERS),
+      fetchProductHuntLast24h(FETCH_HEADERS),
     ]);
 
     const appSnaps = appRes.status === "fulfilled" ? appRes.value : [];
@@ -33,11 +32,9 @@ export async function GET(req: NextRequest) {
 
     console.log(`[CRON] AppStore: ${appSnaps.length}, PlayStore: ${playSnaps.length}, PH fresh: ${freshPHSignals.length}`);
 
-    // 2. Save snapshots (App Store + Play Store)
     const allSnapshots = [...appSnaps, ...playSnaps];
     await saveSnapshots(allSnapshots);
 
-    // 3. Movement detection
     const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
     const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
 
@@ -65,7 +62,6 @@ export async function GET(req: NextRequest) {
 
     const fallbackSignals = !hasMovementData ? generateFallbackSignals(allSnapshots) : [];
 
-    // 4. Load previous cache to preserve all historical PH products
     const sb = getSupabase();
     const { data: prevCache } = await sb
       .from("pulse_feed_cache")
@@ -74,7 +70,6 @@ export async function GET(req: NextRequest) {
       .limit(1)
       .single();
 
-    // Build maps from previous cache
     const prevPHByTitle = new Map<string, any>();
     if (prevCache?.signals) {
       for (const s of prevCache.signals as any[]) {
@@ -86,90 +81,65 @@ export async function GET(req: NextRequest) {
 
     console.log("[CRON] Previous cache has", prevPHByTitle.size, "PH products (all-time)");
 
-    // 5. Merge strategy:
-    //    - Fresh PH products (today): use fresh upvotes, keep old claudeGap if exists
-    //    - Historical PH products (previous days): keep exactly as-is, no update
     const freshTitles = new Set(freshPHSignals.map((s: any) => s.title?.trim()));
 
-    // Update today's products with fresh upvotes, preserving their claudeGap
-    const mergedTodayPH = freshPHSignals.map((s: any) => {
+    // Live (< 24h): update upvotes, preserve claudeGap
+    const mergedLivePH = freshPHSignals.map((s: any) => {
       const prev = prevPHByTitle.get(s.title?.trim());
-      return prev?.claudeGap ? { ...s, claudeGap: prev.claudeGap } : s;
+      return { ...s, isLive: true, claudeGap: prev?.claudeGap ?? undefined };
     });
 
-    // Keep historical products (previous days) exactly as-is
-    const historicalPH = Array.from(prevPHByTitle.values()).filter(
-      (s: any) => !freshTitles.has(s.title?.trim())
-    );
+    // Frozen (> 24h): keep as-is, upvotes stay frozen
+    const frozenPH = Array.from(prevPHByTitle.values())
+      .filter((s: any) => !freshTitles.has(s.title?.trim()))
+      .map((s: any) => ({ ...s, isLive: false }));
 
-    console.log(`[CRON] Today: ${mergedTodayPH.length} products, Historical: ${historicalPH.length} products`);
+    console.log(`[CRON] Live: ${mergedLivePH.length}, Frozen: ${frozenPH.length}`);
 
-    // Sort today's PH by upvotes desc, then append historical
-    const sortedTodayPH = [...mergedTodayPH].sort((a, b) => {
-      const av = parseInt(a.subtitle?.match(/^(\d+)/)?.[1] ?? "0");
-      const bv = parseInt(b.subtitle?.match(/^(\d+)/)?.[1] ?? "0");
-      return bv - av;
-    });
+    const sortedLivePH = [...mergedLivePH].sort((a, b) => (b.votesCount ?? 0) - (a.votesCount ?? 0));
+    const sortedFrozenPH = [...frozenPH].sort((a, b) => (b.votesCount ?? 0) - (a.votesCount ?? 0));
+    const allPHSignals = [...sortedLivePH, ...sortedFrozenPH];
 
-    const allPHSignals = [...sortedTodayPH, ...historicalPH];
-
-    // 6. Combine and sort all signals
     const priority: Record<string, number> = {
-      rank_jump: 0,
-      new_entry: 1,
-      review_spike: 2,
-      top_mover: 3,
-      weekly_mover: 4,
-      monthly_mover: 5,
-      ph_trending: 6,
-      trending: 7,
+      rank_jump: 0, new_entry: 1, review_spike: 2, top_mover: 3,
+      weekly_mover: 4, monthly_mover: 5, ph_trending: 6, trending: 7,
     };
 
     const signals = [
-      ...hourlySignals,
-      ...weeklySignals,
-      ...monthlySignals,
-      ...allPHSignals,
-      ...fallbackSignals,
+      ...hourlySignals, ...weeklySignals, ...monthlySignals,
+      ...allPHSignals, ...fallbackSignals,
     ].sort((a, b) => {
       const pa = priority[a.movementType ?? "trending"] ?? 7;
       const pb = priority[b.movementType ?? "trending"] ?? 7;
       if (pa !== pb) return pa - pb;
-      if (a.movementType === "ph_trending") return 0; // PH already sorted above
+      if (a.movementType === "ph_trending") return 0;
       return Math.abs(b.rankChange ?? 0) - Math.abs(a.rankChange ?? 0);
     });
 
-    // 7. Save updated feed cache
     const { error } = await sb.from("pulse_feed_cache").insert({
       signals,
       has_movement_data: hasMovementData,
       sources: {
-        appStore: appSnaps.length,
-        playStore: playSnaps.length,
+        appStore: appSnaps.length, playStore: playSnaps.length,
         productHunt: allPHSignals.length,
-        productHuntToday: mergedTodayPH.length,
-        productHuntHistorical: historicalPH.length,
+        productHuntLive: mergedLivePH.length,
+        productHuntFrozen: frozenPH.length,
       },
       generated_at: new Date().toISOString(),
     });
 
     if (error) console.log("[CRON] cache insert error:", error.message);
 
-    // 8. Clean up old cache entries (keep 48h) — but NOT the PH products, they live in signals
     const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
     await sb.from("pulse_feed_cache").delete().lt("generated_at", cutoff);
     cleanupOldSnapshots();
 
-    console.log(`[CRON] DONE: ${signals.length} signals (${mergedTodayPH.length} today + ${historicalPH.length} historical PH)`);
+    console.log(`[CRON] DONE: ${signals.length} signals (${mergedLivePH.length} live + ${frozenPH.length} frozen PH)`);
 
     return NextResponse.json({
-      ok: true,
-      signals: signals.length,
-      appStore: appSnaps.length,
-      playStore: playSnaps.length,
-      phToday: mergedTodayPH.length,
-      phHistorical: historicalPH.length,
-      hasMovementData,
+      ok: true, signals: signals.length,
+      appStore: appSnaps.length, playStore: playSnaps.length,
+      phLive: mergedLivePH.length, phFrozen: frozenPH.length, hasMovementData,
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -178,41 +148,14 @@ export async function GET(req: NextRequest) {
   }
 }
 
-/* ── PH midnight = Pacific Time (UTC-8 winter / UTC-7 summer) ── */
-function getPHTodayStart(): Date {
-  const now = new Date();
-  // Detect US DST: second Sunday of March through first Sunday of November
-  const year = now.getUTCFullYear();
-  const dstStart = getNthSundayUTC(year, 2, 2); // March (month=2), 2nd Sunday, 2:00 AM = 10:00 UTC
-  const dstEnd   = getNthSundayUTC(year, 10, 1); // November (month=10), 1st Sunday, 2:00 AM = 9:00 UTC (was 10:00 PST)
-  const isDST    = now >= dstStart && now < dstEnd;
-  const offsetHours = isDST ? 7 : 8; // PDT=UTC-7, PST=UTC-8
-
-  // PH "today" starts at midnight Pacific = offsetHours UTC
-  const utcNow = now.getTime();
-  const utcMidnightPH = Math.floor((utcNow + offsetHours * 3600000) / 86400000) * 86400000 - offsetHours * 3600000;
-  return new Date(utcMidnightPH);
-}
-
-function getNthSundayUTC(year: number, month: number, n: number): Date {
-  // Find nth Sunday of month, at 10:00 UTC (= 2:00 AM Pacific standard)
-  const d = new Date(Date.UTC(year, month, 1));
-  let count = 0;
-  while (d.getUTCMonth() === month) {
-    if (d.getUTCDay() === 0) { count++; if (count === n) break; }
-    d.setUTCDate(d.getUTCDate() + 1);
-  }
-  d.setUTCHours(10, 0, 0, 0);
-  return d;
-}
-
-/* ── PH: fetch today's products (since PH midnight Pacific) ──── */
-async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promise<any[]> {
+/* ── PH: fetch products from last 24 hours ──────────────────── */
+async function fetchProductHuntLast24h(fetchHeaders: Record<string, string>): Promise<any[]> {
   const token = process.env.PRODUCTHUNT_API_KEY;
   if (!token) return [];
 
-  const todayStart = getPHTodayStart();
-  console.log(`[CRON] PH today start: ${todayStart.toISOString()} (Pacific midnight)`);
+  // Always fetch last 24 hours - no more PH Pacific midnight logic
+  const postedAfter = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  console.log(`[CRON] PH fetching since: ${postedAfter.toISOString()} (last 24h)`);
 
   const query = `query($postedAfter: DateTime!, $after: String) {
     posts(order: NEWEST, first: 50, postedAfter: $postedAfter, after: $after) {
@@ -220,9 +163,9 @@ async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promis
       totalCount
       edges {
         node {
-          name tagline description votesCount url website createdAt
+          name tagline votesCount url website createdAt
           thumbnail { url }
-          topics(first: 3) { edges { node { name } } }
+          topics(first: 5) { edges { node { name } } }
           makers { name }
         }
       }
@@ -237,24 +180,15 @@ async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promis
 
   while (hasNextPage && page < 10) {
     page++;
-    const res: Response = await fetch("https://api.producthunt.com/v2/api/graphql", {
+    const res = await fetch("https://api.producthunt.com/v2/api/graphql", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-        ...fetchHeaders,
-      },
-      body: JSON.stringify({
-        query,
-        variables: { postedAfter: todayStart.toISOString(), after: cursor },
-      }),
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...fetchHeaders },
+      body: JSON.stringify({ query, variables: { postedAfter: postedAfter.toISOString(), after: cursor } }),
       signal: AbortSignal.timeout(10_000),
     });
-
     if (!res.ok) break;
     const data = await res.json();
     if (data?.errors) break;
-
     const postsData = data?.data?.posts;
     allEdges = [...allEdges, ...(postsData?.edges ?? [])];
     if (totalCount === undefined) totalCount = postsData?.totalCount;
@@ -262,7 +196,7 @@ async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promis
     cursor = postsData?.pageInfo?.endCursor ?? null;
   }
 
-  console.log(`[CRON] PH: ${allEdges.length} products fetched (PH total today: ${totalCount ?? "unknown"})`);
+  console.log(`[CRON] PH: ${allEdges.length} products fetched (total in 24h: ${totalCount ?? "unknown"})`);
 
   return allEdges.map((e: any) => {
     const n = e.node;
@@ -270,18 +204,15 @@ async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promis
     const createdAt = n?.createdAt ?? new Date().toISOString();
     const hours = Math.floor((Date.now() - new Date(createdAt).getTime()) / 3_600_000);
     const timeAgo = hours < 1 ? "just now" : `${hours}h ago`;
-    const topics = (n?.topics?.edges ?? [])
-      .map((t: any) => t.node?.name)
-      .filter(Boolean)
-      .slice(0, 3);
+    const topics = (n?.topics?.edges ?? []).map((t: any) => t.node?.name).filter(Boolean).slice(0, 5);
 
     return {
       source: "producthunt",
       sourceLabel: "Product Hunt",
       emoji: "\u{1F680}",
       title: n?.name ?? "",
-      subtitle: `${votes} upvotes \u2014 launched ${timeAgo}`,
-      signal: `${votes} upvotes \u2014 launched ${timeAgo}. ${n?.tagline ?? ""}`,
+      subtitle: `${votes} upvotes — launched ${timeAgo}`,
+      signal: `${votes} upvotes — launched ${timeAgo}. ${n?.tagline ?? ""}`,
       url: n?.url ?? "",
       timestamp: createdAt,
       movementType: "ph_trending",
@@ -290,6 +221,8 @@ async function fetchProductHuntAll(fetchHeaders: Record<string, string>): Promis
       tagline: n?.tagline ?? undefined,
       makerName: n?.makers?.[0]?.name ?? undefined,
       externalUrl: n?.website || n?.url || "",
+      votesCount: votes,
+      isLive: true,
     };
   });
 }
@@ -303,7 +236,6 @@ function detectMovements(current: AppSnapshot[], previous: AppSnapshot[]): any[]
   const allPrevAppIds = new Set<string>();
   for (const snap of previous) allPrevAppIds.add(`${snap.source}:${snap.app_id}`);
   let biggestMover: { snap: AppSnapshot; prevRank: number; diff: number } | null = null;
-
   for (const snap of current) {
     const key = `${snap.source}:${snap.category}:${snap.app_id}`;
     const prev = prevMap.get(key);
@@ -311,44 +243,26 @@ function detectMovements(current: AppSnapshot[], previous: AppSnapshot[]): any[]
     if (prev) {
       const rankDiff = prev.rank - snap.rank;
       if (prev.rank >= 20 && snap.rank <= 10 && rankDiff >= 10) {
-        signals.push({ source: snap.source, sourceLabel, emoji: "\u{1F4C8}", title: snap.app_name,
-          subtitle: `#${prev.rank} \u2192 #${snap.rank} in ${snap.category}`,
-          signal: `Jumped from #${prev.rank} to #${snap.rank} in ${snap.category} (\u25B2${rankDiff} positions)`,
-          url: snap.url, timestamp: now, movementType: "rank_jump",
-          prevRank: prev.rank, newRank: snap.rank, rankChange: rankDiff });
+        signals.push({ source: snap.source, sourceLabel, emoji: "\u{1F4C8}", title: snap.app_name, subtitle: `#${prev.rank} → #${snap.rank} in ${snap.category}`, signal: `Jumped from #${prev.rank} to #${snap.rank} in ${snap.category} (▲${rankDiff} positions)`, url: snap.url, timestamp: now, movementType: "rank_jump", prevRank: prev.rank, newRank: snap.rank, rankChange: rankDiff });
       }
       if (prev.review_count && snap.review_count) {
         const gained = snap.review_count - prev.review_count;
         if (gained >= 500) {
           const pct = Math.round((gained / prev.review_count) * 100);
-          signals.push({ source: snap.source, sourceLabel, emoji: "\u{1F4AC}", title: snap.app_name,
-            subtitle: `${gained.toLocaleString()} new reviews in 1 hour`,
-            signal: `${gained.toLocaleString()} new reviews in 1 hour (+${pct}%)`,
-            url: snap.url, timestamp: now, movementType: "review_spike",
-            prevRank: prev.rank, newRank: snap.rank, rankChange: prev.rank - snap.rank });
+          signals.push({ source: snap.source, sourceLabel, emoji: "\u{1F4AC}", title: snap.app_name, subtitle: `${gained.toLocaleString()} new reviews in 1 hour`, signal: `${gained.toLocaleString()} new reviews in 1 hour (+${pct}%)`, url: snap.url, timestamp: now, movementType: "review_spike", prevRank: prev.rank, newRank: snap.rank, rankChange: prev.rank - snap.rank });
         }
       }
-      if (rankDiff > 0 && (!biggestMover || rankDiff > biggestMover.diff)) {
-        biggestMover = { snap, prevRank: prev.rank, diff: rankDiff };
-      }
+      if (rankDiff > 0 && (!biggestMover || rankDiff > biggestMover.diff)) biggestMover = { snap, prevRank: prev.rank, diff: rankDiff };
     } else if (snap.rank <= 10 && !allPrevAppIds.has(`${snap.source}:${snap.app_id}`)) {
-      signals.push({ source: snap.source, sourceLabel, emoji: "\u{1F195}", title: snap.app_name,
-        subtitle: `New entry at #${snap.rank} in ${snap.category}`,
-        signal: `New entry at #${snap.rank} in ${snap.category} \u2014 wasn't in any top 50 last hour`,
-        url: snap.url, timestamp: now, movementType: "new_entry", newRank: snap.rank, rankChange: 0 });
+      signals.push({ source: snap.source, sourceLabel, emoji: "\u{1F195}", title: snap.app_name, subtitle: `New entry at #${snap.rank} in ${snap.category}`, signal: `New entry at #${snap.rank} in ${snap.category} — wasn't in any top 50 last hour`, url: snap.url, timestamp: now, movementType: "new_entry", newRank: snap.rank, rankChange: 0 });
     }
   }
-
   if (biggestMover && biggestMover.diff >= 10) {
     const { snap, prevRank, diff } = biggestMover;
     const already = signals.some((s) => s.movementType === "rank_jump" && s.title === snap.app_name && s.source === snap.source);
     if (!already) {
       const sourceLabel = snap.source === "appstore" ? "App Store" : "Google Play";
-      signals.push({ source: snap.source, sourceLabel, emoji: "\u{1F680}", title: snap.app_name,
-        subtitle: `Biggest mover \u2014 up ${diff} positions`,
-        signal: `Biggest mover this hour \u2014 up ${diff} positions in ${snap.category} (#${prevRank} \u2192 #${snap.rank})`,
-        url: snap.url, timestamp: new Date().toISOString(), movementType: "top_mover",
-        prevRank, newRank: snap.rank, rankChange: diff });
+      signals.push({ source: snap.source, sourceLabel, emoji: "\u{1F680}", title: snap.app_name, subtitle: `Biggest mover — up ${diff} positions`, signal: `Biggest mover this hour — up ${diff} positions in ${snap.category} (#${prevRank} → #${snap.rank})`, url: snap.url, timestamp: new Date().toISOString(), movementType: "top_mover", prevRank, newRank: snap.rank, rankChange: diff });
     }
   }
   return signals;
@@ -369,11 +283,8 @@ function detectLongTermMovements(current: AppSnapshot[], previous: AppSnapshot[]
     const rankDiff = prev.rank - snap.rank;
     if (Math.abs(rankDiff) < 5) continue;
     const sourceLabel = snap.source === "appstore" ? "App Store" : "Google Play";
-    const direction = rankDiff > 0 ? "\u25B2" : "\u25BC";
-    signals.push({ source: snap.source, sourceLabel, emoji, title: snap.app_name,
-      subtitle: `${label} #${prev.rank} \u2192 now #${snap.rank} in ${snap.category}`,
-      signal: `${label} #${prev.rank} \u2192 now #${snap.rank} in ${snap.category} (${direction}${Math.abs(rankDiff)})`,
-      url: snap.url, timestamp: now, movementType, prevRank: prev.rank, newRank: snap.rank, rankChange: rankDiff });
+    const direction = rankDiff > 0 ? "▲" : "▼";
+    signals.push({ source: snap.source, sourceLabel, emoji, title: snap.app_name, subtitle: `${label} #${prev.rank} → now #${snap.rank} in ${snap.category}`, signal: `${label} #${prev.rank} → now #${snap.rank} in ${snap.category} (${direction}${Math.abs(rankDiff)})`, url: snap.url, timestamp: now, movementType, prevRank: prev.rank, newRank: snap.rank, rankChange: rankDiff });
   }
   signals.sort((a: any, b: any) => Math.abs(b.rankChange ?? 0) - Math.abs(a.rankChange ?? 0));
   return signals.slice(0, 10);
@@ -394,13 +305,9 @@ function generateFallbackSignals(snapshots: AppSnapshot[]): any[] {
     const catName = key.split(":").slice(1).join(":");
     const sourceLabel = source === "appstore" ? "App Store" : "Google Play";
     for (const app of apps.slice(0, 3)) {
-      const ratingStr = app.rating ? ` \u2022 ${app.rating.toFixed(1)}\u2605` : "";
-      const reviewStr = app.review_count ? ` \u2022 ${app.review_count.toLocaleString()} reviews` : "";
-      signals.push({ source, sourceLabel, emoji: "\u{1F4F1}", title: app.app_name,
-        subtitle: `#${app.rank} in ${catName}${ratingStr}`,
-        signal: `Currently #${app.rank} in ${sourceLabel} ${catName}${ratingStr}${reviewStr}`,
-        url: app.url, timestamp: now, movementType: "trending",
-        newRank: app.rank, rating: app.rating ?? undefined, reviewCount: app.review_count ?? undefined });
+      const ratingStr = app.rating ? ` • ${app.rating.toFixed(1)}★` : "";
+      const reviewStr = app.review_count ? ` • ${app.review_count.toLocaleString()} reviews` : "";
+      signals.push({ source, sourceLabel, emoji: "\u{1F4F1}", title: app.app_name, subtitle: `#${app.rank} in ${catName}${ratingStr}`, signal: `Currently #${app.rank} in ${sourceLabel} ${catName}${ratingStr}${reviewStr}`, url: app.url, timestamp: now, movementType: "trending", newRank: app.rank, rating: app.rating ?? undefined, reviewCount: app.review_count ?? undefined });
     }
   }
   return signals;
