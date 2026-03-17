@@ -1,8 +1,10 @@
 "use client";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 
 export default function GlobalHeader() {
+  const { isSignedIn, isLoaded } = useUser();
+
   return (
     <header style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
@@ -19,7 +21,7 @@ export default function GlobalHeader() {
         <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.02em" }}>Unbuilt</span>
       </Link>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <SignedOut>
+        {isLoaded && !isSignedIn && (
           <SignInButton mode="modal">
             <button style={{
               padding: "0.375rem 1rem",
@@ -29,8 +31,8 @@ export default function GlobalHeader() {
               fontSize: "0.875rem", fontWeight: 600, cursor: "pointer",
             }}>Sign in</button>
           </SignInButton>
-        </SignedOut>
-        <SignedIn>
+        )}
+        {isLoaded && isSignedIn && (
           <UserButton
             afterSignOutUrl="/"
             appearance={{
@@ -39,7 +41,7 @@ export default function GlobalHeader() {
               }
             }}
           />
-        </SignedIn>
+        )}
       </div>
     </header>
   );
