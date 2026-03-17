@@ -1,15 +1,44 @@
-name: Pulse Hourly Snapshot
+name: Pulse Daily
+
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "15 7 * * *"
   workflow_dispatch:
+
 jobs:
-  snapshot:
+  pulse-daily:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
     steps:
-      - name: Trigger Pulse Cron
+      - name: Step 1 - Fetch today PH products and save cache
         run: |
           curl -f -X GET \
             "https://www.unbuilt.me/api/pulse/cron" \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
-            -H "User-Agent: GitHub-Actions-Cron"
+            -H "User-Agent: GitHub-Actions-Cron" \
+            --max-time 55
+          echo "Fetch complete"
+
+      - name: Step 2 - Analyze all batches until done
+        run: |
+          MAX=50
+          RUN=0
+          while [ $RUN -lt $MAX ]; do
+            RUN=$((RUN + 1))
+            echo "--- Batch $RUN ---"
+            RESP=$(curl -s -X GET \
+              "https://www.unbuilt.me/api/pulse/analyze-batch" \
+              -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+              -H "User-Agent: GitHub-Actions-Cron" \
+              --max-time 55)
+            echo "$RESP"
+            DONE=$(echo "$RESP" | python3 -c "import sys,json; print(json.load(sys.stdin).get('done',False))" 2>/dev/null || echo "false")
+            REM=$(echo "$RESP" | python3 -c "import sys,json; print(json.load(sys.stdin).get('remaining',999))" 2>/dev/null || echo "999")
+            echo "Done=$DONE Remaining=$REM"
+            if [ "$DONE" = "True" ] || [ "$REM" = "0" ]; then
+              echo "All products analyzed!"
+              break
+            fi
+            sleep 2
+          done
