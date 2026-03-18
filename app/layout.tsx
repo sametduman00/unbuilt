@@ -12,7 +12,6 @@ export const metadata: Metadata = {
   description: "Enter any niche or app idea and instantly discover what competitors are missing. Find your edge before you build.",
 };
 
-// Dark mode appearance
 const darkAppearance = {
   variables: { colorPrimary: "#fff", colorBackground: "#111", colorInputBackground: "#1a1a1a", colorText: "#fff", colorTextSecondary: "#999", borderRadius: "0.75rem" },
   elements: {
@@ -35,7 +34,18 @@ const darkAppearance = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider appearance={darkAppearance}>
-      <html lang="en" className={inter.variable}>
+      <html lang="en" className={inter.variable} suppressHydrationWarning>
+        <head>
+          <script dangerouslySetInnerHTML={{ __html: `
+            (function() {
+              try {
+                var theme = localStorage.getItem('theme');
+                var dark = theme ? theme === 'dark' : true;
+                if (!dark) document.documentElement.classList.add('light');
+              } catch(e) {}
+            })();
+          ` }} />
+        </head>
         <body>
           <GlobalHeader />
           {children}
