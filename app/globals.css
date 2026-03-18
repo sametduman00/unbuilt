@@ -339,490 +339,258 @@ html.light .cl-formButtonPrimary {
 }
 
 
+
 /* ═══════════════════════════════════════════════════════════════
-   UNBUILT — DESIGN SYSTEM v2  ·  Futuristic Obsidian
-   Applied: hero typography, card system, label readability,
-            CTA consistency, icon treatment, layout polish
+   UNBUILT — DESIGN SYSTEM v3  ·  Scoped & Precise
+   All card rules anchored to [data-tool-grid] — zero collateral
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── HERO SECTION ─────────────────────────────────────────────── */
-
-/* Wrapper: more vertical breathing room */
-main > div > div:first-child {
-  padding: 4rem 1rem !important;
+/* ── FONTS (global) ───────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Syne', -apple-system, sans-serif !important;
+}
+body, p, span, button, input, textarea, select, label, a {
+  font-family: 'Figtree', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-/* h1 base */
+/* ── HERO ─────────────────────────────────────────────────────── */
 h1 {
   font-family: 'Syne', sans-serif !important;
   font-weight: 800 !important;
   letter-spacing: -0.035em !important;
-  line-height: 1.06 !important;
-  font-size: clamp(2.6rem, 4.8vw, 4.2rem) !important;
+  line-height: 1.07 !important;
+  font-size: clamp(2.4rem, 4.6vw, 4rem) !important;
   white-space: normal !important;
-  margin-bottom: 1.25rem !important;
 }
 
-/* "Claude says your idea is great." — first span, dimmed but readable */
+/* "Claude says your idea is great." — first span, smaller & dimmed */
 h1 span:first-of-type {
   display: block !important;
-  color: var(--clr-text-3) !important;
+  font-size: 0.68em !important;
   font-weight: 700 !important;
-  font-size: 0.72em !important;
+  color: var(--clr-text-3) !important;
+  -webkit-text-fill-color: unset !important;
+  background: none !important;
   letter-spacing: -0.02em !important;
+  margin-bottom: 0.15em !important;
 }
 
 html.light h1 span:first-of-type {
-  color: #888 !important;
+  color: #9ca3af !important;
 }
 
-/* "We'll tell you the truth." — second span, bold & bright */
+/* "We'll tell you the truth." — second span, bold gradient */
 h1 span:last-of-type {
   display: block !important;
-  background: linear-gradient(125deg, #ffffff 0%, #e2e8f8 55%, #93c5fd 100%) !important;
+  background: linear-gradient(130deg, #ffffff 0%, #e0ecff 55%, #7dd3fc 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   font-weight: 800 !important;
-  font-size: 1em !important;
 }
 
 html.light h1 span:last-of-type {
-  background: linear-gradient(125deg, #0f172a 0%, #1e3a5f 100%) !important;
+  background: linear-gradient(130deg, #0f172a 0%, #1e40af 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
 }
 
 /* Hero subtitle */
-main > div > div:first-child > p,
 h1 + p {
   font-family: 'Figtree', sans-serif !important;
   font-size: 1.05rem !important;
   font-weight: 350 !important;
   line-height: 1.7 !important;
   color: var(--clr-text-3) !important;
-  letter-spacing: 0.005em !important;
-  max-width: 560px !important;
-  margin: 0 auto 1.5rem !important;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
 }
 
-/* ── CARD GRID ────────────────────────────────────────────────── */
+html.light h1 + p {
+  color: #6b7280 !important;
+}
 
-/* Grid wrapper */
-main > div > div:last-child {
+/* ── TOOL CARDS GRID — scoped to [data-tool-grid] ────────────── */
+
+/* Grid container */
+[data-tool-grid] {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
   gap: 1rem !important;
   width: 100% !important;
-  padding: 0 0 3rem !important;
-  position: relative;
-  z-index: 1;
 }
 
 @media (max-width: 768px) {
-  main > div > div:last-child {
+  [data-tool-grid] {
     grid-template-columns: 1fr !important;
     gap: 0.75rem !important;
-    padding: 0 0 2rem !important;
   }
 }
 
-/* All cards (both <a> and <div> wrappers) */
-main > div > div:last-child > a,
-main > div > div:last-child > div {
-  display: flex !important;
-  flex-direction: column !important;
-  background: linear-gradient(160deg, rgba(18,18,32,0.97) 0%, rgba(11,11,20,0.99) 100%) !important;
-  border: 1px solid rgba(34,211,238,0.1) !important;
+/* Card outer wrappers (A and DIV) — same look */
+[data-tool-grid] > a,
+[data-tool-grid] > div {
+  background: linear-gradient(155deg, rgba(18,18,32,0.97) 0%, rgba(11,11,20,0.99) 100%) !important;
+  border: 1px solid rgba(34,211,238,0.11) !important;
   border-radius: 16px !important;
-  padding: 1.5rem !important;
   text-decoration: none !important;
   color: inherit !important;
-  transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease !important;
   position: relative !important;
   overflow: hidden !important;
+  transition: border-color 0.28s ease, transform 0.28s cubic-bezier(0.16,1,0.3,1), box-shadow 0.28s ease !important;
   cursor: pointer !important;
 }
 
-/* Card top shimmer */
-main > div > div:last-child > a::before,
-main > div > div:last-child > div::before {
+/* Top shimmer line */
+[data-tool-grid] > a::before,
+[data-tool-grid] > div::before {
   content: '' !important;
   position: absolute !important;
-  top: 0 !important; left: 10% !important; right: 10% !important;
+  top: 0 !important; left: 12% !important; right: 12% !important;
   height: 1px !important;
-  background: linear-gradient(90deg, transparent, rgba(34,211,238,0.35), transparent) !important;
+  background: linear-gradient(90deg, transparent, rgba(34,211,238,0.4), transparent) !important;
   pointer-events: none !important;
 }
 
-/* Card hover */
-main > div > div:last-child > a:hover,
-main > div > div:last-child > div:hover {
+/* Hover */
+[data-tool-grid] > a:hover,
+[data-tool-grid] > div:hover {
   border-color: rgba(34,211,238,0.28) !important;
-  transform: translateY(-4px) !important;
-  box-shadow:
-    0 0 0 1px rgba(34,211,238,0.1),
-    0 20px 60px rgba(0,0,0,0.6),
-    0 0 40px rgba(34,211,238,0.05) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.55), 0 0 30px rgba(34,211,238,0.04) !important;
+}
+
+/* Selected card */
+[data-tool-grid] > div[style*="border: 2px"] {
+  border-color: rgba(34,211,238,0.4) !important;
+  box-shadow: 0 0 0 1px rgba(34,211,238,0.2) !important;
 }
 
 /* Light mode cards */
-html.light main > div > div:last-child > a,
-html.light main > div > div:last-child > div {
+html.light [data-tool-grid] > a,
+html.light [data-tool-grid] > div {
   background: #ffffff !important;
   border: 1px solid #e5e7eb !important;
 }
 
-html.light main > div > div:last-child > a:hover,
-html.light main > div > div:last-child > div:hover {
+html.light [data-tool-grid] > a:hover,
+html.light [data-tool-grid] > div:hover {
   border-color: #0891b2 !important;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.1) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
 }
 
-/* ── CARD LABEL (WHAT'S RISING / I HAVE AN IDEA / HELP ME...) ── */
+/* Pulse card: A > inner div (remove double-card effect) */
+[data-tool-grid] > a > div {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
 
-/* The tiny eyebrow tag above icon */
-main > div > div:last-child p[style*="uppercase"],
-main > div > div:last-child p[style*="textTransform"] {
+/* ── CARD INTERNALS — via inline style fingerprints ──────────── */
+
+/* Label (WHAT'S RISING / I HAVE AN IDEA / HELP ME...) */
+[data-tool-grid] div[style*="0.625rem"],
+[data-tool-grid] div[style*="letter-spacing: 0.06"] {
   font-family: 'Figtree', sans-serif !important;
   font-size: 0.72rem !important;
   font-weight: 600 !important;
   letter-spacing: 0.08em !important;
   color: var(--clr-accent) !important;
   text-transform: uppercase !important;
-  margin-bottom: 0.75rem !important;
-  opacity: 0.9 !important;
 }
 
-/* ── CARD ICON BOX ────────────────────────────────────────────── */
-
-/* Icon container — subtle glow bg */
-main > div > div:last-child div[style*="padding: 10px"],
-main > div > div:last-child div[style*="borderRadius: 12px"] {
-  background: rgba(34,211,238,0.07) !important;
-  border: 1px solid rgba(34,211,238,0.12) !important;
-  border-radius: 12px !important;
-  width: 44px !important;
-  height: 44px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin-bottom: 1rem !important;
-}
-
-/* Icon color */
-main > div > div:last-child svg {
-  color: var(--clr-accent) !important;
-  stroke: var(--clr-accent) !important;
-}
-
-/* ── CARD HEADINGS ────────────────────────────────────────────── */
-
-main > div > div:last-child h2,
-main > div > div:last-child h3 {
-  font-family: 'Syne', sans-serif !important;
-  font-size: 1.2rem !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.025em !important;
-  color: var(--clr-text) !important;
-  margin-bottom: 0.25rem !important;
-  line-height: 1.25 !important;
-}
-
-/* Card subtitle (Find the gaps before you build) */
-main > div > div:last-child h2 + div,
-main > div > div:last-child h3 + div,
-main > div > div:last-child div[style*="color: var(--clr-text-3)"] {
-  font-family: 'Figtree', sans-serif !important;
-  font-size: 0.78rem !important;
-  font-weight: 500 !important;
-  color: var(--clr-accent) !important;
-  letter-spacing: 0.01em !important;
-  margin-bottom: 0.75rem !important;
-}
-
-/* Card body paragraph */
-main > div > div:last-child p:not([style*="uppercase"]):not([style*="textTransform"]) {
-  font-family: 'Figtree', sans-serif !important;
-  font-size: 0.875rem !important;
-  font-weight: 400 !important;
-  line-height: 1.65 !important;
-  color: var(--clr-text-3) !important;
-  flex: 1 !important;
-  margin-bottom: 1.25rem !important;
-}
-
-/* ── CARD CTA LINKS ───────────────────────────────────────────── */
-
-/* ALL card CTAs — unified look */
-main > div > div:last-child div[style*="color: var(--clr-accent)"],
-main > div > div:last-child a[style*="color: var(--clr-accent)"],
-main > div > div:last-child span[style*="color: var(--clr-accent)"],
-main > div > div:last-child > a > div > div:last-child,
-main > div > div:last-child > div > div:last-child {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  color: var(--clr-accent) !important;
-  font-family: 'Figtree', sans-serif !important;
-  font-size: 0.875rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.01em !important;
-  margin-top: auto !important;
-  transition: gap 0.2s ease, color 0.2s ease !important;
-}
-
-main > div > div:last-child > a:hover > div > div:last-child,
-main > div > div:last-child > div:hover > div:last-child {
-  gap: 10px !important;
-  color: #ffffff !important;
-}
-
-html.light main > div > div:last-child div[style*="color: var(--clr-accent)"] {
+html.light [data-tool-grid] div[style*="0.625rem"],
+html.light [data-tool-grid] div[style*="letter-spacing: 0.06"] {
   color: #0891b2 !important;
 }
 
-/* ── FOOTER ───────────────────────────────────────────────────── */
-footer, [class*="footer"] {
-  border-top: 1px solid rgba(255,255,255,0.05) !important;
-  background: transparent !important;
-  padding: 1.5rem 0 !important;
-}
-
-footer a {
-  font-family: 'Figtree', sans-serif !important;
-  font-size: 0.75rem !important;
-  color: rgba(100,100,140,0.5) !important;
-  letter-spacing: 0.01em !important;
-  transition: color 0.2s ease !important;
-}
-
-footer a:hover { color: var(--clr-accent) !important; }
-footer span { color: rgba(100,100,140,0.25) !important; }
-
-html.light footer a { color: #9ca3af !important; }
-html.light footer a:hover { color: #0891b2 !important; }
-
-/* ── GLOBAL TYPOGRAPHY POLISH ─────────────────────────────────── */
-
-* { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-
-p, span, div {
-  font-family: 'Figtree', -apple-system, sans-serif;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Syne', sans-serif !important;
-}
-
-/* Thin scrollbar */
-::-webkit-scrollbar { width: 3px; height: 3px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.2); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: var(--clr-accent); }
-
-/* Selection */
-::selection { background: rgba(34,211,238,0.15); color: #fff; }
-html.light ::selection { background: rgba(8,145,178,0.15); color: #000; }
-
-/* ── NAV FINAL POLISH ─────────────────────────────────────────── */
-header {
-  backdrop-filter: blur(24px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
-  border-bottom: 1px solid rgba(34,211,238,0.07) !important;
-}
-
-html.light header {
-  border-bottom: 1px solid rgba(0,0,0,0.07) !important;
-  backdrop-filter: blur(20px) !important;
-}
-
-/* Nav font */
-header *, nav * {
-  font-family: 'Figtree', sans-serif !important;
-}
-
-header a, nav a {
-  letter-spacing: 0.01em !important;
-}
-
-
-/* ═══════════════════════════════════════════════════════════════
-   PROPORTION FIX v1  ·  Card ratio corrections
-   ═══════════════════════════════════════════════════════════════ */
-
-/* ── FIX 1: Pulse card — remove double-card effect ───────────── */
-/* The <a> is the outer card (already styled). 
-   Its first child <div> inherits JSX styles (border, bg, padding)
-   which creates a "card inside card". Reset it. */
-
-main > div > div:last-child > a > div {
-  background: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-  padding: 0 !important;
-  box-shadow: none !important;
-  display: flex !important;
-  flex-direction: column !important;
-  flex: 1 !important;
-  width: 100% !important;
-  gap: 0 !important;
-  overflow: visible !important;
-}
-
-/* ── FIX 2: Uniform card padding & gap ───────────────────────── */
-main > div > div:last-child > a,
-main > div > div:last-child > div {
-  padding: 1.5rem !important;
-  gap: 0 !important;
-}
-
-/* ── FIX 3: Label spacing — consistent across all cards ──────── */
-/* First element in each card = label */
-main > div > div:last-child > a > div > div:first-child,
-main > div > div:last-child > div > div:first-child {
-  font-family: 'Figtree', sans-serif !important;
-  font-size: 0.7rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.09em !important;
-  text-transform: uppercase !important;
-  color: var(--clr-accent) !important;
-  margin-bottom: 0.75rem !important;
-  display: block !important;
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-}
-
-html.light main > div > div:last-child > a > div > div:first-child,
-html.light main > div > div:last-child > div > div:first-child {
-  color: #0891b2 !important;
-}
-
-/* ── FIX 4: Icon box — uniform size & style ──────────────────── */
-main > div > div:last-child > a > div > div:nth-child(2),
-main > div > div:last-child > div > div:nth-child(2) {
+/* Icon box (36px square) */
+[data-tool-grid] div[style*="width: 36px"] {
   width: 40px !important;
   height: 40px !important;
-  min-width: 40px !important;
-  min-height: 40px !important;
+  border-radius: 10px !important;
+  background: rgba(34,211,238,0.08) !important;
+  border: 1px solid rgba(34,211,238,0.15) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  background: rgba(34,211,238,0.08) !important;
-  border: 1px solid rgba(34,211,238,0.15) !important;
-  border-radius: 10px !important;
-  margin-bottom: 1rem !important;
-  padding: 0 !important;
-  box-shadow: none !important;
 }
 
-html.light main > div > div:last-child > a > div > div:nth-child(2),
-html.light main > div > div:last-child > div > div:nth-child(2) {
+html.light [data-tool-grid] div[style*="width: 36px"] {
   background: rgba(8,145,178,0.07) !important;
-  border-color: rgba(8,145,178,0.2) !important;
+  border-color: rgba(8,145,178,0.18) !important;
 }
 
-/* SVG icons inside icon box */
-main > div > div:last-child svg {
-  width: 18px !important;
-  height: 18px !important;
-  flex-shrink: 0 !important;
-}
-
-/* ── FIX 5: Card title — 3rd child ───────────────────────────── */
-main > div > div:last-child > a > div > div:nth-child(3),
-main > div > div:last-child > div > div:nth-child(3) {
+/* Card title (1.1rem, weight 700) */
+[data-tool-grid] div[style*="1.1rem"][style*="700"] {
   font-family: 'Syne', sans-serif !important;
   font-size: 1.15rem !important;
   font-weight: 700 !important;
-  letter-spacing: -0.02em !important;
+  letter-spacing: -0.022em !important;
   color: var(--clr-text) !important;
-  margin-bottom: 0.2rem !important;
-  line-height: 1.3 !important;
 }
 
-/* ── FIX 6: Card subtitle — 4th child ───────────────────────── */
-main > div > div:last-child > a > div > div:nth-child(4),
-main > div > div:last-child > div > div:nth-child(4) {
+html.light [data-tool-grid] div[style*="1.1rem"][style*="700"] {
+  color: #111827 !important;
+}
+
+/* Card subtitle (0.825rem weight 500) */
+[data-tool-grid] div[style*="0.825rem"][style*="500"] {
   font-family: 'Figtree', sans-serif !important;
-  font-size: 0.775rem !important;
-  font-weight: 500 !important;
+  font-size: 0.78rem !important;
   color: var(--clr-accent) !important;
-  margin-bottom: 0.875rem !important;
-  line-height: 1.3 !important;
 }
 
-html.light main > div > div:last-child > a > div > div:nth-child(4),
-html.light main > div > div:last-child > div > div:nth-child(4) {
+html.light [data-tool-grid] div[style*="0.825rem"][style*="500"] {
   color: #0891b2 !important;
 }
 
-/* ── FIX 7: Card body text — the <p> ────────────────────────── */
-main > div > div:last-child > a > div > p,
-main > div > div:last-child > div > p {
+/* Card body paragraph */
+[data-tool-grid] p {
   font-family: 'Figtree', sans-serif !important;
-  font-size: 0.86rem !important;
-  font-weight: 400 !important;
+  font-size: 0.875rem !important;
   line-height: 1.65 !important;
   color: var(--clr-text-3) !important;
-  margin-bottom: 1.25rem !important;
-  flex: 1 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
 }
 
-html.light main > div > div:last-child > a > div > p,
-html.light main > div > div:last-child > div > p {
+html.light [data-tool-grid] p {
   color: #6b7280 !important;
 }
 
-/* ── FIX 8: CTA row — bottom of each card ────────────────────── */
-main > div > div:last-child > a > div > div:last-child,
-main > div > div:last-child > div > div:last-child {
+/* CTA row (Explore Pulse / Open → / Selected →) */
+[data-tool-grid] div[style*="margin-top: 0.875rem"] {
   display: inline-flex !important;
   align-items: center !important;
   gap: 5px !important;
   color: var(--clr-accent) !important;
   font-family: 'Figtree', sans-serif !important;
-  font-size: 0.85rem !important;
+  font-size: 0.875rem !important;
   font-weight: 600 !important;
-  letter-spacing: 0.005em !important;
-  margin-top: auto !important;
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-  cursor: pointer !important;
-  transition: gap 0.2s ease, color 0.2s ease, opacity 0.2s !important;
 }
 
-main > div > div:last-child > a:hover > div > div:last-child,
-main > div > div:last-child > div:hover > div:last-child {
-  gap: 8px !important;
-  color: var(--clr-text) !important;
-}
-
-html.light main > div > div:last-child > a > div > div:last-child,
-html.light main > div > div:last-child > div > div:last-child {
+html.light [data-tool-grid] div[style*="margin-top: 0.875rem"] {
   color: #0891b2 !important;
 }
 
-/* ── FIX 9: Expanded tool panel — when card opens inline ─────── */
-/* Card 2 & 3 expand to show a tool form — make it use full space */
-main > div > div:last-child > div[style*="width"],
-main > div > div:last-child > div[style*="max-width"] {
-  width: 100% !important;
-  max-width: 100% !important;
+/* ── NAV POLISH ───────────────────────────────────────────────── */
+header {
+  backdrop-filter: blur(20px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+  border-bottom: 1px solid rgba(34,211,238,0.07) !important;
 }
 
-/* Stack Advisor / Gap Analysis expanded state */
-main > div > div:last-child {
-  align-items: stretch !important;
+html.light header {
+  border-bottom: 1px solid rgba(0,0,0,0.07) !important;
 }
 
-/* ── FIX 10: Ensure equal card heights via grid ──────────────── */
-main > div > div:last-child > a,
-main > div > div:last-child > div {
-  height: auto !important;
-  min-height: 0 !important;
-  align-self: stretch !important;
-}
+/* ── SCROLLBAR ────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.25); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--clr-accent); }
+
+::selection { background: rgba(34,211,238,0.15); color: #fff; }
+html.light ::selection { background: rgba(8,145,178,0.15); color: #000; }
