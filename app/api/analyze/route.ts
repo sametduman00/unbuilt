@@ -8,9 +8,10 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const SYSTEM_PROMPT = `You are a sharp, experienced market analyst and startup advisor. You produce concise, highly actionable competitor analysis and market gap reports. Your tone is direct, insightful, and slightly contrarian — you cut through hype. IMPORTANT: You MUST respond with ONLY a single JSON code block. No text before or after. The JSON must match the exact schema provided. Be specific: name real competitors, real products, real pain points.`;
 
-const USER_PROMPT = (idea: string, youtubeContext: string, appStoreContext: string) => `Analyze the market for: "${idea}"
+const USER_PROMPT = (idea: string, youtubeContext: string, appStoreContext: string, serperContext: string) => `Analyze the market for: "${idea}"
 ${youtubeContext}
 ${appStoreContext}
+${serperContext}
 Respond with ONLY a JSON code block matching this exact schema:
 \`\`\`json
 {
@@ -146,6 +147,40 @@ async function fetchGPlayContext(query: string): Promise<string> {
   }
 }
 
+// Fetch live Google Search results via Serper — closes Claude's training data gap
+async function fetchSerperContext(idea: string): Promise<string> {
+  const apiKey = process.env.SERPER_API_KEY;
+  if (!apiKey) return "";
+  try {
+    const res = await fetch("https://google.serper.dev/search", {
+      method: "POST",
+      headers: { "X-API-KEY": apiKey, "Content-Type": "application/json" },
+      body: JSON.stringify({ q: idea + " app software tool", num: 8, hl: "en", gl: "us" }),
+      signal: AbortSignal.timeout(6000),
+    });
+    if (!res.ok) return "";
+    const data = await res.json();
+
+    const organic = data.organic ?? [];
+    if (organic.length === 0) return "";
+
+    const lines = organic.slice(0, 6).map((r: { title: string; link: string; snippet?: string }) => {
+      const snippet = (r.snippet || "").slice(0, 120).replace(/\n/g, " ");
+      return `- "${r.title}" (${r.link}) — ${snippet}`;
+    });
+
+    // Related searches as signals
+    const related = (data.relatedSearches ?? []).slice(0, 4).map((r: { query: string }) => r.query);
+
+    console.log("[Analyze] Serper context:", lines.length, "results for:", idea);
+    return `\nHere are LIVE Google search results for this idea right now (use these to identify new competitors, products, and trends that may have emerged after your training cutoff):\n${lines.join("\n")}${related.length ? `\nPeople also search: ${related.join(", ")}` : ""}\n`;
+  } catch (err) {
+    console.log("[Analyze] Serper context fetch failed:", err);
+    return "";
+  }
+}
+
+
 // Fetch top YouTube videos for the idea to give Claude real-time context
 async function fetchYouTubeContext(idea: string): Promise<string> {
   const apiKey = process.env.YOUTUBE_API_KEY;
@@ -223,10 +258,11 @@ export async function POST(req: NextRequest) {
 
       try {
         // Fetch all live data sources in parallel
-        const [youtubeContext, appStoreContext, gplayContext] = await Promise.all([
+        const [youtubeContext, appStoreContext, gplayContext, serperContext] = await Promise.all([
           fetchYouTubeContext(idea),
           fetchAppStoreContext(idea),
           fetchGPlayContext(idea),
+          fetchSerperContext(idea),
         ]);
 
         const combinedAppContext = [appStoreContext, gplayContext].filter(Boolean).join("");
@@ -237,7 +273,7 @@ export async function POST(req: NextRequest) {
           max_tokens: 16000,
           thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM_PROMPT,
-          messages: [{ role: "user", content: USER_PROMPT(idea, youtubeContext, combinedAppContext) }],
+          messages: [{ role: "user", content: USER_PROMPT(idea, youtubeContext, combinedAppContext, serperContext) }],
         });
 
         for await (const event of anthropicStream) {
