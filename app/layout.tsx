@@ -12,16 +12,36 @@ export const metadata: Metadata = {
   description: "Enter any niche or app idea and instantly discover what competitors are missing. Find your edge before you build.",
 };
 
-const darkAppearance = {
-  variables: { colorPrimary: "#fff", colorBackground: "#111", colorInputBackground: "#1a1a1a", colorText: "#fff", colorTextSecondary: "#999", borderRadius: "0.75rem" },
+const clerkAppearance = {
+  variables: {
+    colorPrimary: "#fff",
+    colorBackground: "#111",
+    colorInputBackground: "#1a1a1a",
+    colorText: "#fff",
+    colorTextSecondary: "#999",
+    borderRadius: "0.75rem",
+  },
   elements: {
     card: { background: "#111", border: "1px solid #2a2a2a", boxShadow: "0 8px 40px rgba(0,0,0,0.7)" },
     formButtonPrimary: { background: "#fff", color: "#000" },
-    headerTitle: { color: "#fff" }, headerSubtitle: { color: "#999" },
+    headerTitle: { color: "#fff" },
+    headerSubtitle: { color: "#999" },
     footer: { display: "none" },
-    socialButtonsBlockButton__github: { background: "#24292e", border: "1px solid #444", color: "#fff" },
+    socialButtonsBlockButton__github: {
+      background: "#24292e",
+      border: "1px solid #444",
+      color: "#fff",
+    },
     socialButtonsBlockButtonText__github: { color: "#fff" },
-    socialButtonsBlockButton__google: { background: "#fff", border: "1px solid #dadce0", color: "#3c4043", boxShadow: "none", backgroundImage: "none", filter: "none" },
+    socialButtonsProviderIcon__github: { filter: "invert(1)" },
+    socialButtonsBlockButton__google: {
+      background: "#fff",
+      border: "1px solid #dadce0",
+      color: "#3c4043",
+      boxShadow: "none",
+      backgroundImage: "none",
+      filter: "none",
+    },
     socialButtonsBlockButtonText__google: { color: "#3c4043" },
     userButtonPopoverCard: { background: "#111", border: "1px solid #2a2a2a" },
     userButtonPopoverActionButton: { color: "#fff" },
@@ -33,18 +53,22 @@ const darkAppearance = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider appearance={darkAppearance}>
+    <ClerkProvider appearance={clerkAppearance}>
       <html lang="en" className={inter.variable} suppressHydrationWarning>
         <head>
-          <script dangerouslySetInnerHTML={{ __html: `
-            (function() {
-              try {
-                var theme = localStorage.getItem('theme');
-                var dark = theme ? theme === 'dark' : true;
-                if (!dark) document.documentElement.classList.add('light');
-              } catch(e) {}
-            })();
-          ` }} />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+(function() {
+  try {
+    var theme = localStorage.getItem('theme');
+    var dark = theme ? theme === 'dark' : true;
+    if (!dark) document.documentElement.classList.add('light');
+  } catch(e) {}
+})();
+`,
+            }}
+          />
         </head>
         <body>
           <GlobalHeader />
