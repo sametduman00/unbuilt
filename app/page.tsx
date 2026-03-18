@@ -3232,7 +3232,7 @@ export default function Home() {
                 </h1>
                 <p style={{
                   color: "var(--clr-text-3)", fontSize: "1.2rem", lineHeight: 1.6,
-                  maxWidth: 480, margin: "0 auto 1rem",
+                  maxWidth: 680, margin: "0 auto 1rem",
                 }}>
                   Your AI chat was trained on last year's data. Unbuilt searches the live web — so you build on facts, not memories.
                 </p>
