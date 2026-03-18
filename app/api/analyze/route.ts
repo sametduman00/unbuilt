@@ -156,7 +156,7 @@ async function fetchYouTubeContext(idea: string): Promise<string> {
       part: "snippet",
       type: "video",
       order: "viewCount",
-      q: `${idea} review OR problem`,
+      q: `${idea} app startup OR "we built" OR "why doesn't" OR "I need" OR launching`,
       maxResults: "5",
       publishedAfter,
       key: apiKey,
@@ -190,7 +190,7 @@ async function fetchYouTubeContext(idea: string): Promise<string> {
       return `- "${item.snippet.title}" by ${item.snippet.channelTitle} (${fmtViews} views)`;
     });
     console.log("[Analyze] YouTube context:", lines.length, "videos found");
-    return `\nHere are the most-viewed recent YouTube videos about this space — factor these into your pain points and market gap analysis:\n${lines.join("\n")}\n`;
+    return `\nHere are recent YouTube videos in this space (new product launches, founder stories, user frustrations, problem callouts) — use these to identify real pain points and emerging signals:\n${lines.join("\n")}\n`;
   } catch (err) {
     console.log("[Analyze] YouTube context fetch failed:", err);
     return "";
