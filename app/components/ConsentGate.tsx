@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser, useClerk } from "@clerk/nextjs";
+import { useUser, useSignIn } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -8,7 +8,7 @@ const CONSENT_KEY = "unbuilt_consent_v1";
 
 export default function ConsentGate({ children }: { children: React.ReactNode }) {
   const { isSignedIn, isLoaded } = useUser();
-  const { openSignIn } = useClerk();
+  const { signIn } = useSignIn();
   const [consentGiven, setConsentGiven] = useState(true);
   const [check1, setCheck1] = useState(false);
   const [check2, setCheck2] = useState(false);
@@ -26,8 +26,13 @@ export default function ConsentGate({ children }: { children: React.ReactNode })
     setConsentGiven(true);
   };
 
-  const signInWith = (provider: "oauth_github" | "oauth_google") => {
-    openSignIn({ redirectUrl: window.location.href, initialValues: { strategy: provider } as any });
+  const signInWith = async (provider: "oauth_github" | "oauth_google") => {
+    if (!signIn) return;
+    await signIn.authenticateWithRedirect({
+      strategy: provider,
+      redirectUrl: "/sso-callback",
+      redirectUrlComplete: "/",
+    });
   };
 
   const showGate = mounted && isLoaded && (!isSignedIn || !consentGiven);
