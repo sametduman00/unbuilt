@@ -3218,12 +3218,12 @@ export default function Home() {
               <div style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
                 justifyContent: "center", textAlign: "center", maxWidth: 720, margin: "0 auto",
-                width: "100%", padding: "3rem 0 3rem", position: "relative",
+                width: "100%", padding: "1.5rem 0 2rem", position: "relative",
               }}>
                 <h1 style={{
                   fontSize: "clamp(2.52rem, 4.608vw, 3.96rem)", fontWeight: 700,
                   letterSpacing: "-0.03em", lineHeight: 1.15,
-                  color: "var(--clr-text)", marginBottom: "0.75rem",
+                  color: "var(--clr-text)", marginBottom: "0.2rem",
                   whiteSpace: "normal",
                 }}>
                   <span style={{ color: "var(--clr-text-3)" }}>Claude says your idea is great.</span>
