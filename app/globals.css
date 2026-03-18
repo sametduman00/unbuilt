@@ -358,9 +358,9 @@ h1 {
   font-family: 'Syne', sans-serif !important;
   font-weight: 800 !important;
   letter-spacing: -0.04em !important;
-  line-height: 1.06 !important;
-  font-size: clamp(2.2rem, 3.8vw, 3.6rem) !important;
-  white-space: normal !important;
+  line-height: 1.05 !important;
+  font-size: clamp(1.9rem, 3vw, 2.75rem) !important;
+  white-space: nowrap !important;
 }
 
 /* "Claude says your idea is great." — first span, same size, dimmed */
@@ -372,8 +372,9 @@ h1 span:first-of-type {
   -webkit-text-fill-color: unset !important;
   background: none !important;
   letter-spacing: inherit !important;
-  line-height: 1.06 !important;
+  line-height: 1.05 !important;
   margin-bottom: 0 !important;
+  white-space: nowrap !important;
 }
 
 html.light h1 span:first-of-type {
@@ -388,7 +389,8 @@ h1 span:last-of-type {
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   font-weight: 800 !important;
-  line-height: 1.06 !important;
+  line-height: 1.05 !important;
+  white-space: nowrap !important;
 }
 
 html.light h1 span:last-of-type {
