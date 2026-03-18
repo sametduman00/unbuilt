@@ -1975,6 +1975,22 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
           <p style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.5, letterSpacing: "-0.01em" }}>
             {data.headline}
           </p>
+          {data.timeToMvp && (
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: "0.5rem" }}>
+              <span style={{
+                display: "inline-flex", alignItems: "center", gap: 5,
+                padding: "3px 10px", borderRadius: 6,
+                background: "rgba(var(--clr-text-rgb),0.06)",
+                border: "1px solid var(--clr-border-2)",
+                fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text-3)",
+              }}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                MVP: {data.timeToMvp}
+              </span>
+            </div>
+          )}
         </div>
       )}
 
@@ -2074,6 +2090,19 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                       <div style={{ fontSize: "0.68rem", color: "var(--clr-text-5)", marginTop: 2 }}>
                         {tool.purpose}
                       </div>
+                      {tool.alternatives && tool.alternatives.length > 0 && (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 5 }}>
+                          {tool.alternatives.map((alt: { name: string; reason: string }, i: number) => (
+                            <span key={i} title={alt.reason} style={{
+                              fontSize: "0.6rem", padding: "2px 7px", borderRadius: 4,
+                              border: "1px dashed var(--clr-border-2)",
+                              color: "var(--clr-text-5)", cursor: "help",
+                            }}>
+                              alt: {alt.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
