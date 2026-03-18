@@ -3382,11 +3382,50 @@ export default function Home() {
               {/* Error */}
               {error && (
                 <div style={{
-                  padding: "1rem 1.25rem", borderRadius: 12,
+                  padding: "1.25rem 1.5rem", borderRadius: 12,
                   background: "rgba(var(--clr-text-rgb),0.04)", border: "1px solid var(--clr-border-2)",
                   color: "var(--clr-text-2)", fontSize: "0.875rem",
+                  display: "flex", flexDirection: "column", gap: "0.875rem",
                 }}>
-                  {error}
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0, marginTop: 1, color: "var(--clr-text-3)" }}>
+                      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <div>
+                      <div style={{ fontWeight: 600, marginBottom: "0.25rem", color: "var(--clr-text)" }}>
+                        {error.includes("Overloaded") || error.includes("overloaded")
+                          ? "Claude is busy right now"
+                          : error.includes("timeout") || error.includes("Timeout")
+                          ? "Request timed out"
+                          : "Something went wrong"}
+                      </div>
+                      <div style={{ color: "var(--clr-text-3)", lineHeight: 1.5 }}>
+                        {error.includes("Overloaded") || error.includes("overloaded")
+                          ? "The AI is under heavy load. Wait a few seconds and try again — it usually clears quickly."
+                          : error.includes("timeout") || error.includes("Timeout")
+                          ? "The analysis took too long. Try a shorter or more specific description."
+                          : error}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => { setError(""); handleSubmit(); }}
+                    style={{
+                      alignSelf: "flex-start",
+                      padding: "0.5rem 1rem",
+                      background: "var(--clr-text)", color: "var(--clr-bg)",
+                      border: "none", borderRadius: 8,
+                      fontSize: "0.8125rem", fontWeight: 600, cursor: "pointer",
+                      display: "flex", alignItems: "center", gap: 6,
+                      fontFamily: "inherit",
+                    }}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M1 4v6h6M23 20v-6h-6" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Try again
+                  </button>
                 </div>
               )}
 
