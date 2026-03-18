@@ -3234,7 +3234,7 @@ export default function Home() {
                   color: "var(--clr-text-3)", fontSize: "1rem", lineHeight: 1.6,
                   maxWidth: 480, margin: "0 auto 1rem",
                 }}>
-                  Pick your situation. Get a real analysis — competitors, market gaps, trends, or tech stack — powered by Claude.
+                  Stop guessing. Start knowing.
                 </p>
               </div>
               )}
