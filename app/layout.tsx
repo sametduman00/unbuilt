@@ -27,21 +27,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         elements: {
           card: { background: "#111111", border: "1px solid #222222", boxShadow: "0 8px 32px rgba(0,0,0,0.6)" },
           formButtonPrimary: { background: "#ffffff", color: "#000000" },
-          footerActionLink: { color: "#e5e5e5" },
           headerTitle: { color: "#ffffff" },
           headerSubtitle: { color: "#888888" },
-          // GitHub button: brand color #24292e background, white text
+          // Hide "Don't have an account? Sign up"
+          footer: { display: "none" },
+          // GitHub: brand dark
           socialButtonsBlockButton__github: {
             background: "#24292e",
             border: "1px solid #444",
             color: "#ffffff",
           },
-          // Google button: white background, dark text
+          socialButtonsBlockButtonText__github: { color: "#ffffff" },
+          // Google: clean white, no overlay
           socialButtonsBlockButton__google: {
             background: "#ffffff",
-            border: "1px solid #ddd",
-            color: "#333333",
+            border: "1px solid #dadce0",
+            color: "#3c4043",
+            boxShadow: "none",
           },
+          socialButtonsBlockButtonText__google: { color: "#3c4043" },
+          // UserButton
           userButtonPopoverCard: { background: "#111111", border: "1px solid #222222" },
           userButtonPopoverActionButton: { color: "#ffffff" },
           userButtonPopoverActionButtonText: { color: "#ffffff" },
