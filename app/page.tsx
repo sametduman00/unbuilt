@@ -1,4 +1,4 @@
-"use client";
+üüüüş"use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
@@ -3218,7 +3218,7 @@ export default function Home() {
               <div style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
                 justifyContent: "center", textAlign: "center", maxWidth: 720, margin: "0 auto",
-                width: "100%", padding: "2rem 0 1.5rem", position: "relative",
+                width: "100%", padding: "3rem 0 3rem", position: "relative",
               }}>
                 <h1 style={{
                   fontSize: "clamp(2.52rem, 4.608vw, 3.96rem)", fontWeight: 700,
@@ -3242,10 +3242,11 @@ export default function Home() {
               {/* ── Tool selector grid ── */}
               <div data-tool-grid style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
+                marginTop: "2rem",
+            gridTemplateColumns: "repeat(3, 1fr)",
                 gap: "1rem",
                 paddingBottom: "2rem",
-                maxWidth: "54rem",
+                maxWidth: "59.4rem",
                 margin: "0 auto",
               }}>
                 {/* Pulse card — links to /pulse instead of triggering tool flow */}
@@ -3276,12 +3277,12 @@ export default function Home() {
                     <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(var(--clr-accent-rgb),0.08)", border: "1px solid rgba(var(--clr-accent-rgb),0.15)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "0.5rem", flexShrink: 0 }}>
                       {TOOL_ICONS["trend-feed"]("var(--clr-accent)")}
                     </div>
-                    <div style={{ fontSize: "1rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--clr-text)", marginBottom: "0.25rem" }}>Pulse</div>
-                    <div style={{ fontSize: "0.75rem", fontWeight: 500, color: "var(--clr-text-3)", marginBottom: "0.5rem" }}>Live market signals</div>
-                    <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)", lineHeight: 1.6, flex: 1, margin: 0 }}>
+                    <div style={{ fontSize: "1.1rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--clr-text)", marginBottom: "0.25rem" }}>Pulse</div>
+                    <div style={{ fontSize: "0.825rem", fontWeight: 500, color: "var(--clr-text-3)", marginBottom: "0.5rem" }}>Live market signals</div>
+                    <p style={{ fontSize: "0.894rem", color: "var(--clr-text-4)", lineHeight: 1.6, flex: 1, margin: 0 }}>
                       See what apps are exploding right now. Real-time signals from App Store, Google Play, Product Hunt and GitHub — before Twitter even notices.
                     </p>
-                    <div style={{ marginTop: "0.875rem", display: "flex", alignItems: "center", gap: 5, fontSize: "0.8125rem", fontWeight: 600, color: "var(--clr-accent)" }}>
+                    <div style={{ marginTop: "0.875rem", display: "flex", alignItems: "center", gap: 5, fontSize: "0.894rem", fontWeight: 600, color: "var(--clr-accent)" }}>
                       Explore Pulse
                       <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9.5 4.5M13 8l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </div>
