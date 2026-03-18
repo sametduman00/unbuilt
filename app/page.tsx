@@ -1885,7 +1885,7 @@ interface StackPhaseCosts {
 interface StackPhase {
   name: string;
   subtitle: string;
-  tools: { name: string; purpose: string; price: string; free: boolean }[];
+  tools: { name: string; purpose: string; price: string; free: boolean; alternatives?: { name: string; reason: string }[] }[];
   costs?: StackPhaseCosts;
 }
 interface StackMistake { title: string; description: string; }
@@ -1893,6 +1893,7 @@ interface StackScalability { trigger: string; whatBreaks: string; upgradeTo: str
 interface StackUpgrade { tool: string; trigger: string; migrateTo: string; }
 interface StackAdvisorData {
   headline: string;
+  timeToMvp?: string;
   phases: StackPhase[];
   costs?: { tools: { name: string; purpose: string; freeTier: boolean; monthlyCost: string }[]; total: string };
   buildOrder: { week: string; title: string; steps: string[] }[];
