@@ -51,7 +51,7 @@ Respond with ONLY a JSON code block matching this exact schema:
       "name": "Phase 0: Validate",
       "subtitle": "Prove demand before building anything",
       "tools": [
-        { "name": "Telegram Bot", "purpose": "Collect interest and test the flow manually", "price": "Free", "free": true }
+        { "name": "Telegram Bot", "purpose": "Collect interest and test the flow manually", "price": "Free", "free": true, "alternatives": [{ "name": "Alt Tool", "reason": "Use if X" }] }
       ],
       "costs": {
         "tools": [{ "name": "Telegram Bot", "purpose": "Collect interest", "freeTier": true, "monthlyCost": "$0" }],
@@ -77,6 +77,7 @@ Respond with ONLY a JSON code block matching this exact schema:
       "steps": ["Set up X", "Configure Y", "Deploy Z"]
     }
   ],
+  "timeToMvp": "X days",
   "mistakes": [
     { "title": "Mistake Name", "description": "Why this is wrong and what to do instead. Max 2 sentences." }
   ],
@@ -92,7 +93,9 @@ Respond with ONLY a JSON code block matching this exact schema:
 Rules:
 - "phases": MUST start with Phase 0 (Validate) — the fastest $0 way to test demand before building. Use a Telegram bot, WhatsApp group, Google Form, landing page with waitlist, or similar zero-cost tool. Phase 0 should ALWAYS cost $0. Then 2-3 more phases (MVP, Growth, Scale). Each phase has 2-5 tools. "price": show real monthly cost or "Free". "free": boolean. Each phase must include a "costs" object (see below).
 - Each phase object must also include: "costs": { "tools": [{ "name": "Tool", "purpose": "What", "freeTier": true, "monthlyCost": "$0" }], "total": "$0/mo" } — listing ONLY the tools in that phase with their costs and the phase total.
-- "buildOrder": 3-4 time blocks (Week 1, Week 2, Week 3-4, Month 2). 2-4 steps each. Be opinionated about order.
+- "buildOrder": 2-4 time blocks. Use realistic labels based on project complexity: simple projects use "Day 1-2", "Day 3-5", "Week 2"; medium projects use "Week 1", "Week 2", "Week 3-4"; complex projects use "Week 1", "Week 2-3", "Week 4-6", "Month 2+". Do NOT default to "Month 2" for simple projects — most no-code MVPs ship in 1-2 weeks. Be aggressive: if a skilled developer follows your plan, how long does it ACTUALLY take?
+- "timeToMvp": Single realistic estimate for Phase 1 MVP completion. Examples: "3-5 days" (simple no-code), "1-2 weeks" (standard MVP), "3-4 weeks" (complex with integrations). Be honest — do NOT overestimate. Most MVPs take days to weeks, not months.
+- Each tool in phases must include "alternatives": array of 1-2 backup options from the database. Format: [{ "name": "Tool", "reason": "Use if primary is too expensive / requires coding / unavailable in your region" }]. Pick real alternatives that genuinely replace the primary tool.
 - "mistakes": exactly 3 common mistakes for someone at this skill+budget level. Be blunt. Max 2 sentences each.
 - "scalability": 2-4 items. "severity": "low" | "medium" | "high". "trigger": specific metric.
 - "upgrades": 2-4 items. When and what to migrate to.
