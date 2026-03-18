@@ -51,31 +51,60 @@ function IconStack({ color }: { color: string }) {
 const TABS: TabConfig[] = [
   {
     id: "trend-feed",
-    name: "Trend Feed",
-    tagline: "Real signals, not hype",
+    name: "Pulse",
+    tagline: "Live market signals",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     icon: <IconTrend color="var(--clr-accent)" />,
-    who: "Founders looking for their next idea, researchers scanning markets, or anyone who wants to know what\u2019s actually moving \u2014 backed by real data from GitHub and Hacker News, not just AI guesses.",
-    what: "Trend Feed pulls live data from GitHub (repos created in the last 7 days) and Hacker News (posts from the last 30 days), then layers Claude AI analysis on top. You get a Space Temperature score from 0-100 across 5 levels \u2014 from Freezing to On Fire \u2014 so you can see at a glance whether a space is worth entering right now.",
+    who: "Founders scanning for their next idea, indie hackers tracking what's being built, or anyone who wants to spot real gaps in products as they launch — before Twitter even notices.",
+    what: "Pulse pulls live data from Product Hunt and the App Store every day, then runs each product through Claude AI to generate structured analysis. Every app gets three labels: WHAT it does, DIFF what makes it different, and MISS what it's missing. That missing piece is your opportunity.",
     steps: [
-      { title: "Describe the space", desc: "Type a market, industry, or technology \u2014 \u2018B2B SaaS tools\u2019, \u2018creator economy\u2019, \u2018AI code editors\u2019. As broad or narrow as you want." },
-      { title: "Live data is pulled", desc: "GitHub is searched for repos created in the last 7 days. Hacker News is queried for posts and discussions from the last 30 days. Both run in parallel while Claude begins its analysis." },
-      { title: "Claude analyzes the landscape", desc: "Claude Sonnet synthesizes the live data with its training knowledge to identify rising topics, dying trends, underserved niches, and contrarian opportunities." },
-      { title: "Space Temperature score appears", desc: "A 0-100 score with 5 levels (Freezing, Cool, Warm, Hot, On Fire) summarizes market momentum. HN engagement data can boost the score up to +15 points based on average post points and comment volume." },
+      {
+        title: "Open Pulse",
+        desc: "Navigate to Pulse from the main page. No query needed — the feed is already live and populated with today's launches from Product Hunt and the App Store.",
+      },
+      {
+        title: "Choose your feed",
+        desc: "Switch between Product Hunt (today's launches across all categories) and App Store (new iOS apps submitted today). Both update automatically every day.",
+      },
+      {
+        title: "Filter and sort",
+        desc: "Narrow by topic (AI, Productivity, SaaS, Games, etc.) or sort by newest first. Search across all titles and descriptions to find what's relevant to your space.",
+      },
+      {
+        title: "Read the AI analysis",
+        desc: "Each product card shows Claude's 3-label breakdown: WHAT (core function), DIFF (differentiator), and MISS (what it lacks). The MISS label is the gap — the feature or audience nobody's serving yet.",
+      },
     ],
     inputs: [
-      "A market, industry, or category name",
-      "Can be broad (\u2018social apps\u2019) or narrow (\u2018AI tools for solo lawyers\u2019)",
-      "No need for specific company names \u2014 Claude infers the landscape",
+      "No input needed — Pulse is a passive feed, not a query tool",
+      "Optional: filter by topic to focus on your market vertical",
+      "Optional: search by keyword to find apps in a specific niche",
     ],
     outputs: [
-      { emoji: "\ud83c\udf21\ufe0f", label: "Space Temperature", preview: "**Score: 78/100** \u2014 Hot. Significant activity in the last 7 days on GitHub (42 new repos) and strong HN engagement (avg 85 points, 340+ comments across 12 posts). HN boost: +12 points." },
-      { emoji: "\ud83d\udcc8", label: "Rising Topics", preview: "**Async-first B2B tools** gaining real traction as remote teams reject synchronous standup culture. **Vertical AI agents** replacing horizontal platforms in legal, medical, and financial niches..." },
-      { emoji: "\ud83d\udc80", label: "Dying Trends", preview: "**All-in-one platforms** with feature bloat losing ground to focused single-purpose tools. Founders who built on **Notion as their core DB** are quietly migrating \u2014 the API limits are a ceiling..." },
-      { emoji: "\ud83d\udca1", label: "Underexplored Niches", preview: "**Compliance tooling for SMBs** \u2014 the customer exists (every business needs it), the problem is acute (penalties are real), but every existing solution targets enterprise and costs $40k+/yr..." },
+      {
+        emoji: "🔴",
+        label: "WHAT — What the app does",
+        preview: "**Next Edu** — Education platform connecting schools, parents, and students for learning support. Analyzes student performance and provides an intelligent assistant for adaptive learning.",
+      },
+      {
+        emoji: "🟢",
+        label: "DIFF — What makes it different",
+        preview: "**Next Edu** — Analyzes student abilities beyond grades with an intelligent learning assistant that adapts to individual progress rather than delivering static content.",
+      },
+      {
+        emoji: "🔴",
+        label: "MISS — The gap (your opportunity)",
+        preview: "**Next Edu** — No offline functionality or mobile app availability clearly mentioned. Parents and students in low-connectivity areas are completely unserved.",
+      },
+      {
+        emoji: "📋",
+        label: "Full product card",
+        preview: "**Claude Dispatch** · Android · Productivity · Task Management\n\n**WHAT**: Android app to text Claude and get AI responses via SMS.\n**DIFF**: Direct SMS interface without needing to open an app or browser.\n**MISS**: No image attachment support — multimodal use cases are blocked entirely.",
+      },
     ],
   },
+
   {
     id: "gap-analysis",
     name: "Gap Analysis",
