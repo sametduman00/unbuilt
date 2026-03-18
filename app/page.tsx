@@ -2094,10 +2094,10 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                       {tool.alternatives && tool.alternatives.length > 0 && (
                         <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 5 }}>
                           {tool.alternatives.map((alt: { name: string; reason: string }, i: number) => (
-                            <span key={i} title={alt.reason} style={{
+                            <span key={i} style={{
                               fontSize: "0.6rem", padding: "2px 7px", borderRadius: 4,
                               border: "1px dashed var(--clr-border-2)",
-                              color: "var(--clr-text-5)", cursor: "help",
+                              color: "var(--clr-text-5)",
                             }}>
                               alt: {alt.name}
                             </span>
