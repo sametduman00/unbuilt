@@ -31,7 +31,7 @@ export default function GlobalHeader() {
       backdropFilter: "blur(12px)",
     }}>
       {/* Logo + How it works */}
-      <div style={{ display: "flex", alignItems: "center", gap: 20, paddingLeft: "0.5rem" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 20, paddingLeft: "3rem" }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none" }}>
           <svg width="26" height="26" viewBox="0 0 19 19" fill="none">
             <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2" strokeLinecap="round" />
