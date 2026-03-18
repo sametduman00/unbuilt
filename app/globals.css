@@ -421,3 +421,11 @@ html.light .cl-socialButtonsProviderIcon__github,
 html.light .cl-providerIcon__github {
   background-color: #24292f !important;
 }
+
+
+/* Hide Clerk "Last used" badge on OAuth buttons */
+.cl-badge,
+[data-localization-key="socialButtonsBlockButton__lastUsed"],
+.cl-internal-b3fm6y {
+  display: none !important;
+}
