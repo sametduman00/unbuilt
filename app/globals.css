@@ -337,3 +337,312 @@ html.light .cl-formButtonPrimary {
   background: #0891b2 !important;
   color: #ffffff !important;
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   UNBUILT — DESIGN SYSTEM v2  ·  Futuristic Obsidian
+   Applied: hero typography, card system, label readability,
+            CTA consistency, icon treatment, layout polish
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── HERO SECTION ─────────────────────────────────────────────── */
+
+/* Wrapper: more vertical breathing room */
+main > div > div:first-child {
+  padding: 4rem 1rem !important;
+}
+
+/* h1 base */
+h1 {
+  font-family: 'Syne', sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.035em !important;
+  line-height: 1.06 !important;
+  font-size: clamp(2.6rem, 4.8vw, 4.2rem) !important;
+  white-space: normal !important;
+  margin-bottom: 1.25rem !important;
+}
+
+/* "Claude says your idea is great." — first span, dimmed but readable */
+h1 span:first-of-type {
+  display: block !important;
+  color: var(--clr-text-3) !important;
+  font-weight: 700 !important;
+  font-size: 0.72em !important;
+  letter-spacing: -0.02em !important;
+}
+
+html.light h1 span:first-of-type {
+  color: #888 !important;
+}
+
+/* "We'll tell you the truth." — second span, bold & bright */
+h1 span:last-of-type {
+  display: block !important;
+  background: linear-gradient(125deg, #ffffff 0%, #e2e8f8 55%, #93c5fd 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 800 !important;
+  font-size: 1em !important;
+}
+
+html.light h1 span:last-of-type {
+  background: linear-gradient(125deg, #0f172a 0%, #1e3a5f 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* Hero subtitle */
+main > div > div:first-child > p,
+h1 + p {
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 1.05rem !important;
+  font-weight: 350 !important;
+  line-height: 1.7 !important;
+  color: var(--clr-text-3) !important;
+  letter-spacing: 0.005em !important;
+  max-width: 560px !important;
+  margin: 0 auto 1.5rem !important;
+}
+
+/* ── CARD GRID ────────────────────────────────────────────────── */
+
+/* Grid wrapper */
+main > div > div:last-child {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 1rem !important;
+  width: 100% !important;
+  padding: 0 0 3rem !important;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  main > div > div:last-child {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+    padding: 0 0 2rem !important;
+  }
+}
+
+/* All cards (both <a> and <div> wrappers) */
+main > div > div:last-child > a,
+main > div > div:last-child > div {
+  display: flex !important;
+  flex-direction: column !important;
+  background: linear-gradient(160deg, rgba(18,18,32,0.97) 0%, rgba(11,11,20,0.99) 100%) !important;
+  border: 1px solid rgba(34,211,238,0.1) !important;
+  border-radius: 16px !important;
+  padding: 1.5rem !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+}
+
+/* Card top shimmer */
+main > div > div:last-child > a::before,
+main > div > div:last-child > div::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important; left: 10% !important; right: 10% !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, rgba(34,211,238,0.35), transparent) !important;
+  pointer-events: none !important;
+}
+
+/* Card hover */
+main > div > div:last-child > a:hover,
+main > div > div:last-child > div:hover {
+  border-color: rgba(34,211,238,0.28) !important;
+  transform: translateY(-4px) !important;
+  box-shadow:
+    0 0 0 1px rgba(34,211,238,0.1),
+    0 20px 60px rgba(0,0,0,0.6),
+    0 0 40px rgba(34,211,238,0.05) !important;
+}
+
+/* Light mode cards */
+html.light main > div > div:last-child > a,
+html.light main > div > div:last-child > div {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+html.light main > div > div:last-child > a:hover,
+html.light main > div > div:last-child > div:hover {
+  border-color: #0891b2 !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1) !important;
+}
+
+/* ── CARD LABEL (WHAT'S RISING / I HAVE AN IDEA / HELP ME...) ── */
+
+/* The tiny eyebrow tag above icon */
+main > div > div:last-child p[style*="uppercase"],
+main > div > div:last-child p[style*="textTransform"] {
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
+  color: var(--clr-accent) !important;
+  text-transform: uppercase !important;
+  margin-bottom: 0.75rem !important;
+  opacity: 0.9 !important;
+}
+
+/* ── CARD ICON BOX ────────────────────────────────────────────── */
+
+/* Icon container — subtle glow bg */
+main > div > div:last-child div[style*="padding: 10px"],
+main > div > div:last-child div[style*="borderRadius: 12px"] {
+  background: rgba(34,211,238,0.07) !important;
+  border: 1px solid rgba(34,211,238,0.12) !important;
+  border-radius: 12px !important;
+  width: 44px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Icon color */
+main > div > div:last-child svg {
+  color: var(--clr-accent) !important;
+  stroke: var(--clr-accent) !important;
+}
+
+/* ── CARD HEADINGS ────────────────────────────────────────────── */
+
+main > div > div:last-child h2,
+main > div > div:last-child h3 {
+  font-family: 'Syne', sans-serif !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  color: var(--clr-text) !important;
+  margin-bottom: 0.25rem !important;
+  line-height: 1.25 !important;
+}
+
+/* Card subtitle (Find the gaps before you build) */
+main > div > div:last-child h2 + div,
+main > div > div:last-child h3 + div,
+main > div > div:last-child div[style*="color: var(--clr-text-3)"] {
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  color: var(--clr-accent) !important;
+  letter-spacing: 0.01em !important;
+  margin-bottom: 0.75rem !important;
+}
+
+/* Card body paragraph */
+main > div > div:last-child p:not([style*="uppercase"]):not([style*="textTransform"]) {
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  line-height: 1.65 !important;
+  color: var(--clr-text-3) !important;
+  flex: 1 !important;
+  margin-bottom: 1.25rem !important;
+}
+
+/* ── CARD CTA LINKS ───────────────────────────────────────────── */
+
+/* ALL card CTAs — unified look */
+main > div > div:last-child div[style*="color: var(--clr-accent)"],
+main > div > div:last-child a[style*="color: var(--clr-accent)"],
+main > div > div:last-child span[style*="color: var(--clr-accent)"],
+main > div > div:last-child > a > div > div:last-child,
+main > div > div:last-child > div > div:last-child {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  color: var(--clr-accent) !important;
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  margin-top: auto !important;
+  transition: gap 0.2s ease, color 0.2s ease !important;
+}
+
+main > div > div:last-child > a:hover > div > div:last-child,
+main > div > div:last-child > div:hover > div:last-child {
+  gap: 10px !important;
+  color: #ffffff !important;
+}
+
+html.light main > div > div:last-child div[style*="color: var(--clr-accent)"] {
+  color: #0891b2 !important;
+}
+
+/* ── FOOTER ───────────────────────────────────────────────────── */
+footer, [class*="footer"] {
+  border-top: 1px solid rgba(255,255,255,0.05) !important;
+  background: transparent !important;
+  padding: 1.5rem 0 !important;
+}
+
+footer a {
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 0.75rem !important;
+  color: rgba(100,100,140,0.5) !important;
+  letter-spacing: 0.01em !important;
+  transition: color 0.2s ease !important;
+}
+
+footer a:hover { color: var(--clr-accent) !important; }
+footer span { color: rgba(100,100,140,0.25) !important; }
+
+html.light footer a { color: #9ca3af !important; }
+html.light footer a:hover { color: #0891b2 !important; }
+
+/* ── GLOBAL TYPOGRAPHY POLISH ─────────────────────────────────── */
+
+* { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+p, span, div {
+  font-family: 'Figtree', -apple-system, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Syne', sans-serif !important;
+}
+
+/* Thin scrollbar */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--clr-accent); }
+
+/* Selection */
+::selection { background: rgba(34,211,238,0.15); color: #fff; }
+html.light ::selection { background: rgba(8,145,178,0.15); color: #000; }
+
+/* ── NAV FINAL POLISH ─────────────────────────────────────────── */
+header {
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  border-bottom: 1px solid rgba(34,211,238,0.07) !important;
+}
+
+html.light header {
+  border-bottom: 1px solid rgba(0,0,0,0.07) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+/* Nav font */
+header *, nav * {
+  font-family: 'Figtree', sans-serif !important;
+}
+
+header a, nav a {
+  letter-spacing: 0.01em !important;
+}
