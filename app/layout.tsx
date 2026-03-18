@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import ClerkThemeProvider from "./components/ClerkThemeProvider";
 import GlobalHeader from "./components/GlobalHeader";
 import CookieConsent from "./components/CookieConsent";
+import ConsentGate from "./components/ConsentGate";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -32,9 +33,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ClerkThemeProvider>
-          <GlobalHeader />
-          {children}
-          <CookieConsent />
+          <ConsentGate>
+            <GlobalHeader />
+            {children}
+            <CookieConsent />
+          </ConsentGate>
         </ClerkThemeProvider>
       </body>
     </html>
