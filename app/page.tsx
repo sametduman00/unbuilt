@@ -1495,7 +1495,7 @@ function ToolSelectorCard({
         color: isSelected ? tool.accentColor : "var(--clr-text-4)",
         transition: "color 0.2s",
       }}>
-        {isSelected ? "Selected" : "Select tool"}
+        {isSelected ? "Selected" : "Open →"}
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
           style={{ transform: isSelected ? "translateX(2px)" : "none", transition: "transform 0.2s" }}>
           <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -3094,7 +3094,7 @@ export default function Home() {
                     <h2 style={{ fontSize: "1.125rem", fontWeight: 750, color: "var(--clr-text)", letterSpacing: "-0.025em", margin: "0 0 0.375rem" }}>
                       {selectedTool === "stack-advisor" ? "Evaluating tools…" : "Gathering intelligence…"}
                     </h2>
-                    <p style={{ fontSize: "0.8rem", color: "var(--clr-text-5)", margin: 0, lineHeight: 1.5, maxWidth: 280, marginInline: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <p style={{ fontSize: "0.8rem", color: "var(--clr-text-5)", margin: 0, lineHeight: 1.5, maxWidth: 280, marginInline: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "normal" }}>
                       {idea}
                     </p>
                   </div>
@@ -3224,9 +3224,9 @@ export default function Home() {
                   fontSize: "clamp(2.52rem, 4.608vw, 3.96rem)", fontWeight: 700,
                   letterSpacing: "-0.03em", lineHeight: 1.15,
                   color: "var(--clr-text)", marginBottom: "0.75rem",
-                  whiteSpace: "nowrap",
+                  whiteSpace: "normal",
                 }}>
-                  <span style={{ color: "var(--clr-text-5)" }}>Claude says your idea is great.</span>
+                  <span style={{ color: "var(--clr-text-3)" }}>Claude says your idea is great.</span>
                   <br />
                   <span style={{ color: "var(--clr-text)" }}>We&apos;ll tell you the truth.</span>
                 </h1>
@@ -3344,7 +3344,7 @@ export default function Home() {
                     <div style={{ fontSize: "0.65rem", fontWeight: 700, color: currentTool.accentColor, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 1 }}>
                       {currentTool.name}
                     </div>
-                    <div style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <div style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "normal" }}>
                       {idea}
                       {selectedTool === "stack-advisor" && (
                         <span style={{ color: "var(--clr-text-6)", fontWeight: 400 }}>
@@ -3765,7 +3765,7 @@ export default function Home() {
                               <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.35, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                                 {video.title}
                               </div>
-                              <div style={{ fontSize: "0.7rem", color: "var(--clr-text-5)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              <div style={{ fontSize: "0.7rem", color: "var(--clr-text-5)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "normal" }}>
                                 {video.channel ?? video.channelTitle}
                               </div>
                               <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
