@@ -12,49 +12,29 @@ export const metadata: Metadata = {
   description: "Enter any niche or app idea and instantly discover what competitors are missing. Find your edge before you build.",
 };
 
+// Dark mode appearance
+const darkAppearance = {
+  variables: { colorPrimary: "#fff", colorBackground: "#111", colorInputBackground: "#1a1a1a", colorText: "#fff", colorTextSecondary: "#999", borderRadius: "0.75rem" },
+  elements: {
+    card: { background: "#111", border: "1px solid #2a2a2a", boxShadow: "0 8px 40px rgba(0,0,0,0.7)" },
+    formButtonPrimary: { background: "#fff", color: "#000" },
+    headerTitle: { color: "#fff" }, headerSubtitle: { color: "#999" },
+    footer: { display: "none" },
+    socialButtonsBlockButton__github: { background: "#24292e", border: "1px solid #444", color: "#fff" },
+    socialButtonsBlockButtonText__github: { color: "#fff" },
+    socialButtonsBlockButton__google: { background: "#fff", border: "1px solid #dadce0", color: "#3c4043", boxShadow: "none", backgroundImage: "none", filter: "none" },
+    socialButtonsBlockButtonText__google: { color: "#3c4043" },
+    userButtonPopoverCard: { background: "#111", border: "1px solid #2a2a2a" },
+    userButtonPopoverActionButton: { color: "#fff" },
+    userButtonPopoverActionButtonText: { color: "#fff" },
+    userButtonPopoverFooter: { display: "none" },
+    userButtonPopoverActionButton__manageAccount: { display: "none" },
+  },
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider
-      appearance={{
-        variables: {
-          colorPrimary: "#ffffff",
-          colorBackground: "#111111",
-          colorInputBackground: "#161616",
-          colorText: "#ffffff",
-          colorTextSecondary: "#888888",
-          borderRadius: "0.75rem",
-        },
-        elements: {
-          card: { background: "#111111", border: "1px solid #222222", boxShadow: "0 8px 32px rgba(0,0,0,0.6)" },
-          formButtonPrimary: { background: "#ffffff", color: "#000000" },
-          headerTitle: { color: "#ffffff" },
-          headerSubtitle: { color: "#888888" },
-          // Hide "Don't have an account? Sign up"
-          footer: { display: "none" },
-          // GitHub: brand dark
-          socialButtonsBlockButton__github: {
-            background: "#24292e",
-            border: "1px solid #444",
-            color: "#ffffff",
-          },
-          socialButtonsBlockButtonText__github: { color: "#ffffff" },
-          // Google: clean white, no overlay
-          socialButtonsBlockButton__google: {
-            background: "#ffffff",
-            border: "1px solid #dadce0",
-            color: "#3c4043",
-            boxShadow: "none",
-          },
-          socialButtonsBlockButtonText__google: { color: "#3c4043" },
-          // UserButton
-          userButtonPopoverCard: { background: "#111111", border: "1px solid #222222" },
-          userButtonPopoverActionButton: { color: "#ffffff" },
-          userButtonPopoverActionButtonText: { color: "#ffffff" },
-          userButtonPopoverFooter: { display: "none" },
-          userButtonPopoverActionButton__manageAccount: { display: "none" },
-        },
-      }}
-    >
+    <ClerkProvider appearance={darkAppearance}>
       <html lang="en" className={inter.variable}>
         <body>
           <GlobalHeader />
