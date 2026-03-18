@@ -1,33 +1,34 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Figtree:wght@300;400;500;600&display=swap');
 
 /* ── Color tokens ─────────────────────────────────────────────── */
 :root {
-  --clr-bg: #0a0a0a;
-  --clr-surface: #111111;
-  --clr-surface-2: #111111;
-  --clr-surface-3: #161616;
-  --clr-header-bg: #0a0a0a;
-  --clr-border-deep: #1a1a1a;
-  --clr-border: #1e1e1e;
-  --clr-border-2: #222222;
-  --clr-border-3: #333333;
-  --clr-text: #ffffff;
-  --clr-text-2: #e5e5e5;
-  --clr-text-3: #888888;
-  --clr-text-4: #888888;
-  --clr-text-5: #555555;
-  --clr-text-6: #444444;
-  --clr-text-7: #444444;
-  --clr-text-8: #333333;
-  --clr-placeholder: #444444;
-  --clr-accent: #8B5CF6;
+  --clr-bg: #050508;
+  --clr-surface: #0d0d14;
+  --clr-surface-2: #111119;
+  --clr-surface-3: #15151f;
+  --clr-header-bg: #050508;
+  --clr-border-deep: #18182a;
+  --clr-border: #1d1d2e;
+  --clr-border-2: #24243a;
+  --clr-border-3: #2e2e48;
+  --clr-text: #e8e8f0;
+  --clr-text-2: #b8b8d0;
+  --clr-text-3: #6868a0;
+  --clr-text-4: #6868a0;
+  --clr-text-5: #505080;
+  --clr-text-6: #404068;
+  --clr-text-7: #404068;
+  --clr-text-8: #303058;
+  --clr-placeholder: #404068;
+  --clr-accent: #22d3ee;
   --clr-accent-hover: #ffffff;
-  --clr-text-rgb: 255, 255, 255;
-  --clr-accent-rgb: 229, 229, 229;
-  --clr-code-bg: #0e0e0e;
-  --clr-code-text: #cccccc;
-  --clr-btn-bg: #ffffff;
-  --clr-btn-text: #000000;
+  --clr-text-rgb: 232, 232, 240;
+  --clr-accent-rgb: 34, 211, 238;
+  --clr-code-bg: #0a0a12;
+  --clr-code-text: #a0a0c8;
+  --clr-btn-bg: #22d3ee;
+  --clr-btn-text: #050508;
 }
 
 html.light {
@@ -49,122 +50,122 @@ html.light {
   --clr-text-7: #999999;
   --clr-text-8: #aaaaaa;
   --clr-placeholder: #999999;
-  --clr-accent: #8B5CF6;
+  --clr-accent: #0891b2;
   --clr-accent-hover: #000000;
   --clr-text-rgb: 17, 17, 17;
-  --clr-accent-rgb: 17, 17, 17;
-  --clr-code-bg: #e8e8e8;
+  --clr-accent-rgb: 8, 145, 178;
+  --clr-code-bg: #f0f0f0;
   --clr-code-text: #333333;
-  --clr-btn-bg: #111111;
+  --clr-btn-bg: #0891b2;
   --clr-btn-text: #ffffff;
 }
 
-@theme {
-  --color-background: #0a0a0a;
-  --color-surface: #111111;
-  --color-surface-2: #111111;
-  --color-surface-3: #161616;
-  --color-border: #1e1e1e;
-  --color-border-bright: #222222;
-  --color-accent: #e5e5e5;
-  --color-accent-2: #ffffff;
-  --color-accent-glow: rgba(255, 255, 255, 0.05);
-  --color-text: #ffffff;
-  --color-text-secondary: #888888;
-  --color-text-muted: #555555;
+/* ── Base ─────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-* { box-sizing: border-box; }
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
 
 body {
   background-color: var(--clr-bg);
   color: var(--clr-text);
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  position: relative;
 }
 
-/* ── Gradient utilities ───────────────────────── */
-.gradient-text {
-  color: var(--clr-text);
-  -webkit-text-fill-color: var(--clr-text);
-}
-
-.gradient-border { position: relative; }
-.gradient-border::before {
-  content: "";
-  position: absolute;
+/* Deep space background glow */
+body::before {
+  content: '';
+  position: fixed;
   inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(var(--clr-text-rgb),0.12) 0%, rgba(var(--clr-text-rgb),0.04) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
   pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 100% 55% at 50% -5%, rgba(34,211,238,0.055) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 35% at 85% 85%, rgba(99,102,241,0.025) 0%, transparent 60%);
 }
 
-/* ── Shimmer skeleton ─────────────────────────── */
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
-}
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(var(--clr-text-rgb),0.02) 0%,
-    rgba(var(--clr-text-rgb),0.06) 50%,
-    rgba(var(--clr-text-rgb),0.02) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.8s ease-in-out infinite;
+/* Subtle dot grid */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.028) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
-/* ── Section cards ────────────────────────────── */
-.section-card {
-  background: var(--clr-surface);
-  border: 1px solid var(--clr-border-2);
-  border-radius: 12px;
-  padding: 1.5rem;
-  transition: border-color 0.2s;
-}
-.section-card:hover { border-color: var(--clr-border-3); }
-
-.section-card-header {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  margin-bottom: 1.25rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--clr-border);
+html.light body::before,
+html.light body::after {
+  display: none;
 }
 
-.section-icon {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  flex-shrink: 0;
-}
-
-.section-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+/* ── Typography ───────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Syne', -apple-system, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
   color: var(--clr-text);
 }
 
-/* ── Prose inside cards ───────────────────────── */
+h1 {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+}
+
+p {
+  font-family: 'Figtree', -apple-system, sans-serif;
+  line-height: 1.65;
+}
+
+a {
+  color: var(--clr-accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover { color: var(--clr-accent-hover); }
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--clr-bg); }
+::-webkit-scrollbar-thumb { background: var(--clr-border-2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--clr-accent); }
+
+/* ── Selection ────────────────────────────────────────────────── */
+::selection { background: rgba(34,211,238,0.18); color: var(--clr-text); }
+html.light ::selection { background: rgba(8,145,178,0.18); }
+
+/* ── Header / Nav ─────────────────────────────────────────────── */
+header, nav {
+  background: rgba(5,5,8,0.82) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  border-bottom: 1px solid rgba(34,211,238,0.07) !important;
+}
+
+html.light header,
+html.light nav {
+  background: rgba(245,245,245,0.88) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+}
+
+/* ── Prose inside cards ───────────────────────────────────────── */
 .card-prose p {
   color: var(--clr-text-3);
   line-height: 1.75;
   margin-bottom: 0.625rem;
   font-size: 0.9375rem;
+  font-family: 'Figtree', sans-serif;
 }
 .card-prose ul {
   list-style: none;
@@ -207,127 +208,57 @@ body {
   position: relative;
   line-height: 1.65;
   font-size: 0.9375rem;
+  border-radius: 6px;
+  transition: background 0.15s;
   counter-increment: item;
 }
+.card-prose ol li:hover { background: rgba(var(--clr-text-rgb),0.03); }
 .card-prose ol li::before {
-  content: counter(item);
+  content: counter(item) ".";
   position: absolute;
-  left: 0;
-  width: 1.25rem;
-  height: 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(var(--clr-text-rgb),0.06);
-  color: var(--clr-text-2);
-  border-radius: 4px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  top: 0.45rem;
-}
-.card-prose h3 {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--clr-text-5);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin: 1rem 0 0.5rem;
-}
-.card-prose strong { color: var(--clr-text); font-weight: 600; }
-.card-prose em { color: var(--clr-text-3); font-style: italic; }
-
-/* ── Tables ───────────────────────────────────── */
-.card-prose .table-wrap {
-  overflow-x: auto;
-  margin: 0.75rem 0;
-  border-radius: 10px;
-  border: 1px solid var(--clr-border-2);
-}
-.card-prose table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-.card-prose th {
-  background: var(--clr-surface-3);
-  color: var(--clr-text-5);
-  font-weight: 600;
+  left: 0.375rem;
+  color: var(--clr-accent);
   font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.625rem 0.875rem;
-  text-align: left;
-  border-bottom: 1px solid var(--clr-border-2);
-  white-space: nowrap;
-}
-.card-prose td {
-  color: var(--clr-text-3);
-  padding: 0.625rem 0.875rem;
-  border-bottom: 1px solid var(--clr-border);
-  vertical-align: top;
-  line-height: 1.55;
-}
-.card-prose tr:last-child td { border-bottom: none; }
-.card-prose tr:nth-child(even) td { background: rgba(var(--clr-text-rgb),0.015); }
-.card-prose tr:hover td { background: rgba(var(--clr-text-rgb),0.03); }
-.card-prose td:first-child { font-weight: 500; color: var(--clr-text); }
-
-/* ── Badge chips ──────────────────────────────── */
-.card-prose .badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.125rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.03em;
-  vertical-align: middle;
-  margin-left: 0.375rem;
+  top: 0.45rem;
+  font-family: 'Figtree', sans-serif;
 }
-.badge-green  { background: var(--clr-border-2); color: var(--clr-text-2); }
-.badge-red    { background: var(--clr-border-2); color: var(--clr-text-3); }
-.badge-yellow { background: var(--clr-border-2); color: var(--clr-text-3); }
-.badge-purple { background: var(--clr-border-2); color: var(--clr-text-2); }
-
-/* react-markdown wraps loose list items in <p> — flatten them */
-.card-prose li > p { margin: 0; padding: 0; display: inline; }
-
-/* Horizontal rule */
-.card-prose hr { border: none; border-top: 1px solid var(--clr-border-2); margin: 1rem 0; }
-
-/* Block code */
-.card-prose pre {
+.card-prose h3, .card-prose h4 {
+  font-family: 'Syne', sans-serif;
+  color: var(--clr-text);
+}
+.card-prose strong { color: var(--clr-text-2); font-weight: 600; }
+.card-prose code {
   background: var(--clr-code-bg);
-  border: 1px solid var(--clr-border-2);
-  border-radius: 8px;
-  padding: 0.875rem 1rem;
-  overflow-x: auto;
-  margin: 0.75rem 0;
-}
-.card-prose pre code {
-  background: none;
   color: var(--clr-code-text);
-  font-size: 0.8125rem;
-  padding: 0;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  font-size: 0.85em;
 }
+.card-prose a { color: var(--clr-accent); }
+.card-prose a:hover { color: var(--clr-accent-hover); }
 
-/* ── Clerk UI — dark mode (default) ─────────────────────────────────────── */
+/* ── Clerk Auth UI ────────────────────────────────────────────── */
 .cl-card,
 .cl-modalContent,
 .cl-userButtonPopoverCard {
-  background: #111111 !important;
-  border: 1px solid #2a2a2a !important;
+  background: #0d0d14 !important;
+  border: 1px solid #1d1d2e !important;
   box-shadow: 0 8px 40px rgba(0,0,0,0.7) !important;
 }
-.cl-headerTitle  { color: #ffffff !important; }
-.cl-headerSubtitle { color: #999999 !important; }
+.cl-headerTitle  { color: #e8e8f0 !important; }
+.cl-headerSubtitle { color: #6868a0 !important; }
 .cl-footer,
 .cl-userButtonPopoverFooter { display: none !important; }
 .cl-userButtonPopoverActionButton,
 .cl-userButtonPopoverActionButton span,
 .cl-userButtonPopoverActionButtonText,
 .cl-userButtonPopoverActionButtonIcon {
-  color: #ffffff !important;
-  fill: #ffffff !important;
+  color: #e8e8f0 !important;
+  fill: #e8e8f0 !important;
 }
 
-/* GitHub button — dark */
+/* GitHub button */
 .cl-socialButtonsBlockButton__github {
   background: #24292e !important;
   border: 1px solid #555 !important;
@@ -335,97 +266,74 @@ body {
   position: relative !important;
 }
 .cl-socialButtonsBlockButton__github::before,
-.cl-socialButtonsBlockButton__github::after {
-  display: none !important;
-}
+.cl-socialButtonsBlockButton__github::after { display: none !important; }
 .cl-socialButtonsBlockButtonText__github { color: #ffffff !important; }
 
-/* Google button — dark */
+/* Google button */
 .cl-socialButtonsBlockButton__google {
   background: #ffffff !important;
-  border: 1px solid #dadce0 !important;
-  color: #3c4043 !important;
-  box-shadow: none !important;
-  filter: none !important;
+  border: 1px solid #ddd !important;
+  color: #333333 !important;
 }
-.cl-socialButtonsBlockButton__google::before,
-.cl-socialButtonsBlockButton__google::after { display: none !important; }
-.cl-socialButtonsBlockButtonText__google { color: #3c4043 !important; }
+.cl-socialButtonsBlockButtonText__google { color: #333333 !important; }
 
-/* ── Clerk UI — light mode ───────────────────────────────────────────────── */
+/* Apple button */
+.cl-socialButtonsBlockButton__apple {
+  background: #000000 !important;
+  border: 1px solid #333 !important;
+  color: #ffffff !important;
+}
+.cl-socialButtonsBlockButtonText__apple { color: #ffffff !important; }
+
+/* Form inputs */
+.cl-formFieldInput {
+  background: #0d0d14 !important;
+  border-color: #1d1d2e !important;
+  color: #e8e8f0 !important;
+}
+.cl-formFieldInput:focus {
+  border-color: #22d3ee !important;
+  box-shadow: 0 0 0 2px rgba(34,211,238,0.12) !important;
+}
+.cl-formFieldLabel { color: #b8b8d0 !important; }
+
+/* Primary CTA button */
+.cl-formButtonPrimary {
+  background: #22d3ee !important;
+  color: #050508 !important;
+  font-family: 'Figtree', sans-serif !important;
+  font-weight: 600 !important;
+  border: none !important;
+}
+.cl-formButtonPrimary:hover { background: #67e8f9 !important; }
+
+/* Light mode Clerk overrides */
 html.light .cl-card,
 html.light .cl-modalContent,
 html.light .cl-userButtonPopoverCard {
-  background: #ffffff !important;
-  border: 1px solid #e5e5e5 !important;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.12) !important;
+  background: rgb(255,255,255) !important;
+  border: 1px solid rgb(229,229,229) !important;
+  box-shadow: rgba(0,0,0,0.12) 0px 8px 40px !important;
 }
-html.light .cl-headerTitle  { color: #111111 !important; }
-html.light .cl-headerSubtitle { color: #555555 !important; }
-
+html.light .cl-headerTitle { color: rgb(17,17,17) !important; }
+html.light .cl-headerSubtitle { color: rgb(100,100,100) !important; }
 html.light .cl-userButtonPopoverActionButton,
 html.light .cl-userButtonPopoverActionButton span,
 html.light .cl-userButtonPopoverActionButtonText,
 html.light .cl-userButtonPopoverActionButtonIcon {
-  color: #111111 !important;
-  fill: #111111 !important;
+  color: rgb(17,17,17) !important;
+  fill: rgb(17,17,17) !important;
 }
-html.light .cl-formButtonPrimary {
-  background: #111111 !important;
-  color: #ffffff !important;
-}
-html.light .cl-footerActionLink { color: #333333 !important; }
-
-/* GitHub button — light */
-html.light .cl-socialButtonsBlockButton__github {
-  background: #f6f8fa !important;
-  border: 1px solid #d0d7de !important;
-  color: #24292f !important;
-}
-html.light .cl-socialButtonsBlockButton__github::before,
-html.light .cl-socialButtonsBlockButton__github::after { display: none !important; }
-html.light .cl-socialButtonsBlockButtonText__github { color: #24292f !important; }
-
-/* Google button — light */
-html.light .cl-socialButtonsBlockButton__google {
-  background: #ffffff !important;
-  border: 1px solid #dadce0 !important;
-  color: #3c4043 !important;
-}
-html.light .cl-socialButtonsBlockButton__google::before,
-html.light .cl-socialButtonsBlockButton__google::after { display: none !important; }
-html.light .cl-socialButtonsBlockButtonText__google { color: #3c4043 !important; }
-
-/* Divider, input, body text in light mode */
-html.light .cl-dividerText,
-html.light .cl-dividerLine { color: #999 !important; border-color: #e5e5e5 !important; }
 html.light .cl-formFieldInput {
-  background: #f5f5f5 !important;
+  background: #ffffff !important;
   border-color: #d4d4d4 !important;
   color: #111111 !important;
 }
-html.light .cl-formFieldLabel { color: #333333 !important; }
-html.light .cl-identityPreviewText,
-html.light .cl-userPreviewMainIdentifier,
-html.light .cl-userPreviewSecondaryIdentifier { color: #111111 !important; }
-
-/* ── GitHub icon mask color fix ────────────────────────────────────────────── */
-/* Dark mode: icon must be white so it's visible on dark button */
-.cl-socialButtonsProviderIcon__github,
-.cl-providerIcon__github {
-  background-color: #ffffff !important;
+html.light .cl-formFieldInput:focus {
+  border-color: #0891b2 !important;
+  box-shadow: 0 0 0 2px rgba(8,145,178,0.12) !important;
 }
-
-/* Light mode: icon must be dark so it's visible on light button */
-html.light .cl-socialButtonsProviderIcon__github,
-html.light .cl-providerIcon__github {
-  background-color: #24292f !important;
-}
-
-
-/* Hide Clerk "Last used" badge on OAuth buttons */
-.cl-badge,
-[data-localization-key="socialButtonsBlockButton__lastUsed"],
-.cl-internal-b3fm6y {
-  display: none !important;
+html.light .cl-formButtonPrimary {
+  background: #0891b2 !important;
+  color: #ffffff !important;
 }
