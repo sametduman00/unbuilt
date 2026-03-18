@@ -8,13 +8,12 @@ const CONSENT_KEY = "unbuilt_consent_v1";
 
 export default function ConsentGate({ children }: { children: React.ReactNode }) {
   const { isSignedIn, isLoaded } = useUser();
-  const [consentGiven, setConsentGiven] = useState(true);
+  // null = unknown (loading), false = not given, true = given
+  const [consentGiven, setConsentGiven] = useState<boolean | null>(null);
   const [check1, setCheck1] = useState(false);
   const [check2, setCheck2] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const saved = localStorage.getItem(CONSENT_KEY);
     setConsentGiven(saved === "true");
   }, []);
@@ -25,10 +24,11 @@ export default function ConsentGate({ children }: { children: React.ReactNode })
     setConsentGiven(true);
   };
 
-  const showGate = mounted && isLoaded && (!isSignedIn || !consentGiven);
+  // While Clerk or consent state is loading, render nothing (avoids flash)
+  if (!isLoaded || consentGiven === null) return null;
 
-  if (!mounted || !isLoaded) return <>{children}</>;
-  if (!showGate) return <>{children}</>;
+  // Fully authenticated and consent given → show the app
+  if (isSignedIn && consentGiven) return <>{children}</>;
 
   const canAccept = isSignedIn && check1 && check2;
 
@@ -177,6 +177,7 @@ export default function ConsentGate({ children }: { children: React.ReactNode })
         </div>
       </div>
 
+      {/* Blurred background content */}
       <div style={{ filter: "blur(4px)", pointerEvents: "none", userSelect: "none" }}>
         {children}
       </div>
