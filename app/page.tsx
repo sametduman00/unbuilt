@@ -3221,7 +3221,7 @@ export default function Home() {
                 width: "100%", padding: "2rem 0 1.5rem", position: "relative",
               }}>
                 <h1 style={{
-                  fontSize: "clamp(2.1rem, 3.84vw, 3.3rem)", fontWeight: 700,
+                  fontSize: "clamp(2.52rem, 4.608vw, 3.96rem)", fontWeight: 700,
                   letterSpacing: "-0.03em", lineHeight: 1.15,
                   color: "var(--clr-text)", marginBottom: "0.75rem",
                   whiteSpace: "nowrap",
@@ -3231,7 +3231,7 @@ export default function Home() {
                   <span style={{ color: "var(--clr-text)" }}>We&apos;ll tell you the truth.</span>
                 </h1>
                 <p style={{
-                  color: "var(--clr-text-3)", fontSize: "1rem", lineHeight: 1.6,
+                  color: "var(--clr-text-3)", fontSize: "1.2rem", lineHeight: 1.6,
                   maxWidth: 480, margin: "0 auto 1rem",
                 }}>
                   Stop guessing. Start knowing.
