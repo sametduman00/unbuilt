@@ -408,3 +408,16 @@ html.light .cl-formFieldLabel { color: #333333 !important; }
 html.light .cl-identityPreviewText,
 html.light .cl-userPreviewMainIdentifier,
 html.light .cl-userPreviewSecondaryIdentifier { color: #111111 !important; }
+
+/* ── GitHub icon mask color fix ────────────────────────────────────────────── */
+/* Dark mode: icon must be white so it's visible on dark button */
+.cl-socialButtonsProviderIcon__github,
+.cl-providerIcon__github {
+  background-color: #ffffff !important;
+}
+
+/* Light mode: icon must be dark so it's visible on light button */
+html.light .cl-socialButtonsProviderIcon__github,
+html.light .cl-providerIcon__github {
+  background-color: #24292f !important;
+}
