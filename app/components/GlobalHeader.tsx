@@ -4,7 +4,7 @@ import { useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-export default function GlobalHeader() 
+export default function GlobalHeader() {
   const { isSignedIn, isLoaded } = useUser();
   const [isDark, setIsDark] = useState(true);
 
