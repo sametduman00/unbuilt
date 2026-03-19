@@ -54,12 +54,12 @@ export default function PricingPage() {
       }}>
 
         {/* ── TOOLS ROW (80%) ── */}
-        <div style={{ flex: 4, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, minHeight: 0 }}>
+        <div style={{ flex: "1 1 0", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, minHeight: 0 }}>
           {tools.map(tool => (
             <div key={tool.id} style={{
               border: "1px solid var(--clr-border)",
               borderRadius: 14,
-              padding: "20px 22px",
+              padding: "16px 20px",
               display: "flex", flexDirection: "column", gap: 0,
               overflow: "hidden",
             }}>
@@ -68,7 +68,7 @@ export default function PricingPage() {
                 {tool.label}
               </div>
               {/* name + $0 on same line */}
-              <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 6 }}>
+              <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 4 }}>
                 <div>
                   <div style={{ fontSize: "1.35rem", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1 }}>{tool.name}</div>
                   <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: 3 }}>{tool.desc}</div>
@@ -76,7 +76,7 @@ export default function PricingPage() {
                 <div style={{ fontSize: "3.2rem", fontWeight: 900, letterSpacing: "-0.06em", lineHeight: 1, flexShrink: 0 }}>$0</div>
               </div>
               {/* divider */}
-              <div style={{ borderTop: "1px solid var(--clr-border)", margin: "10px 0" }} />
+              <div style={{ borderTop: "1px solid var(--clr-border)", margin: "8px 0" }} />
               {/* features */}
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {tool.features.map(f => (
