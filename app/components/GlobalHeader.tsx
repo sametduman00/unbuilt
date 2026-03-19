@@ -4,12 +4,12 @@ import { useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-export default function GlobalHeader() {
+export default function GlobalHeader() 
   const { isSignedIn, isLoaded } = useUser();
   const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
-    const saved = localStorage.getItem("theme");
+    const saved = localStorage.getItem("theme")
     const dark = saved ? saved === "dark" : true;
     setIsDark(dark);
     document.documentElement.classList.toggle("light", !dark);
@@ -25,7 +25,7 @@ export default function GlobalHeader() {
   return (
     <header style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-      height: 52, display: "flex", alignItems: "center",
+      height: 42, display: "flex", alignItems: "center",
       justifyContent: "space-between", padding: "0 2rem",
       background: "var(--clr-bg)", borderBottom: "1px solid var(--clr-border)",
       backdropFilter: "blur(12px)",
