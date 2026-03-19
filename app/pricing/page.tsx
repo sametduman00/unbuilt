@@ -73,17 +73,17 @@ export default function PricingPage() {
               <div key={w.symbol} style={{
                 display:"flex", flexDirection:"column", alignItems:"center", gap:7,
                 border:"1px solid var(--clr-border)", borderRadius:9, padding:"10px 10px",
-                minHeight:0,
+                minHeight:0, justifyContent:"space-between",
               }}>
                 <div style={{ display:"flex", alignItems:"center", gap:5, flexShrink:0 }}>
                   <span style={{ width:7, height:7, borderRadius:"50%", background:w.color, display:"inline-block", flexShrink:0 }}/>
                   <span style={{ fontWeight:700, fontSize:"0.82rem" }}>{w.symbol}</span>
                   <span style={{ fontSize:"0.62rem", color:"var(--clr-text-4)" }}>{w.name}</span>
                 </div>
-                <img src={w.qr} alt={w.symbol} style={{ width:"100%", aspectRatio:"1", objectFit:"contain", borderRadius:6, background:"#fff", flexShrink:1, minHeight:0 }}/>
+                <img src={w.qr} alt={w.symbol} style={{ width:"100%", aspectRatio:"1", objectFit:"contain", borderRadius:6, background:"#fff", flex:1, minHeight:0, maxHeight:220 }}/>
                 <div style={{ fontSize:"0.65rem", color:"var(--clr-text-3)", wordBreak:"break-all", textAlign:"center", lineHeight:1.45, fontFamily:"monospace", width:"100%", flexShrink:0 }}>{w.address}</div>
                 <button onClick={() => copy(w.address, w.symbol)} style={{
-                  width:"100%", padding:"0.3rem", marginTop:"auto", flexShrink:0,
+                  width:"100%", padding:"0.3rem", flexShrink:0,
                   background: copied===w.symbol ? "color-mix(in srgb,var(--clr-accent) 15%,transparent)" : "var(--clr-surface)",
                   border:"1px solid var(--clr-border)", borderRadius:7,
                   fontSize:"0.7rem", fontWeight:600, cursor:"pointer",
