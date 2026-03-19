@@ -2770,6 +2770,21 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
       scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
         setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 800)
       );
+      stackCheckTimerRef.current = setInterval(() => {
+        idx++;
+        if (idx >= STACK_CHECK_TOOLS.length) {
+          if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
+          setStackCheckItems(prev => prev.map(item => ({ ...item, status: "done" })));
+          return;
+        }
+        setStackCheckItems(prev =>
+          prev.map((item, i) => {
+            if (i < idx) return { ...item, status: "done" };
+            if (i === idx) return { ...item, status: "checking" };
+            return item;
+          })
+        );
+      }, 400);
       try {
         const res = await fetch(`/api/trend-feed?q=${encodeURIComponent(idea.trim())}`);
         if (!res.ok) {
@@ -2791,21 +2806,7 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
       if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
       setStackCheckItems(STACK_CHECK_TOOLS.map((name) => ({ name, status: "pending" })));
       let idx = -1;
-      stackCheckTimerRef.current = setInterval(() => {
-        idx++;
-        if (idx >= STACK_CHECK_TOOLS.length) {
-          if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
-          setStackCheckItems(prev => prev.map(item => ({ ...item, status: "done" })));
-          return;
-        }
-        setStackCheckItems(prev =>
-          prev.map((item, i) => {
-            if (i < idx) return { ...item, status: "done" };
-            if (i === idx) return { ...item, status: "checking" };
-            return item;
-          })
-        );
-      }, 400);
+      
     } else {
       const steps = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3);
       scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
