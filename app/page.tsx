@@ -2410,9 +2410,9 @@ export default function Home() {
   const [resultCached, setResultCached] = useState<boolean | null>(null);
 
   const [scanStep, setScanStep] = useState(-1); // -1=hidden 0-3=active step 4=all done
-  const [stackCheckItems, setStackCheckItems] = useState<{ name: string;
+const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "pending" | "checking" | "done"}[]>([]);
   const [stackToolIdx, setStackToolIdx] = useState(0);
-  const [stackToolVisible, setStackToolVisible] = useState(true); done: boolean }[]>([]);
+  const [stackToolVisible, setStackToolVisible] = useState(true);
 
   const inputSectionRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
