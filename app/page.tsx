@@ -1473,8 +1473,8 @@ function ToolSelectorCard({
 
       {/* Tagline */}
       <div style={{
-        fontSize: "0.75rem", fontWeight: 500,
-        color: "var(--clr-text-3)", marginBottom: "0.5rem",
+        fontSize: "0.75rem", fontWeight: 700,
+        color: "var(--clr-text)", marginBottom: "0.5rem",
       }}>
         {tool.tagline}
       </div>
@@ -1495,7 +1495,7 @@ function ToolSelectorCard({
         color: isSelected ? tool.accentColor : "var(--clr-text-4)",
         transition: "color 0.2s",
       }}>
-        {isSelected ? "Selected" : "Open →"}
+        {isSelected ? "Selected" : "Open"}
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
           style={{ transform: isSelected ? "translateX(2px)" : "none", transition: "transform 0.2s" }}>
           <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
