@@ -116,17 +116,15 @@ export default function CareersPage() {
         }}>What we offer</h2>
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "0",
+          gridTemplateColumns: "1fr 1fr",
           borderTop: "1px solid var(--clr-border)",
+          borderLeft: "1px solid var(--clr-border)",
         }}>
-          {perks.map((p, i) => (
+          {perks.map((p) => (
             <div key={p.label} style={{
-              padding: "24px 0",
+              padding: "28px 32px",
               borderBottom: "1px solid var(--clr-border)",
-              borderRight: i % 2 === 0 ? "1px solid var(--clr-border)" : "none",
-              paddingRight: i % 2 === 0 ? 40 : 0,
-              paddingLeft: i % 2 === 1 ? 40 : 0,
+              borderRight: "1px solid var(--clr-border)",
             }}>
               <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--clr-accent)", marginBottom: 8 }}>
                 {p.label}
