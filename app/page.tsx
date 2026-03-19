@@ -2770,6 +2770,7 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
       scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
         setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 800)
       );
+      let idx = -1;
       stackCheckTimerRef.current = setInterval(() => {
         idx++;
         if (idx >= STACK_CHECK_TOOLS.length) {
@@ -2805,8 +2806,7 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
     if (selectedTool === "stack-advisor") {
       if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
       setStackCheckItems(STACK_CHECK_TOOLS.map((name) => ({ name, status: "pending" })));
-      let idx = -1;
-      
+            
     } else {
       const steps = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3);
       scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
