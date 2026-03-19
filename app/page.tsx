@@ -2805,7 +2805,7 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
     // ── Other tools: existing flow ──
     if (selectedTool === "stack-advisor") {
       if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
-      setStackCheckItems([{ name: STACK_CHECK_TOOLS[0], done: false }]);
+      setStackCheckItems([{ name: STACK_CHECK_TOOLS[0], status: "pending" }]);
       let idx = 0;
       stackCheckTimerRef.current = setInterval(() => {
         idx++;
@@ -2815,7 +2815,7 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
         }
         setStackCheckItems(prev => {
           const updated = prev.map((item, i) => i === prev.length - 1 ? { ...item, done: true } : item);
-          return [...updated, { name: STACK_CHECK_TOOLS[idx], done: false }];
+          return [...updated, { name: STACK_CHECK_TOOLS[idx], status: "pending" }];
         });
       }, 500);
     } else {
