@@ -61,7 +61,7 @@ export default function PricingPage() {
     <div style={{ minHeight: "100vh", background: "var(--clr-bg)", color: "var(--clr-text)" }}>
       <GlobalHeader />
 
-      <div style={{ maxWidth: 1080, margin: "0 auto", padding: "40px 24px 48px", display: "flex", flexDirection: "column", gap: 24 }}>
+      <div style={{ maxWidth: 1080, margin: "0 auto", padding: "80px 24px 48px", display: "flex", flexDirection: "column", gap: 24 }}>
 
         {/* Cards */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, alignItems: "start" }}>
