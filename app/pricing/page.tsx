@@ -48,11 +48,11 @@ const tools = [
 ];
 
 const wallets = [
-  { symbol: "BTC",  name: "Bitcoin",        color: "#F7931A", address: "bc1q9fjlxn39vs9sfurekgjd7p4qx9yzj4kulqe580",        qr: "/qr/btc.jpg"  },
-  { symbol: "ETH",  name: "Ethereum",       color: "#627EEA", address: "0x60d601C0CcF6A27f5BB00066FCAE8c7208a8Fac8",        qr: "/qr/eth.jpg"  },
-  { symbol: "SOL",  name: "Solana",         color: "#9945FF", address: "3oXApv9hQC2UUtoVKb29gLtW61SRdsT9mpfzKvM4jjgM",    qr: "/qr/sol.jpg"  },
-  { symbol: "USDT", name: "Tether ERC-20",  color: "#26A17B", address: "0x60d601C0CcF6A27f5BB00066FCAE8c7208a8Fac8",        qr: "/qr/usdt.jpg" },
-  { symbol: "XRP",  name: "Ripple",         color: "#00AAE4", address: "rPMvhnSuaw82TqEMPNffBVhj5yJTxZyv9Y",               qr: "/qr/xrp.jpg"  },
+  { symbol: "BTC",  name: "Bitcoin",       color: "#F7931A", address: "bc1q9fjlxn39vs9sfurekgjd7p4qx9yzj4kulqe580",     qr: "/qr/btc.jpg"  },
+  { symbol: "ETH",  name: "Ethereum",      color: "#627EEA", address: "0x60d601C0CcF6A27f5BB00066FCAE8c7208a8Fac8",     qr: "/qr/eth.jpg"  },
+  { symbol: "SOL",  name: "Solana",        color: "#9945FF", address: "3oXApv9hQC2UUtoVKb29gLtW61SRdsT9mpfzKvM4jjgM", qr: "/qr/sol.jpg"  },
+  { symbol: "USDT", name: "Tether ERC-20", color: "#26A17B", address: "0x60d601C0CcF6A27f5BB00066FCAE8c7208a8Fac8",     qr: "/qr/usdt.jpg" },
+  { symbol: "XRP",  name: "Ripple",        color: "#00AAE4", address: "rPMvhnSuaw82TqEMPNffBVhj5yJTxZyv9Y",            qr: "/qr/xrp.jpg"  },
 ];
 
 export default function PricingPage() {
@@ -68,37 +68,8 @@ export default function PricingPage() {
     <div style={{ minHeight: "100vh", background: "var(--clr-bg)", color: "var(--clr-text)" }}>
       <GlobalHeader />
 
-      {/* Hero */}
-      <section style={{ maxWidth: 680, margin: "0 auto", padding: "140px 2rem 60px", textAlign: "center" }}>
-        <div style={{
-          display: "inline-flex", alignItems: "center", gap: 6,
-          fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase",
-          color: "var(--clr-accent)", background: "color-mix(in srgb, var(--clr-accent) 10%, transparent)",
-          padding: "0.3rem 0.875rem", borderRadius: 20, marginBottom: 28,
-        }}>Pricing</div>
-        <div style={{
-          fontSize: "clamp(5rem, 14vw, 9rem)", fontWeight: 900,
-          letterSpacing: "-0.06em", lineHeight: 0.9, marginBottom: 24,
-        }}>$0</div>
-        <p style={{ fontSize: "1.125rem", fontWeight: 600, color: "var(--clr-text-2)", marginBottom: 12, letterSpacing: "-0.02em" }}>
-          Every founder deserves honest data.
-        </p>
-        <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", lineHeight: 1.75, maxWidth: 480, margin: "0 auto 36px" }}>
-          We&apos;re building in public. While we grow, everything is free —
-          no limits, no catch, no credit card.
-        </p>
-        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-          {["Unlimited queries", "All 3 tools", "No rate limits", "No account for Pulse"].map(tag => (
-            <span key={tag} style={{
-              padding: "0.375rem 1rem", border: "1px solid var(--clr-border)",
-              borderRadius: 20, fontSize: "0.875rem", color: "var(--clr-text-3)", background: "var(--clr-surface)",
-            }}>{tag}</span>
-          ))}
-        </div>
-      </section>
-
-      {/* 3-col tool pricing */}
-      <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 2rem 100px" }}>
+      {/* Tool pricing — 3 col */}
+      <section style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 2rem 80px" }}>
         <div style={{
           display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
           border: "1px solid var(--clr-border)", borderRadius: 16, overflow: "hidden",
@@ -134,14 +105,13 @@ export default function PricingPage() {
       </section>
 
       {/* Donate */}
-      <section style={{ borderTop: "1px solid var(--clr-border)", padding: "80px 2rem 120px" }}>
-        <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center", marginBottom: 56 }}>
-          <h2 style={{ fontSize: "1.75rem", fontWeight: 800, letterSpacing: "-0.04em", marginBottom: 14 }}>
-            If Unbuilt helped you,<br />pay it forward.
+      <section style={{ borderTop: "1px solid var(--clr-border)", padding: "60px 2rem 100px" }}>
+        <div style={{ maxWidth: 500, margin: "0 auto", textAlign: "center", marginBottom: 48 }}>
+          <h2 style={{ fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.04em", marginBottom: 12 }}>
+            If Unbuilt helped you, pay it forward.
           </h2>
-          <p style={{ color: "var(--clr-text-3)", lineHeight: 1.75, fontSize: "0.9375rem" }}>
-            We keep this free because founders deserve better tools.
-            If we saved you time or helped you avoid a bad idea —
+          <p style={{ color: "var(--clr-text-3)", lineHeight: 1.7, fontSize: "0.9rem" }}>
+            Everything is free. If we saved you time or helped you avoid a bad idea,
             a small donation goes directly into server costs and API bills.
           </p>
         </div>
@@ -162,11 +132,7 @@ export default function PricingPage() {
                 <span style={{ fontWeight: 700, fontSize: "0.875rem" }}>{w.symbol}</span>
               </div>
               <div style={{ fontSize: "0.7rem", color: "var(--clr-text-4)" }}>{w.name}</div>
-              <img
-                src={w.qr}
-                alt={w.symbol + " QR code"}
-                style={{ width: 130, height: 130, borderRadius: 6, display: "block", background: "#fff" }}
-              />
+              <img src={w.qr} alt={w.symbol} style={{ width: 130, height: 130, borderRadius: 6, display: "block", background: "#fff" }} />
               <div style={{
                 fontSize: "0.55rem", color: "var(--clr-text-4)", wordBreak: "break-all",
                 textAlign: "center", lineHeight: 1.6, fontFamily: "monospace",
@@ -184,7 +150,7 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
-        <p style={{ textAlign: "center", marginTop: 28, fontSize: "0.8rem", color: "var(--clr-text-4)" }}>
+        <p style={{ textAlign: "center", marginTop: 24, fontSize: "0.8rem", color: "var(--clr-text-4)" }}>
           🙏 No pressure. Every satoshi helps.
         </p>
       </section>
