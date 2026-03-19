@@ -123,8 +123,6 @@ export async function GET(req: NextRequest) {
   }
 
   const topicSlug = findTopicSlug(query);
-  console.log("PH: query:", query, "→ topic slug:", topicSlug ?? "(none, fetching all)");
-  console.log("PH: using token:", token.slice(0, 10) + "...");
 
   try {
     const gqlQuery = buildPostsQuery(topicSlug);
@@ -153,7 +151,6 @@ export async function GET(req: NextRequest) {
     }
 
     const edges = data?.data?.posts?.edges ?? [];
-    console.log("PH: total posts returned:", edges.length, topicSlug ? `(topic: ${topicSlug})` : "(all)");
 
     const posts = mapPosts(edges);
 
