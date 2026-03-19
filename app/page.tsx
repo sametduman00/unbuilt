@@ -3175,7 +3175,7 @@ export default function Home() {
                       {TOOL_ICONS["trend-feed"]("var(--clr-accent)")}
                     </div>
                     <div style={{ fontSize: "1.1rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--clr-text)", marginBottom: "0.25rem" }}>Pulse</div>
-                    <div style={{ fontSize: "0.825rem", fontWeight: 500, color: "var(--clr-text-3)", marginBottom: "0.5rem" }}>Trending products, analyzed</div>
+                    <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: "0.5rem" }}>Trending products, analyzed</div>
                     <p style={{ fontSize: "0.894rem", color: "var(--clr-text-4)", lineHeight: 1.6, flex: 1, margin: 0 }}>
                       Browse what’s launching on Product Hunt and App Store. Every product gets an instant AI breakdown — what it does, what makes it different, and what it’s missing.
                     </p>
