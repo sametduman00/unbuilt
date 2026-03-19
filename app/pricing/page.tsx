@@ -9,16 +9,10 @@ const tools = [
     name: "Pulse",
     desc: "Discover what's trending before everyone else.",
     features: [
-      "Product Hunt feed — updated daily",
-      "App Store feed — updated daily",
-      "AI breakdown per product",
-      "WHAT it does · DIFF · MISS format",
+      "Product Hunt & App Store — daily",
+      "AI breakdown: WHAT it does · DIFF · MISS",
       "Topic & category filters",
-      "Unlimited browsing",
       "No account required",
-      "Mobile-friendly",
-      "Dark mode supported",
-      "New products added automatically",
     ],
   },
   {
@@ -27,16 +21,10 @@ const tools = [
     name: "Gap Analysis",
     desc: "Find the gaps in the market before you build.",
     features: [
-      "Live Google search integration",
-      "Live YouTube search integration",
+      "Live Google & YouTube search",
       "Real competitor breakdown",
       "Market gap identification",
-      "Honest scoring — no fluff",
-      "Structured, export-ready output",
-      "Works on any niche or idea",
       "Unlimited queries",
-      "AI-powered insights",
-      "No account required",
     ],
   },
   {
@@ -49,12 +37,6 @@ const tools = [
       "Budget-matched recommendations",
       "Phase-by-phase build plan",
       "Time-to-MVP estimate",
-      "Common mistake warnings",
-      "Tool alternatives included",
-      "Founder-first perspective",
-      "Covers infra, design & payments",
-      "Unlimited queries",
-      "No account required",
     ],
   },
 ];
@@ -79,139 +61,67 @@ export default function PricingPage() {
     <div style={{ minHeight: "100vh", background: "var(--clr-bg)", color: "var(--clr-text)" }}>
       <GlobalHeader />
 
-      {/* Hero */}
-      <div style={{ textAlign: "center", padding: "72px 24px 48px" }}>
-        <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, letterSpacing: "-0.04em", margin: 0, marginBottom: 12 }}>
-          Everything is free.
-        </h1>
-        <p style={{ fontSize: "1rem", color: "var(--clr-text-3)", margin: 0 }}>
-          No limits, no credit card, no catch. We&apos;re building in public.
-        </p>
-      </div>
+      <div style={{ maxWidth: 1080, margin: "0 auto", padding: "40px 24px 48px", display: "flex", flexDirection: "column", gap: 24 }}>
 
-      {/* Cards */}
-      <div style={{
-        maxWidth: 1080,
-        margin: "0 auto",
-        padding: "0 24px",
-        display: "grid",
-        gridTemplateColumns: "repeat(3, 1fr)",
-        gap: 16,
-        alignItems: "start",
-      }}>
-        {tools.map(tool => (
-          <div key={tool.id} style={{
-            border: "1px solid var(--clr-border)",
-            borderRadius: 16,
-            padding: "28px 24px",
-            background: "var(--clr-surface)",
-            display: "flex",
-            flexDirection: "column",
-            gap: 0,
-          }}>
-            {/* label */}
-            <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--clr-accent)", marginBottom: 12 }}>
-              {tool.label}
+        {/* Cards */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, alignItems: "start" }}>
+          {tools.map(tool => (
+            <div key={tool.id} style={{
+              border: "1px solid var(--clr-border)",
+              borderRadius: 16,
+              padding: "24px 22px",
+              background: "var(--clr-surface)",
+            }}>
+              <div style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--clr-accent)", marginBottom: 10 }}>
+                {tool.label}
+              </div>
+              <div style={{ fontSize: "1.4rem", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 2 }}>{tool.name}</div>
+              <div style={{ fontSize: "2.8rem", fontWeight: 900, letterSpacing: "-0.06em", lineHeight: 1, marginBottom: 6 }}>$0</div>
+              <div style={{ fontSize: "0.8rem", color: "var(--clr-text-4)", marginBottom: 18, lineHeight: 1.5 }}>{tool.desc}</div>
+              <div style={{ height: 1, background: "var(--clr-border)", marginBottom: 16 }} />
+              <div style={{ fontSize: "0.68rem", fontWeight: 600, color: "var(--clr-text-3)", marginBottom: 10 }}>Included:</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {tool.features.map(f => (
+                  <div key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                    <span style={{ color: "var(--clr-accent)", fontSize: "0.7rem", marginTop: 2, flexShrink: 0 }}>&#10003;</span>
+                    <span style={{ fontSize: "0.82rem", color: "var(--clr-text-3)", lineHeight: 1.4 }}>{f}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            {/* name */}
-            <div style={{ fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 4 }}>
-              {tool.name}
-            </div>
-            {/* price */}
-            <div style={{ fontSize: "3rem", fontWeight: 900, letterSpacing: "-0.06em", lineHeight: 1, marginBottom: 6 }}>
-              $0
-            </div>
-            {/* desc */}
-            <div style={{ fontSize: "0.82rem", color: "var(--clr-text-4)", marginBottom: 20, lineHeight: 1.5 }}>
-              {tool.desc}
-            </div>
+          ))}
+        </div>
 
-            {/* divider */}
-            <div style={{ height: 1, background: "var(--clr-border)", marginBottom: 16 }} />
-
-            {/* feature label */}
-            <div style={{ fontSize: "0.7rem", fontWeight: 600, color: "var(--clr-text-3)", marginBottom: 10 }}>
-              Included in {tool.name}:
-            </div>
-
-            {/* features */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-              {tool.features.map(f => (
-                <div key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                  <span style={{ color: "var(--clr-accent)", fontSize: "0.72rem", marginTop: 2, flexShrink: 0 }}>&#10003;</span>
-                  <span style={{ fontSize: "0.82rem", color: "var(--clr-text-3)", lineHeight: 1.4 }}>{f}</span>
-                </div>
-              ))}
-            </div>
+        {/* Donate */}
+        <div style={{ border: "1px solid var(--clr-border)", borderRadius: 16, padding: "22px 22px" }}>
+          <div style={{ marginBottom: 16 }}>
+            <span style={{ fontSize: "0.95rem", fontWeight: 700 }}>If Unbuilt helped you, pay it forward.</span>
+            <span style={{ fontSize: "0.78rem", color: "var(--clr-text-4)", marginLeft: 10 }}>Donations cover server & API costs. No pressure. &#128591;</span>
           </div>
-        ))}
-      </div>
-
-      {/* Donate */}
-      <div style={{ maxWidth: 1080, margin: "48px auto 64px", padding: "0 24px" }}>
-        <div style={{ border: "1px solid var(--clr-border)", borderRadius: 16, padding: "28px 24px" }}>
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: 4 }}>
-              If Unbuilt helped you, pay it forward. &#128591;
-            </div>
-            <div style={{ fontSize: "0.82rem", color: "var(--clr-text-4)" }}>
-              Everything is free — a small donation goes directly into server costs and API bills. No pressure.
-            </div>
-          </div>
-
           <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12 }}>
             {wallets.map(w => (
-              <div key={w.symbol} style={{
-                border: "1px solid var(--clr-border)",
-                borderRadius: 12,
-                padding: "16px 12px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 10,
-              }}>
+              <div key={w.symbol} style={{ border: "1px solid var(--clr-border)", borderRadius: 12, padding: "14px 12px", display: "flex", flexDirection: "column", alignItems: "center", gap: 9 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <span style={{ width: 8, height: 8, borderRadius: "50%", background: w.color, display: "inline-block", flexShrink: 0 }} />
-                  <span style={{ fontWeight: 700, fontSize: "0.85rem" }}>{w.symbol}</span>
-                  <span style={{ fontSize: "0.65rem", color: "var(--clr-text-4)" }}>{w.name}</span>
+                  <span style={{ fontWeight: 700, fontSize: "0.82rem" }}>{w.symbol}</span>
+                  <span style={{ fontSize: "0.62rem", color: "var(--clr-text-4)" }}>{w.name}</span>
                 </div>
-                <img
-                  src={w.qr}
-                  alt={w.symbol}
-                  style={{ width: 100, height: 100, borderRadius: 8, background: "#fff", display: "block" }}
-                />
-                <div style={{
-                  fontSize: "0.62rem",
-                  color: "var(--clr-text-3)",
-                  wordBreak: "break-all",
-                  textAlign: "center",
-                  lineHeight: 1.5,
-                  fontFamily: "monospace",
-                  width: "100%",
+                <img src={w.qr} alt={w.symbol} style={{ width: 90, height: 90, borderRadius: 7, background: "#fff", display: "block" }} />
+                <div style={{ fontSize: "0.6rem", color: "var(--clr-text-3)", wordBreak: "break-all", textAlign: "center", lineHeight: 1.5, fontFamily: "monospace", width: "100%" }}>{w.address}</div>
+                <button onClick={() => copy(w.address, w.symbol)} style={{
+                  width: "100%", padding: "5px 0",
+                  background: copied === w.symbol ? "color-mix(in srgb,var(--clr-accent) 12%,transparent)" : "var(--clr-surface)",
+                  border: "1px solid var(--clr-border)", borderRadius: 8,
+                  fontSize: "0.7rem", fontWeight: 600, cursor: "pointer",
+                  color: copied === w.symbol ? "var(--clr-accent)" : "var(--clr-text-3)",
                 }}>
-                  {w.address}
-                </div>
-                <button
-                  onClick={() => copy(w.address, w.symbol)}
-                  style={{
-                    width: "100%",
-                    padding: "6px 0",
-                    background: copied === w.symbol ? "color-mix(in srgb,var(--clr-accent) 12%,transparent)" : "var(--clr-surface)",
-                    border: "1px solid var(--clr-border)",
-                    borderRadius: 8,
-                    fontSize: "0.72rem",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    color: copied === w.symbol ? "var(--clr-accent)" : "var(--clr-text-3)",
-                    transition: "all 0.15s",
-                  }}
-                >
                   {copied === w.symbol ? "Copied!" : "Copy"}
                 </button>
               </div>
             ))}
           </div>
         </div>
+
       </div>
     </div>
   );
