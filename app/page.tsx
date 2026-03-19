@@ -3221,13 +3221,12 @@ export default function Home() {
                 width: "100%", padding: "1.5rem 0 2rem", position: "relative",
               }}>
                 <h1 style={{
-                  fontSize: "clamp(2rem, 3.2vw, 2.8rem)", fontWeight: 700,
-                  letterSpacing: "-0.03em", lineHeight: 1.0,
+                  fontSize: "4rem", fontWeight: 700,
+                  letterSpacing: "-0.035em", lineHeight: "4.5rem",
                   color: "var(--clr-text)", marginBottom: "0",
                   whiteSpace: "normal",
                 }}>
                   <span style={{ color: "var(--clr-text-3)" }}>Claude says your idea is great.</span>
-                  <br />
                   <span style={{ color: "var(--clr-text)" }}>We&apos;ll tell you the truth.</span>
                 </h1>
                 <p style={{
