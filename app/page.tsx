@@ -2471,10 +2471,6 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [selectedTool, isLoading]);
 
-   [scanStep, loading, maxScanStep]);
-
-  // Handle stack-advisor checklist completion when API response arrives
-   [loading, selectedTool, stackCheckItems.length, scanStep]);
 
   useEffect(() => {
     if (hasResults) {
