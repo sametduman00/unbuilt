@@ -3118,8 +3118,8 @@ export default function Home() {
                 width: "100%", padding: "1.5rem 0 2rem", position: "relative",
               }}>
                 <h1 style={{
-                  fontSize: "5.2rem", fontWeight: 700,
-                  letterSpacing: "-0.035em", lineHeight: "5.85rem",
+                  fontSize: "6rem", fontWeight: 700,
+                  letterSpacing: "-0.035em", lineHeight: "6.75rem",
                   color: "var(--clr-text)", marginBottom: "0",
                   whiteSpace: "normal",
                 }}>
