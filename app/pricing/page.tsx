@@ -5,24 +5,54 @@ import { useState } from "react";
 const tools = [
   {
     id: "pulse",
-    name: "Pulse",
     label: "I NEED INSPIRATION",
-    desc: "Trending products, analyzed daily.",
-    features: ["Product Hunt & App Store feed", "AI: WHAT it does · DIFF · MISS", "Topic & category filters", "No account required"],
+    name: "Pulse",
+    features: [
+      "Product Hunt feed — updated daily",
+      "App Store feed — updated daily",
+      "AI breakdown per product",
+      "WHAT it does · DIFF · MISS format",
+      "Topic & category filters",
+      "Unlimited browsing",
+      "No account required",
+      "Mobile-friendly layout",
+      "Dark mode supported",
+      "New products added automatically",
+    ],
   },
   {
     id: "gap",
-    name: "Gap Analysis",
     label: "I HAVE AN IDEA",
-    desc: "Find the gaps before you build.",
-    features: ["Live Google & YouTube search", "Real competitor breakdown", "Market gap identification", "Honest scoring — no fluff"],
+    name: "Gap Analysis",
+    features: [
+      "Live Google search integration",
+      "Live YouTube search integration",
+      "Real competitor breakdown",
+      "Market gap identification",
+      "Honest scoring — no fluff",
+      "Structured export-ready output",
+      "Works on any niche or idea",
+      "Unlimited queries",
+      "AI-powered insights",
+      "No account required",
+    ],
   },
   {
     id: "stack",
-    name: "Stack Advisor",
     label: "HELP ME CHOOSE MY STACK",
-    desc: "Build fast, cheap, and right.",
-    features: ["123+ tools with live pricing", "Budget-matched recommendations", "Phase-by-phase build plan", "Time-to-MVP estimate"],
+    name: "Stack Advisor",
+    features: [
+      "123+ tools with live pricing",
+      "Budget-matched recommendations",
+      "Phase-by-phase build plan",
+      "Time-to-MVP estimate",
+      "Common mistake warnings",
+      "Tool alternatives included",
+      "Founder-first perspective",
+      "Unlimited queries",
+      "Covers infra, design & payments",
+      "No account required",
+    ],
   },
 ];
 
@@ -47,42 +77,46 @@ export default function PricingPage() {
       <GlobalHeader />
       <main style={{
         position: "fixed", top: 60, left: 0, right: 0, bottom: 0,
-        display: "flex", flexDirection: "column",
-        padding: "16px 24px 16px", gap: 12,
-        background: "var(--clr-bg)", color: "var(--clr-text)",
+        display: "grid",
+        gridTemplateRows: "1fr auto",
+        padding: "14px 20px",
+        gap: 10,
+        background: "var(--clr-bg)",
+        color: "var(--clr-text)",
         overflow: "hidden",
       }}>
 
-        {/* ── TOOLS ROW (80%) ── */}
-        <div style={{ flex: "1 1 0", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, minHeight: 0 }}>
+        {/* ── TOOL CARDS ── */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, minHeight: 0, overflow: "hidden" }}>
           {tools.map(tool => (
             <div key={tool.id} style={{
               border: "1px solid var(--clr-border)",
               borderRadius: 14,
-              padding: "16px 20px",
-              display: "flex", flexDirection: "column", gap: 0,
+              display: "grid",
+              gridTemplateRows: "auto auto 1px 1fr",
               overflow: "hidden",
             }}>
-              {/* label */}
-              <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--clr-accent)", marginBottom: 10 }}>
-                {tool.label}
-              </div>
-              {/* name + $0 on same line */}
-              <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 4 }}>
-                <div>
-                  <div style={{ fontSize: "1.35rem", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1 }}>{tool.name}</div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: 3 }}>{tool.desc}</div>
+              {/* top: label + name + price */}
+              <div style={{ padding: "16px 18px 0" }}>
+                <div style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--clr-accent)", marginBottom: 8 }}>
+                  {tool.label}
                 </div>
-                <div style={{ fontSize: "3.2rem", fontWeight: 900, letterSpacing: "-0.06em", lineHeight: 1, flexShrink: 0 }}>$0</div>
+                <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: "1.25rem", fontWeight: 800, letterSpacing: "-0.02em" }}>{tool.name}</span>
+                  <span style={{ fontSize: "2.8rem", fontWeight: 900, letterSpacing: "-0.06em", lineHeight: 1, color: "var(--clr-text)" }}>$0</span>
+                </div>
               </div>
+
               {/* divider */}
-              <div style={{ borderTop: "1px solid var(--clr-border)", margin: "8px 0" }} />
-              {/* features */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ height: 1, background: "var(--clr-border)", margin: "12px 18px 0" }} />
+              <div />
+
+              {/* features 2-col grid */}
+              <div style={{ padding: "10px 18px 14px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 10px", alignContent: "start", overflow: "hidden" }}>
                 {tool.features.map(f => (
-                  <div key={f} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ color: "var(--clr-accent)", fontSize: "0.72rem", flexShrink: 0 }}>&#10003;</span>
-                    <span style={{ fontSize: "0.82rem", color: "var(--clr-text-3)", lineHeight: 1.3 }}>{f}</span>
+                  <div key={f} style={{ display: "flex", alignItems: "flex-start", gap: 6 }}>
+                    <span style={{ color: "var(--clr-accent)", fontSize: "0.68rem", marginTop: 1, flexShrink: 0 }}>&#10003;</span>
+                    <span style={{ fontSize: "0.73rem", color: "var(--clr-text-3)", lineHeight: 1.35 }}>{f}</span>
                   </div>
                 ))}
               </div>
@@ -90,54 +124,46 @@ export default function PricingPage() {
           ))}
         </div>
 
-        {/* ── DONATE ROW (20%) ── */}
+        {/* ── DONATE STRIP ── */}
         <div style={{
-          flex: 1,
           border: "1px solid var(--clr-border)",
-          borderRadius: 14,
-          padding: "12px 16px",
-          display: "flex", flexDirection: "column", gap: 8,
-          minHeight: 0, overflow: "hidden",
+          borderRadius: 12,
+          padding: "10px 14px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 8,
         }}>
-          {/* header */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: "0.82rem", fontWeight: 700 }}>If Unbuilt helped you, pay it forward.</span>
-              <span style={{ fontSize: "0.7rem", color: "var(--clr-text-4)" }}>Donations cover server &amp; API costs.</span>
+          {/* header row */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: "0.78rem", fontWeight: 700 }}>If Unbuilt helped you, pay it forward.</span>
+              <span style={{ fontSize: "0.68rem", color: "var(--clr-text-4)" }}>Everything is free — donations keep servers running.</span>
             </div>
-            <span style={{ fontSize: "0.7rem", color: "var(--clr-text-4)" }}>&#128591; No pressure.</span>
+            <span style={{ fontSize: "0.68rem", color: "var(--clr-text-4)" }}>&#128591; No pressure.</span>
           </div>
 
-          {/* wallets */}
-          <div style={{ flex: 1, display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 10, minHeight: 0, overflow: "hidden" }}>
+          {/* wallet row */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8 }}>
             {wallets.map(w => (
               <div key={w.symbol} style={{
-                display: "flex", alignItems: "center", gap: 10,
-                border: "1px solid var(--clr-border)", borderRadius: 10,
-                padding: "8px 10px", overflow: "hidden",
+                display: "flex", alignItems: "center", gap: 9,
+                border: "1px solid var(--clr-border)", borderRadius: 9, padding: "8px 10px",
               }}>
-                {/* QR */}
-                <img src={w.qr} alt={w.symbol} style={{ width: 48, height: 48, borderRadius: 5, background: "#fff", flexShrink: 0 }} />
-                {/* info */}
+                <img src={w.qr} alt={w.symbol} style={{ width: 46, height: 46, borderRadius: 5, background: "#fff", flexShrink: 0, display: "block" }} />
                 <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 3 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                     <span style={{ width: 7, height: 7, borderRadius: "50%", background: w.color, display: "inline-block", flexShrink: 0 }} />
-                    <span style={{ fontWeight: 700, fontSize: "0.8rem" }}>{w.symbol}</span>
+                    <span style={{ fontWeight: 700, fontSize: "0.78rem" }}>{w.symbol}</span>
                     <span style={{ fontSize: "0.6rem", color: "var(--clr-text-4)" }}>{w.name}</span>
                   </div>
-                  <div style={{ fontSize: "0.58rem", color: "var(--clr-text-3)", wordBreak: "break-all", lineHeight: 1.35, fontFamily: "monospace" }}>
-                    {w.address}
-                  </div>
-                  <button
-                    onClick={() => copy(w.address, w.symbol)}
-                    style={{
-                      padding: "2px 0", width: "100%",
-                      background: copied === w.symbol ? "color-mix(in srgb,var(--clr-accent) 14%,transparent)" : "var(--clr-surface)",
-                      border: "1px solid var(--clr-border)", borderRadius: 5,
-                      fontSize: "0.65rem", fontWeight: 600, cursor: "pointer",
-                      color: copied === w.symbol ? "var(--clr-accent)" : "var(--clr-text-3)",
-                    }}
-                  >
+                  <div style={{ fontSize: "0.57rem", color: "var(--clr-text-3)", wordBreak: "break-all", lineHeight: 1.4, fontFamily: "monospace" }}>{w.address}</div>
+                  <button onClick={() => copy(w.address, w.symbol)} style={{
+                    padding: "2px 0", width: "100%",
+                    background: copied === w.symbol ? "color-mix(in srgb,var(--clr-accent) 14%,transparent)" : "var(--clr-surface)",
+                    border: "1px solid var(--clr-border)", borderRadius: 5,
+                    fontSize: "0.62rem", fontWeight: 600, cursor: "pointer",
+                    color: copied === w.symbol ? "var(--clr-accent)" : "var(--clr-text-3)",
+                  }}>
                     {copied === w.symbol ? "Copied!" : "Copy"}
                   </button>
                 </div>
