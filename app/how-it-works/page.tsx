@@ -370,9 +370,9 @@ export default function HowItWorks() {
           {/* Page header */}
           <div style={{ textAlign: "center", padding: "4rem 0 3rem", maxWidth: 600, margin: "0 auto" }}>
             <h1 style={{
-              fontSize: "clamp(1.875rem, 3.5vw, 2.75rem)", fontWeight: 800,
+              fontSize: "2.5rem", fontWeight: 800,
               letterSpacing: "-0.035em", lineHeight: 1.1, color: "var(--clr-text)",
-              marginBottom: "1rem",
+              whiteSpace: "nowrap", marginBottom: "1rem",
             }}>
               Three tools. One honest output.
             </h1>
