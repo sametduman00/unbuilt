@@ -2801,7 +2801,7 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
           const updated = prev.map((item, i) => i === prev.length - 1 ? { ...item, done: true } : item);
           return [...updated, { name: STACK_CHECK_TOOLS[idx], status: "pending" }];
         });
-      }, 500);
+      }, 1500);
     } else {
       const steps = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3);
       scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
