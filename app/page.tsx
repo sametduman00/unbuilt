@@ -3120,7 +3120,7 @@ export default function Home() {
                 <h1 style={{
                   fontSize: "4.2rem", fontWeight: 700,
                   letterSpacing: "-0.035em", lineHeight: "4.725rem",
-                  color: "var(--clr-text)", marginBottom: "0",
+                  color: "var(--clr-text)", marginBottom: "1.5rem",
                   whiteSpace: "normal",
                 }}>
                   <span style={{ color: "var(--clr-text-3)" }}>Claude says your idea is great.</span>
