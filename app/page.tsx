@@ -2409,8 +2409,9 @@ export default function Home() {
   const [domainKeywords, setDomainKeywords] = useState<string[]>([]);
   const [resultCached, setResultCached] = useState<boolean | null>(null);
 
-  const [scanStep, setScanStep] = useState(-1); // -1=hidden 0-3=active step 4=all done
-  const [stackCheckItems, setStackCheckItems] = useState<{ name: string; done: boolean }[]>([]);
+  const [stackToolIdx, setStackToolIdx] = useState(0);
+  const [stackToolVisible, setStackToolVisible] = useState(true) // -1=hidden 0-3=active step 4=all done
+   done: boolean }[]>([]);
 
   const inputSectionRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -2420,9 +2421,37 @@ export default function Home() {
   const pendingAutoSubmit = useRef(false);
 
   const STACK_CHECK_TOOLS = [
-    "Vercel", "Supabase", "Stripe", "Clerk", "Resend", "Anthropic API",
-    "OpenAI", "Cloudflare", "PlanetScale", "Railway", "Fly.io",
-    "Lemon Squeezy", "PostHog", "Sentry", "Neon", "Upstash",
+    "Vercel","Netlify","Cloudflare Pages","Railway","Render","Fly.io",
+    "Supabase","PlanetScale","Neon","Firebase","Turso","MongoDB Atlas",
+    "Clerk","Auth0","Supabase Auth","NextAuth (Auth.js)","Lucia",
+    "Stripe","Lemon Squeezy","Paddle","Gumroad",
+    "OpenAI","Anthropic","Groq","Together AI","Replicate","Hugging Face",
+    "Bubble","Webflow","Framer","Glide","FlutterFlow","Adalo","Softr",
+    "Make.com","Zapier","n8n","Pipedream",
+    "Resend","Postmark","SendGrid","Mailgun","Loops",
+    "Cloudflare R2","AWS S3","Uploadthing","Supabase Storage",
+    "PostHog","Mixpanel","Plausible","Umami",
+    "Sanity","Contentful","Strapi","Payload",
+    "Expo","React Native","Telegram Bot API","Twilio","WhatsApp Business API",
+    "Sentry","LogRocket","Datadog",
+    "Lovable","Bolt.new","v0 by Vercel","Cursor","Windsurf","Replit","GitHub Copilot","Claude Code",
+    "Google Cloud Platform","Amazon Web Services","Microsoft Azure","Oracle Cloud","Heroku",
+    "Cloud Firestore","DynamoDB","Fauna",
+    "Okta","SuperTokens","Kinde",
+    "Brevo","Google Cloud Storage","Cloudinary","Imgix",
+    "Redis","Upstash","Ably","Pusher","Socket.io",
+    "Prisma","Drizzle","TypeORM","Mongoose",
+    "Next.js","Remix","Astro","SvelteKit","Nuxt",
+    "TailwindCSS","Shadcn/ui","Chakra UI","Material UI",
+    "Vercel AI SDK","LangChain","LlamaIndex",
+    "Linear","Notion","Airtable","Coda",
+    "Intercom","Crisp","Tawk.to",
+    "Algolia","Typesense","Meilisearch",
+    "Cloudflare Workers","Deno Deploy","Netlify Functions",
+    "PlanetScale","CockroachDB","Xata",
+    "Stytch","Magic","Passage",
+    "Segment","Amplitude","June",
+    "Cal.com","Calendly","Dub.co",
   ];
 
   // Number of scan steps for the current tool (used for timer logic)
@@ -2431,26 +2460,21 @@ export default function Home() {
 
   // Advance scan to "done" once last step is active AND Claude has finished
   useEffect(() => {
-    if (scanStep === 4) {
-      const t = setTimeout(() => { setHasResults(true); setScanStep(-1); }, 750);
-      return () => clearTimeout(t);
-    }
-    if (scanStep >= maxScanStep && !loading) {
-      const t = setTimeout(() => setScanStep(4), 350);
-      return () => clearTimeout(t);
-    }
-  }, [scanStep, loading, maxScanStep]);
+    if (selectedTool?.id !== 'stack-advisor' || !isLoading) return;
+    const timer = setInterval(() => {
+      setStackToolVisible(false);
+      setTimeout(() => {
+        setStackToolIdx(idx => (idx + 1) % STACK_CHECK_TOOLS.length);
+        setStackToolVisible(true);
+      }, 300);
+    }, 600);
+    return () => clearInterval(timer);
+  }, [selectedTool, isLoading]);
+
+   [scanStep, loading, maxScanStep]);
 
   // Handle stack-advisor checklist completion when API response arrives
-  useEffect(() => {
-    if (selectedTool === "stack-advisor" && !loading && stackCheckItems.length > 0 && scanStep >= 0) {
-      if (stackCheckTimerRef.current) { clearInterval(stackCheckTimerRef.current); stackCheckTimerRef.current = null; }
-      // Mark all items as done
-      setStackCheckItems(prev => prev.map(item => ({ ...item, done: true })));
-      const t = setTimeout(() => { setHasResults(true); setScanStep(-1); setStackCheckItems([]); }, 750);
-      return () => clearTimeout(t);
-    }
-  }, [loading, selectedTool, stackCheckItems.length, scanStep]);
+   [loading, selectedTool, stackCheckItems.length, scanStep]);
 
   useEffect(() => {
     if (hasResults) {
@@ -2999,49 +3023,17 @@ export default function Home() {
                   {/* Steps */}
                   {selectedTool === "stack-advisor" ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem", maxHeight: 320, overflowY: "auto" }}>
-                      {stackCheckItems.map((item, i) => {
-                        const isLast = i === stackCheckItems.length - 1;
-                        const isDone = item.done;
-                        return (
-                          <div key={item.name} style={{
-                            display: "flex", alignItems: "center", gap: "0.875rem",
-                            padding: "0.5rem 0.75rem", borderRadius: 12,
-                            background: !isDone ? `rgba(${currentTool?.accentRgb ?? "var(--clr-accent-rgb)"},0.05)` : "transparent",
-                            transition: "background 0.3s",
-                            animation: "stepIn 0.3s ease both",
-                          }}>
-                            <div style={{ width: 22, height: 22, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                              {isDone ? (
-                                <div style={{
-                                  width: 22, height: 22, borderRadius: "50%",
-                                  background: "rgba(34,197,94,0.15)", border: "1px solid rgba(34,197,94,0.35)",
-                                  display: "flex", alignItems: "center", justifyContent: "center",
-                                  animation: "checkPop 0.35s cubic-bezier(0.16,1,0.3,1)",
-                                }}>
-                                  <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-                                    <path d="M2 5.5l2.5 2.5 4.5-5" stroke="var(--clr-text-2)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-                                  </svg>
-                                </div>
-                              ) : (
-                                <div style={{ width: 18, height: 18, border: "2px solid var(--clr-text-5)", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-                              )}
-                            </div>
-                            <span style={{
-                              fontSize: "0.875rem", fontWeight: isDone ? 500 : 600,
-                              color: isDone ? "var(--clr-text-3)" : "var(--clr-text)",
-                              transition: "color 0.3s", flex: 1,
-                            }}>
-                              Checking {item.name}
-                              {!isDone && <span style={{ animation: "blink 1.1s step-end infinite" }}>…</span>}
-                            </span>
-                            {isDone && (
-                              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style={{ flexShrink: 0, animation: "checkPop 0.35s ease" }}>
-                                <path d="M2 6.5l3 3 5.5-6" stroke="rgb(34,197,94)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                            )}
-                          </div>
-                        );
-                      })}
+                      {/* Fade animasyon - tek tool adı */}
+                      <div style={{
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        flexDirection: "column", gap: 8, minHeight: 120,
+                        opacity: stackToolVisible ? 1 : 0,
+                        transition: "opacity 0.3s ease",
+                      }}>
+                        <span style={{ fontSize: "0.8rem", color: "var(--clr-text-4)", letterSpacing: "0.05em", textTransform: "uppercase" }}>Analyzing</span>
+                        <span style={{ fontSize: "1.15rem", fontWeight: 700, color: "var(--clr-text-2)" }}>{STACK_CHECK_TOOLS[stackToolIdx]}</span>
+                        <span style={{ fontSize: "0.8rem", color: "var(--clr-text-4)" }}>...</span>
+                      </div>}
                     </div>
                   ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem" }}>
