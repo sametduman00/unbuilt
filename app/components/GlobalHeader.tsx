@@ -21,6 +21,14 @@ export default function GlobalHeader() {
     localStorage.setItem("theme", next ? "dark" : "light");
   };
 
+  const navStyle: React.CSSProperties = {
+    fontSize: "0.8rem",
+    fontWeight: 500,
+    color: "var(--clr-text)",
+    textDecoration: "none",
+    transition: "opacity 0.15s",
+  };
+
   return (
     <header style={{
       position: "fixed",
@@ -38,49 +46,32 @@ export default function GlobalHeader() {
     }}>
 
       {/* Sol: Logo + divider + nav */}
-      <div style={{ display: "flex", alignItems: "center", gap: 24, height: "100%" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 0, height: "100%" }}>
 
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none", paddingRight: 24 }}>
           <svg width="22" height="22" viewBox="0 0 19 19" fill="none">
             <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2.2" strokeLinecap="round" />
           </svg>
-          <span style={{ fontWeight: 700, fontSize: "1.17rem", color: "var(--clr-text)", letterSpacing: "-0.03em" }}>
+          <span style={{ fontWeight: 700, fontSize: "0.94rem", color: "var(--clr-text)", letterSpacing: "-0.03em" }}>
             Unbuilt
           </span>
         </Link>
 
         {/* Dikey çizgi */}
-        <div style={{ width: 1, height: 25, background: "var(--clr-border)", marginRight: 24 }} />
+        <div style={{ width: 1, height: 22, background: "var(--clr-border)", marginRight: 24, flexShrink: 0 }} />
 
-        <Link href="/how-it-works" style={{
-          fontSize: "1.015rem", fontWeight: 500,
-          color: "var(--clr-text-3)", textDecoration: "none",
-          transition: "color 0.15s",
-        }}
-          onMouseEnter={e => (e.currentTarget.style.color = "var(--clr-text)")}
-          onMouseLeave={e => (e.currentTarget.style.color = "var(--clr-text-3)")}>
-          How it works
-        </Link>
-
-        <Link href="/careers" style={{
-          fontSize: "1.015rem", fontWeight: 500,
-          color: "var(--clr-text-3)", textDecoration: "none",
-          transition: "color 0.15s",
-        }}
-          onMouseEnter={e => (e.currentTarget.style.color = "var(--clr-text)")}
-          onMouseLeave={e => (e.currentTarget.style.color = "var(--clr-text-3)")}>
-          Careers
-        </Link>
-
-        <Link href="/careers" style={{
-          fontSize: "1.015rem", fontWeight: 500,
-          color: "var(--clr-text-3)", textDecoration: "none",
-          transition: "color 0.15s", marginLeft: 20,
-        }}
-          onMouseEnter={e => (e.currentTarget.style.color = "var(--clr-text)")}
-          onMouseLeave={e => (e.currentTarget.style.color = "var(--clr-text-3)")}>
-          Careers
-        </Link>
+        <nav style={{ display: "flex", alignItems: "center", gap: 28, height: "100%" }}>
+          <Link href="/how-it-works" style={navStyle}
+            onMouseEnter={e => (e.currentTarget.style.opacity = "0.6")}
+            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}>
+            How it works
+          </Link>
+          <Link href="/careers" style={navStyle}
+            onMouseEnter={e => (e.currentTarget.style.opacity = "0.6")}
+            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}>
+            Careers
+          </Link>
+        </nav>
       </div>
 
       {/* Sağ: tema + auth */}
@@ -104,7 +95,7 @@ export default function GlobalHeader() {
               padding: "0.44rem 1.25rem",
               background: "var(--clr-text)", color: "var(--clr-bg)",
               border: "none", borderRadius: 10,
-              fontSize: "1.015rem", fontWeight: 600, cursor: "pointer",
+              fontSize: "0.8rem", fontWeight: 600, cursor: "pointer",
             }}>
               Sign in
             </button>
