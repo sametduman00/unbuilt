@@ -2409,6 +2409,8 @@ export default function Home() {
   const [domainKeywords, setDomainKeywords] = useState<string[]>([]);
   const [resultCached, setResultCached] = useState<boolean | null>(null);
 
+  const [scanStep, setScanStep] = useState(-1);
+  const [maxScanStep, setMaxScanStep] = useState(0);
   const [stackToolIdx, setStackToolIdx] = useState(0);
   const [stackToolVisible, setStackToolVisible] = useState(true) // -1=hidden 0-3=active step 4=all done
    done: boolean }[]>([]);
