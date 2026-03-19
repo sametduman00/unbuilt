@@ -49,10 +49,10 @@ export default function GlobalHeader() {
       <div style={{ display: "flex", alignItems: "center", gap: 0, height: "100%" }}>
 
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none", paddingRight: 24 }}>
-          <svg width="22" height="22" viewBox="0 0 19 19" fill="none">
+          <svg width="26" height="26" viewBox="0 0 19 19" fill="none">
             <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2.2" strokeLinecap="round" />
           </svg>
-          <span style={{ fontWeight: 700, fontSize: "0.94rem", color: "var(--clr-text)", letterSpacing: "-0.03em" }}>
+          <span style={{ fontWeight: 700, fontSize: "1.13rem", color: "var(--clr-text)", letterSpacing: "-0.03em" }}>
             Unbuilt
           </span>
         </Link>
