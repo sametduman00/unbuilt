@@ -119,7 +119,6 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   font-weight: 800;
   letter-spacing: -0.035em;
-  line-height: 1.04;
 }
 
 p {
@@ -358,9 +357,6 @@ h1 {
   font-family: 'Syne', sans-serif !important;
   font-weight: 800 !important;
   letter-spacing: -0.04em !important;
-  line-height: 1.125 !important;
-  font-size: clamp(1.9rem, 3vw, 2.75rem) !important;
-  white-space: nowrap !important;
 }
 
 /* "Claude says your idea is great." — first span, same size, dimmed */
