@@ -25,25 +25,25 @@ export default function PricingPage() {
   };
 
   return (
-    <div style={{ height:"100vh", display:"flex", flexDirection:"column", background:"var(--clr-bg)", color:"var(--clr-text)", overflow:"hidden" }}>
+    <div style={{ height:"100dvh", display:"flex", flexDirection:"column", background:"var(--clr-bg)", color:"var(--clr-text)" }}>
       <GlobalHeader />
 
-      <div style={{ flex:1, display:"flex", flexDirection:"column", padding:"16px 24px", gap:12, minHeight:0, overflow:"hidden" }}>
+      <div style={{ flex:1, display:"flex", flexDirection:"column", padding:"14px 22px 14px", gap:10, overflow:"hidden" }}>
 
-        {/* Tools */}
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10, flexShrink:0 }}>
+        {/* Tools — 3 col, fixed height */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10 }}>
           {tools.map(tool => (
-            <div key={tool.id} style={{ border:"1px solid var(--clr-border)", borderRadius:12, padding:"12px 14px", display:"flex", flexDirection:"column", gap:8 }}>
-              <div style={{ fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"var(--clr-accent)" }}>{tool.label}</div>
-              <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between" }}>
+            <div key={tool.id} style={{ border:"1px solid var(--clr-border)", borderRadius:11, padding:"11px 14px", display:"flex", flexDirection:"column", gap:7 }}>
+              <div style={{ fontSize:"0.58rem", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--clr-accent)" }}>{tool.label}</div>
+              <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", gap:8 }}>
                 <span style={{ fontSize:"1rem", fontWeight:700 }}>{tool.name}</span>
-                <span style={{ fontSize:"1.6rem", fontWeight:900, letterSpacing:"-0.04em", lineHeight:1 }}>$0<span style={{ fontSize:"0.65rem", color:"var(--clr-text-4)", fontWeight:400, marginLeft:3 }}>/ forever</span></span>
+                <span style={{ fontSize:"1.5rem", fontWeight:900, letterSpacing:"-0.04em", lineHeight:1, flexShrink:0 }}>$0<span style={{ fontSize:"0.6rem", color:"var(--clr-text-4)", fontWeight:400, marginLeft:2 }}>/ forever</span></span>
               </div>
               <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
                 {tool.features.map(f => (
                   <div key={f} style={{ display:"flex", alignItems:"center", gap:6 }}>
-                    <span style={{ color:"var(--clr-accent)", fontSize:"0.7rem", flexShrink:0 }}>✓</span>
-                    <span style={{ fontSize:"0.78rem", color:"var(--clr-text-3)" }}>{f}</span>
+                    <span style={{ color:"var(--clr-accent)", fontSize:"0.68rem", flexShrink:0 }}>✓</span>
+                    <span style={{ fontSize:"0.76rem", color:"var(--clr-text-3)", lineHeight:1.3 }}>{f}</span>
                   </div>
                 ))}
               </div>
@@ -52,32 +52,39 @@ export default function PricingPage() {
         </div>
 
         {/* Donate */}
-        <div style={{ border:"1px solid var(--clr-border)", borderRadius:12, padding:"12px 14px", flex:1, display:"flex", flexDirection:"column", gap:10, minHeight:0, overflow:"hidden" }}>
+        <div style={{ border:"1px solid var(--clr-border)", borderRadius:11, padding:"11px 14px", flex:1, display:"flex", flexDirection:"column", gap:8, overflow:"hidden" }}>
+          {/* header */}
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexShrink:0 }}>
-            <div>
-              <span style={{ fontSize:"0.85rem", fontWeight:700 }}>If Unbuilt helped you, pay it forward.</span>
-              <span style={{ fontSize:"0.72rem", color:"var(--clr-text-4)", marginLeft:8 }}>Everything is free — donations cover server &amp; API costs.</span>
+            <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+              <span style={{ fontSize:"0.82rem", fontWeight:700 }}>If Unbuilt helped you, pay it forward.</span>
+              <span style={{ fontSize:"0.7rem", color:"var(--clr-text-4)" }}>Everything is free — donations cover server &amp; API costs.</span>
             </div>
-            <span style={{ fontSize:"0.72rem", color:"var(--clr-text-4)" }}>🙏 No pressure.</span>
+            <span style={{ fontSize:"0.7rem", color:"var(--clr-text-4)", flexShrink:0 }}>🙏 No pressure.</span>
           </div>
 
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:10, flex:1, minHeight:0 }}>
+          {/* wallet cards — stretch to fill remaining */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:8, flex:1, overflow:"hidden" }}>
             {wallets.map(w => (
-              <div key={w.symbol} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:6, border:"1px solid var(--clr-border)", borderRadius:10, padding:"10px 8px", minHeight:0, overflow:"hidden" }}>
+              <div key={w.symbol} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:6, border:"1px solid var(--clr-border)", borderRadius:9, padding:"10px 8px", overflow:"hidden" }}>
+                {/* symbol row */}
                 <div style={{ display:"flex", alignItems:"center", gap:5, flexShrink:0 }}>
                   <span style={{ width:7, height:7, borderRadius:"50%", background:w.color, display:"inline-block", flexShrink:0 }}/>
-                  <span style={{ fontWeight:700, fontSize:"0.82rem" }}>{w.symbol}</span>
-                  <span style={{ fontSize:"0.62rem", color:"var(--clr-text-4)" }}>{w.name}</span>
+                  <span style={{ fontWeight:700, fontSize:"0.8rem" }}>{w.symbol}</span>
+                  <span style={{ fontSize:"0.6rem", color:"var(--clr-text-4)" }}>{w.name}</span>
                 </div>
-                <img src={w.qr} alt={w.symbol} style={{ width:"100%", aspectRatio:"1/1", borderRadius:6, background:"#fff", display:"block", objectFit:"cover", flexShrink:0, maxWidth:120 }}/>
-                <div style={{ fontSize:"0.65rem", color:"var(--clr-text-3)", wordBreak:"break-all", textAlign:"center", lineHeight:1.4, fontFamily:"monospace", width:"100%", flexShrink:0 }}>{w.address}</div>
+                {/* QR - fill available space */}
+                <div style={{ flex:1, width:"100%", minHeight:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <img src={w.qr} alt={w.symbol} style={{ width:"100%", height:"100%", objectFit:"contain", borderRadius:6, background:"#fff", display:"block" }}/>
+                </div>
+                {/* address */}
+                <div style={{ fontSize:"0.63rem", color:"var(--clr-text-3)", wordBreak:"break-all", textAlign:"center", lineHeight:1.4, fontFamily:"monospace", width:"100%", flexShrink:0 }}>{w.address}</div>
+                {/* copy btn */}
                 <button onClick={() => copy(w.address, w.symbol)} style={{
-                  width:"100%", padding:"0.28rem", marginTop:"auto",
+                  width:"100%", padding:"0.28rem", flexShrink:0,
                   background: copied===w.symbol ? "color-mix(in srgb,var(--clr-accent) 15%,transparent)" : "var(--clr-surface)",
                   border:"1px solid var(--clr-border)", borderRadius:7,
-                  fontSize:"0.7rem", fontWeight:600, cursor:"pointer",
+                  fontSize:"0.68rem", fontWeight:600, cursor:"pointer",
                   color: copied===w.symbol ? "var(--clr-accent)" : "var(--clr-text-3)",
-                  flexShrink:0,
                 }}>
                   {copied===w.symbol ? "Copied!" : "Copy"}
                 </button>
