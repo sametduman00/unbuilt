@@ -22,77 +22,53 @@ export default function GlobalHeader() {
   };
 
   return (
-    <div style={{
+    <header style={{
       position: "fixed",
-      top: 12,
-      left: "50%",
-      transform: "translateX(-50%)",
+      top: 0, left: 0, right: 0,
       zIndex: 100,
+      height: 48,
       display: "flex",
       alignItems: "center",
-      height: 42,
+      justifyContent: "space-between",
+      padding: "0 2rem",
       background: "var(--clr-bg)",
-      border: "1px solid var(--clr-border)",
-      borderRadius: 12,
+      borderBottom: "1px solid var(--clr-border)",
       backdropFilter: "blur(12px)",
       WebkitBackdropFilter: "blur(12px)",
-      boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
-      overflow: "hidden",
-      whiteSpace: "nowrap" as const,
     }}>
 
-      {/* Logo bölümü */}
-      <Link href="/" style={{
-        display: "flex", alignItems: "center", gap: 7,
-        textDecoration: "none",
-        padding: "0 14px 0 16px",
-        height: "100%",
-      }}>
-        <svg width="18" height="18" viewBox="0 0 19 19" fill="none">
-          <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2.2" strokeLinecap="round" />
-        </svg>
-        <span style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--clr-text)", letterSpacing: "-0.03em" }}>
-          Unbuilt
-        </span>
-      </Link>
+      {/* Sol: Logo + divider + nav */}
+      <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
 
-      {/* Dikey ayırıcı */}
-      <div style={{ width: 1, height: 20, background: "var(--clr-border)", flexShrink: 0 }} />
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 7, textDecoration: "none", paddingRight: 20 }}>
+          <svg width="18" height="18" viewBox="0 0 19 19" fill="none">
+            <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2.2" strokeLinecap="round" />
+          </svg>
+          <span style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--clr-text)", letterSpacing: "-0.03em" }}>
+            Unbuilt
+          </span>
+        </Link>
 
-      {/* Nav linkleri */}
-      <nav style={{ display: "flex", alignItems: "center", height: "100%" }}>
+        {/* Dikey çizgi */}
+        <div style={{ width: 1, height: 20, background: "var(--clr-border)", marginRight: 20 }} />
+
         <Link href="/how-it-works" style={{
           fontSize: "0.8125rem", fontWeight: 500,
           color: "var(--clr-text-3)", textDecoration: "none",
-          padding: "0 14px", height: "100%",
-          display: "flex", alignItems: "center",
-          transition: "color 0.15s, background 0.15s",
+          transition: "color 0.15s",
         }}
-          onMouseEnter={e => { e.currentTarget.style.color = "var(--clr-text)"; e.currentTarget.style.background = "var(--clr-surface)"; }}
-          onMouseLeave={e => { e.currentTarget.style.color = "var(--clr-text-3)"; e.currentTarget.style.background = "transparent"; }}>
+          onMouseEnter={e => (e.currentTarget.style.color = "var(--clr-text)")}
+          onMouseLeave={e => (e.currentTarget.style.color = "var(--clr-text-3)")}>
           How it works
         </Link>
-        <Link href="/pulse" style={{
-          fontSize: "0.8125rem", fontWeight: 500,
-          color: "var(--clr-text-3)", textDecoration: "none",
-          padding: "0 14px", height: "100%",
-          display: "flex", alignItems: "center",
-          transition: "color 0.15s, background 0.15s",
-        }}
-          onMouseEnter={e => { e.currentTarget.style.color = "var(--clr-text)"; e.currentTarget.style.background = "var(--clr-surface)"; }}
-          onMouseLeave={e => { e.currentTarget.style.color = "var(--clr-text-3)"; e.currentTarget.style.background = "transparent"; }}>
-          Pulse
-        </Link>
-      </nav>
-
-      {/* Dikey ayırıcı */}
-      <div style={{ width: 1, height: 20, background: "var(--clr-border)", flexShrink: 0 }} />
+      </div>
 
       {/* Sağ: tema + auth */}
-      <div style={{ display: "flex", alignItems: "center", height: "100%", padding: "0 8px", gap: 6 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <button onClick={toggleTheme} style={{
-          background: "transparent", border: "none",
-          borderRadius: 7, width: 28, height: 28,
+          background: "transparent",
+          border: "1px solid var(--clr-border)",
+          borderRadius: 8, width: 32, height: 32,
           cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
           color: "var(--clr-text-3)",
         }}>
@@ -105,9 +81,9 @@ export default function GlobalHeader() {
         {isLoaded && !isSignedIn && (
           <SignInButton mode="modal">
             <button style={{
-              padding: "0.3rem 0.875rem",
+              padding: "0.35rem 1rem",
               background: "var(--clr-text)", color: "var(--clr-bg)",
-              border: "none", borderRadius: 7,
+              border: "none", borderRadius: 8,
               fontSize: "0.8125rem", fontWeight: 600, cursor: "pointer",
             }}>
               Sign in
@@ -116,6 +92,6 @@ export default function GlobalHeader() {
         )}
         {isLoaded && isSignedIn && <UserButton />}
       </div>
-    </div>
+    </header>
   );
 }
