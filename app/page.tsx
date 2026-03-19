@@ -2789,19 +2789,23 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
     // ── Other tools: existing flow ──
     if (selectedTool === "stack-advisor") {
       if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
-      setStackCheckItems([{ name: STACK_CHECK_TOOLS[0], status: "pending" }]);
+      setStackCheckItems(STACK_CHECK_TOOLS.map((name, i) => ({ name, status: i === 0 ? "checking" : "pending" })));
       let idx = 0;
       stackCheckTimerRef.current = setInterval(() => {
         idx++;
         if (idx >= STACK_CHECK_TOOLS.length) {
           if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
+          setStackCheckItems(prev => prev.map(item => ({ ...item, status: "done" })));
           return;
         }
-        setStackCheckItems(prev => {
-          const updated = prev.map((item, i) => i === prev.length - 1 ? { ...item, done: true } : item);
-          return [...updated, { name: STACK_CHECK_TOOLS[idx], status: "pending" }];
-        });
-      }, 1500);
+        setStackCheckItems(prev =>
+          prev.map((item, i) => {
+            if (i < idx) return { ...item, status: "done" };
+            if (i === idx) return { ...item, status: "checking" };
+            return item;
+          })
+        );
+      }, 400);
     } else {
       const steps = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3);
       scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
