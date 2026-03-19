@@ -2409,11 +2409,8 @@ export default function Home() {
   const [domainKeywords, setDomainKeywords] = useState<string[]>([]);
   const [resultCached, setResultCached] = useState<boolean | null>(null);
 
-  const [scanStep, setScanStep] = useState(-1);
-  const [maxScanStep, setMaxScanStep] = useState(0);
-  const [stackToolIdx, setStackToolIdx] = useState(0);
-  const [stackToolVisible, setStackToolVisible] = useState(true) // -1=hidden 0-3=active step 4=all done
-   done: boolean }[]>([]);
+  const [scanStep, setScanStep] = useState(-1); // -1=hidden 0-3=active step 4=all done
+  const [stackCheckItems, setStackCheckItems] = useState<{ name: string; done: boolean }[]>([]);
 
   const inputSectionRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -2438,22 +2435,18 @@ export default function Home() {
     "Sentry","LogRocket","Datadog",
     "Lovable","Bolt.new","v0 by Vercel","Cursor","Windsurf","Replit","GitHub Copilot","Claude Code",
     "Google Cloud Platform","Amazon Web Services","Microsoft Azure","Oracle Cloud","Heroku",
-    "Cloud Firestore","DynamoDB","Fauna",
-    "Okta","SuperTokens","Kinde",
+    "Cloud Firestore","DynamoDB","Fauna","Okta","SuperTokens","Kinde",
     "Brevo","Google Cloud Storage","Cloudinary","Imgix",
-    "Redis","Upstash","Ably","Pusher","Socket.io",
+    "Redis","Upstash","Ably","Pusher",
     "Prisma","Drizzle","TypeORM","Mongoose",
     "Next.js","Remix","Astro","SvelteKit","Nuxt",
     "TailwindCSS","Shadcn/ui","Chakra UI","Material UI",
     "Vercel AI SDK","LangChain","LlamaIndex",
     "Linear","Notion","Airtable","Coda",
-    "Intercom","Crisp","Tawk.to",
     "Algolia","Typesense","Meilisearch",
     "Cloudflare Workers","Deno Deploy","Netlify Functions",
-    "PlanetScale","CockroachDB","Xata",
-    "Stytch","Magic","Passage",
-    "Segment","Amplitude","June",
-    "Cal.com","Calendly","Dub.co",
+    "CockroachDB","Xata","Stytch","Magic",
+    "Segment","Amplitude","June","Cal.com","Calendly","Dub.co","Intercom","Crisp",
   ];
 
   // Number of scan steps for the current tool (used for timer logic)
@@ -2462,17 +2455,26 @@ export default function Home() {
 
   // Advance scan to "done" once last step is active AND Claude has finished
   useEffect(() => {
-    if (selectedTool?.id !== 'stack-advisor' || !isLoading) return;
-    const timer = setInterval(() => {
-      setStackToolVisible(false);
-      setTimeout(() => {
-        setStackToolIdx(idx => (idx + 1) % STACK_CHECK_TOOLS.length);
-        setStackToolVisible(true);
-      }, 300);
-    }, 600);
-    return () => clearInterval(timer);
-  }, [selectedTool, isLoading]);
+    if (scanStep === 4) {
+      const t = setTimeout(() => { setHasResults(true); setScanStep(-1); }, 750);
+      return () => clearTimeout(t);
+    }
+    if (scanStep >= maxScanStep && !loading) {
+      const t = setTimeout(() => setScanStep(4), 350);
+      return () => clearTimeout(t);
+    }
+  }, [scanStep, loading, maxScanStep]);
 
+  // Handle stack-advisor checklist completion when API response arrives
+  useEffect(() => {
+    if (selectedTool === "stack-advisor" && !loading && stackCheckItems.length > 0 && scanStep >= 0) {
+      if (stackCheckTimerRef.current) { clearInterval(stackCheckTimerRef.current); stackCheckTimerRef.current = null; }
+      // Mark all items as done
+      setStackCheckItems(prev => prev.map(item => ({ ...item, done: true })));
+      const t = setTimeout(() => { setHasResults(true); setScanStep(-1); setStackCheckItems([]); }, 750);
+      return () => clearTimeout(t);
+    }
+  }, [loading, selectedTool, stackCheckItems.length, scanStep]);
 
   useEffect(() => {
     if (hasResults) {
@@ -2726,6 +2728,23 @@ export default function Home() {
       extraFetches?.(q);
     }
   };
+
+  // Fade animation for stack-advisor scanning
+  useEffect(() => {
+    if (selectedTool?.id !== "stack-advisor" || !isLoading) {
+      _setStackToolIdx(0);
+      _setStackToolVisible(true);
+      return;
+    }
+    const t = setInterval(() => {
+      _setStackToolVisible(false);
+      setTimeout(() => {
+        _setStackToolIdx(i => (i + 1) % STACK_CHECK_TOOLS.length);
+        _setStackToolVisible(true);
+      }, 300);
+    }, 600);
+    return () => clearInterval(t);
+  }, [selectedTool?.id, isLoading]);
 
   const handleSubmit = async () => {
     if (!selectedTool || idea.trim().length < 3) return;
@@ -3021,17 +3040,17 @@ export default function Home() {
                   {/* Steps */}
                   {selectedTool === "stack-advisor" ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem", maxHeight: 320, overflowY: "auto" }}>
-                      {/* Fade animasyon - tek tool adı */}
                       <div style={{
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        flexDirection: "column", gap: 8, minHeight: 120,
-                        opacity: stackToolVisible ? 1 : 0,
+                        display: "flex", flexDirection: "column",
+                        alignItems: "center", justifyContent: "center",
+                        minHeight: 120,
+                        opacity: _stackToolVisible ? 1 : 0,
                         transition: "opacity 0.3s ease",
                       }}>
-                        <span style={{ fontSize: "0.8rem", color: "var(--clr-text-4)", letterSpacing: "0.05em", textTransform: "uppercase" }}>Analyzing</span>
-                        <span style={{ fontSize: "1.15rem", fontWeight: 700, color: "var(--clr-text-2)" }}>{STACK_CHECK_TOOLS[stackToolIdx]}</span>
-                        <span style={{ fontSize: "0.8rem", color: "var(--clr-text-4)" }}>...</span>
-                      </div>
+                        <span style={{ fontSize: "0.7rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-4)", marginBottom: 8 }}>Analyzing</span>
+                        <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--clr-text-2)" }}>{STACK_CHECK_TOOLS[_stackToolIdx]}</span>
+                        <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: 6 }}>...</span>
+                      </div>}
                     </div>
                   ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem" }}>
