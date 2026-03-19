@@ -3106,7 +3106,7 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
                   {/* Steps */}
                   {selectedTool === "stack-advisor" ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem", maxHeight: 320, overflowY: "auto" }}>
-                      {scanSteps.map((step, i) => (
+                      {(SCAN_STEPS_MAP[selectedTool ?? "gap-analysis"] ?? SCAN_STEPS_MAP["gap-analysis"]).map((step, i) => (
                         <div key={i} style={{
                           display: "flex", alignItems: "center", gap: 8,
                           opacity: i < scanStep ? 1 : i === scanStep ? 0.8 : 0.25,
