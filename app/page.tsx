@@ -2445,8 +2445,7 @@ export default function Home() {
     "Linear","Notion","Airtable","Coda",
     "Algolia","Typesense","Meilisearch",
     "Cloudflare Workers","Deno Deploy","Netlify Functions",
-    "CockroachDB","Xata","Stytch","Magic",
-    "Segment","Amplitude","June","Cal.com","Calendly","Dub.co","Intercom","Crisp",
+    "CockroachDB","Xata","Stytch","Segment","Amplitude","Cal.com","Dub.co",
   ];
 
   // Number of scan steps for the current tool (used for timer logic)
@@ -2464,6 +2463,22 @@ export default function Home() {
       return () => clearTimeout(t);
     }
   }, [scanStep, loading, maxScanStep]);
+
+  useEffect(() => {
+    if (selectedTool?.id !== "stack-advisor" || !isLoading) {
+      setStackToolIdx(0);
+      setStackToolVisible(true);
+      return;
+    }
+    const timer = setInterval(() => {
+      setStackToolVisible(false);
+      setTimeout(() => {
+        setStackToolIdx(i => (i + 1) % STACK_CHECK_TOOLS.length);
+        setStackToolVisible(true);
+      }, 300);
+    }, 600);
+    return () => clearInterval(timer);
+  }, [selectedTool?.id, isLoading]);
 
   // Handle stack-advisor checklist completion when API response arrives
   useEffect(() => {
@@ -2728,23 +2743,6 @@ export default function Home() {
       extraFetches?.(q);
     }
   };
-
-  // Fade animation for stack-advisor scanning
-  useEffect(() => {
-    if (selectedTool?.id !== "stack-advisor" || !isLoading) {
-      _setStackToolIdx(0);
-      _setStackToolVisible(true);
-      return;
-    }
-    const t = setInterval(() => {
-      _setStackToolVisible(false);
-      setTimeout(() => {
-        _setStackToolIdx(i => (i + 1) % STACK_CHECK_TOOLS.length);
-        _setStackToolVisible(true);
-      }, 300);
-    }, 600);
-    return () => clearInterval(t);
-  }, [selectedTool?.id, isLoading]);
 
   const handleSubmit = async () => {
     if (!selectedTool || idea.trim().length < 3) return;
@@ -3040,16 +3038,10 @@ export default function Home() {
                   {/* Steps */}
                   {selectedTool === "stack-advisor" ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem", maxHeight: 320, overflowY: "auto" }}>
-                      <div style={{
-                        display: "flex", flexDirection: "column",
-                        alignItems: "center", justifyContent: "center",
-                        minHeight: 120,
-                        opacity: _stackToolVisible ? 1 : 0,
-                        transition: "opacity 0.3s ease",
-                      }}>
-                        <span style={{ fontSize: "0.7rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-4)", marginBottom: 8 }}>Analyzing</span>
-                        <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--clr-text-2)" }}>{STACK_CHECK_TOOLS[_stackToolIdx]}</span>
-                        <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: 6 }}>...</span>
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 120, opacity: stackToolVisible ? 1 : 0, transition: "opacity 0.3s ease" }}>
+                        <span style={{ fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--clr-text-4)", marginBottom: 8 }}>Analyzing</span>
+                        <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--clr-text-2)" }}>{STACK_CHECK_TOOLS[stackToolIdx]}</span>
+                        <span style={{ fontSize: "0.8rem", color: "var(--clr-text-4)", marginTop: 4 }}>...</span>
                       </div>}
                     </div>
                   ) : (
