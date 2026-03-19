@@ -65,6 +65,16 @@ export default function GlobalHeader() {
         <Link href="/careers" style={{
           fontSize: "1.015rem", fontWeight: 500,
           color: "var(--clr-text-3)", textDecoration: "none",
+          transition: "color 0.15s",
+        }}
+          onMouseEnter={e => (e.currentTarget.style.color = "var(--clr-text)")}
+          onMouseLeave={e => (e.currentTarget.style.color = "var(--clr-text-3)")}>
+          Careers
+        </Link>
+
+        <Link href="/careers" style={{
+          fontSize: "1.015rem", fontWeight: 500,
+          color: "var(--clr-text-3)", textDecoration: "none",
           transition: "color 0.15s", marginLeft: 20,
         }}
           onMouseEnter={e => (e.currentTarget.style.color = "var(--clr-text)")}
