@@ -2942,7 +2942,7 @@ export default function Home() {
 
         
         {/* ── Main ── */}
-        <main style={{ maxWidth: 1200, margin: "0 auto", width: "100%", padding: "0 2rem", flex: 1, display: "flex", flexDirection: "column" }}>
+        <main style={{ maxWidth: 1200, margin: "0 auto", width: "100%", padding: "42px 2rem 0", flex: 1, display: "flex", flexDirection: "column" }}>
 
           {/* ── Scanning overlay ── */}
           {scanStep >= 0 ? (() => {
