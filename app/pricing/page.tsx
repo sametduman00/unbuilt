@@ -93,7 +93,7 @@ export default function PricingPage() {
               border: "1px solid var(--clr-border)",
               borderRadius: 14,
               display: "grid",
-              gridTemplateRows: "auto auto 1px 1fr",
+              gridTemplateRows: "auto auto 1px auto",
               overflow: "hidden",
             }}>
               {/* top: label + name + price */}
