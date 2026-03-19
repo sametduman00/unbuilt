@@ -358,7 +358,7 @@ h1 {
   font-family: 'Syne', sans-serif !important;
   font-weight: 800 !important;
   letter-spacing: -0.04em !important;
-  line-height: 1.05 !important;
+  line-height: 1.125 !important;
   font-size: clamp(1.9rem, 3vw, 2.75rem) !important;
   white-space: nowrap !important;
 }
