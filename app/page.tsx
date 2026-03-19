@@ -2945,7 +2945,7 @@ export default function Home() {
           borderBottom: "1px solid var(--clr-border-deep)",
           backdropFilter: "blur(16px)",
           background: "var(--clr-bg)",
-          position: "sticky", top: 0, zIndex: 50,
+          position: "sticky", top: 42, zIndex: 50,
         }}>
           <div style={{
             maxWidth: 1200, margin: "0 auto", padding: "0 2rem",
@@ -3221,8 +3221,8 @@ export default function Home() {
                 width: "100%", padding: "1.5rem 0 2rem", position: "relative",
               }}>
                 <h1 style={{
-                  fontSize: "4rem", fontWeight: 700,
-                  letterSpacing: "-0.035em", lineHeight: "4.5rem",
+                  fontSize: "5.2rem", fontWeight: 700,
+                  letterSpacing: "-0.035em", lineHeight: "5.85rem",
                   color: "var(--clr-text)", marginBottom: "0",
                   whiteSpace: "normal",
                 }}>
