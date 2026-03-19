@@ -3042,7 +3042,7 @@ export default function Home() {
                         <span style={{ fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--clr-text-4)", marginBottom: 8 }}>Analyzing</span>
                         <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--clr-text-2)" }}>{STACK_CHECK_TOOLS[stackToolIdx]}</span>
                         <span style={{ fontSize: "0.8rem", color: "var(--clr-text-4)", marginTop: 4 }}>...</span>
-                      </div>}
+                      </div>
                     </div>
                   ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem" }}>
