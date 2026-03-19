@@ -71,6 +71,11 @@ export default function GlobalHeader() {
             onMouseLeave={e => (e.currentTarget.style.opacity = "1")}>
             Careers
           </Link>
+          <Link href="/pricing" style={navStyle}
+            onMouseEnter={e => (e.currentTarget.style.opacity = "0.6")}
+            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}>
+            Pricing
+          </Link>
         </nav>
       </div>
 
