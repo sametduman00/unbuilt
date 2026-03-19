@@ -3169,15 +3169,15 @@ export default function Home() {
                     onMouseLeave={(e) => { e.currentTarget.style.border = "1px solid var(--clr-border-2)"; e.currentTarget.style.transform = "none"; }}
                   >
                     <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--clr-accent)", marginBottom: "0.5rem" }}>
-                      WHAT&apos;S RISING
+                      I NEED INSPIRATION
                     </div>
                     <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(var(--clr-accent-rgb),0.08)", border: "1px solid rgba(var(--clr-accent-rgb),0.15)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "0.5rem", flexShrink: 0 }}>
                       {TOOL_ICONS["trend-feed"]("var(--clr-accent)")}
                     </div>
                     <div style={{ fontSize: "1.1rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--clr-text)", marginBottom: "0.25rem" }}>Pulse</div>
-                    <div style={{ fontSize: "0.825rem", fontWeight: 500, color: "var(--clr-text-3)", marginBottom: "0.5rem" }}>Live market signals</div>
+                    <div style={{ fontSize: "0.825rem", fontWeight: 500, color: "var(--clr-text-3)", marginBottom: "0.5rem" }}>Trending products, analyzed</div>
                     <p style={{ fontSize: "0.894rem", color: "var(--clr-text-4)", lineHeight: 1.6, flex: 1, margin: 0 }}>
-                      See what apps are exploding right now. Real-time signals from App Store, Google Play, Product Hunt and GitHub — before Twitter even notices.
+                      Browse what’s launching on Product Hunt and App Store. Every product gets an instant AI breakdown — what it does, what makes it different, and what it’s missing.
                     </p>
                     <div style={{ marginTop: "0.875rem", display: "flex", alignItems: "center", gap: 5, fontSize: "0.894rem", fontWeight: 600, color: "var(--clr-accent)" }}>
                       Explore Pulse
