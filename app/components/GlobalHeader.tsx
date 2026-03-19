@@ -38,7 +38,7 @@ export default function GlobalHeader() {
     }}>
 
       {/* Sol: Logo + divider + nav */}
-      <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 24, height: "100%" }}>
 
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none", paddingRight: 24 }}>
           <svg width="22" height="22" viewBox="0 0 19 19" fill="none">
