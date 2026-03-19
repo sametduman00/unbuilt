@@ -3115,7 +3115,7 @@ export default function Home() {
               <div style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
                 justifyContent: "center", textAlign: "center", maxWidth: 720, margin: "0 auto",
-                width: "100%", padding: "1.5rem 0 2rem", position: "relative",
+                width: "100%", padding: "4rem 0 2rem", position: "relative",
               }}>
                 <h1 style={{
                   fontSize: "4.2rem", fontWeight: 700,
