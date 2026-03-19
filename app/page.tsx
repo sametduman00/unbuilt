@@ -2465,7 +2465,7 @@ export default function Home() {
   }, [scanStep, loading, maxScanStep]);
 
   useEffect(() => {
-    if (selectedTool?.id !== "stack-advisor" || !isLoading) {
+    if (selectedTool !== "stack-advisor" || !isLoading) {
       setStackToolIdx(0);
       setStackToolVisible(true);
       return;
@@ -2478,7 +2478,7 @@ export default function Home() {
       }, 300);
     }, 600);
     return () => clearInterval(timer);
-  }, [selectedTool?.id, isLoading]);
+  }, [selectedTool, isLoading]);
 
   // Handle stack-advisor checklist completion when API response arrives
   useEffect(() => {
