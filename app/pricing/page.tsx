@@ -13,6 +13,8 @@ const tools = [
       "AI breakdown: WHAT it does · DIFF · MISS",
       "Topic & category filters",
       "No account required",
+      "Unlimited browsing",
+      "Updated every 24 hours",
     ],
   },
   {
@@ -25,6 +27,8 @@ const tools = [
       "Real competitor breakdown",
       "Market gap identification",
       "Unlimited queries",
+      "Structured, export-ready output",
+      "Works on any niche or idea",
     ],
   },
   {
@@ -37,6 +41,8 @@ const tools = [
       "Budget-matched recommendations",
       "Phase-by-phase build plan",
       "Time-to-MVP estimate",
+      "Common mistake warnings",
+      "Tool alternatives included",
     ],
   },
 ];
@@ -95,7 +101,7 @@ export default function PricingPage() {
         {/* Donate */}
         <div style={{ border: "1px solid var(--clr-border)", borderRadius: 16, padding: "22px 22px" }}>
           <div style={{ marginBottom: 16 }}>
-            <span style={{ fontSize: "0.95rem", fontWeight: 700 }}>If Unbuilt helped you, pay it forward.</span>
+            <span style={{ fontSize: "0.95rem", fontWeight: 700 }}>Unbuilt is free. Your barista isn't. Donate if we saved you time.</span>
             <span style={{ fontSize: "0.78rem", color: "var(--clr-text-4)", marginLeft: 10 }}>Donations cover server & API costs. No pressure. &#128591;</span>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12 }}>
