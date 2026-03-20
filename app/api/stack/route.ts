@@ -1,9 +1,16 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { NextRequest } from "next/server";
+import {
+  const { userId } = await auth();
+  if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+  const hasCredits = await deductCredit(userId);
+  if (!hasCredits) return new Response(JSON.stringify({ error: "No credits remaining" }), { status: 402, headers: { "Content-Type": "application/json" } });
+ NextRequest } from "next/server";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { getCached, setCached, TTL_MS } from "../_cache";
 import { normalizeQuery } from "../_normalize";
+import { auth } from "@clerk/nextjs/server";
+import { deductCredit } from "@/app/lib/credits";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
