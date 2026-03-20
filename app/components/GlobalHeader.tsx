@@ -106,7 +106,17 @@ export default function GlobalHeader() {
             </button>
           </SignInButton>
         )}
-        {isLoaded && isSignedIn && <UserButton />}
+        {isLoaded && isSignedIn && <UserButton appearance={{
+          userProfile: { variables: { colorText: isDark ? "#ffffff" : undefined, colorBackground: isDark ? "#1a1a1a" : undefined } },
+          elements: {
+            userPreviewMainIdentifier: { color: isDark ? "#ffffff" : undefined },
+            userPreviewSecondaryIdentifier: { color: isDark ? "rgba(255,255,255,0.6)" : undefined },
+            userButtonPopoverCard: { backgroundColor: isDark ? "#1e1e1e" : undefined, borderColor: isDark ? "#333" : undefined },
+            userButtonPopoverActionButton: { color: isDark ? "#ffffff" : undefined },
+            userButtonPopoverActionButtonText: { color: isDark ? "#ffffff" : undefined },
+            userButtonPopoverActionButtonIcon: { color: isDark ? "#ffffff" : undefined },
+          }
+        }} />}
       </div>
     </header>
   );
