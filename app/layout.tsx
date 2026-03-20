@@ -9,7 +9,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Unbuilt — Market Gap Finder",
+  title: "Unbuilt — Build Smarter",
   description: "Enter any niche or app idea and instantly discover what competitors are missing. Find your edge before you build.",
 };
 
