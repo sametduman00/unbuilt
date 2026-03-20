@@ -594,3 +594,19 @@ html.light header {
 
 ::selection { background: rgba(34,211,238,0.15); color: #fff; }
 html.light ::selection { background: rgba(8,145,178,0.15); color: #000; }
+
+
+/* ── Clerk UserButton popup — dark mode text fix ── */
+.dark .cl-userPreviewTextContainer,
+.dark .cl-userPreviewMainIdentifier,
+.dark .cl-userPreviewSecondaryIdentifier,
+.dark .cl-userButtonPopoverCard,
+.dark .cl-userButtonPopoverActionButtonText,
+.dark .cl-userButtonPopoverFooterPagesLink {
+  color: #ffffff !important;
+}
+
+.dark .cl-userButtonPopoverCard {
+  background-color: var(--clr-surface) !important;
+  border: 1px solid var(--clr-border) !important;
+}
