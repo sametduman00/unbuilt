@@ -2410,46 +2410,16 @@ export default function Home() {
   const [resultCached, setResultCached] = useState<boolean | null>(null);
 
   const [scanStep, setScanStep] = useState(-1); // -1=hidden 0-3=active step 4=all done
-const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "pending" | "checking" | "done"}[]>([]);
 
   const inputSectionRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const scanTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const stackCheckTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const resultsRef = useRef<HTMLDivElement>(null);
+    const resultsRef = useRef<HTMLDivElement>(null);
   const pendingAutoSubmit = useRef(false);
 
-  const STACK_CHECK_TOOLS = [
-    "Vercel","Netlify","Cloudflare Pages","Railway","Render","Fly.io",
-    "Supabase","PlanetScale","Neon","Firebase","Turso","MongoDB Atlas",
-    "Clerk","Auth0","Supabase Auth","NextAuth (Auth.js)","Lucia",
-    "Stripe","Lemon Squeezy","Paddle","Gumroad",
-    "OpenAI","Anthropic","Groq","Together AI","Replicate","Hugging Face",
-    "Bubble","Webflow","Framer","Glide","FlutterFlow","Adalo","Softr",
-    "Make.com","Zapier","n8n","Pipedream",
-    "Resend","Postmark","SendGrid","Mailgun","Loops",
-    "Cloudflare R2","AWS S3","Uploadthing","Supabase Storage",
-    "PostHog","Mixpanel","Plausible","Umami",
-    "Sanity","Contentful","Strapi","Payload",
-    "Expo","React Native","Telegram Bot API","Twilio","WhatsApp Business API",
-    "Sentry","LogRocket","Datadog",
-    "Lovable","Bolt.new","v0 by Vercel","Cursor","Windsurf","Replit","GitHub Copilot","Claude Code",
-    "Google Cloud Platform","Amazon Web Services","Microsoft Azure","Oracle Cloud","Heroku",
-    "Cloud Firestore","DynamoDB","Fauna","Okta","SuperTokens","Kinde",
-    "Brevo","Google Cloud Storage","Cloudinary","Imgix",
-    "Redis","Upstash","Ably","Pusher",
-    "Prisma","Drizzle","TypeORM","Mongoose",
-    "Next.js","Remix","Astro","SvelteKit","Nuxt",
-    "TailwindCSS","Shadcn/ui","Chakra UI","Material UI",
-    "Vercel AI SDK","LangChain","LlamaIndex",
-    "Linear","Notion","Airtable","Coda",
-    "Algolia","Typesense","Meilisearch",
-    "Cloudflare Workers","Deno Deploy","Netlify Functions",
-    "CockroachDB","Xata","Stytch","Segment","Amplitude","Cal.com","Dub.co",
-  ];
-
+  
   // Number of scan steps for the current tool (used for timer logic)
-  const scanStepCounts: Record<string, number> = { "trend-feed": 5, "gap-analysis": 4, "competitor-radar": 1, "stack-advisor": 1 };
+  const scanStepCounts: Record<string, number> = { "trend-feed": 5, "gap-analysis": 4, "stack-advisor": 4, "competitor-radar": 1, "stack-advisor": 1 };
   const maxScanStep = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3) - 1;
 
   // Advance scan to "done" once last step is active AND Claude has finished
@@ -2468,14 +2438,7 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
 
   // Handle stack-advisor checklist completion when API response arrives
   useEffect(() => {
-    if (selectedTool === "stack-advisor" && !loading && stackCheckItems.length > 0 && scanStep >= 0) {
-      if (stackCheckTimerRef.current) { clearInterval(stackCheckTimerRef.current); stackCheckTimerRef.current = null; }
-      // Mark all items as done
-      setStackCheckItems(prev => prev.map(item => ({ ...item, done: true })));
-      const t = setTimeout(() => { setHasResults(true); setScanStep(-1); setStackCheckItems([]); }, 750);
-      return () => clearTimeout(t);
-    }
-  }, [loading, selectedTool, stackCheckItems.length, scanStep]);
+      }, [loading, selectedTool, scanStep]);
 
   useEffect(() => {
     if (hasResults) {
@@ -2516,8 +2479,6 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
   const handleSelectTool = (toolId: ToolId) => {
     // Reset all result state when switching tools
     scanTimersRef.current.forEach(clearTimeout);
-    if (stackCheckTimerRef.current) { clearInterval(stackCheckTimerRef.current); stackCheckTimerRef.current = null; }
-    setStackCheckItems([]);
     setScanStep(-1);
     setHasResults(false);
     setStreamedContent("");
@@ -2770,22 +2731,7 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
       scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
         setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 800)
       );
-      let idx = -1;
-      stackCheckTimerRef.current = setInterval(() => {
-        idx++;
-        if (idx >= STACK_CHECK_TOOLS.length) {
-          if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
-          setStackCheckItems(prev => prev.map(item => ({ ...item, status: "done" })));
-          return;
-        }
-        setStackCheckItems(prev =>
-          prev.map((item, i) => {
-            if (i < idx) return { ...item, status: "done" };
-            if (i === idx) return { ...item, status: "checking" };
-            return item;
-          })
-        );
-      }, 400);
+      
       try {
         const res = await fetch(`/api/trend-feed?q=${encodeURIComponent(idea.trim())}`);
         if (!res.ok) {
@@ -2803,11 +2749,7 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
     }
 
     // ── Other tools: existing flow ──
-    if (selectedTool === "stack-advisor") {
-      if (stackCheckTimerRef.current) clearInterval(stackCheckTimerRef.current);
-      setStackCheckItems(STACK_CHECK_TOOLS.map((name) => ({ name, status: "pending" })));
-            
-    } else {
+     else {
       const steps = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3);
       scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
         setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 800)
@@ -2897,8 +2839,6 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
 
   const backToTools = () => {
     scanTimersRef.current.forEach(clearTimeout);
-    if (stackCheckTimerRef.current) { clearInterval(stackCheckTimerRef.current); stackCheckTimerRef.current = null; }
-    setStackCheckItems([]);
     setScanStep(-1);
     setHasResults(false);
     setStreamedContent("");
@@ -2982,6 +2922,12 @@ const [stackCheckItems, setStackCheckItems] = useState<{name: string; status: "p
                 { label: "Searching Google Play",  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.04c.29.12.62.18.97.18.49 0 .97-.14 1.42-.42l.02-.01 1.73-1.01L17.63 22c1.07 0 2.01-.56 2.56-1.43l-9.6-5.55-7.4 8.02zm-.63-1.73l7.22-7.83L2.35 8.7c-.22.44-.35.94-.35 1.48V19.82c0 .6.18 1.15.55 1.49zm17.8-3.38c.59-.36 1.03-.94 1.2-1.63l.01-.04.04-.18c.06-.3.1-.63.1-.97v-.52l-.01-.03c-.05-.63-.32-1.18-.72-1.59L17.7 11.3l-2.87 3.12 5.52 3.51zm-.3-10.2L7.36 1.37 4.57 2.99 14.83 11.3l5.22-3.57z"/></svg> },
                 { label: "Searching YouTube",      icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 00.5 6.19 31.6 31.6 0 000 12a31.6 31.6 0 00.5 5.81 3.02 3.02 0 002.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 002.12-2.14A31.6 31.6 0 0024 12a31.6 31.6 0 00-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg> },
                 { label: "Analyzing with AI",      icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
+              ],
+              "stack-advisor": [
+                { label: "Analyzing your requirements", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg> },
+                { label: "Matching tools to your budget", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg> },
+                { label: "Building your tech roadmap", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg> },
+                { label: "Estimating costs and timeline", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg> },
               ],
               "trend-feed": [
                 { label: "Generating sub-categories", icon: <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
