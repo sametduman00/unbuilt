@@ -2419,7 +2419,7 @@ export default function Home() {
 
   
   // Number of scan steps for the current tool (used for timer logic)
-  const scanStepCounts: Record<string, number> = { "trend-feed": 5, "gap-analysis": 4, "stack-advisor": 4, "competitor-radar": 1, "stack-advisor": 1 };
+  const scanStepCounts: Record<string, number> = { "trend-feed": 5, "gap-analysis": 4, "stack-advisor": 4, "competitor-radar": 1 };
   const maxScanStep = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3) - 1;
 
   // Advance scan to "done" once last step is active AND Claude has finished
