@@ -1,6 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+// ── Rate limiting (30 req/min per IP on /api/ routes) ──────────────────────
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS = 30;
@@ -24,6 +25,7 @@ function applyRateLimit(req: NextRequest): NextResponse | null {
   return null;
 }
 
+// ── Public routes (accessible without login) ──────────────────────────────
 const isPublicRoute = createRouteMatcher([
   "/",
   "/pricing(.*)",
@@ -35,17 +37,15 @@ const isPublicRoute = createRouteMatcher([
   "/api/webhooks(.*)",
 ]);
 
-const clerk = clerkMiddleware((auth, req) => {
-  if (!isPublicRoute(req)) {
-    auth.protect();
-  }
-});
-
-export default function middleware(req: NextRequest) {
+// ── Middleware ─────────────────────────────────────────────────────────────
+export default clerkMiddleware(async (auth, req: NextRequest) => {
   const rateLimitResponse = applyRateLimit(req);
   if (rateLimitResponse) return rateLimitResponse;
-  return clerk(req, {} as any);
-}
+
+  if (!isPublicRoute(req)) {
+    await auth.protect();
+  }
+});
 
 export const config = {
   matcher: [
