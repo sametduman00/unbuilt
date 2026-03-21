@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth, UserButton, SignInButton } from "@clerk/nextjs";
 
-// ── Types ──────────────────────────────────────────────────────
+// ââ Types ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 type ToolId = "gap-analysis" | "competitor-radar" | "trend-feed" | "stack-advisor";
 type Budget = "bootstrap" | "growing" | "funded" | "scale";
 type TechLevel = "nocode" | "lowcode" | "developer";
@@ -39,7 +39,7 @@ interface Section {
   isLast: boolean;
 }
 
-// ── SVG Icons ──────────────────────────────────────────────────
+// ââ SVG Icons ââââââââââââââââââââââââââââââââââââââââââââââââââ
 function IconGap({ color }: { color: string }) {
   return (
     <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -83,14 +83,14 @@ const TOOL_ICONS: Record<ToolId, (c: string) => React.ReactNode> = {
   "stack-advisor": (c) => <IconStack color={c} />,
 };
 
-// ── Tool definitions ───────────────────────────────────────────
+// ââ Tool definitions âââââââââââââââââââââââââââââââââââââââââââ
 const TOOLS: ToolConfig[] = [
   {
     id: "trend-feed",
     userLabel: "I need inspiration",
     name: "Trend Feed",
     tagline: "Real signals, no noise",
-    description: "What's actually rising in a market right now. Emerging niches, dying trends, and contrarian bets — powered by AI, not Twitter hype.",
+    description: "What's actually rising in a market right now. Emerging niches, dying trends, and contrarian bets â powered by AI, not Twitter hype.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/trend-feed",
@@ -108,7 +108,7 @@ const TOOLS: ToolConfig[] = [
     userLabel: "I have an idea",
     name: "Gap Analysis",
     tagline: "Find the gaps before you build",
-    description: "Spot what competitors are missing. Get a brutally honest read on where you actually have a shot — before you spend months building the wrong thing.",
+    description: "Spot what competitors are missing. Get a brutally honest read on where you actually have a shot â before you spend months building the wrong thing.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/analyze",
@@ -126,7 +126,7 @@ const TOOLS: ToolConfig[] = [
     userLabel: "I'm already building",
     name: "Competitor Radar",
     tagline: "Know your rivals inside out",
-    description: "Deep competitive intelligence on who you're really up against — their strategies, exploitable weaknesses, and exactly how to outmaneuver them.",
+    description: "Deep competitive intelligence on who you're really up against â their strategies, exploitable weaknesses, and exactly how to outmaneuver them.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/radar",
@@ -155,35 +155,35 @@ const TOOLS: ToolConfig[] = [
   },
 ];
 
-// ── Section metadata (for results cards) ──────────────────────
+// ââ Section metadata (for results cards) ââââââââââââââââââââââ
 const SECTION_META: Record<string, { bg: string; color: string }> = {
-  "🏆": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "😤": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "🕳️":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "⚡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "🎯": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "⚠️":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "💪": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "🩸": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "📣": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "🗺️":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "⚔️":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "📋": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "📈": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "💀": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "🔥": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "💡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "🧲": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "🧠": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "🛠️":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "💰": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "🚀": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "🔄": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "🔮": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "🌡️":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð¤": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð³ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "â¡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð¯": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "â ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ðª": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð©¸": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð£": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ðºï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "âï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð¥": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð¡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð§²": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð§ ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð°": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð®": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð¡ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
 };
 
-// ── Markdown component map ─────────────────────────────────────
+// ââ Markdown component map âââââââââââââââââââââââââââââââââââââ
 const MD: Record<string, (props: any) => React.ReactElement> = {
   table: ({ children }) => (
     <div className="table-wrap"><table>{children}</table></div>
@@ -215,7 +215,7 @@ function parseSections(markdown: string, isStreaming: boolean): Section[] {
       const isLast = idx === arr.length - 1 && isStreaming;
       if (!body.trim() && !isLast) return [];
       return [{
-        emoji: m ? m[0].trim() : "📌",
+        emoji: m ? m[0].trim() : "ð",
         title: raw.replace(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)\s*/u, "").trim(),
         body,
         isLast,
@@ -223,7 +223,7 @@ function parseSections(markdown: string, isStreaming: boolean): Section[] {
     });
 }
 
-// ── Score parser ───────────────────────────────────────────────
+// ââ Score parser âââââââââââââââââââââââââââââââââââââââââââââââ
 function parseScore(body: string): { score: number; label: string; summary: string } | null {
   const clean = (s: string) => s.replace(/\*\*/g, "").replace(/\*/g, "").replace(/---+/g, "").replace(/\s+/g, " ").trim();
   const scoreMatch = body.match(/Score:\s*\**(\d+)\**/i);
@@ -239,7 +239,7 @@ function parseScore(body: string): { score: number; label: string; summary: stri
   return { score, label, summary: summaryLines.join(" ").trim() };
 }
 
-// ── Section Result Card ────────────────────────────────────────
+// ââ Section Result Card ââââââââââââââââââââââââââââââââââââââââ
 function SectionCard({ section, showCursor }: { section: Section; showCursor: boolean }) {
   const meta = SECTION_META[section.emoji] ?? { bg: "rgba(var(--clr-text-rgb),0.1)", color: "var(--clr-text-2)" };
   if (!section.body.trim() && !showCursor) return null;
@@ -261,19 +261,19 @@ function SectionCard({ section, showCursor }: { section: Section; showCursor: bo
   );
 }
 
-// ── Trend Feed Visual Components ─────────────────────────────
+// ââ Trend Feed Visual Components âââââââââââââââââââââââââââââ
 
 function parseBullets(body: string): { title: string; desc: string; badge?: string }[] {
   const lines = body.split("\n").filter((l) => l.trim());
   const bullets: { title: string; desc: string; badge?: string }[] = [];
   for (const line of lines) {
-    const clean = line.replace(/^[-*•]\s*/, "").trim();
+    const clean = line.replace(/^[-*â¢]\s*/, "").trim();
     if (!clean) continue;
-    // Extract badge like **🔥 High Activity** or **📈 Growing**
-    const badgeMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-—–:]\s*/);
+    // Extract badge like **ð¥ High Activity** or **ð Growing**
+    const badgeMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-ââ:]\s*/);
     const rest = badgeMatch ? clean.slice(badgeMatch[0].length) : clean;
     // Split on **: bold title followed by colon/dash
-    const titleMatch = rest.match(/^\*\*([^*]+)\*\*\s*[-—–:]?\s*([\s\S]*)/);
+    const titleMatch = rest.match(/^\*\*([^*]+)\*\*\s*[-ââ:]?\s*([\s\S]*)/);
     if (titleMatch) {
       bullets.push({
         title: titleMatch[1].trim(),
@@ -293,9 +293,9 @@ function parseNicheBullets(body: string): { title: string; desc: string; score: 
   const lines = body.split("\n").filter((l) => l.trim());
   const niches: { title: string; desc: string; score: number }[] = [];
   for (const line of lines) {
-    const clean = line.replace(/^[-*•]\s*/, "").trim();
+    const clean = line.replace(/^[-*â¢]\s*/, "").trim();
     if (!clean) continue;
-    const titleMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-—–:]?\s*([\s\S]*)/);
+    const titleMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-ââ:]?\s*([\s\S]*)/);
     const title = titleMatch ? titleMatch[1].trim() : "";
     const rest = titleMatch ? titleMatch[2].trim() : clean;
     // Estimate opportunity score from language cues
@@ -315,7 +315,7 @@ function TrendRisingSection({ section, isStreaming }: { section: Section; isStre
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-        <span style={{ fontSize: "1.25rem" }}>📈</span>
+        <span style={{ fontSize: "1.25rem" }}>ð</span>
         <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
@@ -370,7 +370,7 @@ function TrendDyingSection({ section, isStreaming }: { section: Section; isStrea
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-        <span style={{ fontSize: "1.25rem" }}>💀</span>
+        <span style={{ fontSize: "1.25rem" }}>ð</span>
         <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
@@ -421,7 +421,7 @@ function TrendNichesSection({ section, isStreaming }: { section: Section; isStre
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-        <span style={{ fontSize: "1.25rem" }}>💡</span>
+        <span style={{ fontSize: "1.25rem" }}>ð¡</span>
         <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
@@ -482,7 +482,7 @@ function TrendPatternHero({ section, isStreaming }: { section: Section; isStream
     }}>
       <div style={{ position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-          <span style={{ fontSize: "1.5rem" }}>🔥</span>
+          <span style={{ fontSize: "1.5rem" }}>ð¥</span>
           <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
             {section.title}
           </h3>
@@ -585,25 +585,25 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
   const ms = Math.max(0, Math.min(100, data.marketScore));
   const msColor = "var(--clr-text)";
   const msBg = "rgba(var(--clr-text-rgb),0.04)";
-  const msEmoji = ms >= 81 ? "🔥" : ms >= 61 ? "🟢" : ms >= 41 ? "🟡" : ms >= 21 ? "🟠" : "🔴";
+  const msEmoji = ms >= 81 ? "ð¥" : ms >= 61 ? "ð¢" : ms >= 41 ? "ð¡" : ms >= 21 ? "ð " : "ð´";
   const msR = 36;
   const msCirc = 2 * Math.PI * msR;
   const msDash = msCirc * ms / 100;
   const msOffset = msCirc * 0.25;
 
   const msSteps = [
-    { emoji: "🔴", label: "No Gap",          min: 0,  max: 20  },
-    { emoji: "🟠", label: "Crowded",         min: 21, max: 40  },
-    { emoji: "🟡", label: "Some Room",       min: 41, max: 60  },
-    { emoji: "🟢", label: "Real Opportunity", min: 61, max: 80  },
-    { emoji: "🔥", label: "Wide Open",       min: 81, max: 100 },
+    { emoji: "ð´", label: "No Gap",          min: 0,  max: 20  },
+    { emoji: "ð ", label: "Crowded",         min: 21, max: 40  },
+    { emoji: "ð¡", label: "Some Room",       min: 41, max: 60  },
+    { emoji: "ð¢", label: "Real Opportunity", min: 61, max: 80  },
+    { emoji: "ð¥", label: "Wide Open",       min: 81, max: 100 },
   ];
   const msActiveIdx = msSteps.findIndex(s => ms >= s.min && ms <= s.max);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
 
-      {/* ── MARKET OPPORTUNITY SCORE ── */}
+      {/* ââ MARKET OPPORTUNITY SCORE ââ */}
       <div style={{
         background: "var(--clr-surface)", border: `1px solid ${msColor}40`,
         borderRadius: 12, padding: "1.5rem 1.75rem",
@@ -676,10 +676,10 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
         </div>
       </div>
 
-      {/* ── KEY COMPETITORS ── */}
+      {/* ââ KEY COMPETITORS ââ */}
       {data.competitors.length > 0 && <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🏆</div>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>ð</div>
           <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Key Competitors</h2>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "0.5rem" }}>
@@ -700,10 +700,10 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
               )}
               <div style={{ display: "flex", gap: 8 }}>
                 <div style={{ fontSize: "0.68rem", color: "var(--clr-text-2)", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(var(--clr-text-rgb),0.3)", flex: 1, minWidth: 0 }}>
-                  {c.strengths[0] ?? "—"}
+                  {c.strengths[0] ?? "â"}
                 </div>
                 <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(var(--clr-text-rgb),0.3)", flex: 1, minWidth: 0 }}>
-                  {c.weaknesses[0] ?? "—"}
+                  {c.weaknesses[0] ?? "â"}
                 </div>
               </div>
             </div>
@@ -711,10 +711,10 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
         </div>
       </div>}
 
-      {/* ── PAIN POINTS ── */}
+      {/* ââ PAIN POINTS ââ */}
       {data.painPoints.length > 0 && <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>😤</div>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>ð¤</div>
           <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Pain Points</h2>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
@@ -741,7 +741,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
                     boxShadow: p.severity === "high" ? `0 0 6px ${sevColor}25` : "none",
                     display: "inline-flex", alignItems: "center", gap: 2,
                   }}>
-                    {p.severity === "high" && <span style={{ fontSize: "0.58rem" }}>🔥</span>}
+                    {p.severity === "high" && <span style={{ fontSize: "0.58rem" }}>ð¥</span>}
                     {p.severity}
                   </span>
                 </div>
@@ -751,10 +751,10 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
         </div>
       </div>}
 
-      {/* ── MARKET GAPS ── */}
+      {/* ââ MARKET GAPS ââ */}
       {data.marketGaps.length > 0 && <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🕳️</div>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>ð³ï¸</div>
           <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text-2)", margin: 0 }}>Market Gaps</h2>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -801,10 +801,10 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
         </div>
       </div>}
 
-      {/* ── SWOT ── */}
+      {/* ââ SWOT ââ */}
       {(data.swot.strengths.length > 0 || data.swot.weaknesses.length > 0 || data.swot.opportunities.length > 0 || data.swot.threats.length > 0) && <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>⚔️</div>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>âï¸</div>
           <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>SWOT</h2>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
@@ -824,7 +824,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
               <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                 {(data.swot[q.key] ?? []).slice(0, 3).map((item, i) => (
                   <div key={i} style={{ display: "flex", gap: 5, fontSize: "0.68rem", color: "var(--clr-text-3)", lineHeight: 1.4 }}>
-                    <span style={{ color: q.color, flexShrink: 0 }}>•</span>
+                    <span style={{ color: q.color, flexShrink: 0 }}>â¢</span>
                     <span>{item}</span>
                   </div>
                 ))}
@@ -834,7 +834,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
         </div>
       </div>}
 
-      {/* ── YOUR OPPORTUNITY ── */}
+      {/* ââ YOUR OPPORTUNITY ââ */}
       {data.opportunity.headline && <div style={{
         background: "linear-gradient(135deg, rgba(var(--clr-text-rgb),0.06), rgba(var(--clr-text-rgb),0.03))",
         border: "1px solid rgba(var(--clr-text-rgb),0.2)",
@@ -847,7 +847,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
         }} />
         <div style={{ position: "relative" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-            <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>⚡</div>
+            <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>â¡</div>
             <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Your Opportunity</h2>
             {(() => {
               const u = data.opportunity.urgency;
@@ -860,7 +860,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
                   letterSpacing: "0.05em", padding: "0.15rem 0.5rem", borderRadius: 999,
                   background: uBg, color: uColor, border: `1px solid ${uColor}30`,
                 }}>
-                  ⏱ {uLabel}
+                  â± {uLabel}
                 </span>
               );
             })()}
@@ -900,13 +900,13 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
         </div>
       </div>}
 
-      {/* ── IDEAL TARGET CUSTOMER ── */}
+      {/* ââ IDEAL TARGET CUSTOMER ââ */}
       {data.targetCustomer.persona && <div style={{
         background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
         borderRadius: 12, padding: "0.875rem 1rem",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>🎯</div>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>ð¯</div>
           <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Target Customer</h2>
         </div>
 
@@ -931,7 +931,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
             </div>
           </div>
 
-          {/* Details — compact chips layout */}
+          {/* Details â compact chips layout */}
           <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             {/* Demographics + WTP */}
             <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -939,7 +939,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
                 {data.targetCustomer.demographics}
               </div>
               <div style={{ fontSize: "0.65rem", color: "var(--clr-text-2)", fontWeight: 600, lineHeight: 1.4 }}>
-                💰 {data.targetCustomer.willingnessToPay}
+                ð° {data.targetCustomer.willingnessToPay}
               </div>
             </div>
 
@@ -947,7 +947,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <span style={{ fontSize: "0.52rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--clr-text-3)" }}>Pains</span>
               {data.targetCustomer.painPoints.slice(0, 3).map((p, i) => (
-                <div key={i} style={{ fontSize: "0.65rem", color: "var(--clr-text-4)", lineHeight: 1.35 }}>• {p}</div>
+                <div key={i} style={{ fontSize: "0.65rem", color: "var(--clr-text-4)", lineHeight: 1.35 }}>â¢ {p}</div>
               ))}
             </div>
 
@@ -971,7 +971,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
   );
 }
 
-// ── Gap Analysis Loading Skeleton ─────────────────────────────
+// ââ Gap Analysis Loading Skeleton âââââââââââââââââââââââââââââ
 function GapAnalysisSkeleton() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -1018,7 +1018,7 @@ function GapAnalysisSkeleton() {
   );
 }
 
-// ── Loading Skeleton ───────────────────────────────────────────
+// ââ Loading Skeleton âââââââââââââââââââââââââââââââââââââââââââ
 function LoadingSkeleton({ tool }: { tool: ToolConfig }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -1037,26 +1037,26 @@ function LoadingSkeleton({ tool }: { tool: ToolConfig }) {
       ))}
       <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--clr-text-6)", fontSize: "0.8125rem", paddingTop: 8 }}>
         <div style={{ width: 16, height: 16, border: `2px solid ${tool.accentColor}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-        Running {tool.name}…
+        Running {tool.name}â¦
       </div>
     </div>
   );
 }
 
-// ── Space Score Card ───────────────────────────────────────────
+// ââ Space Score Card âââââââââââââââââââââââââââââââââââââââââââ
 function deriveScoreLabel(pct: number): { emoji: string; label: string } {
-  if (pct >= 81) return { emoji: "🔥", label: "Explosive" };
-  if (pct >= 61) return { emoji: "🟢", label: "Growing" };
-  if (pct >= 41) return { emoji: "🟡", label: "Warming Up" };
-  if (pct >= 21) return { emoji: "🟠", label: "Crowded" };
-  return { emoji: "🔴", label: "Dead Zone" };
+  if (pct >= 81) return { emoji: "ð¥", label: "Explosive" };
+  if (pct >= 61) return { emoji: "ð¢", label: "Growing" };
+  if (pct >= 41) return { emoji: "ð¡", label: "Warming Up" };
+  if (pct >= 21) return { emoji: "ð ", label: "Crowded" };
+  return { emoji: "ð´", label: "Dead Zone" };
 }
 
 function SpaceScoreCard({ score, summary, label }: { score: number; summary: string; label?: string }) {
   const pct = Math.max(0, Math.min(100, score));
   const labelEmojiMap: Record<string, string> = {
-    "Dead Zone": "🔴", "Uncharted": "🌑", "Fading": "🌫️", "Crowded": "🟠",
-    "Warming Up": "🟡", "Growing": "🟢", "Explosive": "🔥",
+    "Dead Zone": "ð´", "Uncharted": "ð", "Fading": "ð«ï¸", "Crowded": "ð ",
+    "Warming Up": "ð¡", "Growing": "ð¢", "Explosive": "ð¥",
   };
   const tier = label && labelEmojiMap[label]
     ? { emoji: labelEmojiMap[label], label }
@@ -1115,7 +1115,7 @@ function SpaceScoreCard({ score, summary, label }: { score: number; summary: str
   );
 }
 
-/* ── Trend Feed Result ─────────────────────────────────────────── */
+/* ââ Trend Feed Result âââââââââââââââââââââââââââââââââââââââââââ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function TrendFeedResult({ data }: { data: any }) {
   const a = data?.analysis ?? {};
@@ -1161,7 +1161,7 @@ function TrendFeedResult({ data }: { data: any }) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "0.5rem" }}>
             {(a.risingSubcategories ?? []).map((sub: any, i: number) => {
               const dirColor = sub.direction === "rising" ? "#4ade80" : sub.direction === "falling" ? "#f87171" : "var(--clr-text-5)";
-              const dirIcon = sub.direction === "rising" ? "↑" : sub.direction === "falling" ? "↓" : "→";
+              const dirIcon = sub.direction === "rising" ? "â" : sub.direction === "falling" ? "â" : "â";
               return (
                 <div key={i} style={{
                   padding: "0.875rem 1rem", borderRadius: 10,
@@ -1222,7 +1222,7 @@ function TrendFeedResult({ data }: { data: any }) {
                 </div>
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--clr-text)" }}>
-                    {"★".repeat(Math.round(app.rating ?? 0))} {(app.rating ?? 0).toFixed(1)}
+                    {"â".repeat(Math.round(app.rating ?? 0))} {(app.rating ?? 0).toFixed(1)}
                   </div>
                   <div style={{ fontSize: "0.65rem", color: "var(--clr-text-5)" }}>
                     {(app.reviews ?? 0).toLocaleString()} reviews
@@ -1256,7 +1256,7 @@ function TrendFeedResult({ data }: { data: any }) {
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: "0.8rem", fontWeight: 800, color: "var(--clr-text-3)",
                 }}>
-                  ▲ {ph.votes}
+                  â² {ph.votes}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)" }}>{ph.name}</div>
@@ -1356,7 +1356,7 @@ function TrendFeedResult({ data }: { data: any }) {
   );
 }
 
-// ── Data Source Badges ──────────────────────────────────────────
+// ââ Data Source Badges ââââââââââââââââââââââââââââââââââââââââââ
 function DataSourceBadges({ sources, noMargin }: { sources: DataSource[]; noMargin?: boolean }) {
   return (
     <div style={{
@@ -1391,7 +1391,7 @@ function DataSourceBadges({ sources, noMargin }: { sources: DataSource[]; noMarg
   );
 }
 
-// ── Tool Selector Card ─────────────────────────────────────────
+// ââ Tool Selector Card âââââââââââââââââââââââââââââââââââââââââ
 function ToolSelectorCard({
   tool, isSelected, isOtherSelected, onClick,
 }: {
@@ -1505,7 +1505,7 @@ function ToolSelectorCard({
   );
 }
 
-// ── Input Section ──────────────────────────────────────────────
+// ââ Input Section ââââââââââââââââââââââââââââââââââââââââââââââ
 function InputSection({
   tool, idea, setIdea, budget, setBudget, techLevel, setTechLevel,
   onSubmit, loading, textareaRef,
@@ -1520,8 +1520,8 @@ function InputSection({
 
   const BUDGETS: { id: Budget; label: string; sub: string }[] = [
     { id: "bootstrap", label: "Bootstrapped", sub: "< $50/mo" },
-    { id: "growing",   label: "Growing",      sub: "$50–200/mo" },
-    { id: "funded",    label: "Funded",        sub: "$200–1k/mo" },
+    { id: "growing",   label: "Growing",      sub: "$50â200/mo" },
+    { id: "funded",    label: "Funded",        sub: "$200â1k/mo" },
     { id: "scale",     label: "Scale",         sub: "$1k+/mo" },
   ];
   const TECH_LEVELS: { id: TechLevel; label: string; sub: string }[] = [
@@ -1609,8 +1609,8 @@ function InputSection({
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   {[
                     { id: "bootstrap" as Budget, label: "Bootstrapped", sub: "< $50/mo" },
-                    { id: "growing"   as Budget, label: "Growing",      sub: "$50–200/mo" },
-                    { id: "funded"    as Budget, label: "Funded",        sub: "$200–1k/mo" },
+                    { id: "growing"   as Budget, label: "Growing",      sub: "$50â200/mo" },
+                    { id: "funded"    as Budget, label: "Funded",        sub: "$200â1k/mo" },
                     { id: "scale"     as Budget, label: "Scale",         sub: "$1k+/mo" },
                   ].map((opt) => (
                     <button
@@ -1670,7 +1670,7 @@ function InputSection({
             marginTop: "1.125rem", paddingTop: "1.125rem",
             borderTop: "1px solid var(--clr-border-deep)",
           }}>
-            <span style={{ fontSize: "0.7rem", color: "var(--clr-text-8)" }}>⌘↵ to run</span>
+            <span style={{ fontSize: "0.7rem", color: "var(--clr-text-8)" }}>ââµ to run</span>
             <button
               onClick={onSubmit}
               disabled={!canSubmit}
@@ -1689,7 +1689,7 @@ function InputSection({
               {loading ? (
                 <>
                   <div style={{ width: 14, height: 14, border: "2px solid rgba(var(--clr-text-rgb),0.3)", borderTopColor: "var(--clr-text)", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
-                  Running…
+                  Runningâ¦
                 </>
               ) : (
                 <>
@@ -1707,7 +1707,7 @@ function InputSection({
   );
 }
 
-// ── GitHub repo type ────────────────────────────────────────────
+// ââ GitHub repo type ââââââââââââââââââââââââââââââââââââââââââââ
 interface GithubRepo {
   id: number;
   full_name: string;
@@ -1809,7 +1809,7 @@ interface ITunesApp {
   genres: string[];
 }
 
-// ── Gap Analysis structured types ─────────────────────────────
+// ââ Gap Analysis structured types âââââââââââââââââââââââââââââ
 interface GapCompetitor {
   name: string;
   tagline: string;
@@ -1877,7 +1877,7 @@ function parseGapAnalysisJSON(raw: string): GapAnalysisData | null {
   }
 }
 
-// ── Stack Advisor structured types ────────────────────────────
+// ââ Stack Advisor structured types ââââââââââââââââââââââââââââ
 interface StackPhaseCosts {
   tools: { name: string; purpose: string; freeTier: boolean; monthlyCost: string }[];
   total: string;
@@ -1918,12 +1918,12 @@ function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
   }
 }
 
-// ── Stack Advisor Visual Result ──────────────────────────────
+// ââ Stack Advisor Visual Result ââââââââââââââââââââââââââââââ
 const PHASE_COLORS = ["var(--clr-text)", "var(--clr-text-2)", "var(--clr-text-3)", "var(--clr-text-5)", "var(--clr-text-6)"];
 const PHASE_BGS = ["rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)"];
 
 function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVideos?: YouTubeVideo[] }) {
-  // Build a lookup: tool name (lowercased) → best matching YouTube video
+  // Build a lookup: tool name (lowercased) â best matching YouTube video
   const ytToolMap = new Map<string, YouTubeVideo>();
   if (ytVideos && ytVideos.length > 0) {
     for (const v of ytVideos) {
@@ -1953,7 +1953,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
 
-      {/* ── HEADLINE ── */}
+      {/* ââ HEADLINE ââ */}
       {data.headline && (
         <div style={{
           background: "var(--clr-surface)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
@@ -1995,7 +1995,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
         </div>
       )}
 
-      {/* ── PHASES (with embedded cost breakdown) ── */}
+      {/* ââ PHASES (with embedded cost breakdown) ââ */}
       {data.phases.map((phase, pi) => {
         const isP0 = isPhaseZero(phase.name);
         const color = PHASE_COLORS[pi] ?? PHASE_COLORS[PHASE_COLORS.length - 1];
@@ -2083,7 +2083,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                                 border: "1px solid rgba(255,0,0,0.2)",
                               }}
                             >
-                              📺 {fmtV} tutorial views
+                              ðº {fmtV} tutorial views
                             </a>
                           );
                         })()}
@@ -2109,7 +2109,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                 ))}
               </div>
 
-              {/* ── Per-phase cost breakdown ── */}
+              {/* ââ Per-phase cost breakdown ââ */}
               {phaseCosts && phaseCosts.tools.length > 0 && (
                 <div style={{ marginTop: "1rem", marginLeft: 38 }}>
                   <div style={{
@@ -2173,7 +2173,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
         );
       })}
 
-      {/* ── BUILD ORDER TIMELINE ── */}
+      {/* ââ BUILD ORDER TIMELINE ââ */}
       {data.buildOrder.length > 0 && (
         <div style={{
           background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
@@ -2242,7 +2242,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
         </div>
       )}
 
-      {/* ── MISTAKES TO AVOID ── */}
+      {/* ââ MISTAKES TO AVOID ââ */}
       {data.mistakes.length > 0 && (
         <div style={{
           background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
@@ -2275,7 +2275,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
         </div>
       )}
 
-      {/* ── SCALABILITY CEILING ── */}
+      {/* ââ SCALABILITY CEILING ââ */}
       {data.scalability.length > 0 && (
         <div style={{
           background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
@@ -2331,7 +2331,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
         </div>
       )}
 
-      {/* ── WHEN TO UPGRADE ── */}
+      {/* ââ WHEN TO UPGRADE ââ */}
       {data.upgrades.length > 0 && (
         <div style={{
           background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
@@ -2373,7 +2373,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
   );
 }
 
-// ── Main ───────────────────────────────────────────────────────
+// ââ Main âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export default function Home() {
   const { isSignedIn } = useAuth();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
@@ -2674,7 +2674,7 @@ export default function Home() {
       if (res.ok) {
         const meta = await res.json();
         const fullQuery = meta.searchQuery || idea;
-        // Limit to first 3 words — long queries reduce API result quality
+        // Limit to first 3 words â long queries reduce API result quality
         const q = fullQuery.split(/\s+/).slice(0, 3).join(" ");
         console.log("[meta] searchQuery from Haiku:", meta.searchQuery, "| truncated to:", q, "| keywords:", meta.keywords);
         setDomainKeywords(meta.keywords ?? []);
@@ -2686,7 +2686,7 @@ export default function Home() {
       }
     } catch (err) {
       const q = idea.split(/\s+/).slice(0, 3).join(" ");
-      console.log("[meta] fetch error:", err, "— falling back to truncated idea:", q);
+      console.log("[meta] fetch error:", err, "â falling back to truncated idea:", q);
       extraFetches?.(q);
     }
   };
@@ -2748,7 +2748,7 @@ export default function Home() {
       return;
     }
 
-    // ── Other tools: existing flow ──
+    // ââ Other tools: existing flow ââ
      else {
       const steps = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3);
       scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
@@ -2885,10 +2885,10 @@ export default function Home() {
   };
 
   const allSections = streamedContent ? parseSections(streamedContent, loading) : [];
-  // Normalize variation selectors so "🌡️" (with FE0F) and "🌡" (without) both match
+  // Normalize variation selectors so "ð¡ï¸" (with FE0F) and "ð¡" (without) both match
   const stripVS = (s: string) => s.replace(/\uFE0F/g, "");
-  const scoreSection = allSections.find((s) => stripVS(s.emoji) === stripVS("🌡️"));
-  const sections = allSections.filter((s) => stripVS(s.emoji) !== stripVS("🌡️"));
+  const scoreSection = allSections.find((s) => stripVS(s.emoji) === stripVS("ð¡ï¸"));
+  const sections = allSections.filter((s) => stripVS(s.emoji) !== stripVS("ð¡ï¸"));
   const scoreData = scoreSection ? parseScore(scoreSection.body) : null;
   const currentTool = TOOLS.find((t) => t.id === selectedTool);
 
@@ -2911,10 +2911,10 @@ export default function Home() {
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
 
         
-        {/* ── Main ── */}
+        {/* ââ Main ââ */}
         <main style={{ maxWidth: 1200, margin: "0 auto", width: "100%", padding: "42px 2rem 0", flex: 1, display: "flex", flexDirection: "column" }}>
 
-          {/* ── Scanning overlay ── */}
+          {/* ââ Scanning overlay ââ */}
           {scanStep >= 0 ? (() => {
             const SCAN_STEPS_MAP: Record<string, { label: string; icon: React.ReactNode }[]> = {
               "gap-analysis": [
@@ -2962,7 +2962,7 @@ export default function Home() {
                       </div>
                     )}
                     <h2 style={{ fontSize: "1.125rem", fontWeight: 750, color: "var(--clr-text)", letterSpacing: "-0.025em", margin: "0 0 0.375rem" }}>
-                      {selectedTool === "stack-advisor" ? "Evaluating tools…" : "Gathering intelligence…"}
+                      {selectedTool === "stack-advisor" ? "Evaluating toolsâ¦" : "Gathering intelligenceâ¦"}
                     </h2>
                     <p style={{ fontSize: "0.8rem", color: "var(--clr-text-5)", margin: 0, lineHeight: 1.5, maxWidth: 280, marginInline: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "normal" }}>
                       {idea}
@@ -2981,7 +2981,7 @@ export default function Home() {
                         }}>
                           <span style={{ opacity: i <= scanStep ? 1 : 0.3 }}>{step.icon}</span>
                           <span>{step.label}</span>
-                          {i < scanStep && <span style={{ marginLeft: "auto", color: "var(--clr-accent)", fontSize: "0.7rem" }}>✓</span>}
+                          {i < scanStep && <span style={{ marginLeft: "auto", color: "var(--clr-accent)", fontSize: "0.7rem" }}>â</span>}
                         </div>
                       ))}
                     </div>
@@ -3033,7 +3033,7 @@ export default function Home() {
                             transition: "color 0.3s", flex: 1,
                           }}>
                             {step.label}
-                            {isActive && <span style={{ animation: "blink 1.1s step-end infinite" }}>…</span>}
+                            {isActive && <span style={{ animation: "blink 1.1s step-end infinite" }}>â¦</span>}
                           </span>
 
                           {/* Done tag */}
@@ -3052,7 +3052,7 @@ export default function Home() {
             );
           })() : (
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-              {/* ── Hero ── */}
+              {/* ââ Hero ââ */}
               {!hasResults && (
               <div style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
@@ -3073,12 +3073,12 @@ export default function Home() {
                   maxWidth: 680, margin: "0 auto 1rem",
                 }}>
                   Your AI chat was trained on last year's data. Unbuilt searches the live web<br />
-              — so you build on facts, not memories.
+              â so you build on facts, not memories.
                 </p>
               </div>
               )}
 
-              {/* ── Tool selector grid ── */}
+              {/* ââ Tool selector grid ââ */}
               <div data-tool-grid style={{
                 display: "grid",
                 marginTop: "2rem",
@@ -3088,7 +3088,7 @@ export default function Home() {
                 maxWidth: "59.4rem",
                 margin: "0 auto",
               }}>
-                {/* Pulse card — links to /pulse instead of triggering tool flow */}
+                {/* Pulse card â links to /pulse instead of triggering tool flow */}
                 <Link href="/pulse" style={{ textDecoration: "none", color: "inherit" }}>
                   <div
                     style={{
@@ -3119,7 +3119,7 @@ export default function Home() {
                     <div style={{ fontSize: "1.1rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--clr-text)", marginBottom: "0.25rem" }}>Pulse</div>
                     <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: "0.5rem" }}>Trending products, analyzed</div>
                     <p style={{ fontSize: "0.894rem", color: "var(--clr-text-4)", lineHeight: 1.6, flex: 1, margin: 0 }}>
-                      Browse what’s launching on Product Hunt and App Store. Every product gets an instant AI breakdown — what it does, what makes it different, and what it’s missing.
+                      Browse whatâs launching on Product Hunt and App Store. Every product gets an instant AI breakdown â what it does, what makes it different, and what itâs missing.
                     </p>
                     <div style={{ marginTop: "0.875rem", display: "flex", alignItems: "center", gap: 5, fontSize: "0.894rem", fontWeight: 600, color: "var(--clr-accent)" }}>
                       Explore Pulse
@@ -3138,7 +3138,7 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* ── Input section ── */}
+              {/* ââ Input section ââ */}
               {selectedTool && currentTool && (
                 <div ref={inputSectionRef}>
                   <InputSection
@@ -3155,11 +3155,11 @@ export default function Home() {
                   />
                 </div>
               )}
-              {/* ── Results — inline below input ── */}
+              {/* ââ Results â inline below input ââ */}
               {hasResults && (
               <div ref={resultsRef} style={{ paddingTop: "1.5rem", paddingBottom: "5rem", animation: "fadeSlideIn 0.3s ease" }}>
 
-              {/* ── Compact query bar ── */}
+              {/* ââ Compact query bar ââ */}
               {currentTool && (
                 <div style={{
                   display: "flex", alignItems: "center", gap: 12,
@@ -3187,7 +3187,7 @@ export default function Home() {
                       {idea}
                       {selectedTool === "stack-advisor" && (
                         <span style={{ color: "var(--clr-text-6)", fontWeight: 400 }}>
-                          {" · "}{budget}{" · "}{techLevel}
+                          {" Â· "}{budget}{" Â· "}{techLevel}
                         </span>
                       )}
                     </div>
@@ -3222,7 +3222,7 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ── Data source badges + cache badge ── */}
+              {/* ââ Data source badges + cache badge ââ */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
                 {currentTool && <DataSourceBadges sources={currentTool.sources} noMargin />}
                 {resultCached !== null && (
@@ -3245,7 +3245,7 @@ export default function Home() {
                 )}
               </div>
 
-              {/* Loading skeleton — only while nothing has streamed yet */}
+              {/* Loading skeleton â only while nothing has streamed yet */}
               {loading && (selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && <GapAnalysisSkeleton />}
               {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
 
@@ -3271,7 +3271,7 @@ export default function Home() {
                       </div>
                       <div style={{ color: "var(--clr-text-3)", lineHeight: 1.5 }}>
                         {error.includes("Overloaded") || error.includes("overloaded")
-                          ? "The AI is under heavy load. Wait a few seconds and try again — it usually clears quickly."
+                          ? "The AI is under heavy load. Wait a few seconds and try again â it usually clears quickly."
                           : error.includes("timeout") || error.includes("Timeout")
                           ? "The analysis took too long. Try a shorter or more specific description."
                           : error}
@@ -3352,7 +3352,7 @@ export default function Home() {
                 ) : null
               ) : null}
 
-              {/* ── App Stores (Gap Analysis only) — unified merged list ── */}
+              {/* ââ App Stores (Gap Analysis only) â unified merged list ââ */}
               {selectedTool === "gap-analysis" && (() => {
                 const storesLoading = (itunesLoading || !itunesFetched) && (gplayLoading || !gplayFetched);
                 const anyLoading = (itunesLoading || !itunesFetched) || (gplayLoading || !gplayFetched);
@@ -3370,7 +3370,7 @@ export default function Home() {
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       <span className="section-title">Existing Apps</span>
                       <span style={{ fontSize: "0.62rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-                        Showing top results · ranked by ratings
+                        Showing top results Â· ranked by ratings
                       </span>
                     </div>
                     <div style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
@@ -3395,7 +3395,7 @@ export default function Home() {
                     </div>
                   ) : merged.length === 0 && !anyLoading ? (
                     <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
-                      No existing apps found in this niche — open opportunity
+                      No existing apps found in this niche â open opportunity
                     </div>
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -3486,7 +3486,7 @@ export default function Home() {
                                   </svg>
                                 ))}
                                 <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--clr-text-4)", marginLeft: 2 }}>
-                                  {app.rating > 0 ? app.rating.toFixed(1) : "—"}
+                                  {app.rating > 0 ? app.rating.toFixed(1) : "â"}
                                 </span>
                               </div>
                               <span style={{ fontSize: "0.68rem", color: "var(--clr-text-6)" }}>
@@ -3525,7 +3525,7 @@ export default function Home() {
               })()}
 
 
-              {/* ── YouTube (Gap Analysis only) ── */}
+              {/* ââ YouTube (Gap Analysis only) ââ */}
               {selectedTool === "gap-analysis" && (
                 <div style={{
                   marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
@@ -3534,12 +3534,12 @@ export default function Home() {
                   padding: "1.5rem",
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-                    <span style={{ fontSize: "1.25rem" }}>📺</span>
+                    <span style={{ fontSize: "1.25rem" }}>ðº</span>
                     <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
                       What YouTube Says
                     </h3>
                     <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-                      last 6 months · reviews
+                      last 6 months Â· reviews
                     </span>
                   </div>
 
@@ -3596,7 +3596,7 @@ export default function Home() {
                                 background: "rgba(0,0,0,0.8)", borderRadius: 4,
                                 padding: "1px 5px", fontSize: "0.6rem", color: "#fff", fontWeight: 700,
                               }}>
-                                ▶ {fmtViews}
+                                â¶ {fmtViews}
                               </div>
                             </div>
                             {/* Info */}
@@ -3635,7 +3635,7 @@ export default function Home() {
               )}
 
 
-              {/* ── Footer ── */}
+              {/* ââ Footer ââ */}
               {!loading && streamedContent && (
                 <div style={{
                   display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -3677,32 +3677,8 @@ export default function Home() {
           )}
         </main>
 
-        {/* ── Site Footer ── */}
-        <footer style={{
-          padding: "2rem 0",
-          borderTop: "1px solid var(--clr-border-deep)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexWrap: "wrap",
-          gap: "0.25rem 0.5rem",
-          fontSize: "0.75rem",
-          color: "var(--clr-text-7)",
-        }}>
-          <a href="/legal/privacy-policy" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Privacy Policy</a>
-          <span style={{ opacity: 0.4 }}>|</span>
-          <a href="/legal/terms-of-service" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Terms of Service</a>
-          <span style={{ opacity: 0.4 }}>|</span>
-          <a href="/legal/cookie-policy" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Cookie Policy</a>
-          <span style={{ opacity: 0.4 }}>|</span>
-          <a href="/legal/acceptable-use" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Acceptable Use</a>
-          <span style={{ opacity: 0.4 }}>|</span>
-          <a href="/legal/ai-transparency" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>AI Transparency</a>
-          <span style={{ opacity: 0.4 }}>|</span>
-          <a href="/legal/do-not-sell" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Do Not Sell</a>
-          <span style={{ opacity: 0.4 }}>|</span>
-          <a href="/legal/disclaimer" style={{ color: "var(--clr-text-7)", textDecoration: "none" }}>Disclaimer</a>
-        </footer>
+        {/* ââ Site Footer ââ */}
+        
       </div>
     </>
   );
