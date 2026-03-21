@@ -20,7 +20,7 @@ const PACKAGES = [
     credits: 5,
     perQuery: "$1.00",
     highlight: false,
-    paddlePriceId: "PADDLE_STARTER_PRICE_ID",
+    paddlePriceId: "pri_01km8znr6vfjy12bhkrgxcqky8",
   },
   {
     slug: "popular",
@@ -29,7 +29,7 @@ const PACKAGES = [
     credits: 10,
     perQuery: "$0.90",
     highlight: true,
-    paddlePriceId: "PADDLE_POPULAR_PRICE_ID",
+    paddlePriceId: "pri_01km8zvgagyf8qaxhe8ds1cmh3",
   },
   {
     slug: "pro",
@@ -38,7 +38,7 @@ const PACKAGES = [
     credits: 25,
     perQuery: "$0.80",
     highlight: false,
-    paddlePriceId: "PADDLE_PRO_PRICE_ID",
+    paddlePriceId: "pri_01km8ztv9kx85hwtzepp4b1enf",
   },
 ];
 
