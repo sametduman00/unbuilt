@@ -90,7 +90,7 @@ const TOOLS: ToolConfig[] = [
     userLabel: "I need inspiration",
     name: "Trend Feed",
     tagline: "Real signals, no noise",
-    description: "What's actually rising in a market right now. Emerging niches, dying trends, and contrarian bets â powered by AI, not Twitter hype.",
+    description: "What's actually rising in a market right now. Emerging niches, dying trends, and contrarian bets — powered by AI, not Twitter hype.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/trend-feed",
@@ -108,7 +108,7 @@ const TOOLS: ToolConfig[] = [
     userLabel: "I have an idea",
     name: "Gap Analysis",
     tagline: "Find the gaps before you build",
-    description: "Spot what competitors are missing. Get a brutally honest read on where you actually have a shot â before you spend months building the wrong thing.",
+    description: "Spot what competitors are missing. Get a brutally honest read on where you actually have a shot — before you spend months building the wrong thing.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/analyze",
@@ -126,7 +126,7 @@ const TOOLS: ToolConfig[] = [
     userLabel: "I'm already building",
     name: "Competitor Radar",
     tagline: "Know your rivals inside out",
-    description: "Deep competitive intelligence on who you're really up against â their strategies, exploitable weaknesses, and exactly how to outmaneuver them.",
+    description: "Deep competitive intelligence on who you're really up against — their strategies, exploitable weaknesses, and exactly how to outmaneuver them.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/radar",
@@ -267,13 +267,13 @@ function parseBullets(body: string): { title: string; desc: string; badge?: stri
   const lines = body.split("\n").filter((l) => l.trim());
   const bullets: { title: string; desc: string; badge?: string }[] = [];
   for (const line of lines) {
-    const clean = line.replace(/^[-*â¢]\s*/, "").trim();
+    const clean = line.replace(/^[-*•]\s*/, "").trim();
     if (!clean) continue;
     // Extract badge like **ð¥ High Activity** or **ð Growing**
-    const badgeMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-ââ:]\s*/);
+    const badgeMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-—–:]\s*/);
     const rest = badgeMatch ? clean.slice(badgeMatch[0].length) : clean;
     // Split on **: bold title followed by colon/dash
-    const titleMatch = rest.match(/^\*\*([^*]+)\*\*\s*[-ââ:]?\s*([\s\S]*)/);
+    const titleMatch = rest.match(/^\*\*([^*]+)\*\*\s*[-—–:]?\s*([\s\S]*)/);
     if (titleMatch) {
       bullets.push({
         title: titleMatch[1].trim(),
@@ -293,9 +293,9 @@ function parseNicheBullets(body: string): { title: string; desc: string; score: 
   const lines = body.split("\n").filter((l) => l.trim());
   const niches: { title: string; desc: string; score: number }[] = [];
   for (const line of lines) {
-    const clean = line.replace(/^[-*â¢]\s*/, "").trim();
+    const clean = line.replace(/^[-*•]\s*/, "").trim();
     if (!clean) continue;
-    const titleMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-ââ:]?\s*([\s\S]*)/);
+    const titleMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-—–:]?\s*([\s\S]*)/);
     const title = titleMatch ? titleMatch[1].trim() : "";
     const rest = titleMatch ? titleMatch[2].trim() : clean;
     // Estimate opportunity score from language cues
@@ -700,10 +700,10 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
               )}
               <div style={{ display: "flex", gap: 8 }}>
                 <div style={{ fontSize: "0.68rem", color: "var(--clr-text-2)", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(var(--clr-text-rgb),0.3)", flex: 1, minWidth: 0 }}>
-                  {c.strengths[0] ?? "â"}
+                  {c.strengths[0] ?? "—"}
                 </div>
                 <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(var(--clr-text-rgb),0.3)", flex: 1, minWidth: 0 }}>
-                  {c.weaknesses[0] ?? "â"}
+                  {c.weaknesses[0] ?? "—"}
                 </div>
               </div>
             </div>
@@ -824,7 +824,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
               <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                 {(data.swot[q.key] ?? []).slice(0, 3).map((item, i) => (
                   <div key={i} style={{ display: "flex", gap: 5, fontSize: "0.68rem", color: "var(--clr-text-3)", lineHeight: 1.4 }}>
-                    <span style={{ color: q.color, flexShrink: 0 }}>â¢</span>
+                    <span style={{ color: q.color, flexShrink: 0 }}>•</span>
                     <span>{item}</span>
                   </div>
                 ))}
@@ -931,7 +931,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
             </div>
           </div>
 
-          {/* Details â compact chips layout */}
+          {/* Details — compact chips layout */}
           <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             {/* Demographics + WTP */}
             <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -947,7 +947,7 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <span style={{ fontSize: "0.52rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--clr-text-3)" }}>Pains</span>
               {data.targetCustomer.painPoints.slice(0, 3).map((p, i) => (
-                <div key={i} style={{ fontSize: "0.65rem", color: "var(--clr-text-4)", lineHeight: 1.35 }}>â¢ {p}</div>
+                <div key={i} style={{ fontSize: "0.65rem", color: "var(--clr-text-4)", lineHeight: 1.35 }}>• {p}</div>
               ))}
             </div>
 
@@ -1520,8 +1520,8 @@ function InputSection({
 
   const BUDGETS: { id: Budget; label: string; sub: string }[] = [
     { id: "bootstrap", label: "Bootstrapped", sub: "< $50/mo" },
-    { id: "growing",   label: "Growing",      sub: "$50â200/mo" },
-    { id: "funded",    label: "Funded",        sub: "$200â1k/mo" },
+    { id: "growing",   label: "Growing",      sub: "$50–200/mo" },
+    { id: "funded",    label: "Funded",        sub: "$200–1k/mo" },
     { id: "scale",     label: "Scale",         sub: "$1k+/mo" },
   ];
   const TECH_LEVELS: { id: TechLevel; label: string; sub: string }[] = [
@@ -1609,8 +1609,8 @@ function InputSection({
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   {[
                     { id: "bootstrap" as Budget, label: "Bootstrapped", sub: "< $50/mo" },
-                    { id: "growing"   as Budget, label: "Growing",      sub: "$50â200/mo" },
-                    { id: "funded"    as Budget, label: "Funded",        sub: "$200â1k/mo" },
+                    { id: "growing"   as Budget, label: "Growing",      sub: "$50–200/mo" },
+                    { id: "funded"    as Budget, label: "Funded",        sub: "$200–1k/mo" },
                     { id: "scale"     as Budget, label: "Scale",         sub: "$1k+/mo" },
                   ].map((opt) => (
                     <button
@@ -2674,7 +2674,7 @@ export default function Home() {
       if (res.ok) {
         const meta = await res.json();
         const fullQuery = meta.searchQuery || idea;
-        // Limit to first 3 words â long queries reduce API result quality
+        // Limit to first 3 words — long queries reduce API result quality
         const q = fullQuery.split(/\s+/).slice(0, 3).join(" ");
         console.log("[meta] searchQuery from Haiku:", meta.searchQuery, "| truncated to:", q, "| keywords:", meta.keywords);
         setDomainKeywords(meta.keywords ?? []);
@@ -2686,7 +2686,7 @@ export default function Home() {
       }
     } catch (err) {
       const q = idea.split(/\s+/).slice(0, 3).join(" ");
-      console.log("[meta] fetch error:", err, "â falling back to truncated idea:", q);
+      console.log("[meta] fetch error:", err, "— falling back to truncated idea:", q);
       extraFetches?.(q);
     }
   };
@@ -3073,7 +3073,7 @@ export default function Home() {
                   maxWidth: 680, margin: "0 auto 1rem",
                 }}>
                   Your AI chat was trained on last year's data. Unbuilt searches the live web<br />
-              â so you build on facts, not memories.
+              — so you build on facts, not memories.
                 </p>
               </div>
               )}
@@ -3088,7 +3088,7 @@ export default function Home() {
                 maxWidth: "59.4rem",
                 margin: "0 auto",
               }}>
-                {/* Pulse card â links to /pulse instead of triggering tool flow */}
+                {/* Pulse card — links to /pulse instead of triggering tool flow */}
                 <Link href="/pulse" style={{ textDecoration: "none", color: "inherit" }}>
                   <div
                     style={{
@@ -3119,7 +3119,7 @@ export default function Home() {
                     <div style={{ fontSize: "1.1rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--clr-text)", marginBottom: "0.25rem" }}>Pulse</div>
                     <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: "0.5rem" }}>Trending products, analyzed</div>
                     <p style={{ fontSize: "0.894rem", color: "var(--clr-text-4)", lineHeight: 1.6, flex: 1, margin: 0 }}>
-                      Browse whatâs launching on Product Hunt and App Store. Every product gets an instant AI breakdown â what it does, what makes it different, and what itâs missing.
+                      Browse what’s launching on Product Hunt and App Store. Every product gets an instant AI breakdown — what it does, what makes it different, and what it’s missing.
                     </p>
                     <div style={{ marginTop: "0.875rem", display: "flex", alignItems: "center", gap: 5, fontSize: "0.894rem", fontWeight: 600, color: "var(--clr-accent)" }}>
                       Explore Pulse
@@ -3155,7 +3155,7 @@ export default function Home() {
                   />
                 </div>
               )}
-              {/* ââ Results â inline below input ââ */}
+              {/* ââ Results — inline below input ââ */}
               {hasResults && (
               <div ref={resultsRef} style={{ paddingTop: "1.5rem", paddingBottom: "5rem", animation: "fadeSlideIn 0.3s ease" }}>
 
@@ -3245,7 +3245,7 @@ export default function Home() {
                 )}
               </div>
 
-              {/* Loading skeleton â only while nothing has streamed yet */}
+              {/* Loading skeleton — only while nothing has streamed yet */}
               {loading && (selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && <GapAnalysisSkeleton />}
               {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
 
@@ -3271,7 +3271,7 @@ export default function Home() {
                       </div>
                       <div style={{ color: "var(--clr-text-3)", lineHeight: 1.5 }}>
                         {error.includes("Overloaded") || error.includes("overloaded")
-                          ? "The AI is under heavy load. Wait a few seconds and try again â it usually clears quickly."
+                          ? "The AI is under heavy load. Wait a few seconds and try again — it usually clears quickly."
                           : error.includes("timeout") || error.includes("Timeout")
                           ? "The analysis took too long. Try a shorter or more specific description."
                           : error}
@@ -3352,7 +3352,7 @@ export default function Home() {
                 ) : null
               ) : null}
 
-              {/* ââ App Stores (Gap Analysis only) â unified merged list ââ */}
+              {/* ââ App Stores (Gap Analysis only) — unified merged list ââ */}
               {selectedTool === "gap-analysis" && (() => {
                 const storesLoading = (itunesLoading || !itunesFetched) && (gplayLoading || !gplayFetched);
                 const anyLoading = (itunesLoading || !itunesFetched) || (gplayLoading || !gplayFetched);
@@ -3395,7 +3395,7 @@ export default function Home() {
                     </div>
                   ) : merged.length === 0 && !anyLoading ? (
                     <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
-                      No existing apps found in this niche â open opportunity
+                      No existing apps found in this niche — open opportunity
                     </div>
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -3486,7 +3486,7 @@ export default function Home() {
                                   </svg>
                                 ))}
                                 <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--clr-text-4)", marginLeft: 2 }}>
-                                  {app.rating > 0 ? app.rating.toFixed(1) : "â"}
+                                  {app.rating > 0 ? app.rating.toFixed(1) : "—"}
                                 </span>
                               </div>
                               <span style={{ fontSize: "0.68rem", color: "var(--clr-text-6)" }}>
