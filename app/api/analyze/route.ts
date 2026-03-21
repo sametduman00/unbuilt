@@ -3,6 +3,8 @@ import { NextRequest } from "next/server";
 import gplay from "google-play-scraper";
 import { getCached, setCached, TTL_MS } from "../_cache";
 import { normalizeQuery } from "../_normalize";
+import { auth } from "@clerk/nextjs/server";
+import { deductCredit } from "@/app/lib/credits";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -233,6 +235,10 @@ async function fetchYouTubeContext(idea: string): Promise<string> {
 }
 
 export async function POST(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+  const hasCredits = await deductCredit(userId);
+  if (!hasCredits) return new Response(JSON.stringify({ error: "No credits remaining" }), { status: 402, headers: { "Content-Type": "application/json" } });
   const { idea } = await req.json();
   if (!idea || typeof idea !== "string" || idea.trim().length < 3)
     return Response.json({ error: "Please provide a valid idea (min 3 characters)." }, { status: 400 });
