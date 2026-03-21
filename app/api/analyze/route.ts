@@ -8,7 +8,7 @@ import { deductCredit } from "@/app/lib/credits";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = `You are a sharp, experienced market analyst and startup advisor. You produce concise, highly actionable competitor analysis and market gap reports. Your tone is direct, insightful, and slightly contrarian — you cut through hype. IMPORTANT: You MUST respond with ONLY a single JSON code block. No text before or after. The JSON must match the exact schema provided. Be specific: name real competitors, real products, real pain points.`;
+const SYSTEM_PROMPT = `You are a sharp, experienced market analyst and startup advisor. You produce concise, highly actionable competitor analysis and market gap reports. Your tone is direct, insightful, and slightly contrarian â you cut through hype. IMPORTANT: You MUST respond with ONLY a single JSON code block. No text before or after. The JSON must match the exact schema provided. Be specific: name real competitors, real products, real pain points.`;
 
 const USER_PROMPT = (idea: string, youtubeContext: string, appStoreContext: string, serperContext: string) => `Analyze the market for: "${idea}"
 ${youtubeContext}
@@ -40,7 +40,7 @@ Respond with ONLY a JSON code block matching this exact schema:
   "marketGaps": [
     {
       "title": "Gap Name",
-      "description": "What's missing and why it matters — be specific",
+      "description": "What's missing and why it matters â be specific",
       "opportunityScore": 8,
       "status": "untapped"
     }
@@ -71,10 +71,10 @@ Respond with ONLY a JSON code block matching this exact schema:
 }
 \`\`\`
 Rules:
-- "appStoreQuery": 2-3 specific words to find direct competitors for this EXACT idea on the App Store. Not the generic category — the specific niche. E.g. for "app that calculates calories by pictures" use "photo calorie recognition", not "calorie tracker".
+- "appStoreQuery": 2-3 specific words to find direct competitors for this EXACT idea on the App Store. Not the generic category â the specific niche. E.g. for "app that calculates calories by pictures" use "photo calorie recognition", not "calorie tracker".
 - "marketScore": 1-100 integer assessing overall market opportunity. "marketScoreLabel": one of "No Gap" (0-20), "Crowded" (21-40), "Some Room" (41-60), "Real Opportunity" (61-80), "Wide Open" (81-100). "marketScoreSummary": one sentence explaining the score.
-- "competitors": 4-6 real companies. Prioritize competitors found in the LIVE APP STORE DATA provided above — use their real names, ratings, and download counts. "threatLevel": 1-5 integer (1=minor, 5=dominant). "tagline": max 1 sentence. "strengths": exactly 1 item. "weaknesses": exactly 1 item. Keep each under 12 words.
-- "painPoints": 4-6 items. "severity": "high" | "medium" | "low". Keep the full quote — never truncate. "source" should be a real platform name.
+- "competitors": 4-6 real companies. Prioritize competitors found in the LIVE APP STORE DATA provided above â use their real names, ratings, and download counts. "threatLevel": 1-5 integer (1=minor, 5=dominant). "tagline": max 1 sentence. "strengths": exactly 1 item. "weaknesses": exactly 1 item. Keep each under 12 words.
+- "painPoints": 4-6 items. "severity": "high" | "medium" | "low". Keep the full quote â never truncate. "source" should be a real platform name.
 - "marketGaps": 3-5 items. "opportunityScore": 1-10 integer. "status": "untapped" | "emerging" | "contested". "description": max 2 complete sentences.
 - "swot": 3-4 bullet points per quadrant. Max 10 words per bullet point. Frame from the perspective of a NEW entrant in this market.
 - "opportunity": 3-4 actionItems. "urgency": "high" | "medium" | "low". "detail": max 2 sentences per step.
@@ -117,11 +117,11 @@ async function fetchAppStoreContext(query: string): Promise<string> {
         : "no reviews";
       const price = app.price === 0 ? "Free" : (app.formattedPrice || "Paid");
       const desc = (app.description || "").slice(0, 120).replace(/\n/g, " ");
-      return `- "${app.trackName}" by ${app.sellerName} | ${rating}⭐ ${reviews} | ${price} | ${desc}`;
+      return `- "${app.trackName}" by ${app.sellerName} | ${rating}â­ ${reviews} | ${price} | ${desc}`;
     });
 
     console.log("[Analyze] App Store context:", lines.length, "apps found for query:", query);
-    return `\nHere are REAL App Store apps currently live in this space (fetched right now from iTunes Search API). Use these as your primary competitor sources — these are real products with real ratings:\n${lines.join("\n")}\n`;
+    return `\nHere are REAL App Store apps currently live in this space (fetched right now from iTunes Search API). Use these as your primary competitor sources â these are real products with real ratings:\n${lines.join("\n")}\n`;
   } catch (err) {
     console.log("[Analyze] App Store context fetch failed:", err);
     return "";
@@ -138,7 +138,7 @@ async function fetchGPlayContext(query: string): Promise<string> {
       const rating = app.score ? app.score.toFixed(1) : "N/A";
       const price = app.free ? "Free" : (app.priceText || "Paid");
       const desc = (app.summary || "").slice(0, 100).replace(/\n/g, " ");
-      return `- "${app.title}" by ${app.developer} | ${rating}⭐ | ${price} | ${desc}`;
+      return `- "${app.title}" by ${app.developer} | ${rating}â­ | ${price} | ${desc}`;
     });
 
     console.log("[Analyze] Google Play context:", lines.length, "apps found for query:", query);
@@ -149,7 +149,7 @@ async function fetchGPlayContext(query: string): Promise<string> {
   }
 }
 
-// Fetch live Google Search results via Serper — closes Claude's training data gap
+// Fetch live Google Search results via Serper â closes Claude's training data gap
 async function fetchSerperContext(idea: string): Promise<string> {
   const apiKey = process.env.SERPER_API_KEY;
   if (!apiKey) return "";
@@ -168,7 +168,7 @@ async function fetchSerperContext(idea: string): Promise<string> {
 
     const lines = organic.slice(0, 6).map((r: { title: string; link: string; snippet?: string }) => {
       const snippet = (r.snippet || "").slice(0, 120).replace(/\n/g, " ");
-      return `- "${r.title}" (${r.link}) — ${snippet}`;
+      return `- "${r.title}" (${r.link}) â ${snippet}`;
     });
 
     // Related searches as signals
@@ -227,7 +227,7 @@ async function fetchYouTubeContext(idea: string): Promise<string> {
       return `- "${item.snippet.title}" by ${item.snippet.channelTitle} (${fmtViews} views)`;
     });
     console.log("[Analyze] YouTube context:", lines.length, "videos found");
-    return `\nHere are recent YouTube videos in this space (new product launches, founder stories, user frustrations, problem callouts) — use these to identify real pain points and emerging signals:\n${lines.join("\n")}\n`;
+    return `\nHere are recent YouTube videos in this space (new product launches, founder stories, user frustrations, problem callouts) â use these to identify real pain points and emerging signals:\n${lines.join("\n")}\n`;
   } catch (err) {
     console.log("[Analyze] YouTube context fetch failed:", err);
     return "";
