@@ -2384,6 +2384,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [streamedContent, setStreamedContent] = useState("");
   const [error, setError] = useState("");
+  const [outOfCredits, setOutOfCredits] = useState(false);
   const [hasResults, setHasResults] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [trendFeedData, setTrendFeedData] = useState<any>(null);
@@ -2483,7 +2484,8 @@ export default function Home() {
     setScanStep(-1);
     setHasResults(false);
     setStreamedContent("");
-    setError("");
+    setError("")
+    setOutOfCredits(false);;
     setLoading(false);
     setResultCached(null);
     setGithubRepos([]);
@@ -2700,7 +2702,8 @@ export default function Home() {
     setLoading(true);
     setHasResults(false);
     setStreamedContent("");
-    setError("");
+    setError("")
+    setOutOfCredits(false);;
     setResultCached(null);
     setGithubRepos([]);
     setGithubFetched(false);
@@ -2738,6 +2741,7 @@ export default function Home() {
         const res = await fetch(`/api/trend-feed?q=${encodeURIComponent(idea.trim())}`);
         if (!res.ok) {
           const d = await res.json();
+          if (res.status === 402) { setOutOfCredits(true); setLoading(false); return; }
           throw new Error(d.error || "Something went wrong");
         }
         const result = await res.json();
@@ -2780,6 +2784,7 @@ export default function Home() {
       });
       if (!res.ok) {
         const d = await res.json();
+        if (res.status === 402) { setOutOfCredits(true); setLoading(false); return; }
         throw new Error(d.error || "Something went wrong");
       }
       const reader = res.body?.getReader();
@@ -2844,7 +2849,8 @@ export default function Home() {
     setScanStep(-1);
     setHasResults(false);
     setStreamedContent("");
-    setError("");
+    setError("")
+    setOutOfCredits(false);;
     setResultCached(null);
     setTrendFeedData(null);
     setGithubRepos([]);
@@ -2869,7 +2875,8 @@ export default function Home() {
     setSelectedTool(null);
     setIdea("");
     setStreamedContent("");
-    setError("");
+    setError("")
+    setOutOfCredits(false);;
     setResultCached(null);
     setGithubRepos([]);
     setGithubFetched(false);
@@ -3252,6 +3259,15 @@ export default function Home() {
               {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
 
               {/* Error */}
+              {outOfCredits && (
+                <div style={{ margin: "16px 0", padding: "14px 18px", borderRadius: 10, background: "rgba(255,80,80,0.08)", border: "1px solid rgba(255,80,80,0.3)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,80,80,0.9)" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "rgba(255,80,80,0.9)" }}>Out of credits</span>
+                  </div>
+                  <a href="/pricing" style={{ fontSize: "0.8rem", fontWeight: 700, color: "#fff", background: "rgba(255,80,80,0.85)", padding: "6px 14px", borderRadius: 7, textDecoration: "none" }}>Buy credits →</a>
+                </div>
+              )}
               {error && (
                 <div style={{
                   padding: "1.25rem 1.5rem", borderRadius: 12,
