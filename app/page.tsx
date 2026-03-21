@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useAuth, UserButton, SignInButton } from "@clerk/nextjs";
+import { useAuth, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
 
 // ââ Types ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 type ToolId = "gap-analysis" | "competitor-radar" | "trend-feed" | "stack-advisor";
@@ -2376,6 +2376,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
 // ââ Main âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export default function Home() {
   const { isSignedIn } = useAuth();
+  const { openSignIn } = useClerk();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
   const [idea, setIdea] = useState("");
   const [budget, setBudget] = useState<Budget>("bootstrap");
@@ -2692,6 +2693,7 @@ export default function Home() {
   };
 
   const handleSubmit = async () => {
+    if (!isSignedIn) { openSignIn(); return; }
     if (!selectedTool || idea.trim().length < 3) return;
     const tool = TOOLS.find((t) => t.id === selectedTool)!;
 
