@@ -36,10 +36,10 @@ const TOOLS = [
     id: "pulse",
     label: "ALWAYS FREE",
     name: "Pulse",
-    description: "Browse trending products — no credits needed, ever.",
+    description: "Browse trending products â no credits needed, ever.",
     features: [
-      "Product Hunt & App Store — daily",
-      "AI breakdown: WHAT it does · DIFF · MISS",
+      "Product Hunt & App Store â daily",
+      "AI breakdown: WHAT it does Â· DIFF Â· MISS",
       "Topic & category filters",
       "No account required",
       "Unlimited browsing",
@@ -96,7 +96,7 @@ export default function PricingPage() {
         margin: "0 auto",
       }}
     >
-      {/* ── Header ── */}
+      {/* ââ Header ââ */}
       <div style={{ textAlign: "center", marginBottom: 56 }}>
         <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", color: "var(--clr-accent)", textTransform: "uppercase", marginBottom: 12 }}>
           Pricing
@@ -105,12 +105,12 @@ export default function PricingPage() {
           Start free. Pay only when you need more.
         </h1>
         <p style={{ fontSize: 16, color: "var(--clr-muted)", maxWidth: 520, margin: "0 auto" }}>
-          Every account gets 2 free queries — 1 Gap Analysis + 1 Stack Advisor.
+          Every account gets 2 free queries â 1 Gap Analysis + 1 Stack Advisor.
           Pulse is always free. When you need more, buy a credit pack.
         </p>
       </div>
 
-      {/* ── Why so expensive? honest box ── */}
+      {/* ââ Why so expensive? honest box ââ */}
       <div
         style={{
           background: "var(--clr-surface)",
@@ -129,7 +129,7 @@ export default function PricingPage() {
             Why does a query cost $0.40?
           </p>
           <p style={{ fontSize: 14, color: "var(--clr-muted)", lineHeight: 1.6, margin: 0 }}>
-            We use <strong style={{ color: "var(--clr-text)" }}>Claude Opus 4.6 with Extended Thinking</strong> — Anthropic's most capable model with deep reasoning. Every query runs a full analysis, not a shortcut. The real cost to us is ~$0.45. You pay $0.40.
+            We use <strong style={{ color: "var(--clr-text)" }}>Claude Opus 4.6 with Extended Thinking</strong> â Anthropic's most capable model with deep reasoning. Every query runs a full analysis, not a shortcut. The real cost to us is ~$0.45. You pay $0.40.
           </p>
         </div>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
@@ -157,7 +157,7 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* ── Credit packs ── */}
+      {/* ââ Credit packs ââ */}
       <div style={{ marginBottom: 64 }}>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--clr-text)", marginBottom: 24, textAlign: "center" }}>
           Credit packs
@@ -205,7 +205,7 @@ export default function PricingPage() {
                   {pkg.price}
                 </div>
                 <div style={{ fontSize: 13, color: "var(--clr-muted)", marginTop: 6 }}>
-                  {pkg.credits} queries · {pkg.perQuery}/query
+                  {pkg.credits} queries Â· {pkg.perQuery}/query
                 </div>
               </div>
               <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 8 }}>
@@ -216,7 +216,7 @@ export default function PricingPage() {
                   "Instant delivery",
                 ].map((f) => (
                   <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 13, color: "var(--clr-muted)" }}>
-                    <span style={{ color: "var(--clr-accent)", fontWeight: 700, marginTop: 1 }}>✓</span>
+                    <span style={{ color: "var(--clr-accent)", fontWeight: 700, marginTop: 1 }}>â</span>
                     {f}
                   </li>
                 ))}
@@ -244,7 +244,7 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* ── Tool cards ── */}
+      {/* ââ Tool cards ââ */}
       <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--clr-text)", marginBottom: 24, textAlign: "center" }}>
         What's included
       </h2>
@@ -275,7 +275,7 @@ export default function PricingPage() {
               <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 6 }}>
                 {tool.features.map((f) => (
                   <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: "var(--clr-muted)" }}>
-                    <span style={{ color: "var(--clr-accent)", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
+                    <span style={{ color: "var(--clr-accent)", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>â</span>
                     {f}
                   </li>
                 ))}
@@ -285,7 +285,7 @@ export default function PricingPage() {
         ))}
       </div>
 
-      {/* ── Donate section ── */}
+      {/* ââ Donate section ââ */}
       <div
         style={{
           textAlign: "center",
@@ -355,7 +355,13 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
+      
+      <div style={{ textAlign: "center", padding: "2rem 0 1rem", fontSize: 12, color: "#555", borderTop: "1px solid #1a1a1a", marginTop: "3rem" }}>
+        <a href="/legal/terms-of-service" style={{ color: "#666", marginRight: 16, textDecoration: "none" }}>Terms of Service</a>
+        <a href="/legal/privacy-policy" style={{ color: "#666", marginRight: 16, textDecoration: "none" }}>Privacy Policy</a>
+        <a href="/legal/refund-policy" style={{ color: "#666", textDecoration: "none" }}>Refund Policy</a>
       </div>
+</div>
     </main>
   );
 }
