@@ -88,7 +88,7 @@ export default function PricingPage() {
     script.onload = () => {
       if (!(window as any).Paddle) return;
       (window as any).Paddle.Initialize({
-        token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN!,
+        token: 'live_52661022360279de7c131bad447',
       });
       setPaddleReady(true);
     };
