@@ -1,4 +1,5 @@
-fix: reduce batch size to 8 to prevent sonnet timeoutimport { getSupabase } from "@/app/lib/supabase";
+import { NextRequest, NextResponse } from "next/server";
+import { getSupabase } from "@/app/lib/supabase";
 
 export async function GET(req: NextRequest) {
   const secret = req.headers.get("x-cron-secret");
