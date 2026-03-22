@@ -79,16 +79,21 @@ async function analyzeBatch(signals: any[]): Promise<any[]> {
       .join("\n\n---\n\n");
 
     const msg = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 2000,
+      model: "claude-sonnet-4-6",
+      max_tokens: 4000,
       messages: [{
         role: "user",
-        content: `Analyze each Product Hunt product. Answer 3 things in English (max 12 words each):
-1. "what": What it does and who it's for (be concrete, not vague)
-2. "different": What genuinely sets it apart from existing tools (avoid "uses AI" — be specific)
-3. "missing": One specific feature users would clearly want but it lacks (must be a concrete missing feature, not a positive statement)
+        content: `You are a sharp product analyst who writes for founders. Analyze each Product Hunt product with depth and honesty.
 
-IMPORTANT for "missing": Always name something that is absent or underdeveloped. Never write something positive. Examples of good answers: "No offline mode", "Lacks team collaboration features", "No export to PDF or CSV". Bad answers: "Nothing obvious" or "Seems comprehensive".
+For each product write:
+1. "what": 1-2 sentences — what it does and exactly who it's for. Be specific about the use case and target user, not generic.
+2. "different": 1-2 sentences — what genuinely sets it apart from existing tools. Name the specific category or competitors it's up against and explain the real differentiation. Never say "uses AI" as a differentiator.
+3. "missing": 1-2 sentences — which user segment can't use this yet, or what one concrete addition would make it significantly more powerful. Must be a real gap, not a vague complaint.
+
+Rules:
+- Write in plain English, no marketing fluff
+- Be direct and specific — name real alternatives where relevant
+- "missing" must always identify an absence, never spin it positively
 
 Return ONLY a JSON array, no markdown:
 [{"name":"...","what":"...","different":"...","missing":"..."}]
