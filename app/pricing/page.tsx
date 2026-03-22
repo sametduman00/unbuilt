@@ -86,8 +86,8 @@ export default function PricingPage() {
     const script = document.createElement("script");
     script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
     script.onload = () => {
-      if (!window.Paddle) return;
-      window.Paddle.Initialize({
+      if (!(window as any).Paddle) return;
+      (window as any).Paddle.Initialize({
         token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN!,
       });
       setPaddleReady(true);
@@ -96,8 +96,8 @@ export default function PricingPage() {
   }, []);
 
   const handleBuy = (pkg: typeof PACKAGES[0]) => {
-    if (!isSignedIn || !paddleReady || !window.Paddle) return;
-    window.Paddle.Checkout.open({
+    if (!isSignedIn || !paddleReady || !(window as any).Paddle) return;
+    (window as any).Paddle.Checkout.open({
       items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
       customData: {
         user_id: user?.id ?? "",
