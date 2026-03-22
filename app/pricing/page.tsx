@@ -1,16 +1,6 @@
 "use client";
 import { useUser, SignInButton } from "@clerk/nextjs";
-import Link from "next/link";
 import { useEffect, useState } from "react";
-
-declare global {
-  interface Window {
-    Paddle?: {
-      Setup: (opts: { seller: number }) => void;
-      Checkout: { open: (opts: { items: { priceId: string; quantity: number }[]; customData: Record<string, string> }) => void };
-    };
-  }
-}
 
 const PACKAGES = [
   {
@@ -92,18 +82,21 @@ export default function PricingPage() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    // Paddle v2 (Billing) initialization
     const script = document.createElement("script");
     script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
     script.onload = () => {
-      window.Paddle?.Setup({ seller: Number(process.env.NEXT_PUBLIC_PADDLE_SELLER_ID) });
+      if (!window.Paddle) return;
+      window.Paddle.Initialize({
+        token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN!,
+      });
       setPaddleReady(true);
     };
     document.head.appendChild(script);
   }, []);
 
   const handleBuy = (pkg: typeof PACKAGES[0]) => {
-    if (!isSignedIn) return;
-    if (!paddleReady || !window.Paddle) return;
+    if (!isSignedIn || !paddleReady || !window.Paddle) return;
     window.Paddle.Checkout.open({
       items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
       customData: {
