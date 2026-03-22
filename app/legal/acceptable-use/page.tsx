@@ -2,13 +2,13 @@ const S = ({ children }: { children: React.ReactNode }) => (
   <section style={{ marginBottom: "2.5rem" }}>{children}</section>
 );
 const H2 = ({ children }: { children: React.ReactNode }) => (
-  <h2 style={{ fontSize: 20, fontWeight: 600, color: "#fff", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
+  <h2 style={{ fontSize: 20, fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
 );
 const P = ({ children }: { children: React.ReactNode }) => (
-  <p style={{ color: "#bbb", marginBottom: "0.75rem" }}>{children}</p>
+  <p style={{ color: "var(--clr-text-2)", marginBottom: "0.75rem" }}>{children}</p>
 );
 const UL = ({ children }: { children: React.ReactNode }) => (
-  <ul style={{ color: "#bbb", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
+  <ul style={{ color: "var(--clr-text-2)", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
 );
 const LI = ({ children }: { children: React.ReactNode }) => (
   <li style={{ marginBottom: "0.35rem" }}>{children}</li>
@@ -38,13 +38,13 @@ export default function AcceptableUsePage() {
         <H2>2. Prohibited Activities</H2>
         <P>You must not use Unbuilt to:</P>
         <UL>
-          <LI><strong style={{ color: "#ddd" }}>Scrape or harvest data</strong> — Use automated tools, bots, crawlers, or scripts to extract data from the service at scale</LI>
-          <LI><strong style={{ color: "#ddd" }}>Overload the service</strong> — Send excessive requests intended to degrade performance or availability for other users</LI>
-          <LI><strong style={{ color: "#ddd" }}>Circumvent access controls</strong> — Bypass rate limits, authentication, or any security measures</LI>
-          <LI><strong style={{ color: "#ddd" }}>Reverse engineer</strong> — Attempt to decompile, disassemble, or extract the source code or underlying algorithms</LI>
-          <LI><strong style={{ color: "#ddd" }}>Resell or redistribute</strong> — Package and resell analysis results as a competing data product or service</LI>
-          <LI><strong style={{ color: "#ddd" }}>Generate harmful content</strong> — Use the service to produce content that is illegal, defamatory, or violates third-party rights</LI>
-          <LI><strong style={{ color: "#ddd" }}>Misrepresent AI output</strong> — Present AI-generated analysis as human-written professional advice (financial, legal, medical)</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Scrape or harvest data</strong> — Use automated tools, bots, crawlers, or scripts to extract data from the service at scale</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Overload the service</strong> — Send excessive requests intended to degrade performance or availability for other users</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Circumvent access controls</strong> — Bypass rate limits, authentication, or any security measures</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Reverse engineer</strong> — Attempt to decompile, disassemble, or extract the source code or underlying algorithms</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Resell or redistribute</strong> — Package and resell analysis results as a competing data product or service</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Generate harmful content</strong> — Use the service to produce content that is illegal, defamatory, or violates third-party rights</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Misrepresent AI output</strong> — Present AI-generated analysis as human-written professional advice (financial, legal, medical)</LI>
         </UL>
       </S>
 
@@ -59,7 +59,7 @@ export default function AcceptableUsePage() {
         <H2>4. Account Responsibility</H2>
         <P>
           You are responsible for all activity under your account. Do not share your credentials with unauthorized parties. If you suspect unauthorized access, notify us immediately at{" "}
-          <a href="mailto:builder@unbuilt.me" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>.
+          <a href="mailto:builder@unbuilt.me" style={{ color: "var(--clr-text-3)", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>.
         </P>
       </S>
 
@@ -67,7 +67,7 @@ export default function AcceptableUsePage() {
         <H2>5. Reporting Violations</H2>
         <P>
           If you become aware of any misuse of the service, please report it to{" "}
-          <a href="mailto:builder@unbuilt.me" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>.
+          <a href="mailto:builder@unbuilt.me" style={{ color: "var(--clr-text-3)", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>.
           We investigate all reports and take appropriate action.
         </P>
       </S>
@@ -83,7 +83,7 @@ export default function AcceptableUsePage() {
         <H2>7. Contact</H2>
         <P>
           Questions about this policy? Contact us at{" "}
-          <a href="mailto:builder@unbuilt.me" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>.
+          <a href="mailto:builder@unbuilt.me" style={{ color: "var(--clr-text-3)", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>.
         </P>
       </S>
     </>
