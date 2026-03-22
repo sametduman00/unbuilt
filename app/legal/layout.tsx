@@ -21,8 +21,8 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#080808",
-      color: "#e5e5e5",
+      background: "var(--clr-bg)",
+      color: "var(--clr-text)",
       fontFamily: "system-ui, -apple-system, sans-serif",
     }}>
       <div style={{
@@ -36,7 +36,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
-            color: "#888",
+            color: "var(--clr-text-3)",
             textDecoration: "none",
             fontSize: 14,
             marginBottom: "2rem",
@@ -54,14 +54,14 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
         <h1 style={{
           fontSize: 32,
           fontWeight: 700,
-          color: "#fff",
+          color: "var(--clr-text)",
           marginBottom: "0.5rem",
           letterSpacing: "-0.02em",
         }}>
           {title}
         </h1>
 
-        <p style={{ color: "#666", fontSize: 14, marginBottom: "2.5rem" }}>
+        <p style={{ color: "var(--clr-muted)", fontSize: 14, marginBottom: "2.5rem" }}>
           Last updated: March 14, 2026
         </p>
 
@@ -72,12 +72,12 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
         <div style={{
           marginTop: "4rem",
           paddingTop: "2rem",
-          borderTop: "1px solid #1a1a1a",
+          borderTop: "1px solid var(--clr-border)",
           display: "flex",
           flexWrap: "wrap",
           gap: "0.75rem 1.5rem",
           fontSize: 13,
-          color: "#555",
+          color: "var(--clr-muted)",
         }}>
           {Object.entries(TITLES).map(([path, label]) => (
             <Link
