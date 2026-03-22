@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -11,7 +10,7 @@ const TITLES: Record<string, string> = {
   "/legal/ai-transparency": "AI Transparency",
   "/legal/do-not-sell": "Do Not Sell My Info",
   "/legal/disclaimer": "Disclaimer",
-    "/legal/refund-policy": "Refund Policy",
+  "/legal/refund-policy": "Refund Policy",
 };
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
@@ -28,7 +27,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
       <div style={{
         maxWidth: 720,
         margin: "0 auto",
-        padding: "3rem 1.5rem 6rem",
+        padding: "6rem 1.5rem 6rem", // 6rem top = 60px header + spacing
       }}>
         <Link
           href="/"
@@ -42,8 +41,8 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
             marginBottom: "2rem",
             transition: "color 0.15s",
           }}
-          onMouseEnter={e => (e.currentTarget.style.color = "#fff")}
-          onMouseLeave={e => (e.currentTarget.style.color = "#888")}
+          onMouseEnter={e => (e.currentTarget.style.color = "var(--clr-text)")}
+          onMouseLeave={e => (e.currentTarget.style.color = "var(--clr-text-3)")}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -61,11 +60,11 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
           {title}
         </h1>
 
-        <p style={{ color: "var(--clr-muted)", fontSize: 14, marginBottom: "2.5rem" }}>
+        <p style={{ color: "var(--clr-text-3)", fontSize: 14, marginBottom: "2.5rem" }}>
           Last updated: March 14, 2026
         </p>
 
-        <div style={{ lineHeight: 1.7, fontSize: 15 }}>
+        <div style={{ lineHeight: 1.7, fontSize: 15, color: "var(--clr-text)" }}>
           {children}
         </div>
 
@@ -77,19 +76,19 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
           flexWrap: "wrap",
           gap: "0.75rem 1.5rem",
           fontSize: 13,
-          color: "var(--clr-muted)",
+          color: "var(--clr-text-3)",
         }}>
           {Object.entries(TITLES).map(([path, label]) => (
             <Link
               key={path}
               href={path}
               style={{
-                color: pathname === path ? "#999" : "#555",
+                color: pathname === path ? "var(--clr-text)" : "var(--clr-text-3)",
                 textDecoration: "none",
                 transition: "color 0.15s",
               }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#aaa")}
-              onMouseLeave={e => (e.currentTarget.style.color = pathname === path ? "#999" : "#555")}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--clr-text)")}
+              onMouseLeave={e => (e.currentTarget.style.color = pathname === path ? "var(--clr-text)" : "var(--clr-text-3)")}
             >
               {label}
             </Link>
