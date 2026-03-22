@@ -1,5 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/app/lib/supabase";
+fix: reduce batch size to 8 to prevent sonnet timeoutimport { getSupabase } from "@/app/lib/supabase";
 
 export async function GET(req: NextRequest) {
   const secret = req.headers.get("x-cron-secret");
@@ -29,7 +28,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, analyzed: 0, remaining: 0, done: true });
   }
 
-  const batch = unanalyzed.slice(0, 20);
+  const batch = unanalyzed.slice(0, 8);
   const analyses = await analyzeBatch(batch);
 
   if (analyses.length === 0) {
