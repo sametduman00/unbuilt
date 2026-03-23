@@ -337,14 +337,17 @@ export async function POST(req: NextRequest) {
 
       try {
         // Fetch all live data sources in parallel
-        const [youtubeContext, appStoreContext, gplayContext, serperContext] = await Promise.all([
+        const [youtubeContext, appStoreContext, gplayContext, serperContext, redditContext, twitterContext] = await Promise.all([
           fetchYouTubeContext(idea),
           fetchAppStoreContext(idea),
           fetchGPlayContext(idea),
           fetchSerperContext(idea),
+          fetchRedditContext(idea),
+          fetchTwitterContext(idea),
         ]);
 
         const combinedAppContext = [appStoreContext, gplayContext].filter(Boolean).join("");
+        const socialSignals = [redditContext, twitterContext].filter(Boolean).join("");
 
         let full = "";
         const anthropicStream = client.messages.stream({
@@ -352,7 +355,7 @@ export async function POST(req: NextRequest) {
           max_tokens: 16000,
           thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM_PROMPT,
-          messages: [{ role: "user", content: USER_PROMPT(idea, youtubeContext, combinedAppContext, serperContext + combinedSocialContext) }],
+          messages: [{ role: "user", content: USER_PROMPT(idea, youtubeContext, combinedAppContext, serperContext + socialSignals) }],
         });
 
         for await (const event of anthropicStream) {
