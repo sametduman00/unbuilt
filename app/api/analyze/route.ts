@@ -207,7 +207,7 @@ async function fetchRedditContext(idea: string): Promise<string> {
   const apiKey = process.env.SCRAPECREATORS_API_KEY;
   if (!apiKey) return "";
   try {
-    const query = encodeURIComponent(idea + ' problem OR alternative OR frustrating OR complaint');
+    const query = encodeURIComponent(idea + ' (problem OR frustrating OR complaint OR "need a" OR "looking for" OR "anyone know" OR "best tool" OR "I wish")');
     const res = await fetch(
       `https://api.scrapecreators.com/v1/reddit/search?query=${query}&sort=relevance&time=month&limit=8`,
       { headers: { "x-api-key": apiKey }, signal: AbortSignal.timeout(6000) }
@@ -221,7 +221,7 @@ async function fetchRedditContext(idea: string): Promise<string> {
       return `- r/${p.subreddit} (${p.score ?? 0} upvotes): "${p.title}" — ${snippet}`;
     });
     console.log("[Analyze] Reddit context:", lines.length, "posts for:", idea);
-    return `\nHere are REAL Reddit discussions about this topic right now (use these as primary pain point sources — real user voices):\n${lines.join("\n")}\n`;
+    return `\nHere are REAL Reddit discussions about this topic right now. Use these as primary signals — look for BOTH pain points (frustrations, complaints) AND demand signals (what people want, are looking for, or need). Real user voices:\n${lines.join("\n")}\n`;
   } catch (err) {
     console.log("[Analyze] Reddit context fetch failed:", err);
     return "";
@@ -233,7 +233,7 @@ async function fetchTwitterContext(idea: string): Promise<string> {
   const apiKey = process.env.SCRAPECREATORS_API_KEY;
   if (!apiKey) return "";
   try {
-    const query = encodeURIComponent(idea + " -is:retweet lang:en");
+    const query = encodeURIComponent(idea + ' (problem OR need OR want OR alternative OR recommend OR "looking for") -is:retweet lang:en');
     const res = await fetch(
       `https://api.scrapecreators.com/v1/twitter/search?query=${query}&limit=8`,
       { headers: { "x-api-key": apiKey }, signal: AbortSignal.timeout(6000) }
