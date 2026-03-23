@@ -22,8 +22,20 @@ export default function GlobalHeader() {
       background: "var(--clr-surface)",
       borderBottom: "1px solid var(--clr-border)",
     }}>
-      {/* Sidebar width spacer — logo lives in the sidebar */}
-      <div style={{ width: 220, minWidth: 220, flexShrink: 0, borderRight: "1px solid var(--clr-border)", height: "100%" }} />
+      {/* Logo — top-left, inside the 220px sidebar zone */}
+      <div style={{ width: 220, minWidth: 220, flexShrink: 0, display: "flex", alignItems: "center", padding: "0 16px" }}>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+          <svg width="22" height="22" viewBox="0 0 19 19" fill="none">
+            <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2.2" strokeLinecap="round" />
+          </svg>
+          <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.025em", fontFamily: "Figtree, sans-serif" }}>
+            Unbuilt
+          </span>
+        </Link>
+      </div>
+
+      {/* Divider matching sidebar border */}
+      <div style={{ width: 1, height: "100%", background: "var(--clr-border)", flexShrink: 0 }} />
 
       {/* Nav links — start right after sidebar border */}
       <nav style={{ display: "flex", alignItems: "center", gap: 24, height: "100%", padding: "0 24px" }}>
@@ -57,10 +69,7 @@ export default function GlobalHeader() {
                 strokeWidth="2.5">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
               </svg>
-              <span style={{
-                fontSize: "0.8rem", fontWeight: 600,
-                color: credits === 0 ? "rgb(220,38,38)" : "var(--clr-text-2)",
-              }}>
+              <span style={{ fontSize: "0.8rem", fontWeight: 600, color: credits === 0 ? "rgb(220,38,38)" : "var(--clr-text-2)" }}>
                 {credits === 0 ? "Buy credits" : `${credits} credit${credits === 1 ? "" : "s"}`}
               </span>
             </div>
