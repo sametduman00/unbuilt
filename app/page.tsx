@@ -966,6 +966,119 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
             </div>
           </div>
         </div>
+
+      {/* ── YOUR ONE-LINER ─────────────────────────────────────── */}
+      {data.oneLiner && (
+        <div style={{
+          background: "linear-gradient(135deg, rgba(var(--clr-accent-rgb),0.08), rgba(var(--clr-accent-rgb),0.03))",
+          border: "1px solid rgba(var(--clr-accent-rgb),0.25)",
+          borderRadius: 14, padding: "1.25rem 1.5rem",
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16,
+        }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+            <span style={{ fontSize: "1.25rem" }}>💡</span>
+            <div>
+              <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--clr-accent)", marginBottom: 4 }}>Your One-Liner</div>
+              <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.45, fontStyle: "italic" }}>
+                &ldquo;{data.oneLiner}&rdquo;
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => { navigator.clipboard.writeText(data.oneLiner!); }}
+            style={{
+              flexShrink: 0, padding: "0.4rem 0.9rem", borderRadius: 8,
+              background: "rgba(var(--clr-accent-rgb),0.12)",
+              border: "1px solid rgba(var(--clr-accent-rgb),0.3)",
+              color: "var(--clr-accent)", fontSize: "0.7rem", fontWeight: 600, cursor: "pointer",
+            }}
+          >Copy</button>
+        </div>
+      )}
+
+      {/* ── MARKET SIZE ──────────────────────────────────────────── */}
+      {data.marketSize && (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "0.875rem" }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(var(--clr-accent-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>📊</div>
+            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Market Size</span>
+            {data.marketSize.growthRate && (
+              <span style={{ fontSize: "0.65rem", background: "rgba(34,197,94,0.12)", color: "rgb(34,197,94)", borderRadius: 99, padding: "0.15rem 0.6rem", fontWeight: 600 }}>↑ {data.marketSize.growthRate}</span>
+            )}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
+            {(["tam", "sam", "som"] as const).map((key) => {
+              const meta = {
+                tam: { label: "TAM", sub: "Total Addressable", bg: "rgba(var(--clr-accent-rgb),0.12)" },
+                sam: { label: "SAM", sub: "Serviceable",       bg: "rgba(var(--clr-accent-rgb),0.07)" },
+                som: { label: "SOM", sub: "Obtainable",        bg: "rgba(var(--clr-accent-rgb),0.04)" },
+              }[key];
+              return (
+                <div key={key} style={{ background: meta.bg, border: "1px solid var(--clr-border)", borderRadius: 12, padding: "0.875rem 1rem" }}>
+                  <div style={{ fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--clr-accent)", marginBottom: 4 }}>{meta.label} — {meta.sub}</div>
+                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.3 }}>{data.marketSize![key]}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── VALIDATION CHECKLIST ─────────────────────────────────── */}
+      {data.validationChecklist && data.validationChecklist.length > 0 && (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "0.875rem" }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(234,179,8,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>✅</div>
+            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Validate Before Building</span>
+            <span style={{ fontSize: "0.65rem", color: "var(--clr-text-3)" }}>{data.validationChecklist.length} assumptions to test</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+            {data.validationChecklist.map((item, i) => {
+              const riskColor = item.risk === "high" ? "rgba(239,68,68,0.9)" : item.risk === "medium" ? "rgba(234,179,8,0.9)" : "rgba(34,197,94,0.9)";
+              const riskBg   = item.risk === "high" ? "rgba(239,68,68,0.08)" : item.risk === "medium" ? "rgba(234,179,8,0.08)" : "rgba(34,197,94,0.08)";
+              return (
+                <div key={i} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "0.875rem 1rem", display: "flex", gap: 12 }}>
+                  <div style={{ flexShrink: 0, width: 4, borderRadius: 99, background: riskColor, alignSelf: "stretch" }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text)" }}>{i + 1}. {item.assumption}</span>
+                      <span style={{ fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", background: riskBg, color: riskColor, borderRadius: 99, padding: "0.1rem 0.5rem", whiteSpace: "nowrap" }}>{item.risk} risk</span>
+                    </div>
+                    <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", lineHeight: 1.5 }}>💡 Test: {item.howToTest}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── SYNTHESIS ────────────────────────────────────────────── */}
+      {data.synthesis && (
+        <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, overflow: "hidden" }}>
+          <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid var(--clr-border)", display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(139,92,246,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>🎯</div>
+            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Synthesis</span>
+          </div>
+          <div style={{ padding: "1.25rem" }}>
+            <p style={{ fontSize: "0.78rem", color: "var(--clr-text-2)", lineHeight: 1.65, marginBottom: "1.25rem" }}>{data.synthesis.oneParagraph}</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+              <div style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 10, padding: "0.875rem" }}>
+                <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgb(34,197,94)", marginBottom: 8 }}>✓ Working For You</div>
+                {data.synthesis.workingForYou.map((item, i) => (
+                  <div key={i} style={{ fontSize: "0.7rem", color: "var(--clr-text-2)", lineHeight: 1.5, marginBottom: 3 }}>• {item}</div>
+                ))}
+              </div>
+              <div style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: "0.875rem" }}>
+                <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgb(239,68,68)", marginBottom: 8 }}>⚠ Watch Out For</div>
+                {data.synthesis.watchOutFor.map((item, i) => (
+                  <div key={i} style={{ fontSize: "0.7rem", color: "var(--clr-text-2)", lineHeight: 1.5, marginBottom: 3 }}>• {item}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       </div>}
     </div>
   );
@@ -1847,6 +1960,22 @@ interface GapTargetCustomer {
   currentTools: string[];
   willingnessToPay: string;
 }
+interface GapValidationItem {
+  assumption: string;
+  risk: "high" | "medium" | "low";
+  howToTest: string;
+}
+interface GapMarketSize {
+  tam: string;
+  sam: string;
+  som: string;
+  growthRate: string;
+}
+interface GapSynthesis {
+  oneParagraph: string;
+  workingForYou: string[];
+  watchOutFor: string[];
+}
 interface GapAnalysisData {
   appStoreQuery?: string;
   marketScore: number;
@@ -1858,6 +1987,10 @@ interface GapAnalysisData {
   swot: GapSWOT;
   opportunity: GapOpportunity;
   targetCustomer: GapTargetCustomer;
+  oneLiner?: string;
+  marketSize?: GapMarketSize;
+  validationChecklist?: GapValidationItem[];
+  synthesis?: GapSynthesis;
 }
 
 function parseGapAnalysisJSON(raw: string): GapAnalysisData | null {
