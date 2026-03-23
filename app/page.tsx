@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -2992,7 +2992,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
 export default function Home() {
   const { isSignedIn } = useAuth();
   const { openSignIn } = useClerk();
-  const [selectedTool, setSelectedTool] = useState<ToolId | null>("gap-analysis");
+  const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
   const [idea, setIdea] = useState("");
   const [budget, setBudget] = useState<Budget>("bootstrap");
   const [techLevel, setTechLevel] = useState<TechLevel>("nocode");
@@ -3001,6 +3001,33 @@ export default function Home() {
   const [error, setError] = useState("");
   const [outOfCredits, setOutOfCredits] = useState(false);
   const [hasResults, setHasResults] = useState(false);
+
+  // ── Pulse inline state ────────────────────────────────────────────────────
+  const [pulseTab, setPulseTab] = useState<"ph"|"appstore">("ph");
+  const [pulseSignals, setPulseSignals] = useState<Array<{source:string;sourceLabel:string;emoji:string;title:string;subtitle:string;signal:string;url:string;timestamp:string;movementType?:string;imageUrl?:string;topics?:string[];tagline?:string;externalUrl?:string;claudeGap?:string;}>>([]);
+  const [pulseLoading, setPulseLoading] = useState(false);
+  const [pulseError, setPulseError] = useState<string|null>(null);
+  const [pulseAsDays, setPulseAsDays] = useState<Array<{date:string;isToday:boolean;apps:Array<{app_id:string;app_name:string;developer:string;category:string;price:string;icon_url:string;store_url:string;release_date:string;description:string;rating:number|null;review_count:number;min_os:string;age_rating:string;languages:string[];screenshot_urls:string[];file_size_mb:number|null;claude_what:string|null;claude_different:string|null;claude_missing:string|null;}>;appCount:number;generatedAt:string;}>>([]);
+  const [pulseAsLoading, setPulseAsLoading] = useState(false);
+  const [pulsePhSearch, setPulsePhSearch] = useState("");
+  const [pulsePhTopic, setPulsePhTopic] = useState("all");
+  const [pulseAsSearch, setPulseAsSearch] = useState("");
+  const [pulseAsCat, setPulseAsCat] = useState("all");
+  const PULSE_TOPIC_COLORS = ["#6366f1","#06b6d4","#f59e0b","#ec4899","#22c55e","#8b5cf6","#f97316","#14b8a6"];
+  const PULSE_MOVE_COLORS: Record<string,string> = { rank_jump:"#22c55e",new_entry:"#3b82f6",review_spike:"#f59e0b",top_mover:"#8b5cf6",weekly_mover:"#06b6d4",monthly_mover:"#ec4899" };
+  const pulseRelTime = (ts:string) => { const m=Math.floor((Date.now()-new Date(ts).getTime())/60000); if(m<1)return"just now"; if(m<60)return m+"m ago"; const h=Math.floor(m/60); if(h<24)return h+"h ago"; return Math.floor(h/24)+"d ago"; };
+  const pulseParseGap = (gap?:string) => { if(!gap)return null; const p=gap.split("✦").map(s=>s.trim()); if(p.length<3)return null; return{what:p[0].replace(/^What:\s*/i,""),different:p[1].replace(/^Different:\s*/i,""),missing:p[2].replace(/^Missing:\s*/i,"")}; };
+  const pulseFmtDate = (d:string) => new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+  const fetchPulseSignals = useCallback(async()=>{ if(pulseSignals.length>0)return; setPulseLoading(true); try{const res=await fetch("/api/pulse");const data=await res.json();if(!res.ok)throw new Error(data.error||"Failed");setPulseSignals(data.signals??[]);setPulseError(null);}catch(e){setPulseError(e instanceof Error?e.message:"Error");}finally{setPulseLoading(false);} },[pulseSignals.length]);
+  const fetchPulseAS = useCallback(async()=>{ if(pulseAsDays.length>0)return; setPulseAsLoading(true); try{const r=await fetch("/api/pulse/appstore");const d=await r.json();setPulseAsDays(d.days??[]);}catch{}finally{setPulseAsLoading(false);} },[pulseAsDays.length]);
+  useEffect(()=>{ if(selectedTool===null)fetchPulseSignals(); },[selectedTool,fetchPulseSignals]);
+  useEffect(()=>{ if(selectedTool===null&&pulseTab==="appstore")fetchPulseAS(); },[selectedTool,pulseTab,fetchPulseAS]);
+  const phSignals = useMemo(()=>pulseSignals.filter(s=>s.source==="producthunt"),[pulseSignals]);
+  const phTopics = useMemo(()=>Array.from(new Set(phSignals.flatMap(s=>s.topics||[]))).sort(),[phSignals]);
+  const phFiltered = useMemo(()=>{ let list=pulsePhTopic==="all"?phSignals:phSignals.filter(s=>s.topics?.includes(pulsePhTopic)); if(pulsePhSearch){const q=pulsePhSearch.toLowerCase();list=list.filter(s=>s.title?.toLowerCase().includes(q)||s.tagline?.toLowerCase().includes(q));} return list; },[phSignals,pulsePhTopic,pulsePhSearch]);
+  const allAsApps = useMemo(()=>pulseAsDays.flatMap(d=>d.apps),[pulseAsDays]);
+  const asCategories = useMemo(()=>Array.from(new Set(allAsApps.map(a=>a.category).filter(Boolean))).sort(),[allAsApps]);
+  const asFiltered = useMemo(()=>{ let list=pulseAsCat==="all"?allAsApps:allAsApps.filter(a=>a.category===pulseAsCat); if(pulseAsSearch){const q=pulseAsSearch.toLowerCase();list=list.filter(a=>a.app_name?.toLowerCase().includes(q)||a.developer?.toLowerCase().includes(q));} return list.sort((a,b)=>new Date(b.release_date||0).getTime()-new Date(a.release_date||0).getTime()); },[allAsApps,pulseAsCat,pulseAsSearch]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [trendFeedData, setTrendFeedData] = useState<any>(null);
   const [githubRepos, setGithubRepos] = useState<GithubRepo[]>([]);
@@ -3077,7 +3104,7 @@ export default function Home() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSelectTool = (toolId: ToolId) => {
+  const handleSelectTool = (toolId: ToolId | null) => {
     // Reset all result state when switching tools
     scanTimersRef.current.forEach(clearTimeout);
     setScanStep(-1);
@@ -3521,29 +3548,25 @@ export default function Home() {
 
         {/* Sidebar */}
         <aside style={{ width: 220, minWidth: 220, background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)", display: "flex", flexDirection: "column", position: "fixed", top: 52, bottom: 0, left: 0, zIndex: 50 }}>
-          {/* Logo inside sidebar */}
-          <div style={{ padding: "14px 16px 10px", borderBottom: "1px solid var(--clr-border)" }}>
-            <a href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
-              <svg width="22" height="22" viewBox="0 0 19 19" fill="none">
-                <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2.2" strokeLinecap="round" />
-              </svg>
-              <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.025em" }}>Unbuilt</span>
-            </a>
-          </div>
 
-          {/* Nav items */}
-          <div style={{ padding: "10px 10px 4px", flex: 1 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.07em", color: "var(--clr-text-4)", textTransform: "uppercase", padding: "6px 8px 4px" }}>Explore</div>
-            <a href="/pulse" style={{ display: "flex", alignItems: "center", gap: 9, padding: "8px 10px", borderRadius: 8, color: "var(--clr-text)", fontSize: 14, fontWeight: 500, textDecoration: "none", transition: "background 0.1s" }}
-              onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.05)"}
-              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+          {/* Nav items — logo is in header, nav starts right at top */}
+          <div style={{ padding: "8px 10px 4px", flex: 1 }}>
+            {/* Pulse — default / home */}
+            <div onClick={() => { handleSelectTool(null as unknown as ToolId); }}
+              style={{ display: "flex", alignItems: "center", gap: 9, padding: "8px 10px", borderRadius: 8, cursor: "pointer", fontSize: 14, fontWeight: 500, position: "relative", transition: "background 0.1s",
+                color: "var(--clr-text)",
+                background: selectedTool === null ? "rgba(0,0,0,0.07)" : "transparent",
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(0,0,0,0.05)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = selectedTool === null ? "rgba(0,0,0,0.07)" : "transparent"; }}
             >
+              {selectedTool === null && <span style={{ position: "absolute", left: -10, top: "50%", transform: "translateY(-50%)", width: 3, height: 18, background: "#a78bfa", borderRadius: "0 3px 3px 0" }} />}
               <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#a78bfa", flexShrink: 0, display: "inline-block" }} />
               Pulse
               <span style={{ marginLeft: "auto", fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(34,197,94,0.12)", color: "#16a34a", fontWeight: 700 }}>FREE</span>
-            </a>
+            </div>
 
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.07em", color: "var(--clr-text-4)", textTransform: "uppercase", padding: "10px 8px 4px" }}>Analyze</div>
+            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.07em", color: "var(--clr-text-4)", textTransform: "uppercase", padding: "12px 8px 4px" }}>Analyze</div>
 
             <div onClick={() => { if (!isSignedIn) { openSignIn(); return; } handleSelectTool("gap-analysis"); }}
               style={{ display: "flex", alignItems: "center", gap: 9, padding: "8px 10px", borderRadius: 8, cursor: "pointer", fontSize: 14, fontWeight: 500, position: "relative", transition: "background 0.1s",
@@ -3751,42 +3774,143 @@ export default function Home() {
           })() : (
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
 
-              {/* ── Tool welcome panel (when no tool selected) ── */}
+              {/* ── Pulse Panel (default view) ── */}
               {!selectedTool && !hasResults && (
-                <div style={{
-                  flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
-                  justifyContent: "center", textAlign: "center", padding: "3rem 2rem",
-                }}>
-                  <div style={{ marginBottom: "0.75rem" }}>
-                    <svg width="32" height="32" viewBox="0 0 19 19" fill="none">
-                      <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2.2" strokeLinecap="round" />
-                    </svg>
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                  {/* Tab bar */}
+                  <div style={{ display: "flex", borderBottom: "1px solid var(--clr-border)", padding: "0 1.5rem", flexShrink: 0, background: "var(--clr-bg)" }}>
+                    {([{id:"ph" as const,label:"Product Hunt",color:"#DA552F"},{id:"appstore" as const,label:"App Store",color:"#007AFF"}]).map(t=>(
+                      <button key={t.id} onClick={()=>setPulseTab(t.id)} style={{ background:"none", border:"none", borderBottom: pulseTab===t.id?"2px solid "+t.color:"2px solid transparent", padding:"12px 16px", cursor:"pointer", fontSize:"0.875rem", fontWeight: pulseTab===t.id?600:400, color: pulseTab===t.id?t.color:"var(--clr-text-3)", fontFamily:"inherit", marginBottom:-1, transition:"color 0.15s,border-color 0.15s" }}>
+                        {t.label}
+                      </button>
+                    ))}
                   </div>
-                  <h2 style={{ fontSize: "1.5rem", fontWeight: 600, color: "var(--clr-text)", letterSpacing: "-0.025em", marginBottom: "0.5rem" }}>
-                    Pick a tool to get started
-                  </h2>
-                  <p style={{ fontSize: "0.9rem", color: "var(--clr-text-3)", lineHeight: 1.7, maxWidth: 380, margin: "0 auto 1.5rem" }}>
-                    Use <strong style={{ color: "var(--clr-text-2)", fontWeight: 600 }}>Gap Analysis</strong> to find market gaps before you build, or <strong style={{ color: "var(--clr-text-2)", fontWeight: 600 }}>Stack Advisor</strong> to get the exact tools for your idea.
-                  </p>
-                  <div style={{ display: "flex", gap: 10 }}>
-                    <button
-                      onClick={() => { if (!isSignedIn) { openSignIn(); return; } handleSelectTool("gap-analysis"); }}
-                      style={{ padding: "8px 20px", borderRadius: 8, background: "#7c6fff", color: "#fff", border: "none", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
-                    >
-                      Gap Analysis
-                    </button>
-                    <button
-                      onClick={() => { if (!isSignedIn) { openSignIn(); return; } handleSelectTool("stack-advisor"); }}
-                      style={{ padding: "8px 20px", borderRadius: 8, background: "transparent", color: "var(--clr-text-2)", border: "1px solid var(--clr-border-2)", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
-                    >
-                      Stack Advisor
-                    </button>
+
+                  {/* Feed */}
+                  <div style={{ flex:1, overflowY:"auto", padding:"1.25rem 1.5rem" }}>
+
+                    {/* ── PRODUCT HUNT ── */}
+                    {pulseTab==="ph" && (
+                      <div>
+                        {/* Filters */}
+                        <div style={{ display:"flex", gap:8, marginBottom:"1.25rem", flexWrap:"wrap" }}>
+                          <input value={pulsePhSearch} onChange={e=>setPulsePhSearch(e.target.value)} placeholder="Search..." style={{ flex:1, minWidth:160, padding:"7px 12px", border:"1px solid var(--clr-border)", borderRadius:8, fontSize:"0.875rem", background:"var(--clr-surface)", color:"var(--clr-text)", outline:"none" }}/>
+                          {phTopics.length>0&&(
+                            <select value={pulsePhTopic} onChange={e=>setPulsePhTopic(e.target.value)} style={{ padding:"7px 12px", border:"1px solid var(--clr-border)", borderRadius:8, fontSize:"0.875rem", background:"var(--clr-surface)", color:"var(--clr-text)", cursor:"pointer", outline:"none" }}>
+                              <option value="all">All Topics</option>
+                              {phTopics.map(t=><option key={t} value={t}>{t}</option>)}
+                            </select>
+                          )}
+                        </div>
+
+                        {pulseLoading && (
+                          <div style={{ display:"flex",flexDirection:"column",gap:8 }}>
+                            {[1,2,3,4].map(i=>(
+                              <div key={i} className="shimmer" style={{ height:80, borderRadius:10 }}/>
+                            ))}
+                          </div>
+                        )}
+                        {pulseError && !pulseLoading && (
+                          <div style={{ background:"rgba(239,68,68,0.08)", border:"1px solid rgba(239,68,68,0.2)", borderRadius:10, padding:"1rem", color:"#ef4444", fontSize:"0.875rem" }}>{pulseError}</div>
+                        )}
+                        {!pulseLoading && phFiltered.length===0 && pulseSignals.length>0 && (
+                          <div style={{ textAlign:"center", padding:"3rem 0", color:"var(--clr-text-3)" }}>No results. <button onClick={()=>{setPulsePhSearch("");setPulsePhTopic("all");}} style={{ color:"#DA552F", background:"none", border:"none", cursor:"pointer" }}>Clear</button></div>
+                        )}
+                        {!pulseLoading && phFiltered.length>0 && (
+                          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                            {phFiltered.map((s,i)=>{
+                              const mc=PULSE_MOVE_COLORS[s.movementType??""];
+                              const gap=pulseParseGap(s.claudeGap);
+                              return (
+                                <a key={s.title+i} href={s.externalUrl||s.url} target="_blank" rel="noopener noreferrer"
+                                  style={{ display:"flex", alignItems:"flex-start", gap:"1rem", padding:"1.125rem", background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderLeft:mc?"3px solid "+mc:"1px solid var(--clr-border)", borderRadius:12, textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
+                                  onMouseEnter={e=>e.currentTarget.style.background="rgba(0,0,0,0.02)"}
+                                  onMouseLeave={e=>e.currentTarget.style.background="var(--clr-surface)"}
+                                >
+                                  {s.imageUrl
+                                    ? <img src={s.imageUrl} alt="" width={56} height={56} style={{ borderRadius:12, flexShrink:0, objectFit:"cover", border:"1px solid var(--clr-border)" }}/>
+                                    : <div style={{ width:56, height:56, borderRadius:12, background:"var(--clr-border)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.5rem" }}>{s.emoji}</div>
+                                  }
+                                  <div style={{ flex:1, minWidth:0 }}>
+                                    <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:3, flexWrap:"wrap" }}>
+                                      <span style={{ fontSize:"0.9375rem", fontWeight:600, color:"var(--clr-text)", letterSpacing:"-0.015em" }}>{s.title}</span>
+                                      {mc&&s.movementType&&<span style={{ fontSize:"0.5625rem", fontWeight:700, padding:"0.1rem 0.4rem", borderRadius:999, background:mc+"20", color:mc, letterSpacing:"0.04em", textTransform:"uppercase" }}>{s.movementType==="rank_jump"?"RANK ↑":s.movementType==="new_entry"?"NEW":s.movementType==="review_spike"?"REVIEWS↑":"TOP"}</span>}
+                                      <span style={{ fontSize:"0.6875rem", color:"var(--clr-text-4)", marginLeft:"auto" }}>{pulseRelTime(s.timestamp)}</span>
+                                    </div>
+                                    {s.tagline&&<p style={{ fontSize:"0.8125rem", color:"var(--clr-text-3)", margin:"0 0 6px", lineHeight:1.45 }}>{s.tagline}</p>}
+                                    {s.topics&&s.topics.length>0&&(
+                                      <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
+                                        {s.topics.map((t,ti)=><span key={t} style={{ fontSize:"0.5625rem", fontWeight:600, padding:"0.15rem 0.5rem", borderRadius:999, background:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length]+"18", color:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length] }}>{t}</span>)}
+                                      </div>
+                                    )}
+                                    {gap&&(
+                                      <div style={{ marginTop:8, background:"rgba(0,0,0,0.03)", border:"1px solid var(--clr-border)", borderRadius:9, padding:"8px 10px", display:"flex", flexDirection:"column", gap:4 }}>
+                                        {gap.what&&<div style={{ display:"flex", gap:6, alignItems:"flex-start" }}><span style={{ fontSize:"0.5rem", fontWeight:700, color:"#6366f1", background:"rgba(99,102,241,0.12)", padding:"0.1rem 0.4rem", borderRadius:4, flexShrink:0, marginTop:1 }}>WHAT</span><span style={{ fontSize:"0.75rem", color:"var(--clr-text-3)", lineHeight:1.4 }}>{gap.what}</span></div>}
+                                        {gap.missing&&<div style={{ display:"flex", gap:6, alignItems:"flex-start" }}><span style={{ fontSize:"0.5rem", fontWeight:700, color:"#ef4444", background:"rgba(239,68,68,0.1)", padding:"0.1rem 0.4rem", borderRadius:4, flexShrink:0, marginTop:1 }}>MISS</span><span style={{ fontSize:"0.75rem", color:"var(--clr-text-3)", lineHeight:1.4 }}>{gap.missing}</span></div>}
+                                      </div>
+                                    )}
+                                  </div>
+                                </a>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* ── APP STORE ── */}
+                    {pulseTab==="appstore" && (
+                      <div>
+                        <div style={{ display:"flex", gap:8, marginBottom:"1.25rem", flexWrap:"wrap" }}>
+                          <input value={pulseAsSearch} onChange={e=>setPulseAsSearch(e.target.value)} placeholder="Search apps..." style={{ flex:1, minWidth:160, padding:"7px 12px", border:"1px solid var(--clr-border)", borderRadius:8, fontSize:"0.875rem", background:"var(--clr-surface)", color:"var(--clr-text)", outline:"none" }}/>
+                          {asCategories.length>0&&(
+                            <select value={pulseAsCat} onChange={e=>setPulseAsCat(e.target.value)} style={{ padding:"7px 12px", border:"1px solid var(--clr-border)", borderRadius:8, fontSize:"0.875rem", background:"var(--clr-surface)", color:"var(--clr-text)", cursor:"pointer", outline:"none" }}>
+                              <option value="all">All Categories</option>
+                              {asCategories.map(c=><option key={c} value={c}>{c}</option>)}
+                            </select>
+                          )}
+                        </div>
+                        {pulseAsLoading&&<div style={{ display:"flex",flexDirection:"column",gap:8 }}>{[1,2,3].map(i=><div key={i} className="shimmer" style={{ height:80, borderRadius:10 }}/>)}</div>}
+                        {!pulseAsLoading&&pulseAsDays.length===0&&<div style={{ textAlign:"center", padding:"4rem 0", color:"var(--clr-text-3)" }}>No App Store data yet. Check back after 08:00 UTC.</div>}
+                        {!pulseAsLoading&&asFiltered.length>0&&(
+                          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                            {(() => {
+                              const byDate = new Map<string,{day:typeof pulseAsDays[0];apps:typeof allAsApps}>();
+                              for (const day of pulseAsDays) { const da=asFiltered.filter(a=>day.apps.some(da=>da.app_id===a.app_id)); if(da.length>0) byDate.set(day.date,{day,apps:da}); }
+                              return Array.from(byDate.values()).map(({day,apps})=>(
+                                <div key={day.date}>
+                                  <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
+                                    <span style={{ fontSize:"0.875rem", fontWeight:700, color:"var(--clr-text)" }}>{pulseFmtDate(day.date)}</span>
+                                    {day.isToday&&<span style={{ fontSize:"0.5625rem", fontWeight:700, padding:"0.15rem 0.5rem", borderRadius:999, background:"rgba(0,122,255,0.12)", color:"#007AFF" }}>TODAY</span>}
+                                    <span style={{ fontSize:"0.75rem", color:"var(--clr-text-4)" }}>{apps.length} apps</span>
+                                  </div>
+                                  <div style={{ display:"flex", flexDirection:"column", gap:6, marginBottom:16 }}>
+                                    {apps.map(app=>(
+                                      <a key={app.app_id} href={app.store_url} target="_blank" rel="noopener noreferrer"
+                                        style={{ display:"flex", gap:"1rem", padding:"1rem", background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderLeft:day.isToday?"3px solid #007AFF":"1px solid var(--clr-border)", borderRadius:12, textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
+                                        onMouseEnter={e=>e.currentTarget.style.background="rgba(0,0,0,0.02)"}
+                                        onMouseLeave={e=>e.currentTarget.style.background="var(--clr-surface)"}
+                                      >
+                                        {app.icon_url?<img src={app.icon_url} alt="" width={52} height={52} style={{ borderRadius:12, flexShrink:0, objectFit:"cover", border:"1px solid var(--clr-border)" }}/>:<div style={{ width:52, height:52, borderRadius:12, background:"var(--clr-border)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.5rem" }}>📱</div>}
+                                        <div style={{ flex:1, minWidth:0 }}>
+                                          <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:2 }}>
+                                            <span style={{ fontSize:"0.9375rem", fontWeight:600, color:"var(--clr-text)" }}>{app.app_name}</span>
+                                            {app.category&&<span style={{ fontSize:"0.5625rem", fontWeight:700, padding:"0.1rem 0.4rem", borderRadius:999, background:"rgba(99,102,241,0.12)", color:"#6366f1", textTransform:"uppercase", letterSpacing:"0.04em" }}>{app.category}</span>}
+                                          </div>
+                                          <div style={{ fontSize:"0.8125rem", color:"var(--clr-text-3)" }}>{app.developer}</div>
+                                          {app.claude_what&&<div style={{ fontSize:"0.75rem", color:"var(--clr-text-4)", marginTop:4, lineHeight:1.4 }}>{app.claude_what}</div>}
+                                        </div>
+                                      </a>
+                                    ))}
+                                  </div>
+                                </div>
+                              ));
+                            })()}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  {!isSignedIn && (
-                    <p style={{ marginTop: "1rem", fontSize: "0.8rem", color: "var(--clr-text-5)" }}>
-                      <span onClick={() => openSignIn()} style={{ color: "var(--clr-accent)", cursor: "pointer", fontWeight: 500 }}>Sign in</span> to use Gap Analysis and Stack Advisor
-                    </p>
-                  )}
                 </div>
               )}
 
