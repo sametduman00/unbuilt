@@ -67,6 +67,21 @@ Respond with ONLY a JSON code block matching this exact schema:
     "painPoints": ["Pain 1", "Pain 2", "Pain 3"],
     "currentTools": ["Tool they currently use 1", "Tool 2"],
     "willingnessToPay": "What they'd pay and why"
+  },
+  "oneLiner": "The only [category] that [unique differentiator] for [target customer].",
+  "marketSize": {
+    "tam": "$X.XB — everyone who could possibly use this",
+    "sam": "$X.XM — the reachable segment",
+    "som": "$X.XM — realistic first 2 years",
+    "growthRate": "X% CAGR"
+  },
+  "validationChecklist": [
+    { "assumption": "Key assumption being made", "risk": "high", "howToTest": "Specific action to validate in under 1 week" }
+  ],
+  "synthesis": {
+    "oneParagraph": "2-3 sentence honest summary: what works, what the real risk is, what to get right.",
+    "workingForYou": ["Genuine advantage 1", "Genuine advantage 2", "Genuine advantage 3"],
+    "watchOutFor": ["Real risk 1", "Real risk 2", "Real risk 3"]
   }
 }
 \`\`\`
@@ -79,6 +94,10 @@ Rules:
 - "swot": 3-4 bullet points per quadrant. Max 10 words per bullet point. Frame from the perspective of a NEW entrant in this market.
 - "opportunity": 3-4 actionItems. "urgency": "high" | "medium" | "low". "detail": max 2 sentences per step.
 - "targetCustomer": be specific and concrete, not generic. Keep "willingnessToPay" to 1 sentence.
+- "oneLiner": One punchy sentence: "The only [X] that [Y] for [Z]". Make it specific and memorable.
+- "marketSize": Honest TAM/SAM/SOM estimates using real market knowledge. Be specific with numbers.
+- "validationChecklist": 4-5 key assumptions. "risk": "high"|"medium"|"low". "howToTest": concrete action doable in under 1 week.
+- "synthesis.oneParagraph": 2-3 honest sentences — not cheerleading. "workingForYou": 3-4 genuine advantages. "watchOutFor": 3-4 real risks.
 - Be brutally honest. Name real companies and real products. Skip generic advice.
 - CONCISENESS IS CRITICAL. Every string value should be as short as possible while retaining key information. No filler words.`;
 
