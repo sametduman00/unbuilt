@@ -967,6 +967,37 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
           </div>
         </div>
 
+      {/* ── COMMUNITY SIGNALS ────────────────────────────────── */}
+      {data.communitySignals && data.communitySignals.length > 0 && (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "0.875rem" }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(255,140,0,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>💬</div>
+            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>What People Are Saying</span>
+            <span style={{ fontSize: "0.65rem", color: "var(--clr-text-3)" }}>Reddit & X</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+            {data.communitySignals.map((signal, i) => {
+              const isPain = signal.sentiment === "pain";
+              const isNeed = signal.sentiment === "need";
+              const color = isPain ? "rgba(239,68,68,0.9)" : isNeed ? "rgba(234,179,8,0.9)" : "rgba(34,197,94,0.9)";
+              const bg    = isPain ? "rgba(239,68,68,0.06)" : isNeed ? "rgba(234,179,8,0.06)" : "rgba(34,197,94,0.06)";
+              const label = isPain ? "😤 Pain" : isNeed ? "🙋 Need" : "✅ Positive";
+              const icon  = signal.source === "reddit" ? "🟠" : "𝕏";
+              return (
+                <div key={i} style={{ background: bg, border: `1px solid ${color.replace("0.9", "0.25")}`, borderRadius: 12, padding: "0.875rem 1rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                    <span style={{ fontSize: "0.75rem" }}>{icon}</span>
+                    <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--clr-text-3)" }}>{signal.subredditOrHandle}</span>
+                    <span style={{ fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", background: color.replace("0.9","0.12"), color, borderRadius: 99, padding: "0.1rem 0.5rem", marginLeft: "auto" }}>{label}</span>
+                  </div>
+                  <div style={{ fontSize: "0.72rem", color: "var(--clr-text-2)", lineHeight: 1.55, fontStyle: "italic" }}>&ldquo;{signal.quote}&rdquo;</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* ── YOUR ONE-LINER ─────────────────────────────────────── */}
       {data.oneLiner && (
         <div style={{
@@ -1960,6 +1991,12 @@ interface GapTargetCustomer {
   currentTools: string[];
   willingnessToPay: string;
 }
+interface GapCommunitySignal {
+  quote: string;
+  source: "reddit" | "twitter";
+  sentiment: "pain" | "need" | "positive";
+  subredditOrHandle: string;
+}
 interface GapValidationItem {
   assumption: string;
   risk: "high" | "medium" | "low";
@@ -1987,6 +2024,7 @@ interface GapAnalysisData {
   swot: GapSWOT;
   opportunity: GapOpportunity;
   targetCustomer: GapTargetCustomer;
+  communitySignals?: GapCommunitySignal[];
   oneLiner?: string;
   marketSize?: GapMarketSize;
   validationChecklist?: GapValidationItem[];
