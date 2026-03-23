@@ -115,20 +115,28 @@ function Toolbar({ search, onSearch, topic, onTopic, topics, sort, onSort, sortO
 function AiBlock({ what, diff, gap }: { what:string|null; diff:string|null; gap:string|null }) {
   if (!what && !diff && !gap) return null;
   return (
-    <div style={{background:"rgba(var(--clr-text-rgb),0.03)",border:"1px solid var(--clr-border)",borderRadius:10,padding:"0.75rem 1rem"}}>
-      <div style={{fontSize:"0.625rem",fontWeight:700,color:"var(--clr-text-4)",letterSpacing:"0.06em",textTransform:"uppercase",marginBottom:"0.5rem",display:"flex",alignItems:"center",gap:5}}>
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-        AI Analysis
-      </div>
-      <div style={{display:"flex",flexDirection:"column",gap:"0.4rem"}}>
-        {what && <div style={{display:"flex",gap:"0.5rem",alignItems:"flex-start"}}><span style={{fontSize:"0.625rem",fontWeight:700,color:"#6366f1",background:"rgba(99,102,241,0.12)",padding:"0.1rem 0.45rem",borderRadius:5,flexShrink:0,marginTop:1,whiteSpace:"nowrap"}}>WHAT</span><span style={{fontSize:"0.8125rem",color:"var(--clr-text-3)",lineHeight:1.5}}>{what}</span></div>}
-        {diff && <div style={{display:"flex",gap:"0.5rem",alignItems:"flex-start"}}><span style={{fontSize:"0.625rem",fontWeight:700,color:"#06b6d4",background:"rgba(6,182,212,0.12)",padding:"0.1rem 0.45rem",borderRadius:5,flexShrink:0,marginTop:1,whiteSpace:"nowrap"}}>DIFF</span><span style={{fontSize:"0.8125rem",color:"var(--clr-text-3)",lineHeight:1.5}}>{diff}</span></div>}
-        {gap && <div style={{display:"flex",gap:"0.5rem",alignItems:"flex-start"}}><span style={{fontSize:"0.625rem",fontWeight:700,color:"#ef4444",background:"rgba(239,68,68,0.1)",padding:"0.1rem 0.45rem",borderRadius:5,flexShrink:0,marginTop:1,whiteSpace:"nowrap"}}>MISS</span><span style={{fontSize:"0.8125rem",color:"var(--clr-text-3)",lineHeight:1.5}}>{gap}</span></div>}
-      </div>
+    <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginTop:"0.75rem"}}>
+      {what && (
+        <div style={{flex:"1 1 150px",background:"rgba(var(--clr-text-rgb),0.03)",border:"1px solid var(--clr-border)",borderRadius:8,padding:"8px 10px"}}>
+          <div style={{fontSize:"0.5625rem",fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",color:"#534AB7",marginBottom:3}}>What it does</div>
+          <div style={{fontSize:"0.75rem",color:"var(--clr-text-3)",lineHeight:1.5}}>{what}</div>
+        </div>
+      )}
+      {diff && (
+        <div style={{flex:"1 1 140px",background:"rgba(var(--clr-text-rgb),0.03)",border:"1px solid var(--clr-border)",borderRadius:8,padding:"8px 10px"}}>
+          <div style={{fontSize:"0.5625rem",fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",color:"#0F6E56",marginBottom:3}}>Different because</div>
+          <div style={{fontSize:"0.75rem",color:"var(--clr-text-3)",lineHeight:1.5}}>{diff}</div>
+        </div>
+      )}
+      {gap && (
+        <div style={{flex:"1 1 140px",background:"rgba(250,199,117,0.08)",border:"1px solid rgba(250,199,117,0.55)",borderRadius:8,padding:"8px 10px"}}>
+          <div style={{fontSize:"0.5625rem",fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",color:"#854F0B",marginBottom:3}}>Blind spot</div>
+          <div style={{fontSize:"0.75rem",color:"#633806",lineHeight:1.5}}>{gap}</div>
+        </div>
+      )}
     </div>
   );
 }
-
 // ── Skeleton ─────────────────────────────────────────────────────────────────
 const Skeleton = () => (
   <div style={{display:"flex",flexDirection:"column",gap:"0.625rem"}}>
