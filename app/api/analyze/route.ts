@@ -202,6 +202,60 @@ async function fetchSerperContext(idea: string): Promise<string> {
 }
 
 
+// Fetch Reddit discussions via ScrapeCreators API
+async function fetchRedditContext(idea: string): Promise<string> {
+  const apiKey = process.env.SCRAPECREATORS_API_KEY;
+  if (!apiKey) return "";
+  try {
+    const query = encodeURIComponent(idea + " problem OR alternative OR "I wish" OR frustrating");
+    const res = await fetch(
+      `https://api.scrapecreators.com/v1/reddit/search?query=${query}&sort=relevance&time=month&limit=8`,
+      { headers: { "x-api-key": apiKey }, signal: AbortSignal.timeout(6000) }
+    );
+    if (!res.ok) return "";
+    const data = await res.json();
+    const posts = data.posts ?? data.data ?? [];
+    if (!posts.length) return "";
+    const lines = posts.slice(0, 6).map((p: { title: string; subreddit: string; score?: number; selftext?: string }) => {
+      const snippet = (p.selftext || "").slice(0, 120).replace(/\n/g, " ");
+      return `- r/${p.subreddit} (${p.score ?? 0} upvotes): "${p.title}" — ${snippet}`;
+    });
+    console.log("[Analyze] Reddit context:", lines.length, "posts for:", idea);
+    return `\nHere are REAL Reddit discussions about this topic right now (use these as primary pain point sources — real user voices):\n${lines.join("\n")}\n`;
+  } catch (err) {
+    console.log("[Analyze] Reddit context fetch failed:", err);
+    return "";
+  }
+}
+
+// Fetch Twitter/X discussions via ScrapeCreators API
+async function fetchTwitterContext(idea: string): Promise<string> {
+  const apiKey = process.env.SCRAPECREATORS_API_KEY;
+  if (!apiKey) return "";
+  try {
+    const query = encodeURIComponent(idea + " -is:retweet lang:en");
+    const res = await fetch(
+      `https://api.scrapecreators.com/v1/twitter/search?query=${query}&limit=8`,
+      { headers: { "x-api-key": apiKey }, signal: AbortSignal.timeout(6000) }
+    );
+    if (!res.ok) return "";
+    const data = await res.json();
+    const tweets = data.tweets ?? data.data ?? [];
+    if (!tweets.length) return "";
+    const lines = tweets.slice(0, 5).map((t: { text: string; user?: { followers_count?: number; screen_name?: string }; favorite_count?: number }) => {
+      const text = (t.text || "").slice(0, 150).replace(/\n/g, " ");
+      const user = t.user?.screen_name ?? "user";
+      const likes = t.favorite_count ?? 0;
+      return `- @${user} (${likes} likes): "${text}"`;
+    });
+    console.log("[Analyze] Twitter context:", lines.length, "tweets for:", idea);
+    return `\nHere are REAL recent tweets about this topic (founder conversations, user frustrations, market signals):\n${lines.join("\n")}\n`;
+  } catch (err) {
+    console.log("[Analyze] Twitter context fetch failed:", err);
+    return "";
+  }
+}
+
 // Fetch top YouTube videos for the idea to give Claude real-time context
 async function fetchYouTubeContext(idea: string): Promise<string> {
   const apiKey = process.env.YOUTUBE_API_KEY;
@@ -298,7 +352,7 @@ export async function POST(req: NextRequest) {
           max_tokens: 16000,
           thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM_PROMPT,
-          messages: [{ role: "user", content: USER_PROMPT(idea, youtubeContext, combinedAppContext, serperContext) }],
+          messages: [{ role: "user", content: USER_PROMPT(idea, youtubeContext, combinedAppContext, serperContext + combinedSocialContext) }],
         });
 
         for await (const event of anthropicStream) {
