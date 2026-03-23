@@ -352,7 +352,7 @@ export async function POST(req: NextRequest) {
           max_tokens: 16000,
           thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM_PROMPT,
-          messages: [{ role: "user", content: USER_PROMPT(idea, youtubeContext, combinedAppContext, serperContext + socialSignals) }],
+          messages: [{ role: "user", content: USER_PROMPT(idea, youtubeContext, combinedAppContext, serperContext + combinedSocialContext) }],
         });
 
         for await (const event of anthropicStream) {
