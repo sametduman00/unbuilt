@@ -422,7 +422,7 @@ RULES — follow exactly:
 - "goToMarket.channels": 3-5 channels with real CAC estimates from live GTM data. "type": "primary"|"secondary"|"experimental".
 - "goToMarket.launchPhases": 2-3 phases, concrete steps from live data.
 - "customerInterviewGuide": 5 non-leading questions. greenSignals/redSignals from live data patterns.
-- "financialDeep": ALL numbers from live financial/pricing benchmark data. No invented numbers.
+- "financialDeep": ALL numbers from live financial/pricing benchmark data. No invented numbers. CRITICAL: Use SINGLE specific numbers (e.g. "$8,500" not "$7K-$10K", "Month 12" not "Month 10-14", "$22,000" not "$15K-$30K"). Pick the most realistic middle estimate from the live data. Ranges are NOT acceptable — they confuse founders. The three revenue scenarios (cautious/middle/optimistic) are the only place for variation; all other fields must be single values.
 - "fundabilityRadar": scores 1-10 per dimension, notes from live funding/investor data.
 - "communitySignals": 4-6 from live Reddit/Twitter data. "sentiment": "pain"|"need"|"positive".
 - "marketSize": from live market data, not training memory.

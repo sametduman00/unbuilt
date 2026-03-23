@@ -118,7 +118,6 @@ const TOOLS: ToolConfig[] = [
       { name: "Claude AI", color: "var(--clr-text-2)", live: true },
       { name: "App Store", color: "var(--clr-text-3)", live: true },
       { name: "Google Play", color: "var(--clr-text-3)", live: true },
-      { name: "YouTube", color: "var(--clr-text-3)", live: true },
     ],
   },
   {
@@ -150,7 +149,6 @@ const TOOLS: ToolConfig[] = [
     hasExtras: true,
     sources: [
       { name: "Claude AI", color: "var(--clr-text-2)", live: true },
-      { name: "YouTube", color: "var(--clr-text-3)", live: true },
     ],
   },
 ];
@@ -602,6 +600,55 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+
+      {/* ── EXECUTIVE SUMMARY ── */}
+      {(data.synthesis?.oneParagraph || (data.marketGaps && data.marketGaps.length > 0)) && (
+        <div style={{
+          background: "linear-gradient(135deg, rgba(var(--clr-accent-rgb),0.08) 0%, rgba(var(--clr-accent-rgb),0.03) 100%)",
+          border: "1px solid rgba(var(--clr-accent-rgb),0.25)",
+          borderRadius: 14, padding: "1.5rem 1.75rem",
+          position: "relative", overflow: "hidden",
+        }}>
+          <div style={{
+            position: "absolute", top: -40, right: -40, width: 180, height: 180,
+            borderRadius: "50%", background: "rgba(var(--clr-accent-rgb),0.06)", filter: "blur(50px)", pointerEvents: "none",
+          }} />
+          <div style={{ position: "relative" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1rem" }}>
+              <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-accent-rgb),0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.9rem" }}>⚡</div>
+              <span style={{ fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--clr-accent)" }}>TL;DR — Executive Summary</span>
+            </div>
+            {data.synthesis?.oneParagraph && (
+              <p style={{ fontSize: "0.9rem", color: "var(--clr-text)", lineHeight: 1.7, margin: "0 0 1.25rem 0", fontWeight: 500 }}>
+                {data.synthesis.oneParagraph}
+              </p>
+            )}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
+              {data.marketGaps && data.marketGaps.length > 0 && (
+                <div style={{ background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 10, padding: "0.875rem" }}>
+                  <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgba(34,197,94,0.9)", marginBottom: 6 }}>🎯 BIGGEST OPPORTUNITY</div>
+                  <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.4 }}>{data.marketGaps[0].title}</div>
+                  <div style={{ fontSize: "0.65rem", color: "var(--clr-text-3)", marginTop: 4, lineHeight: 1.4 }}>{data.marketGaps[0].description?.split(".")[0]}.</div>
+                </div>
+              )}
+              {data.synthesis?.watchOutFor && data.synthesis.watchOutFor.length > 0 && (
+                <div style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.18)", borderRadius: 10, padding: "0.875rem" }}>
+                  <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgba(239,68,68,0.9)", marginBottom: 6 }}>⚠️ BIGGEST RISK</div>
+                  <div style={{ fontSize: "0.72rem", color: "var(--clr-text-2)", lineHeight: 1.5 }}>{data.synthesis.watchOutFor[0]}</div>
+                </div>
+              )}
+              {data.opportunity?.actionItems && data.opportunity.actionItems.length > 0 && (
+                <div style={{ background: "rgba(var(--clr-accent-rgb),0.07)", border: "1px solid rgba(var(--clr-accent-rgb),0.2)", borderRadius: 10, padding: "0.875rem" }}>
+                  <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-accent)", marginBottom: 6 }}>🚀 FIRST MOVE</div>
+                  <div style={{ fontSize: "0.72rem", color: "var(--clr-text-2)", lineHeight: 1.5 }}>{data.opportunity.actionItems[0].action}</div>
+                  <div style={{ fontSize: "0.62rem", color: "var(--clr-text-3)", marginTop: 3, lineHeight: 1.4 }}>{data.opportunity.actionItems[0].detail}</div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* ââ MARKET OPPORTUNITY SCORE ââ */}
       <div style={{
@@ -4111,114 +4158,6 @@ export default function Home() {
               })()}
 
 
-              {/* ââ YouTube (Gap Analysis only) ââ */}
-              {selectedTool === "gap-analysis" && (
-                <div style={{
-                  marginTop: "1.5rem", borderRadius: 12, overflow: "hidden",
-                  background: "var(--clr-surface)",
-                  border: "1px solid var(--clr-border-2)",
-                  padding: "1.5rem",
-                }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-                    <span style={{ fontSize: "1.25rem" }}>ðº</span>
-                    <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
-                      What YouTube Says
-                    </h3>
-                    <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-                      last 6 months Â· reviews
-                    </span>
-                  </div>
-
-                  {(ytLoading || !ytFetched) ? (
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {[1, 2, 3].map((n) => (
-                        <div key={n} className="shimmer" style={{ height: 80, borderRadius: 10 }} />
-                      ))}
-                    </div>
-                  ) : (ytVideos.length === 0) ? (
-                    <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
-                      No relevant YouTube videos found for this niche
-                    </div>
-                  ) : (
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.625rem" }}>
-                      {ytVideos.map((video: any) => {
-                        const daysAgo = Math.floor((Date.now() - new Date(video.publishedAt).getTime()) / 86400000);
-                        const vc = video.viewCount ?? 0;
-                        const fmtViews = vc >= 1_000_000 ? `${(vc / 1_000_000).toFixed(1)}M` : vc >= 1_000 ? `${(vc / 1_000).toFixed(0)}K` : String(vc);
-                        const lc = video.likeCount ?? 0;
-                        return (
-                          <a
-                            key={video.videoId}
-                            href={`https://youtube.com/watch?v=${video.videoId}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                              display: "flex", gap: "0.75rem",
-                              padding: "0.875rem 1rem", borderRadius: 12,
-                              background: "var(--clr-surface)",
-                              border: "1px solid var(--clr-border-2)",
-                              textDecoration: "none", transition: "transform 0.15s, border-color 0.15s, box-shadow 0.15s",
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.transform = "translateY(-2px)";
-                              e.currentTarget.style.borderColor = "rgba(var(--clr-text-rgb),0.4)";
-                              e.currentTarget.style.boxShadow = "0 8px 24px rgba(var(--clr-text-rgb),0.08)";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.transform = "none";
-                              e.currentTarget.style.borderColor = "var(--clr-border-2)";
-                              e.currentTarget.style.boxShadow = "none";
-                            }}
-                          >
-                            {/* Thumbnail from YouTube videoId */}
-                            <div style={{
-                              width: 120, minWidth: 120, height: 68, borderRadius: 8, overflow: "hidden",
-                              background: "var(--clr-bg)", flexShrink: 0, position: "relative",
-                            }}>
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={`https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                              <div style={{
-                                position: "absolute", bottom: 4, right: 4,
-                                background: "rgba(0,0,0,0.8)", borderRadius: 4,
-                                padding: "1px 5px", fontSize: "0.6rem", color: "#fff", fontWeight: 700,
-                              }}>
-                                â¶ {fmtViews}
-                              </div>
-                            </div>
-                            {/* Info */}
-                            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", minWidth: 0, flex: 1 }}>
-                              <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.35, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                                {video.title}
-                              </div>
-                              <div style={{ fontSize: "0.7rem", color: "var(--clr-text-5)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "normal" }}>
-                                {video.channel ?? video.channelTitle}
-                              </div>
-                              <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
-                                <span style={{
-                                  display: "inline-flex", alignItems: "center", gap: 4,
-                                  padding: "0.15rem 0.45rem", borderRadius: 999,
-                                  background: "rgba(255,0,0,0.1)", border: "1px solid rgba(255,0,0,0.25)",
-                                  fontSize: "0.62rem", fontWeight: 800, color: "var(--clr-text-2)",
-                                }}>
-                                  {fmtViews} views
-                                </span>
-                                {lc > 0 && (
-                                  <span style={{ fontSize: "0.62rem", color: "var(--clr-text-6)", fontWeight: 500 }}>
-                                    {lc >= 1000 ? `${(lc / 1000).toFixed(0)}K` : lc} likes
-                                  </span>
-                                )}
-                                <span style={{ fontSize: "0.62rem", color: "var(--clr-text-7)", marginLeft: "auto" }}>
-                                  {daysAgo === 0 ? "today" : `${daysAgo}d ago`}
-                                </span>
-                              </div>
-                            </div>
-                          </a>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
 
 
               {/* ââ Footer ââ */}
