@@ -8,314 +8,428 @@ import { deductCredit } from "@/app/lib/credits";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = `You are a sharp, experienced market analyst and startup advisor. You produce concise, highly actionable competitor analysis and market gap reports. Your tone is direct, insightful, and slightly contrarian â you cut through hype. IMPORTANT: You MUST respond with ONLY a single JSON code block. No text before or after. The JSON must match the exact schema provided. Be specific: name real competitors, real products, real pain points.`;
+const SYSTEM_PROMPT = `You are a sharp, experienced market analyst and startup advisor. You produce highly actionable competitor analysis and market gap reports backed ONLY by the live data provided to you in this prompt. CRITICAL RULE: Every field you output MUST be derived from the live data sources provided below. Do NOT use your training data as a source — if the live data doesn't confirm something, say so or leave it minimal. Your tone is direct, insightful, and slightly contrarian. You MUST respond with ONLY a single JSON code block. No text before or after.`;
 
-const USER_PROMPT = (idea: string, youtubeContext: string, appStoreContext: string, serperContext: string) => `Analyze the market for: "${idea}"
-${youtubeContext}
-${appStoreContext}
-${serperContext}
-Respond with ONLY a JSON code block matching this exact schema:
-\`\`\`json
-{
-  "appStoreQuery": "photo calorie recognition",
-  "marketScore": 72,
-  "marketScoreLabel": "Real Opportunity",
-  "marketScoreSummary": "One sentence summary of the overall market opportunity level",
-  "competitors": [
-    {
-      "name": "Competitor Name",
-      "tagline": "What they do in one line",
-      "threatLevel": 3,
-      "strengths": ["Strength 1", "Strength 2"],
-      "weaknesses": ["Weakness 1", "Weakness 2"]
-    }
-  ],
-  "painPoints": [
-    {
-      "quote": "The actual complaint or pain description users have",
-      "source": "Where this sentiment comes from (Reddit, G2, Twitter, etc)",
-      "severity": "high"
-    }
-  ],
-  "marketGaps": [
-    {
-      "title": "Gap Name",
-      "description": "What's missing and why it matters â be specific",
-      "opportunityScore": 8,
-      "status": "untapped"
-    }
-  ],
-  "swot": {
-    "strengths": ["Advantage 1", "Advantage 2", "Advantage 3"],
-    "weaknesses": ["Challenge 1", "Challenge 2", "Challenge 3"],
-    "opportunities": ["Opportunity 1", "Opportunity 2", "Opportunity 3"],
-    "threats": ["Threat 1", "Threat 2", "Threat 3"]
-  },
-  "opportunity": {
-    "headline": "One bold sentence describing the core opportunity",
-    "urgency": "high",
-    "actionItems": [
-      { "step": 1, "action": "Action title", "detail": "Brief explanation" },
-      { "step": 2, "action": "Action title", "detail": "Brief explanation" },
-      { "step": 3, "action": "Action title", "detail": "Brief explanation" }
-    ]
-  },
-  "targetCustomer": {
-    "persona": "The Frustrated [Role]",
-    "jobTitle": "Specific job title or role",
-    "demographics": "Age range, company size, industry",
-    "painPoints": ["Pain 1", "Pain 2", "Pain 3"],
-    "currentTools": ["Tool they currently use 1", "Tool 2"],
-    "willingnessToPay": "What they'd pay and why"
-  },
-  "communitySignals": [
-    {
-      "quote": "Exact quote or paraphrase from Reddit or Twitter showing what people say",
-      "source": "reddit" ,
-      "sentiment": "pain",
-      "subredditOrHandle": "r/startups or @username"
-    }
-  ],
-  "oneLiner": "The only [category] that [unique differentiator] for [target customer].",
-  "marketSize": {
-    "tam": "$X.XB — everyone who could possibly use this",
-    "sam": "$X.XM — the reachable segment",
-    "som": "$X.XM — realistic first 2 years",
-    "growthRate": "X% CAGR"
-  },
-  "validationChecklist": [
-    { "assumption": "Key assumption being made", "risk": "high", "howToTest": "Specific action to validate in under 1 week" }
-  ],
-  "synthesis": {
-    "oneParagraph": "2-3 sentence honest summary: what works, what the real risk is, what to get right.",
-    "workingForYou": ["Genuine advantage 1", "Genuine advantage 2", "Genuine advantage 3"],
-    "watchOutFor": ["Real risk 1", "Real risk 2", "Real risk 3"]
-  }
-}
-\`\`\`
-Rules:
-- "appStoreQuery": 2-3 specific words to find direct competitors for this EXACT idea on the App Store. Not the generic category â the specific niche. E.g. for "app that calculates calories by pictures" use "photo calorie recognition", not "calorie tracker".
-- "marketScore": 1-100 integer assessing overall market opportunity. "marketScoreLabel": one of "No Gap" (0-20), "Crowded" (21-40), "Some Room" (41-60), "Real Opportunity" (61-80), "Wide Open" (81-100). "marketScoreSummary": one sentence explaining the score.
-- "competitors": 4-6 real companies. Prioritize competitors found in the LIVE APP STORE DATA provided above â use their real names, ratings, and download counts. "threatLevel": 1-5 integer (1=minor, 5=dominant). "tagline": max 1 sentence. "strengths": exactly 1 item. "weaknesses": exactly 1 item. Keep each under 12 words.
-- "painPoints": 4-6 items. "severity": "high" | "medium" | "low". Keep the full quote â never truncate. "source" should be a real platform name.
-- "marketGaps": 3-5 items. "opportunityScore": 1-10 integer. "status": "untapped" | "emerging" | "contested". "description": max 2 complete sentences.
-- "swot": 3-4 bullet points per quadrant. Max 10 words per bullet point. Frame from the perspective of a NEW entrant in this market.
-- "opportunity": 3-4 actionItems. "urgency": "high" | "medium" | "low". "detail": max 2 sentences per step.
-- "targetCustomer": be specific and concrete, not generic. Keep "willingnessToPay" to 1 sentence.
-- "communitySignals": 4-6 real quotes/paraphrases directly from the Reddit and Twitter data provided above. "source": "reddit" or "twitter". "sentiment": "pain" (complaint/frustration) or "need" (want/looking for) or "positive" (praise/success). "subredditOrHandle": the subreddit like "r/entrepreneur" or Twitter handle like "@username". Pick the most revealing and specific ones — avoid generic quotes. If no social data was provided, return an empty array.
-- "oneLiner": One punchy sentence: "The only [X] that [Y] for [Z]". Make it specific and memorable.
-- "marketSize": Honest TAM/SAM/SOM estimates using real market knowledge. Be specific with numbers.
-- "validationChecklist": 4-5 key assumptions. "risk": "high"|"medium"|"low". "howToTest": concrete action doable in under 1 week.
-- "synthesis.oneParagraph": 2-3 honest sentences — not cheerleading. "workingForYou": 3-4 genuine advantages. "watchOutFor": 3-4 real risks.
-- Be brutally honest. Name real companies and real products. Skip generic advice.
-- CONCISENESS IS CRITICAL. Every string value should be as short as possible while retaining key information. No filler words.`;
-
-// Fetch real App Store results via iTunes Search API (free, no key needed)
-async function fetchAppStoreContext(query: string): Promise<string> {
-  try {
-    const params = new URLSearchParams({
-      term: query,
-      entity: "software",
-      limit: "8",
-      country: "us",
-    });
-    const res = await fetch(
-      `https://itunes.apple.com/search?${params}`,
-      { signal: AbortSignal.timeout(6000) }
-    );
-    if (!res.ok) return "";
-    const data = await res.json();
-    const results = data.results ?? [];
-    if (results.length === 0) return "";
-
-    const lines = results.slice(0, 6).map((app: {
-      trackName: string;
-      sellerName: string;
-      averageUserRating?: number;
-      userRatingCount?: number;
-      price?: number;
-      formattedPrice?: string;
-      description?: string;
-    }) => {
-      const rating = app.averageUserRating ? app.averageUserRating.toFixed(1) : "N/A";
-      const reviews = app.userRatingCount
-        ? app.userRatingCount >= 1000
-          ? `${Math.round(app.userRatingCount / 1000)}K reviews`
-          : `${app.userRatingCount} reviews`
-        : "no reviews";
-      const price = app.price === 0 ? "Free" : (app.formattedPrice || "Paid");
-      const desc = (app.description || "").slice(0, 120).replace(/\n/g, " ");
-      return `- "${app.trackName}" by ${app.sellerName} | ${rating}â­ ${reviews} | ${price} | ${desc}`;
-    });
-
-    console.log("[Analyze] App Store context:", lines.length, "apps found for query:", query);
-    return `\nHere are REAL App Store apps currently live in this space (fetched right now from iTunes Search API). Use these as your primary competitor sources â these are real products with real ratings:\n${lines.join("\n")}\n`;
-  } catch (err) {
-    console.log("[Analyze] App Store context fetch failed:", err);
-    return "";
-  }
-}
-
-// Fetch real Google Play results
-async function fetchGPlayContext(query: string): Promise<string> {
-  try {
-    const results = await gplay.search({ term: query, num: 6 });
-    if (!results || results.length === 0) return "";
-
-    const lines = results.slice(0, 5).map((app) => {
-      const rating = app.score ? app.score.toFixed(1) : "N/A";
-      const price = app.free ? "Free" : (app.priceText || "Paid");
-      const desc = (app.summary || "").slice(0, 100).replace(/\n/g, " ");
-      return `- "${app.title}" by ${app.developer} | ${rating}â­ | ${price} | ${desc}`;
-    });
-
-    console.log("[Analyze] Google Play context:", lines.length, "apps found for query:", query);
-    return `\nHere are REAL Google Play apps currently live in this space:\n${lines.join("\n")}\n`;
-  } catch (err) {
-    console.log("[Analyze] Google Play context fetch failed:", err);
-    return "";
-  }
-}
-
-// Fetch live Google Search results via Serper â closes Claude's training data gap
-async function fetchSerperContext(idea: string): Promise<string> {
-  const apiKey = process.env.SERPER_API_KEY;
-  if (!apiKey) return "";
+// ── Helper: run a single Serper query ────────────────────────────────────────
+async function serperQuery(q: string, apiKey: string, num = 6): Promise<string> {
   try {
     const res = await fetch("https://google.serper.dev/search", {
       method: "POST",
       headers: { "X-API-KEY": apiKey, "Content-Type": "application/json" },
-      body: JSON.stringify({ q: idea + " app software tool", num: 8, hl: "en", gl: "us" }),
-      signal: AbortSignal.timeout(6000),
+      body: JSON.stringify({ q, num, hl: "en", gl: "us" }),
+      signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) return "";
     const data = await res.json();
-
-    const organic = data.organic ?? [];
-    if (organic.length === 0) return "";
-
-    const lines = organic.slice(0, 6).map((r: { title: string; link: string; snippet?: string }) => {
-      const snippet = (r.snippet || "").slice(0, 120).replace(/\n/g, " ");
-      return `- "${r.title}" (${r.link}) â ${snippet}`;
-    });
-
-    // Related searches as signals
-    const related = (data.relatedSearches ?? []).slice(0, 4).map((r: { query: string }) => r.query);
-
-    console.log("[Analyze] Serper context:", lines.length, "results for:", idea);
-    return `\nHere are LIVE Google search results for this idea right now (use these to identify new competitors, products, and trends that may have emerged after your training cutoff):\n${lines.join("\n")}${related.length ? `\nPeople also search: ${related.join(", ")}` : ""}\n`;
-  } catch (err) {
-    console.log("[Analyze] Serper context fetch failed:", err);
+    const lines = (data.organic ?? []).slice(0, num).map((r: { title: string; link: string; snippet?: string }) =>
+      `- "${r.title}" (${r.link}): ${(r.snippet || "").slice(0, 150).replace(/\n/g, " ")}`
+    );
+    const related = (data.relatedSearches ?? []).slice(0, 3).map((r: { query: string }) => r.query).join(", ");
+    return lines.join("\n") + (related ? `\nRelated: ${related}` : "");
+  } catch {
     return "";
   }
 }
 
+// ── 1. General competitors & tools ───────────────────────────────────────────
+async function fetchSerperContext(idea: string): Promise<string> {
+  const apiKey = process.env.SERPER_API_KEY;
+  if (!apiKey) return "";
+  const results = await serperQuery(`${idea} app software tool competitor`, apiKey, 8);
+  if (!results) return "";
+  console.log("[Analyze] Serper general context fetched");
+  return `\n=== LIVE GOOGLE SEARCH: General Competitors & Tools (fetched NOW) ===\n${results}\n`;
+}
 
-// Fetch Reddit discussions via ScrapeCreators API
+// ── 2. Industry trends ────────────────────────────────────────────────────────
+async function fetchTrendsContext(idea: string): Promise<string> {
+  const apiKey = process.env.SERPER_API_KEY;
+  if (!apiKey) return "";
+  const [r1, r2] = await Promise.all([
+    serperQuery(`${idea} industry trends 2025 2026 market forecast`, apiKey, 6),
+    serperQuery(`${idea} market growth drivers emerging technology shift`, apiKey, 6),
+  ]);
+  if (!r1 && !r2) return "";
+  console.log("[Analyze] Trends context fetched");
+  return `\n=== LIVE GOOGLE SEARCH: Industry Trends (fetched NOW — use ONLY these for trends) ===\nTrends & Forecast:\n${r1}\n\nGrowth Drivers & Shifts:\n${r2}\n`;
+}
+
+// ── 3. Market segments ────────────────────────────────────────────────────────
+async function fetchSegmentsContext(idea: string): Promise<string> {
+  const apiKey = process.env.SERPER_API_KEY;
+  if (!apiKey) return "";
+  const [r1, r2] = await Promise.all([
+    serperQuery(`${idea} market segments customer segments B2B B2C size`, apiKey, 6),
+    serperQuery(`${idea} target audience who uses primary secondary customer profile`, apiKey, 6),
+  ]);
+  if (!r1 && !r2) return "";
+  console.log("[Analyze] Segments context fetched");
+  return `\n=== LIVE GOOGLE SEARCH: Market Segments (fetched NOW — use ONLY these for segments) ===\nSegment Data:\n${r1}\n\nTarget Audiences:\n${r2}\n`;
+}
+
+// ── 4. Customer behavior — triggers & buying ─────────────────────────────────
+async function fetchCustomerBehaviorContext(idea: string): Promise<string> {
+  const apiKey = process.env.SERPER_API_KEY;
+  if (!apiKey) return "";
+  const [r1, r2] = await Promise.all([
+    serperQuery(`${idea} customer trigger event when do buyers purchase decision`, apiKey, 6),
+    serperQuery(`${idea} buyer journey how do customers buy evaluate decision process`, apiKey, 6),
+  ]);
+  if (!r1 && !r2) return "";
+  console.log("[Analyze] Customer behavior context fetched");
+  return `\n=== LIVE GOOGLE SEARCH: Customer Behavior & Triggers (fetched NOW) ===\nTrigger Events:\n${r1}\n\nBuying Process:\n${r2}\n`;
+}
+
+// ── 5. GTM channels & CAC ─────────────────────────────────────────────────────
+async function fetchGTMContext(idea: string): Promise<string> {
+  const apiKey = process.env.SERPER_API_KEY;
+  if (!apiKey) return "";
+  const [r1, r2] = await Promise.all([
+    serperQuery(`${idea} go to market strategy customer acquisition cost CAC channels`, apiKey, 6),
+    serperQuery(`${idea} marketing channels cold outreach content community paid growth`, apiKey, 6),
+  ]);
+  if (!r1 && !r2) return "";
+  console.log("[Analyze] GTM context fetched");
+  return `\n=== LIVE GOOGLE SEARCH: Go-to-Market & CAC (fetched NOW) ===\nGTM Strategy & CAC:\n${r1}\n\nMarketing Channels:\n${r2}\n`;
+}
+
+// ── 6. G2, Product Hunt, community reviews ───────────────────────────────────
+async function fetchReviewsContext(idea: string): Promise<string> {
+  const apiKey = process.env.SERPER_API_KEY;
+  if (!apiKey) return "";
+  const [r1, r2] = await Promise.all([
+    serperQuery(`${idea} site:g2.com reviews complaints pricing`, apiKey, 5),
+    serperQuery(`${idea} site:producthunt.com launch reviews`, apiKey, 5),
+  ]);
+  if (!r1 && !r2) return "";
+  console.log("[Analyze] Reviews context fetched");
+  return `\n=== LIVE GOOGLE SEARCH: G2 & Product Hunt Reviews (fetched NOW) ===\nG2 Reviews:\n${r1}\n\nProduct Hunt:\n${r2}\n`;
+}
+
+// ── 7. Financial benchmarks ───────────────────────────────────────────────────
+async function fetchFinancialContext(idea: string): Promise<string> {
+  const apiKey = process.env.SERPER_API_KEY;
+  if (!apiKey) return "";
+  const [r1, r2] = await Promise.all([
+    serperQuery(`${idea} SaaS startup costs burn rate pricing benchmark 2025`, apiKey, 5),
+    serperQuery(`${idea} revenue model pricing tier subscription freemium`, apiKey, 5),
+  ]);
+  if (!r1 && !r2) return "";
+  console.log("[Analyze] Financial context fetched");
+  return `\n=== LIVE GOOGLE SEARCH: Financial Benchmarks (fetched NOW) ===\nBurn Rate & Costs:\n${r1}\n\nPricing & Revenue:\n${r2}\n`;
+}
+
+// ── 8. Fundability & investor landscape ──────────────────────────────────────
+async function fetchFundabilityContext(idea: string): Promise<string> {
+  const apiKey = process.env.SERPER_API_KEY;
+  if (!apiKey) return "";
+  const [r1, r2] = await Promise.all([
+    serperQuery(`${idea} startup funding VC investment 2025 investor interest seed`, apiKey, 5),
+    serperQuery(`${idea} market opportunity investment landscape funding rounds`, apiKey, 5),
+  ]);
+  if (!r1 && !r2) return "";
+  console.log("[Analyze] Fundability context fetched");
+  return `\n=== LIVE GOOGLE SEARCH: Funding & Investor Landscape (fetched NOW) ===\nVC & Funding:\n${r1}\n\nMarket Opportunity for Investors:\n${r2}\n`;
+}
+
+// ── App Store (iTunes, free) ───────────────────────────────────────────────────
+async function fetchAppStoreContext(query: string): Promise<string> {
+  try {
+    const params = new URLSearchParams({ term: query, entity: "software", limit: "8", country: "us" });
+    const res = await fetch(`https://itunes.apple.com/search?${params}`, { signal: AbortSignal.timeout(6000) });
+    if (!res.ok) return "";
+    const data = await res.json();
+    const results = data.results ?? [];
+    if (results.length === 0) return "";
+    const lines = results.slice(0, 6).map((app: { trackName: string; sellerName: string; averageUserRating?: number; userRatingCount?: number; price?: number; formattedPrice?: string; description?: string }) => {
+      const rating = app.averageUserRating ? app.averageUserRating.toFixed(1) : "N/A";
+      const reviews = app.userRatingCount ? (app.userRatingCount >= 1000 ? `${Math.round(app.userRatingCount / 1000)}K reviews` : `${app.userRatingCount} reviews`) : "no reviews";
+      const price = app.price === 0 ? "Free" : (app.formattedPrice || "Paid");
+      const desc = (app.description || "").slice(0, 120).replace(/\n/g, " ");
+      return `- "${app.trackName}" by ${app.sellerName} | ${rating}★ ${reviews} | ${price} | ${desc}`;
+    });
+    return `\n=== App Store (fetched NOW): Primary competitor sources ===\n${lines.join("\n")}\n`;
+  } catch { return ""; }
+}
+
+// ── Google Play ───────────────────────────────────────────────────────────────
+async function fetchGPlayContext(query: string): Promise<string> {
+  try {
+    const results = await gplay.search({ term: query, num: 6 });
+    if (!results || results.length === 0) return "";
+    const lines = results.slice(0, 5).map((app) => {
+      const rating = app.score ? app.score.toFixed(1) : "N/A";
+      const price = app.free ? "Free" : (app.priceText || "Paid");
+      const desc = (app.summary || "").slice(0, 100).replace(/\n/g, " ");
+      return `- "${app.title}" by ${app.developer} | ${rating}★ | ${price} | ${desc}`;
+    });
+    return `\n=== Google Play (fetched NOW) ===\n${lines.join("\n")}\n`;
+  } catch { return ""; }
+}
+
+// ── Reddit via ScrapeCreators ─────────────────────────────────────────────────
 async function fetchRedditContext(idea: string): Promise<string> {
   const apiKey = process.env.SCRAPECREATORS_API_KEY;
   if (!apiKey) return "";
   try {
     const query = encodeURIComponent(idea + ' (problem OR frustrating OR complaint OR "need a" OR "looking for" OR "anyone know" OR "best tool" OR "I wish")');
-    const res = await fetch(
-      `https://api.scrapecreators.com/v1/reddit/search?query=${query}&sort=relevance&time=month&limit=8`,
-      { headers: { "x-api-key": apiKey }, signal: AbortSignal.timeout(6000) }
-    );
+    const res = await fetch(`https://api.scrapecreators.com/v1/reddit/search?query=${query}&sort=relevance&time=month&limit=8`, { headers: { "x-api-key": apiKey }, signal: AbortSignal.timeout(3000) });
     if (!res.ok) return "";
     const data = await res.json();
     const posts = data.posts ?? data.data ?? [];
     if (!posts.length) return "";
-    const lines = posts.slice(0, 6).map((p: { title: string; subreddit: string; score?: number; selftext?: string }) => {
-      const snippet = (p.selftext || "").slice(0, 120).replace(/\n/g, " ");
-      return `- r/${p.subreddit} (${p.score ?? 0} upvotes): "${p.title}" — ${snippet}`;
-    });
-    console.log("[Analyze] Reddit context:", lines.length, "posts for:", idea);
-    return `\nHere are REAL Reddit discussions about this topic right now. Use these as primary signals — look for BOTH pain points (frustrations, complaints) AND demand signals (what people want, are looking for, or need). Real user voices:\n${lines.join("\n")}\n`;
-  } catch (err) {
-    console.log("[Analyze] Reddit context fetch failed:", err);
-    return "";
-  }
+    const lines = posts.slice(0, 6).map((p: { title: string; subreddit: string; score?: number; selftext?: string }) =>
+      `- r/${p.subreddit} (${p.score ?? 0} upvotes): "${p.title}" — ${(p.selftext || "").slice(0, 120).replace(/\n/g, " ")}`
+    );
+    return `\n=== LIVE Reddit (fetched NOW): Real user pain points & demand signals ===\n${lines.join("\n")}\n`;
+  } catch { return ""; }
 }
 
-// Fetch Twitter/X discussions via ScrapeCreators API
+// ── Twitter/X via ScrapeCreators ──────────────────────────────────────────────
 async function fetchTwitterContext(idea: string): Promise<string> {
   const apiKey = process.env.SCRAPECREATORS_API_KEY;
   if (!apiKey) return "";
   try {
     const query = encodeURIComponent(idea + ' (problem OR need OR want OR alternative OR recommend OR "looking for") -is:retweet lang:en');
-    const res = await fetch(
-      `https://api.scrapecreators.com/v1/twitter/search?query=${query}&limit=8`,
-      { headers: { "x-api-key": apiKey }, signal: AbortSignal.timeout(6000) }
-    );
+    const res = await fetch(`https://api.scrapecreators.com/v1/twitter/search?query=${query}&limit=8`, { headers: { "x-api-key": apiKey }, signal: AbortSignal.timeout(3000) });
     if (!res.ok) return "";
     const data = await res.json();
     const tweets = data.tweets ?? data.data ?? [];
     if (!tweets.length) return "";
-    const lines = tweets.slice(0, 5).map((t: { text: string; user?: { followers_count?: number; screen_name?: string }; favorite_count?: number }) => {
-      const text = (t.text || "").slice(0, 150).replace(/\n/g, " ");
-      const user = t.user?.screen_name ?? "user";
-      const likes = t.favorite_count ?? 0;
-      return `- @${user} (${likes} likes): "${text}"`;
-    });
-    console.log("[Analyze] Twitter context:", lines.length, "tweets for:", idea);
-    return `\nHere are REAL recent tweets about this topic (founder conversations, user frustrations, market signals):\n${lines.join("\n")}\n`;
-  } catch (err) {
-    console.log("[Analyze] Twitter context fetch failed:", err);
-    return "";
-  }
+    const lines = tweets.slice(0, 5).map((t: { text: string; user?: { screen_name?: string }; favorite_count?: number }) =>
+      `- @${t.user?.screen_name ?? "user"} (${t.favorite_count ?? 0} likes): "${(t.text || "").slice(0, 150).replace(/\n/g, " ")}"`
+    );
+    return `\n=== LIVE Twitter/X (fetched NOW): Founder conversations & market signals ===\n${lines.join("\n")}\n`;
+  } catch { return ""; }
 }
 
-// Fetch top YouTube videos for the idea to give Claude real-time context
+// ── YouTube ───────────────────────────────────────────────────────────────────
 async function fetchYouTubeContext(idea: string): Promise<string> {
   const apiKey = process.env.YOUTUBE_API_KEY;
   if (!apiKey) return "";
   try {
     const publishedAfter = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString();
-    const searchParams = new URLSearchParams({
-      part: "snippet",
-      type: "video",
-      order: "viewCount",
-      q: `${idea} app startup OR "we built" OR "why doesn't" OR "I need" OR launching`,
-      maxResults: "5",
-      publishedAfter,
-      key: apiKey,
-    });
-    const searchRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/search?${searchParams}`,
-      { signal: AbortSignal.timeout(5000) }
-    );
+    const searchParams = new URLSearchParams({ part: "snippet", type: "video", order: "viewCount", q: `${idea} app startup OR "we built" OR "why doesn't" OR "I need" OR launching`, maxResults: "5", publishedAfter, key: apiKey });
+    const searchRes = await fetch(`https://www.googleapis.com/youtube/v3/search?${searchParams}`, { signal: AbortSignal.timeout(5000) });
     if (!searchRes.ok) return "";
     const searchData = await searchRes.json();
     const items = searchData.items ?? [];
     if (items.length === 0) return "";
-
     const videoIds = items.map((item: { id: { videoId: string } }) => item.id.videoId).join(",");
-    const statsRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${apiKey}`,
-      { signal: AbortSignal.timeout(5000) }
-    );
+    const statsRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${apiKey}`, { signal: AbortSignal.timeout(5000) });
     const statsMap = new Map<string, number>();
     if (statsRes.ok) {
       const statsData = await statsRes.json();
-      for (const v of statsData.items ?? []) {
-        statsMap.set(v.id, parseInt(v.statistics?.viewCount || "0", 10));
-      }
+      for (const v of statsData.items ?? []) statsMap.set(v.id, parseInt(v.statistics?.viewCount || "0", 10));
     }
     const lines = items.map((item: { id: { videoId: string }; snippet: { title: string; channelTitle: string } }) => {
       const views = statsMap.get(item.id.videoId) ?? 0;
-      const fmtViews =
-        views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M` :
-        views >= 1_000 ? `${Math.round(views / 1_000)}K` : String(views);
+      const fmtViews = views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M` : views >= 1_000 ? `${Math.round(views / 1_000)}K` : String(views);
       return `- "${item.snippet.title}" by ${item.snippet.channelTitle} (${fmtViews} views)`;
     });
-    console.log("[Analyze] YouTube context:", lines.length, "videos found");
-    return `\nHere are recent YouTube videos in this space (new product launches, founder stories, user frustrations, problem callouts) â use these to identify real pain points and emerging signals:\n${lines.join("\n")}\n`;
-  } catch (err) {
-    console.log("[Analyze] YouTube context fetch failed:", err);
-    return "";
-  }
+    return `\n=== YouTube (last 6 months, fetched NOW) ===\n${lines.join("\n")}\n`;
+  } catch { return ""; }
 }
 
+// ── PROMPT ────────────────────────────────────────────────────────────────────
+const USER_PROMPT = (
+  idea: string,
+  youtubeContext: string,
+  appStoreContext: string,
+  serperContext: string,
+  trendsContext: string,
+  segmentsContext: string,
+  customerContext: string,
+  gtmContext: string,
+  reviewsContext: string,
+  financialContext: string,
+  fundabilityContext: string,
+  socialContext: string
+) => `Analyze the market for: "${idea}"
+
+CRITICAL: Every field you produce MUST be grounded in the live data below. Do NOT invent data. If the live data is insufficient for a field, use what you have and be explicit.
+
+${appStoreContext}
+${youtubeContext}
+${serperContext}
+${socialContext}
+${trendsContext}
+${segmentsContext}
+${customerContext}
+${gtmContext}
+${reviewsContext}
+${financialContext}
+${fundabilityContext}
+
+Respond with ONLY a JSON code block:
+\`\`\`json
+{
+  "appStoreQuery": "2-3 word niche query for App Store",
+  "marketScore": 72,
+  "marketScoreLabel": "Real Opportunity",
+  "marketScoreSummary": "One sentence summary based on live data above",
+  "competitors": [
+    { "name": "Real Competitor", "tagline": "What they do", "threatLevel": 3, "strengths": ["One strength"], "weaknesses": ["One weakness"] }
+  ],
+  "painPoints": [
+    { "quote": "Real quote from live data above", "source": "Reddit/G2/Twitter/etc", "severity": "high" }
+  ],
+  "marketGaps": [
+    { "title": "Gap Name", "description": "What is missing based on live search data", "opportunityScore": 8, "status": "untapped" }
+  ],
+  "swot": {
+    "strengths": ["Evidence-backed strength from live data"],
+    "weaknesses": ["Evidence-backed challenge"],
+    "opportunities": ["Opportunity confirmed by live data"],
+    "threats": ["Threat confirmed by live data"]
+  },
+  "opportunity": {
+    "headline": "Bold opportunity sentence based on live data",
+    "urgency": "high",
+    "actionItems": [
+      { "step": 1, "action": "Specific action", "detail": "Based on live data findings" }
+    ]
+  },
+  "targetCustomer": {
+    "persona": "The Frustrated [Role]",
+    "jobTitle": "Specific title",
+    "demographics": "Age, company size, industry from live data",
+    "painPoints": ["Pain from live data 1", "Pain 2", "Pain 3"],
+    "currentTools": ["Tool from live data 1", "Tool 2"],
+    "willingnessToPay": "Price point supported by live data"
+  },
+  "targetCustomerDeep": {
+    "whoTheyAre": "2-3 sentences on who this customer is based on live search data",
+    "howTheyThink": "What motivates them, their mental model, based on live data",
+    "availableMoney": "Annual budget/spending power for this category from live data",
+    "howTheyBuy": "How they discover, evaluate and purchase based on live data",
+    "triggerEvents": ["Specific event that triggers purchase 1", "Trigger 2", "Trigger 3"],
+    "whereToFindThem": ["Community/platform 1 from live data", "Platform 2", "Platform 3"]
+  },
+  "industryTrends": {
+    "now": [
+      { "trend": "What is happening RIGHT NOW based on live search data", "evidence": "Specific source/stat from live data", "impact": "high" }
+    ],
+    "emerging": [
+      { "trend": "What is emerging in 1-3 years from live data", "evidence": "Source from live data", "impact": "medium" }
+    ],
+    "structural": [
+      { "trend": "Structural 3-5 year shift from live data", "evidence": "Source from live data", "impact": "high" }
+    ]
+  },
+  "marketSegments": [
+    {
+      "name": "Segment name from live data",
+      "fit": "primary",
+      "size": "$X.XB from live data",
+      "growth": "X% from live data",
+      "description": "Who is in this segment and why it fits, from live data"
+    }
+  ],
+  "goToMarket": {
+    "channels": [
+      {
+        "name": "Channel name e.g. Cold Outreach",
+        "type": "primary",
+        "estimatedCAC": "$X from live data benchmarks",
+        "description": "Why this channel works for this idea based on live data"
+      }
+    ],
+    "launchTarget": "Specific first customer profile to target",
+    "launchPhases": [
+      {
+        "phase": 1,
+        "name": "Early Adopters",
+        "duration": "X-Y months",
+        "steps": ["Specific step from live data analysis 1", "Step 2", "Step 3"]
+      },
+      {
+        "phase": 2,
+        "name": "Public Launch",
+        "duration": "X-Y months",
+        "steps": ["Step 1", "Step 2"]
+      }
+    ]
+  },
+  "customerInterviewGuide": {
+    "questions": [
+      "Non-leading question 1 to validate real demand",
+      "Question 2",
+      "Question 3",
+      "Question 4",
+      "Question 5"
+    ],
+    "whereToFindThem": ["Specific community from live data 1", "Platform 2"],
+    "greenSignals": ["Positive signal that confirms demand from live data", "Signal 2"],
+    "redSignals": ["Warning signal that kills the idea from live data", "Signal 2"],
+    "targetInterviews": 12
+  },
+  "financialDeep": {
+    "monthlyBurn": {
+      "total": "$X,XXX",
+      "infrastructure": "$XXX — based on live pricing data",
+      "tools": "$XXX — based on live pricing data",
+      "marketing": "$XXX — based on live CAC data",
+      "acquisition": "$XXX — based on live CAC benchmarks"
+    },
+    "breakEvenMonth": "Month X",
+    "twelveMonthMRR": "$XX,XXX",
+    "revenueScenarios": {
+      "cautious": { "mrr": "$X,XXX", "probability": "30%", "assumption": "Key assumption for cautious scenario" },
+      "middle": { "mrr": "$XX,XXX", "probability": "50%", "assumption": "Key assumption for middle scenario" },
+      "optimistic": { "mrr": "$XX,XXX", "probability": "20%", "assumption": "Key assumption for optimistic" }
+    },
+    "pricingBenchmark": "Comparable products charge $X-Y/mo based on live data"
+  },
+  "fundabilityRadar": {
+    "team": { "score": 6, "note": "Note based on what live data says about team requirements" },
+    "marketSize": { "score": 8, "note": "Note based on live market size data" },
+    "product": { "score": 7, "note": "Note based on live competitive data" },
+    "competition": { "score": 6, "note": "Note based on live competitor landscape" },
+    "marketing": { "score": 7, "note": "Note based on live GTM data" },
+    "fundingNeed": { "score": 7, "note": "Note based on live funding landscape data" }
+  },
+  "communitySignals": [
+    { "quote": "Real quote from Reddit/Twitter data above", "source": "reddit", "sentiment": "pain", "subredditOrHandle": "r/example" }
+  ],
+  "oneLiner": "The only [X] that [Y] for [Z].",
+  "marketSize": {
+    "tam": "$X.XB — based on live market data",
+    "sam": "$X.XM — based on live segment data",
+    "som": "$X.XM — realistic first 2 years",
+    "growthRate": "X% CAGR from live research"
+  },
+  "validationChecklist": [
+    { "assumption": "Key assumption based on live data gaps", "risk": "high", "howToTest": "Concrete test doable in 1 week" }
+  ],
+  "synthesis": {
+    "oneParagraph": "2-3 honest sentences synthesizing ALL live data above.",
+    "workingForYou": ["Advantage confirmed by live data", "Advantage 2", "Advantage 3"],
+    "watchOutFor": ["Risk confirmed by live data", "Risk 2", "Risk 3"]
+  }
+}
+\`\`\`
+
+RULES — follow exactly:
+- "marketScore" 1-100 integer. "marketScoreLabel": "No Gap"(0-20),"Crowded"(21-40),"Some Room"(41-60),"Real Opportunity"(61-80),"Wide Open"(81-100).
+- "competitors": 4-6 real companies from live data. "threatLevel" 1-5. Each strength/weakness 1 item max 12 words.
+- "painPoints": 4-6, from live Reddit/G2/Twitter data above. "severity": "high"|"medium"|"low".
+- "marketGaps": 3-5 items. "opportunityScore" 1-10. "status": "untapped"|"emerging"|"contested".
+- "swot": 3-4 per quadrant, max 10 words each, new entrant perspective.
+- "targetCustomerDeep": ALL fields from live customer/behavior data above. Do not invent.
+- "industryTrends": Use ONLY trends data from live search above. "now" = confirmed happening, "emerging" = 1-3yr signals, "structural" = 3-5yr shifts. 2-3 per category. "impact": "high"|"medium"|"low".
+- "marketSegments": 2-4 segments from live segments data. "fit": "primary"|"secondary"|"tertiary".
+- "goToMarket.channels": 3-5 channels with real CAC estimates from live GTM data. "type": "primary"|"secondary"|"experimental".
+- "goToMarket.launchPhases": 2-3 phases, concrete steps from live data.
+- "customerInterviewGuide": 5 non-leading questions. greenSignals/redSignals from live data patterns.
+- "financialDeep": ALL numbers from live financial/pricing benchmark data. No invented numbers.
+- "fundabilityRadar": scores 1-10 per dimension, notes from live funding/investor data.
+- "communitySignals": 4-6 from live Reddit/Twitter data. "sentiment": "pain"|"need"|"positive".
+- "marketSize": from live market data, not training memory.
+- "validationChecklist": 4-5 assumptions. "howToTest": action doable in 1 week.
+- CRITICAL: If live data is sparse for a field, write what you found and flag uncertainty. Never fabricate specifics.`;
+
+// ── Main POST handler ──────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
@@ -333,9 +447,7 @@ export async function POST(req: NextRequest) {
 
   const stream = new ReadableStream({
     async start(controller) {
-      controller.enqueue(
-        encoder.encode(`data: ${JSON.stringify({ meta: { cached: !!cached, key: normalizedKey } })}\n\n`)
-      );
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: !!cached, key: normalizedKey } })}\n\n`));
 
       if (cached) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
@@ -345,18 +457,39 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        // Fetch all live data sources in parallel
-        const [youtubeContext, appStoreContext, gplayContext, serperContext, redditContext, twitterContext] = await Promise.all([
+        // Fetch ALL live data in parallel — 12 sources
+        const [
+          youtubeContext,
+          appStoreContext,
+          gplayContext,
+          serperContext,
+          trendsContext,
+          segmentsContext,
+          customerContext,
+          gtmContext,
+          reviewsContext,
+          financialContext,
+          fundabilityContext,
+          redditContext,
+          twitterContext,
+        ] = await Promise.all([
           fetchYouTubeContext(idea),
           fetchAppStoreContext(idea),
           fetchGPlayContext(idea),
           fetchSerperContext(idea),
+          fetchTrendsContext(idea),
+          fetchSegmentsContext(idea),
+          fetchCustomerBehaviorContext(idea),
+          fetchGTMContext(idea),
+          fetchReviewsContext(idea),
+          fetchFinancialContext(idea),
+          fetchFundabilityContext(idea),
           fetchRedditContext(idea),
           fetchTwitterContext(idea),
         ]);
 
         const combinedAppContext = [appStoreContext, gplayContext].filter(Boolean).join("");
-        const socialSignals = [redditContext, twitterContext].filter(Boolean).join("");
+        const socialContext = [redditContext, twitterContext].filter(Boolean).join("");
 
         let full = "";
         const anthropicStream = client.messages.stream({
@@ -364,7 +497,23 @@ export async function POST(req: NextRequest) {
           max_tokens: 16000,
           thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM_PROMPT,
-          messages: [{ role: "user", content: USER_PROMPT(idea, youtubeContext, combinedAppContext, serperContext + socialSignals) }],
+          messages: [{
+            role: "user",
+            content: USER_PROMPT(
+              idea,
+              youtubeContext,
+              combinedAppContext,
+              serperContext,
+              trendsContext,
+              segmentsContext,
+              customerContext,
+              gtmContext,
+              reviewsContext,
+              financialContext,
+              fundabilityContext,
+              socialContext
+            )
+          }],
         });
 
         for await (const event of anthropicStream) {
@@ -386,10 +535,6 @@ export async function POST(req: NextRequest) {
   });
 
   return new Response(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive",
-    },
+    headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" },
   });
 }

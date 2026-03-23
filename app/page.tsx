@@ -967,6 +967,330 @@ function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
           </div>
         </div>
 
+      {/* ── INDUSTRY TRENDS ─────────────────────────────────────────────── */}
+      {data.industryTrends && (data.industryTrends.now?.length > 0 || data.industryTrends.emerging?.length > 0 || data.industryTrends.structural?.length > 0) && (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>📡</div>
+            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Industry Trends</span>
+            <span style={{ fontSize: "0.62rem", color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 99, padding: "0.1rem 0.5rem" }}>Live data</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            {[
+              { key: "now" as const, label: "NOW (0–1yr)", color: "rgba(34,197,94,0.9)", bg: "rgba(34,197,94,0.07)", border: "rgba(34,197,94,0.25)" },
+              { key: "emerging" as const, label: "EMERGING (1–3yr)", color: "rgba(234,179,8,0.9)", bg: "rgba(234,179,8,0.07)", border: "rgba(234,179,8,0.25)" },
+              { key: "structural" as const, label: "STRUCTURAL (3–5yr)", color: "rgba(139,92,246,0.9)", bg: "rgba(139,92,246,0.07)", border: "rgba(139,92,246,0.25)" },
+            ].map(({ key, label, color, bg, border }) => {
+              const items = data.industryTrends![key] ?? [];
+              if (!items.length) return null;
+              return (
+                <div key={key} style={{ background: bg, border: `1px solid ${border}`, borderRadius: 12, padding: "1rem" }}>
+                  <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color, marginBottom: "0.6rem" }}>{label}</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                    {items.map((item, i) => (
+                      <div key={i} style={{ display: "flex", gap: 10 }}>
+                        <div style={{ flexShrink: 0, width: 6, height: 6, borderRadius: "50%", background: color, marginTop: 5 }} />
+                        <div>
+                          <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text)", marginBottom: 2 }}>{item.trend}</div>
+                          <div style={{ fontSize: "0.65rem", color: "var(--clr-text-3)", lineHeight: 1.5 }}>📎 {item.evidence}</div>
+                        </div>
+                        <div style={{ marginLeft: "auto", flexShrink: 0 }}>
+                          <span style={{ fontSize: "0.52rem", fontWeight: 700, textTransform: "uppercase", background: item.impact === "high" ? "rgba(239,68,68,0.1)" : item.impact === "medium" ? "rgba(234,179,8,0.1)" : "rgba(34,197,94,0.1)", color: item.impact === "high" ? "rgba(239,68,68,0.9)" : item.impact === "medium" ? "rgba(234,179,8,0.9)" : "rgba(34,197,94,0.9)", borderRadius: 99, padding: "0.12rem 0.4rem" }}>{item.impact}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── MARKET SEGMENTS ──────────────────────────────────────────────────── */}
+      {data.marketSegments && data.marketSegments.length > 0 && (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(var(--clr-accent-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>🎯</div>
+            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Market Segments</span>
+            <span style={{ fontSize: "0.62rem", color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 99, padding: "0.1rem 0.5rem" }}>Addressable sub-markets ranked by fit</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+            {data.marketSegments.map((seg, i) => {
+              const fitColor = seg.fit === "primary" ? "rgba(var(--clr-accent-rgb),0.9)" : seg.fit === "secondary" ? "rgba(234,179,8,0.9)" : "rgba(100,116,139,0.9)";
+              const fitBg = seg.fit === "primary" ? "rgba(var(--clr-accent-rgb),0.1)" : seg.fit === "secondary" ? "rgba(234,179,8,0.08)" : "rgba(100,116,139,0.08)";
+              return (
+                <div key={i} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "1rem", display: "flex", gap: 14 }}>
+                  <div style={{ flexShrink: 0, width: 4, borderRadius: 99, background: fitColor, alignSelf: "stretch" }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--clr-text)" }}>{seg.name}</span>
+                      <span style={{ fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", background: fitBg, color: fitColor, borderRadius: 99, padding: "0.1rem 0.5rem" }}>{seg.fit}</span>
+                      {seg.size && <span style={{ fontSize: "0.65rem", fontWeight: 600, color: "var(--clr-text-2)" }}>{seg.size}</span>}
+                      {seg.growth && <span style={{ fontSize: "0.65rem", color: "rgba(34,197,94,0.9)", fontWeight: 600 }}>↑ {seg.growth}</span>}
+                    </div>
+                    <div style={{ fontSize: "0.7rem", color: "var(--clr-text-3)", lineHeight: 1.55 }}>{seg.description}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── TARGET CUSTOMER DEEP ─────────────────────────────────────────────── */}
+      {data.targetCustomerDeep && (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(236,72,153,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>👤</div>
+            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Customer Deep Dive</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.65rem", marginBottom: "0.75rem" }}>
+            {[
+              { label: "WHO THEY ARE", value: data.targetCustomerDeep.whoTheyAre },
+              { label: "HOW THEY THINK", value: data.targetCustomerDeep.howTheyThink },
+              { label: "AVAILABLE MONEY", value: data.targetCustomerDeep.availableMoney },
+              { label: "HOW THEY BUY", value: data.targetCustomerDeep.howTheyBuy },
+            ].map(({ label, value }) => (
+              <div key={label} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "0.875rem" }}>
+                <div style={{ fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--clr-accent)", marginBottom: 5 }}>{label}</div>
+                <div style={{ fontSize: "0.72rem", color: "var(--clr-text-2)", lineHeight: 1.55 }}>{value}</div>
+              </div>
+            ))}
+          </div>
+          {data.targetCustomerDeep.triggerEvents?.length > 0 && (
+            <div style={{ background: "rgba(236,72,153,0.05)", border: "1px solid rgba(236,72,153,0.2)", borderRadius: 10, padding: "0.875rem", marginBottom: "0.65rem" }}>
+              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgba(236,72,153,0.9)", marginBottom: 8 }}>⚡ TRIGGER EVENTS — when they decide to buy</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                {data.targetCustomerDeep.triggerEvents.map((t, i) => (
+                  <div key={i} style={{ fontSize: "0.7rem", color: "var(--clr-text-2)", lineHeight: 1.5 }}>• {t}</div>
+                ))}
+              </div>
+            </div>
+          )}
+          {data.targetCustomerDeep.whereToFindThem?.length > 0 && (
+            <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "0.875rem" }}>
+              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-text-3)", marginBottom: 8 }}>📍 WHERE TO FIND THEM</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {data.targetCustomerDeep.whereToFindThem.map((w, i) => (
+                  <span key={i} style={{ fontSize: "0.65rem", background: "rgba(var(--clr-accent-rgb),0.08)", color: "var(--clr-accent)", border: "1px solid rgba(var(--clr-accent-rgb),0.2)", borderRadius: 6, padding: "0.2rem 0.6rem", fontWeight: 500 }}>{w}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── GO TO MARKET ─────────────────────────────────────────────────────── */}
+      {data.goToMarket && (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(34,197,94,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>🚀</div>
+            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Go-to-Market</span>
+          </div>
+          {data.goToMarket.channels && data.goToMarket.channels.length > 0 && (
+            <div style={{ marginBottom: "1rem" }}>
+              <div style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-text-3)", marginBottom: "0.6rem" }}>Channels & Estimated CAC</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                {data.goToMarket.channels.map((ch, i) => {
+                  const typeColor = ch.type === "primary" ? "rgba(var(--clr-accent-rgb),0.9)" : ch.type === "secondary" ? "rgba(234,179,8,0.9)" : "rgba(100,116,139,0.8)";
+                  return (
+                    <div key={i} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "0.75rem 1rem", display: "flex", alignItems: "flex-start", gap: 12 }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+                          <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--clr-text)" }}>{ch.name}</span>
+                          <span style={{ fontSize: "0.52rem", fontWeight: 700, textTransform: "uppercase", color: typeColor, background: typeColor.replace("0.9","0.1"), borderRadius: 99, padding: "0.1rem 0.4rem" }}>{ch.type}</span>
+                        </div>
+                        <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", lineHeight: 1.5 }}>{ch.description}</div>
+                      </div>
+                      <div style={{ flexShrink: 0, textAlign: "right" }}>
+                        <div style={{ fontSize: "0.6rem", color: "var(--clr-text-3)", marginBottom: 2 }}>Est. CAC</div>
+                        <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--clr-text)" }}>{ch.estimatedCAC}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {data.goToMarket.launchTarget && (
+            <div style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 10, padding: "0.875rem", marginBottom: "0.75rem" }}>
+              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgba(34,197,94,0.9)", marginBottom: 5 }}>🎯 LAUNCH TARGET</div>
+              <div style={{ fontSize: "0.75rem", color: "var(--clr-text-2)", fontWeight: 500 }}>{data.goToMarket.launchTarget}</div>
+            </div>
+          )}
+          {data.goToMarket.launchPhases && data.goToMarket.launchPhases.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+              {data.goToMarket.launchPhases.map((phase, i) => (
+                <div key={i} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "0.875rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <div style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(var(--clr-accent-rgb),0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-accent)" }}>{phase.phase}</div>
+                    <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--clr-text)" }}>Phase {phase.phase}: {phase.name}</span>
+                    <span style={{ fontSize: "0.6rem", color: "var(--clr-text-3)", marginLeft: "auto" }}>{phase.duration}</span>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                    {(phase.steps ?? []).map((step, j) => (
+                      <div key={j} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                        <span style={{ fontSize: "0.6rem", color: "rgba(34,197,94,0.9)", marginTop: 2, flexShrink: 0 }}>✓</span>
+                        <span style={{ fontSize: "0.7rem", color: "var(--clr-text-2)", lineHeight: 1.5 }}>{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── CUSTOMER INTERVIEW GUIDE ─────────────────────────────────────────── */}
+      {data.customerInterviewGuide && (
+        <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, overflow: "hidden" }}>
+          <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid var(--clr-border)", display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(14,165,233,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>🎙️</div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Customer Interview Guide</div>
+              <div style={{ fontSize: "0.62rem", color: "var(--clr-text-3)" }}>Non-leading questions to validate real demand • Target: {data.customerInterviewGuide.targetInterviews} interviews</div>
+            </div>
+          </div>
+          <div style={{ padding: "1.25rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <div>
+              <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-text-3)", marginBottom: "0.6rem" }}>Questions to ask</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                {data.customerInterviewGuide.questions.map((q, i) => (
+                  <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                    <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-accent)", flexShrink: 0, width: 18 }}>{i + 1}.</span>
+                    <span style={{ fontSize: "0.72rem", color: "var(--clr-text-2)", lineHeight: 1.55 }}>{q}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {(data.customerInterviewGuide.whereToFindThem?.length > 0 || data.customerInterviewGuide.greenSignals?.length > 0 || data.customerInterviewGuide.redSignals?.length > 0) && (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.65rem" }}>
+                {data.customerInterviewGuide.whereToFindThem?.length > 0 && (
+                  <div style={{ background: "rgba(var(--clr-accent-rgb),0.05)", border: "1px solid rgba(var(--clr-accent-rgb),0.15)", borderRadius: 8, padding: "0.75rem" }}>
+                    <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", color: "var(--clr-accent)", marginBottom: 6 }}>📍 WHERE TO FIND</div>
+                    {data.customerInterviewGuide.whereToFindThem.map((w, i) => <div key={i} style={{ fontSize: "0.68rem", color: "var(--clr-text-2)", lineHeight: 1.5, marginBottom: 2 }}>• {w}</div>)}
+                  </div>
+                )}
+                {data.customerInterviewGuide.greenSignals?.length > 0 && (
+                  <div style={{ background: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 8, padding: "0.75rem" }}>
+                    <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", color: "rgba(34,197,94,0.9)", marginBottom: 6 }}>✅ GREEN SIGNALS</div>
+                    {data.customerInterviewGuide.greenSignals.map((s, i) => <div key={i} style={{ fontSize: "0.68rem", color: "var(--clr-text-2)", lineHeight: 1.5, marginBottom: 2 }}>• {s}</div>)}
+                  </div>
+                )}
+                {data.customerInterviewGuide.redSignals?.length > 0 && (
+                  <div style={{ background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "0.75rem" }}>
+                    <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", color: "rgba(239,68,68,0.9)", marginBottom: 6 }}>🚩 RED SIGNALS</div>
+                    {data.customerInterviewGuide.redSignals.map((s, i) => <div key={i} style={{ fontSize: "0.68rem", color: "var(--clr-text-2)", lineHeight: 1.5, marginBottom: 2 }}>• {s}</div>)}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── FINANCIAL DEEP ──────────────────────────────────────────────────── */}
+      {data.financialDeep && (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(234,179,8,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>💰</div>
+            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Financial Snapshot</span>
+            <span style={{ fontSize: "0.62rem", color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 99, padding: "0.1rem 0.5rem" }}>Based on live benchmark data</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.65rem", marginBottom: "0.75rem" }}>
+            <div style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, padding: "1rem" }}>
+              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgba(239,68,68,0.9)", marginBottom: 6 }}>🔥 MONTHLY BURN</div>
+              <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--clr-text)", marginBottom: 8 }}>{data.financialDeep.monthlyBurn.total}</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                {[
+                  { label: "Infrastructure", val: data.financialDeep.monthlyBurn.infrastructure },
+                  { label: "Tools", val: data.financialDeep.monthlyBurn.tools },
+                  { label: "Marketing", val: data.financialDeep.monthlyBurn.marketing },
+                  { label: "Acquisition", val: data.financialDeep.monthlyBurn.acquisition },
+                ].map(({ label, val }) => (
+                  <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.63rem" }}>
+                    <span style={{ color: "var(--clr-text-3)" }}>{label}</span>
+                    <span style={{ color: "var(--clr-text-2)", fontWeight: 500 }}>{val}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 12, padding: "1rem" }}>
+              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgba(34,197,94,0.9)", marginBottom: 6 }}>✅ BREAK-EVEN</div>
+              <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--clr-text)", marginBottom: 4 }}>{data.financialDeep.breakEvenMonth}</div>
+              <div style={{ fontSize: "0.65rem", color: "var(--clr-text-3)" }}>When revenue covers monthly costs</div>
+            </div>
+            <div style={{ background: "rgba(var(--clr-accent-rgb),0.08)", border: "1px solid rgba(var(--clr-accent-rgb),0.25)", borderRadius: 12, padding: "1rem" }}>
+              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-accent)", marginBottom: 6 }}>🚀 12-MONTH MRR</div>
+              <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--clr-text)", marginBottom: 4 }}>{data.financialDeep.twelveMonthMRR}</div>
+              <div style={{ fontSize: "0.65rem", color: "var(--clr-text-3)" }}>{data.financialDeep.pricingBenchmark}</div>
+            </div>
+          </div>
+          {data.financialDeep.revenueScenarios && (
+            <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, overflow: "hidden" }}>
+              <div style={{ padding: "0.6rem 1rem", borderBottom: "1px solid var(--clr-border)", fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-text-3)" }}>Revenue Projections — Year 1 Scenarios</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr" }}>
+                {[
+                  { key: "cautious" as const, label: "Cautious", color: "rgba(100,116,139,0.8)" },
+                  { key: "middle" as const, label: "Middle", color: "rgba(var(--clr-accent-rgb),0.9)", highlight: true },
+                  { key: "optimistic" as const, label: "Optimistic", color: "rgba(34,197,94,0.9)" },
+                ].map(({ key, label, color, highlight }) => {
+                  const sc = data.financialDeep!.revenueScenarios[key];
+                  return (
+                    <div key={key} style={{ padding: "0.875rem 1rem", background: highlight ? "rgba(var(--clr-accent-rgb),0.04)" : "transparent", borderRight: key !== "optimistic" ? "1px solid var(--clr-border)" : "none" }}>
+                      <div style={{ fontSize: "0.6rem", fontWeight: 700, color, textTransform: "uppercase", marginBottom: 5 }}>{highlight ? "📊 " : ""}{label}</div>
+                      <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 4 }}>{sc.mrr} MRR</div>
+                      <div style={{ fontSize: "0.6rem", color: "var(--clr-text-3)", marginBottom: 4 }}>{sc.probability} likely</div>
+                      <div style={{ fontSize: "0.63rem", color: "var(--clr-text-3)", lineHeight: 1.4 }}>{sc.assumption}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── FUNDABILITY RADAR ────────────────────────────────────────────────── */}
+      {data.fundabilityRadar && (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(139,92,246,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>📡</div>
+            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Fundability Radar</span>
+            <span style={{ fontSize: "0.62rem", color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 99, padding: "0.1rem 0.5rem" }}>Investor lens</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.65rem" }}>
+            {([
+              { key: "team" as const, label: "Team", icon: "👥" },
+              { key: "marketSize" as const, label: "Market Size", icon: "📊" },
+              { key: "product" as const, label: "Product", icon: "⚙️" },
+              { key: "competition" as const, label: "Competition", icon: "⚔️" },
+              { key: "marketing" as const, label: "Marketing", icon: "📣" },
+              { key: "fundingNeed" as const, label: "Funding Need", icon: "💵" },
+            ] as const).map(({ key, label, icon }) => {
+              const dim = data.fundabilityRadar![key];
+              const score = dim?.score ?? 0;
+              const pct = (score / 10) * 100;
+              const barColor = score >= 7 ? "rgba(34,197,94,0.8)" : score >= 5 ? "rgba(234,179,8,0.8)" : "rgba(239,68,68,0.8)";
+              return (
+                <div key={key} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "0.875rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                    <span style={{ fontSize: "0.7rem", fontWeight: 600, color: "var(--clr-text)" }}>{icon} {label}</span>
+                    <span style={{ fontSize: "0.8rem", fontWeight: 800, color: barColor }}>{score}/10</span>
+                  </div>
+                  <div style={{ height: 4, background: "var(--clr-border)", borderRadius: 99, overflow: "hidden", marginBottom: 6 }}>
+                    <div style={{ height: "100%", width: `${pct}%`, background: barColor, borderRadius: 99, transition: "width 0.3s" }} />
+                  </div>
+                  <div style={{ fontSize: "0.63rem", color: "var(--clr-text-3)", lineHeight: 1.45 }}>{dim?.note}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* ── COMMUNITY SIGNALS ────────────────────────────────── */}
       {data.communitySignals && data.communitySignals.length > 0 && (
         <div>
@@ -2013,6 +2337,72 @@ interface GapSynthesis {
   workingForYou: string[];
   watchOutFor: string[];
 }
+interface GapTargetCustomerDeep {
+  whoTheyAre: string;
+  howTheyThink: string;
+  availableMoney: string;
+  howTheyBuy: string;
+  triggerEvents: string[];
+  whereToFindThem: string[];
+}
+interface GapIndustryTrend {
+  trend: string;
+  evidence: string;
+  impact: "high" | "medium" | "low";
+}
+interface GapIndustryTrends {
+  now: GapIndustryTrend[];
+  emerging: GapIndustryTrend[];
+  structural: GapIndustryTrend[];
+}
+interface GapMarketSegment {
+  name: string;
+  fit: "primary" | "secondary" | "tertiary";
+  size: string;
+  growth: string;
+  description: string;
+}
+interface GapGTMChannel {
+  name: string;
+  type: "primary" | "secondary" | "experimental";
+  estimatedCAC: string;
+  description: string;
+}
+interface GapLaunchPhase {
+  phase: number;
+  name: string;
+  duration: string;
+  steps: string[];
+}
+interface GapGoToMarket {
+  channels: GapGTMChannel[];
+  launchTarget: string;
+  launchPhases: GapLaunchPhase[];
+}
+interface GapCustomerInterviewGuide {
+  questions: string[];
+  whereToFindThem: string[];
+  greenSignals: string[];
+  redSignals: string[];
+  targetInterviews: number;
+}
+interface GapRevenueScenario { mrr: string; probability: string; assumption: string; }
+interface GapFinancialDeep {
+  monthlyBurn: { total: string; infrastructure: string; tools: string; marketing: string; acquisition: string; };
+  breakEvenMonth: string;
+  twelveMonthMRR: string;
+  revenueScenarios: { cautious: GapRevenueScenario; middle: GapRevenueScenario; optimistic: GapRevenueScenario; };
+  pricingBenchmark: string;
+}
+interface GapFundabilityDimension { score: number; note: string; }
+interface GapFundabilityRadar {
+  team: GapFundabilityDimension;
+  marketSize: GapFundabilityDimension;
+  product: GapFundabilityDimension;
+  competition: GapFundabilityDimension;
+  marketing: GapFundabilityDimension;
+  fundingNeed: GapFundabilityDimension;
+}
 interface GapAnalysisData {
   appStoreQuery?: string;
   marketScore: number;
@@ -2024,6 +2414,13 @@ interface GapAnalysisData {
   swot: GapSWOT;
   opportunity: GapOpportunity;
   targetCustomer: GapTargetCustomer;
+  targetCustomerDeep?: GapTargetCustomerDeep;
+  industryTrends?: GapIndustryTrends;
+  marketSegments?: GapMarketSegment[];
+  goToMarket?: GapGoToMarket;
+  customerInterviewGuide?: GapCustomerInterviewGuide;
+  financialDeep?: GapFinancialDeep;
+  fundabilityRadar?: GapFundabilityRadar;
   communitySignals?: GapCommunitySignal[];
   oneLiner?: string;
   marketSize?: GapMarketSize;
