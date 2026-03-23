@@ -19,47 +19,47 @@ export default function GlobalHeader() {
     <header style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
       height: 52, display: "flex", alignItems: "center",
-      justifyContent: "space-between", padding: "0 20px",
       background: "var(--clr-surface)",
       borderBottom: "1px solid var(--clr-border)",
     }}>
-      {/* Left: Logo + divider + nav */}
-      <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", paddingRight: 18 }}>
-          <svg width="22" height="22" viewBox="0 0 19 19" fill="none">
-            <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2.2" strokeLinecap="round" />
-          </svg>
-          <span style={{ fontWeight: 600, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.02em", fontFamily: "Figtree, sans-serif" }}>
-            Unbuilt
-          </span>
-        </Link>
-        <div style={{ width: 1, height: 18, background: "var(--clr-border-2)", marginRight: 16, flexShrink: 0 }} />
-        <nav style={{ display: "flex", alignItems: "center", gap: 20, height: "100%" }}>
-          <Link href="/how-it-works" style={{ fontSize: "0.8125rem", fontWeight: 500, color: "var(--clr-text-3)", textDecoration: "none" }}>How it works</Link>
-          <Link href="/pricing" style={{ fontSize: "0.8125rem", fontWeight: 500, color: "var(--clr-text-3)", textDecoration: "none" }}>Pricing</Link>
-          <Link href="/careers" style={{ fontSize: "0.8125rem", fontWeight: 500, color: "var(--clr-text-3)", textDecoration: "none" }}>Careers</Link>
-        </nav>
-      </div>
+      {/* Sidebar width spacer — logo lives in the sidebar */}
+      <div style={{ width: 220, minWidth: 220, flexShrink: 0, borderRight: "1px solid var(--clr-border)", height: "100%" }} />
+
+      {/* Nav links — start right after sidebar border */}
+      <nav style={{ display: "flex", alignItems: "center", gap: 24, height: "100%", padding: "0 24px" }}>
+        <Link href="/how-it-works" style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--clr-text-2)", textDecoration: "none", transition: "color 0.15s" }}
+          onMouseEnter={e => e.currentTarget.style.color = "var(--clr-text)"}
+          onMouseLeave={e => e.currentTarget.style.color = "var(--clr-text-2)"}
+        >How it works</Link>
+        <Link href="/pricing" style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--clr-text-2)", textDecoration: "none", transition: "color 0.15s" }}
+          onMouseEnter={e => e.currentTarget.style.color = "var(--clr-text)"}
+          onMouseLeave={e => e.currentTarget.style.color = "var(--clr-text-2)"}
+        >Pricing</Link>
+        <Link href="/careers" style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--clr-text-2)", textDecoration: "none", transition: "color 0.15s" }}
+          onMouseEnter={e => e.currentTarget.style.color = "var(--clr-text)"}
+          onMouseLeave={e => e.currentTarget.style.color = "var(--clr-text-2)"}
+        >Careers</Link>
+      </nav>
 
       {/* Right: credits + auth */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8, paddingRight: 20 }}>
         {isLoaded && isSignedIn && credits !== null && (
           <Link href="/pricing" style={{ textDecoration: "none" }}>
             <div style={{
               display: "flex", alignItems: "center", gap: 5,
-              padding: "4px 11px", borderRadius: 20,
+              padding: "5px 12px", borderRadius: 20,
               border: credits === 0 ? "1px solid rgba(220,38,38,0.3)" : "1px solid var(--clr-border-2)",
               background: credits === 0 ? "rgba(220,38,38,0.05)" : "transparent",
               cursor: "pointer",
             }}>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
                 stroke={credits === 0 ? "rgb(220,38,38)" : "var(--clr-accent)"}
                 strokeWidth="2.5">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
               </svg>
               <span style={{
-                fontSize: "0.72rem", fontWeight: 600,
-                color: credits === 0 ? "rgb(220,38,38)" : "var(--clr-text-3)",
+                fontSize: "0.8rem", fontWeight: 600,
+                color: credits === 0 ? "rgb(220,38,38)" : "var(--clr-text-2)",
               }}>
                 {credits === 0 ? "Buy credits" : `${credits} credit${credits === 1 ? "" : "s"}`}
               </span>
@@ -70,9 +70,9 @@ export default function GlobalHeader() {
         {isLoaded && !isSignedIn && (
           <SignInButton mode="modal">
             <button style={{
-              padding: "5px 14px", background: "transparent",
-              color: "var(--clr-text-2)", border: "1px solid var(--clr-border-2)",
-              borderRadius: 7, fontSize: "0.8rem", fontWeight: 500,
+              padding: "6px 16px", background: "transparent",
+              color: "var(--clr-text)", border: "1px solid var(--clr-border-2)",
+              borderRadius: 8, fontSize: "0.875rem", fontWeight: 500,
               cursor: "pointer", fontFamily: "inherit",
             }}>Sign in</button>
           </SignInButton>
