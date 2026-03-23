@@ -3003,7 +3003,6 @@ export default function Home() {
   const [hasResults, setHasResults] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [trendFeedData, setTrendFeedData] = useState<any>(null);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [githubRepos, setGithubRepos] = useState<GithubRepo[]>([]);
   const [githubLoading, setGithubLoading] = useState(false);
   const [githubFetched, setGithubFetched] = useState(false);
@@ -3063,14 +3062,6 @@ export default function Home() {
     }
   }, [hasResults]);
 
-  // Initialize theme from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem("theme") as "dark" | "light" | null;
-    const t = saved || "dark";
-    setTheme(t);
-    document.documentElement.classList.toggle("light", t === "light");
-  }, []);
-
   // Auto-trigger analysis from URL params (e.g., from /opportunities page)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -3085,13 +3076,6 @@ export default function Home() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const toggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    localStorage.setItem("theme", next);
-    document.documentElement.classList.toggle("light", next === "light");
-  };
 
   const handleSelectTool = (toolId: ToolId) => {
     // Reset all result state when switching tools
@@ -3532,11 +3516,63 @@ export default function Home() {
         * { box-sizing: border-box; }
       `}</style>
 
-      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      {/* Shell */}
+      <div style={{ display: "flex", height: "100vh", paddingTop: 52 }}>
 
-        
-        {/* ââ Main ââ */}
-        <main style={{ maxWidth: 1200, margin: "0 auto", width: "100%", padding: "42px 2rem 0", flex: 1, display: "flex", flexDirection: "column" }}>
+        {/* Sidebar */}
+        <aside style={{ width: 192, minWidth: 192, background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)", display: "flex", flexDirection: "column", position: "fixed", top: 52, bottom: 0, left: 0, zIndex: 50 }}>
+          {/* Explore */}
+          <div style={{ padding: "10px 8px 4px" }}>
+            <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.1em", color: "var(--clr-text-5)", textTransform: "uppercase", padding: "8px 10px 3px" }}>Explore</div>
+            <a href="/pulse" style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderRadius: 7, color: "var(--clr-text-3)", fontSize: 12.5, textDecoration: "none" }} onMouseEnter={e => { e.currentTarget.style.background = "rgba(0,0,0,0.05)"; e.currentTarget.style.color = "var(--clr-text)"; }} onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--clr-text-3)"; }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#a78bfa", flexShrink: 0, display: "inline-block" }} />
+              Pulse
+              <span style={{ marginLeft: "auto", fontSize: 8.5, padding: "1.5px 5px", borderRadius: 3, background: "rgba(34,197,94,0.12)", color: "#16a34a", fontWeight: 600 }}>FREE</span>
+            </a>
+          </div>
+          {/* Analyze */}
+          <div style={{ padding: "0 8px 4px" }}>
+            <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.1em", color: "var(--clr-text-5)", textTransform: "uppercase", padding: "8px 10px 3px", marginTop: 4 }}>Analyze</div>
+            <div onClick={() => { if (!isSignedIn) { openSignIn(); return; } handleSelectTool("gap-analysis"); }} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderRadius: 7, cursor: "pointer", fontSize: 12.5, position: "relative", color: selectedTool === "gap-analysis" ? "var(--clr-text)" : "var(--clr-text-3)", background: selectedTool === "gap-analysis" ? "rgba(0,0,0,0.07)" : "transparent" }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(0,0,0,0.05)"; (e.currentTarget as HTMLElement).style.color = "var(--clr-text)"; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = selectedTool === "gap-analysis" ? "rgba(0,0,0,0.07)" : "transparent"; (e.currentTarget as HTMLElement).style.color = selectedTool === "gap-analysis" ? "var(--clr-text)" : "var(--clr-text-3)"; }}>
+              {selectedTool === "gap-analysis" && <span style={{ position: "absolute", left: -8, top: "50%", transform: "translateY(-50%)", width: 2.5, height: 14, background: "#7c6fff", borderRadius: "0 2px 2px 0" }} />}
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#7c6fff", flexShrink: 0, display: "inline-block" }} />
+              Gap Analysis
+              <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 3 }}>
+                {isSignedIn && <span style={{ fontSize: 8.5, padding: "1.5px 5px", borderRadius: 3, background: "rgba(124,111,255,0.12)", color: "#7c6fff", fontWeight: 600 }}>1 credit</span>}
+                {!isSignedIn && <svg width="10" height="10" fill="none" viewBox="0 0 24 24" style={{ opacity: 0.4 }}><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>}
+              </div>
+            </div>
+            <div onClick={() => { if (!isSignedIn) { openSignIn(); return; } handleSelectTool("stack-advisor"); }} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderRadius: 7, cursor: "pointer", fontSize: 12.5, position: "relative", color: selectedTool === "stack-advisor" ? "var(--clr-text)" : "var(--clr-text-3)", background: selectedTool === "stack-advisor" ? "rgba(0,0,0,0.07)" : "transparent" }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(0,0,0,0.05)"; (e.currentTarget as HTMLElement).style.color = "var(--clr-text)"; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = selectedTool === "stack-advisor" ? "rgba(0,0,0,0.07)" : "transparent"; (e.currentTarget as HTMLElement).style.color = selectedTool === "stack-advisor" ? "var(--clr-text)" : "var(--clr-text-3)"; }}>
+              {selectedTool === "stack-advisor" && <span style={{ position: "absolute", left: -8, top: "50%", transform: "translateY(-50%)", width: 2.5, height: 14, background: "#38bdf8", borderRadius: "0 2px 2px 0" }} />}
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#38bdf8", flexShrink: 0, display: "inline-block" }} />
+              Stack Advisor
+              <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 3 }}>
+                {isSignedIn && <span style={{ fontSize: 8.5, padding: "1.5px 5px", borderRadius: 3, background: "rgba(56,189,248,0.12)", color: "#0891b2", fontWeight: 600 }}>1 credit</span>}
+                {!isSignedIn && <svg width="10" height="10" fill="none" viewBox="0 0 24 24" style={{ opacity: 0.4 }}><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>}
+              </div>
+            </div>
+          </div>
+          <div style={{ height: 1, background: "var(--clr-border)", margin: "6px 10px" }} />
+          <div style={{ padding: 10, marginTop: "auto" }}>
+            {isSignedIn ? (
+              <div style={{ background: "rgba(0,0,0,0.04)", border: "1px solid var(--clr-border)", borderRadius: 8, overflow: "hidden" }}>
+                <a href="/pricing" style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderBottom: "1px solid var(--clr-border)", textDecoration: "none" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.04)"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                  <svg width="12" height="12" fill="none" viewBox="0 0 24 24" style={{ opacity: 0.4 }}><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                  <span style={{ fontSize: 11, color: "var(--clr-text-3)" }}>My Reports</span>
+                </a>
+                <a href="/pricing" style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", textDecoration: "none" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.04)"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                  <svg width="12" height="12" fill="none" viewBox="0 0 24 24" style={{ opacity: 0.4 }}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg>
+                  <span style={{ fontSize: 11, color: "var(--clr-text-3)" }}>Credits</span>
+                </a>
+              </div>
+            ) : (
+              <div style={{ textAlign: "center", fontSize: 11, color: "var(--clr-text-5)", lineHeight: 1.5, padding: "6px 4px" }}>Sign in to unlock<br />Gap &amp; Stack</div>
+            )}
+          </div>
+        </aside>
+
+        {/* Main content */}
+        <main style={{ marginLeft: 192, flex: 1, display: "flex", flexDirection: "column", overflowY: "auto" }}>
 
           {/* ââ Scanning overlay ââ */}
           {scanStep >= 0 ? (() => {
@@ -3676,91 +3712,45 @@ export default function Home() {
             );
           })() : (
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-              {/* ââ Hero ââ */}
-              {!hasResults && (
-              <div style={{
-                flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
-                justifyContent: "center", textAlign: "center", maxWidth: 720, margin: "0 auto",
-                width: "100%", padding: "4rem 0 2rem", position: "relative",
-              }}>
-                <h1 style={{
-                  fontSize: "4.2rem", fontWeight: 700,
-                  letterSpacing: "-0.035em", lineHeight: "4.725rem",
-                  color: "var(--clr-text)", marginBottom: "1.5rem",
-                  whiteSpace: "normal",
-                }}>
-                  <span style={{ color: "var(--clr-text-3)" }}>Claude says your idea is great.</span>
-                  <span style={{ color: "var(--clr-text)" }}>We&apos;ll tell you the truth.</span>
-                </h1>
-                <p style={{
-                  color: "var(--clr-text-3)", fontSize: "1.2rem", lineHeight: 1.6,
-                  maxWidth: 680, margin: "0 auto 1rem",
-                }}>
-                  Your AI chat was trained on last year's data. Unbuilt searches the live web<br />
-              — so you build on facts, not memories.
-                </p>
-              </div>
-              )}
 
-              {/* ââ Tool selector grid ââ */}
-              <div data-tool-grid style={{
-                display: "grid",
-                marginTop: "2rem",
-            gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "1rem",
-                paddingBottom: "2rem",
-                maxWidth: "59.4rem",
-                margin: "0 auto",
-              }}>
-                {/* Pulse card — links to /pulse instead of triggering tool flow */}
-                <Link href="/pulse" style={{ textDecoration: "none", color: "inherit" }}>
-                  <div
-                    style={{
-                      position: "relative",
-                      borderRadius: 12,
-                      padding: "1rem",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 0,
-                      overflow: "hidden",
-                      cursor: "pointer",
-                      transition: "all 0.18s ease",
-                      background: "var(--clr-surface)",
-                      border: "1px solid var(--clr-border-2)",
-                      opacity: selectedTool ? 0.35 : 1,
-                      userSelect: "none",
-                      height: "100%",
-                    }}
-                    onMouseEnter={(e) => { if (!selectedTool) { e.currentTarget.style.border = "1px solid var(--clr-text-6)"; e.currentTarget.style.transform = "translateY(-1px)"; } }}
-                    onMouseLeave={(e) => { e.currentTarget.style.border = "1px solid var(--clr-border-2)"; e.currentTarget.style.transform = "none"; }}
-                  >
-                    <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--clr-accent)", marginBottom: "0.5rem" }}>
-                      I NEED INSPIRATION
-                    </div>
-                    <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(var(--clr-accent-rgb),0.08)", border: "1px solid rgba(var(--clr-accent-rgb),0.15)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "0.5rem", flexShrink: 0 }}>
-                      {TOOL_ICONS["trend-feed"]("var(--clr-accent)")}
-                    </div>
-                    <div style={{ fontSize: "1.1rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--clr-text)", marginBottom: "0.25rem" }}>Pulse</div>
-                    <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: "0.5rem" }}>Trending products, analyzed</div>
-                    <p style={{ fontSize: "0.894rem", color: "var(--clr-text-4)", lineHeight: 1.6, flex: 1, margin: 0 }}>
-                      Browse what’s launching on Product Hunt and App Store. Every product gets an instant AI breakdown — what it does, what makes it different, and what it’s missing.
-                    </p>
-                    <div style={{ marginTop: "0.875rem", display: "flex", alignItems: "center", gap: 5, fontSize: "0.894rem", fontWeight: 600, color: "var(--clr-accent)" }}>
-                      Explore Pulse
-                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9.5 4.5M13 8l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </div>
+              {/* ── Tool welcome panel (when no tool selected) ── */}
+              {!selectedTool && !hasResults && (
+                <div style={{
+                  flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
+                  justifyContent: "center", textAlign: "center", padding: "3rem 2rem",
+                }}>
+                  <div style={{ marginBottom: "0.75rem" }}>
+                    <svg width="32" height="32" viewBox="0 0 19 19" fill="none">
+                      <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2.2" strokeLinecap="round" />
+                    </svg>
                   </div>
-                </Link>
-                {TOOLS.filter((t) => t.id !== "competitor-radar" && t.id !== "trend-feed").map((tool) => (
-                  <ToolSelectorCard
-                    key={tool.id}
-                    tool={tool}
-                    isSelected={selectedTool === tool.id}
-                    isOtherSelected={selectedTool !== null && selectedTool !== tool.id}
-                    onClick={() => handleSelectTool(tool.id)}
-                  />
-                ))}
-              </div>
+                  <h2 style={{ fontSize: "1.5rem", fontWeight: 600, color: "var(--clr-text)", letterSpacing: "-0.025em", marginBottom: "0.5rem" }}>
+                    Pick a tool to get started
+                  </h2>
+                  <p style={{ fontSize: "0.9rem", color: "var(--clr-text-3)", lineHeight: 1.7, maxWidth: 380, margin: "0 auto 1.5rem" }}>
+                    Use <strong style={{ color: "var(--clr-text-2)", fontWeight: 600 }}>Gap Analysis</strong> to find market gaps before you build, or <strong style={{ color: "var(--clr-text-2)", fontWeight: 600 }}>Stack Advisor</strong> to get the exact tools for your idea.
+                  </p>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <button
+                      onClick={() => { if (!isSignedIn) { openSignIn(); return; } handleSelectTool("gap-analysis"); }}
+                      style={{ padding: "8px 20px", borderRadius: 8, background: "#7c6fff", color: "#fff", border: "none", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+                    >
+                      Gap Analysis
+                    </button>
+                    <button
+                      onClick={() => { if (!isSignedIn) { openSignIn(); return; } handleSelectTool("stack-advisor"); }}
+                      style={{ padding: "8px 20px", borderRadius: 8, background: "transparent", color: "var(--clr-text-2)", border: "1px solid var(--clr-border-2)", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+                    >
+                      Stack Advisor
+                    </button>
+                  </div>
+                  {!isSignedIn && (
+                    <p style={{ marginTop: "1rem", fontSize: "0.8rem", color: "var(--clr-text-5)" }}>
+                      <span onClick={() => openSignIn()} style={{ color: "var(--clr-accent)", cursor: "pointer", fontWeight: 500 }}>Sign in</span> to use Gap Analysis and Stack Advisor
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* ââ Input section ââ */}
               {selectedTool && currentTool && (
@@ -4202,8 +4192,6 @@ export default function Home() {
           )}
         </main>
 
-        {/* ââ Site Footer ââ */}
-        
       </div>
     </>
   );

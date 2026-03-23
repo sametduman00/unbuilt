@@ -17,21 +17,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-(function() {
-  try {
-    var theme = localStorage.getItem('theme');
-    var dark = theme ? theme === 'dark' : true;
-    if (!dark) document.documentElement.classList.add('light');
-  } catch(e) {}
-})();
-`,
-          }}
-        />
-      </head>
+      <head />
       <body>
         <ClerkThemeProvider>
           <ConsentGate>

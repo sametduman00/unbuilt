@@ -1,69 +1,40 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Figtree:wght@300;400;500;600&display=swap');
 
-/* ── Color tokens ─────────────────────────────────────────────── */
+/* ── Color tokens — Perplexity-style light palette ──────────── */
 :root {
-  --clr-bg: #050508;
-  --clr-surface: #0d0d14;
-  --clr-surface-2: #111119;
-  --clr-surface-3: #15151f;
-  --clr-header-bg: #050508;
-  --clr-border-deep: #18182a;
-  --clr-border: #1d1d2e;
-  --clr-border-2: #24243a;
-  --clr-border-3: #2e2e48;
-  --clr-text: #e8e8f0;
-  --clr-text-2: #b8b8d0;
-  --clr-text-3: #6868a0;
-  --clr-text-4: #6868a0;
-  --clr-text-5: #505080;
-  --clr-text-6: #404068;
-  --clr-text-7: #404068;
-  --clr-text-8: #303058;
-  --clr-placeholder: #404068;
-  --clr-accent: #22d3ee;
-  --clr-accent-hover: #ffffff;
-  --clr-text-rgb: 232, 232, 240;
-  --clr-accent-rgb: 34, 211, 238;
-  --clr-code-bg: #0a0a12;
-  --clr-code-text: #a0a0c8;
-  --clr-btn-bg: #22d3ee;
-  --clr-btn-text: #050508;
-}
-
-html.light {
-  --clr-bg: #f5f5f5;
-  --clr-surface: #ffffff;
-  --clr-surface-2: #f0f0f0;
-  --clr-surface-3: #e8e8e8;
-  --clr-header-bg: #f5f5f5;
-  --clr-border-deep: #e0e0e0;
-  --clr-border: #d4d4d4;
-  --clr-border-2: #cccccc;
-  --clr-border-3: #bbbbbb;
-  --clr-text: #111111;
-  --clr-text-2: #222222;
-  --clr-text-3: #555555;
-  --clr-text-4: #666666;
-  --clr-text-5: #777777;
-  --clr-text-6: #888888;
-  --clr-text-7: #999999;
-  --clr-text-8: #aaaaaa;
-  --clr-placeholder: #999999;
+  --clr-bg: #fcfcf9;
+  --clr-surface: #f2f2ef;
+  --clr-surface-2: #eaeae6;
+  --clr-surface-3: #e2e2dd;
+  --clr-header-bg: #f2f2ef;
+  --clr-border-deep: rgba(0,0,0,0.15);
+  --clr-border: rgba(0,0,0,0.08);
+  --clr-border-2: rgba(0,0,0,0.12);
+  --clr-border-3: rgba(0,0,0,0.05);
+  --clr-text: #1a1a1a;
+  --clr-text-2: #3a3a3a;
+  --clr-text-3: #666666;
+  --clr-text-4: #888888;
+  --clr-text-5: #aaaaaa;
+  --clr-text-6: #bbbbbb;
+  --clr-text-7: #cccccc;
+  --clr-text-8: #dddddd;
+  --clr-placeholder: #aaaaaa;
   --clr-accent: #0891b2;
-  --clr-accent-hover: #000000;
-  --clr-text-rgb: 17, 17, 17;
+  --clr-accent-hover: #0e7490;
+  --clr-text-rgb: 26, 26, 26;
   --clr-accent-rgb: 8, 145, 178;
-  --clr-code-bg: #f0f0f0;
-  --clr-code-text: #333333;
+  --clr-primary: #7c6fff;
+  --clr-primary-hover: #6b5fee;
+  --clr-code-bg: #f0f0ec;
+  --clr-code-text: #555555;
   --clr-btn-bg: #0891b2;
   --clr-btn-text: #ffffff;
 }
 
-/* ── Base ─────────────────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
+/* ── Base ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
 html {
   -webkit-font-smoothing: antialiased;
@@ -77,536 +48,101 @@ body {
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  position: relative;
 }
 
-/* Deep space background glow */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background:
-    radial-gradient(ellipse 100% 55% at 50% -5%, rgba(34,211,238,0.055) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 35% at 85% 85%, rgba(99,102,241,0.025) 0%, transparent 60%);
-}
-
-/* Subtle dot grid */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.028) 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-
-html.light body::before,
-html.light body::after {
-  display: none;
-}
-
-/* ── Typography ───────────────────────────────────────────────── */
+/* ── Typography ─────────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Syne', -apple-system, sans-serif;
+  font-family: 'Syne', -apple-system, sans-serif !important;
   font-weight: 700;
   letter-spacing: -0.025em;
   color: var(--clr-text);
 }
-
-h1 {
-  font-weight: 800;
-  letter-spacing: -0.035em;
-}
-
-p {
-  font-family: 'Figtree', -apple-system, sans-serif;
-  line-height: 1.65;
-}
-
-a {
-  color: var(--clr-accent);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
+h1 { font-weight: 800; letter-spacing: -0.035em; }
+p { font-family: 'Figtree', -apple-system, sans-serif; line-height: 1.65; }
+a { color: var(--clr-accent); text-decoration: none; transition: color 0.2s; }
 a:hover { color: var(--clr-accent-hover); }
 
-/* ── Scrollbar ────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-track { background: var(--clr-bg); }
-::-webkit-scrollbar-thumb { background: var(--clr-border-2); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: var(--clr-accent); }
-
-/* ── Selection ────────────────────────────────────────────────── */
-::selection { background: rgba(34,211,238,0.18); color: var(--clr-text); }
-html.light ::selection { background: rgba(8,145,178,0.18); }
-
-/* ── Header / Nav ─────────────────────────────────────────────── */
-header, nav {
-  background: rgba(5,5,8,0.82) !important;
-  backdrop-filter: blur(24px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
-  border-bottom: 1px solid rgba(34,211,238,0.07) !important;
-}
-
-html.light header,
-html.light nav {
-  background: rgba(245,245,245,0.88) !important;
-  backdrop-filter: blur(20px) !important;
-  border-bottom: 1px solid rgba(0,0,0,0.08) !important;
-}
-
-/* ── Prose inside cards ───────────────────────────────────────── */
-.card-prose p {
-  color: var(--clr-text-3);
-  line-height: 1.75;
-  margin-bottom: 0.625rem;
-  font-size: 0.9375rem;
-  font-family: 'Figtree', sans-serif;
-}
-.card-prose ul {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 0.75rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-}
-.card-prose ul li {
-  color: var(--clr-text-3);
-  padding: 0.4rem 0.5rem 0.4rem 1rem;
-  position: relative;
-  line-height: 1.65;
-  font-size: 0.9375rem;
-  border-radius: 6px;
-  transition: background 0.15s;
-}
-.card-prose ul li:hover { background: rgba(var(--clr-text-rgb),0.03); }
-.card-prose ul li::before {
-  content: "\25B8";
-  position: absolute;
-  left: 0;
-  color: var(--clr-text-5);
-  font-size: 0.75rem;
-  top: 0.45rem;
-}
-.card-prose ol {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 0.75rem 0;
-  counter-reset: item;
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-}
-.card-prose ol li {
-  color: var(--clr-text-3);
-  padding: 0.4rem 0.5rem 0.4rem 1.75rem;
-  position: relative;
-  line-height: 1.65;
-  font-size: 0.9375rem;
-  border-radius: 6px;
-  transition: background 0.15s;
-  counter-increment: item;
-}
-.card-prose ol li:hover { background: rgba(var(--clr-text-rgb),0.03); }
-.card-prose ol li::before {
-  content: counter(item) ".";
-  position: absolute;
-  left: 0.375rem;
-  color: var(--clr-accent);
-  font-size: 0.75rem;
-  font-weight: 600;
-  top: 0.45rem;
-  font-family: 'Figtree', sans-serif;
-}
-.card-prose h3, .card-prose h4 {
-  font-family: 'Syne', sans-serif;
-  color: var(--clr-text);
-}
-.card-prose strong { color: var(--clr-text-2); font-weight: 600; }
-.card-prose code {
-  background: var(--clr-code-bg);
-  color: var(--clr-code-text);
-  padding: 0.125rem 0.375rem;
-  border-radius: 4px;
-  font-size: 0.85em;
-}
-.card-prose a { color: var(--clr-accent); }
-.card-prose a:hover { color: var(--clr-accent-hover); }
-
-/* ── Clerk Auth UI ────────────────────────────────────────────── */
-.cl-card,
-.cl-modalContent,
-.cl-userButtonPopoverCard {
-  background: #0d0d14 !important;
-  border: 1px solid #1d1d2e !important;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.7) !important;
-}
-.cl-headerTitle  { color: #e8e8f0 !important; }
-.cl-headerSubtitle { color: #6868a0 !important; }
-.cl-footer,
-.cl-userButtonPopoverFooter { display: none !important; }
-.cl-userButtonPopoverActionButton,
-.cl-userButtonPopoverActionButton span,
-.cl-userButtonPopoverActionButtonText,
-.cl-userButtonPopoverActionButtonIcon {
-  color: #e8e8f0 !important;
-  fill: #e8e8f0 !important;
-}
-
-/* GitHub button */
-.cl-socialButtonsBlockButton__github {
-  background: #24292e !important;
-  border: 1px solid #555 !important;
-  color: #ffffff !important;
-  position: relative !important;
-}
-.cl-socialButtonsBlockButton__github::before,
-.cl-socialButtonsBlockButton__github::after { display: none !important; }
-.cl-socialButtonsBlockButtonText__github { color: #ffffff !important; }
-
-/* Google button */
-.cl-socialButtonsBlockButton__google {
-  background: #ffffff !important;
-  border: 1px solid #ddd !important;
-  color: #333333 !important;
-}
-.cl-socialButtonsBlockButtonText__google { color: #333333 !important; }
-
-/* Apple button */
-.cl-socialButtonsBlockButton__apple {
-  background: #000000 !important;
-  border: 1px solid #333 !important;
-  color: #ffffff !important;
-}
-.cl-socialButtonsBlockButtonText__apple { color: #ffffff !important; }
-
-/* Form inputs */
-.cl-formFieldInput {
-  background: #0d0d14 !important;
-  border-color: #1d1d2e !important;
-  color: #e8e8f0 !important;
-}
-.cl-formFieldInput:focus {
-  border-color: #22d3ee !important;
-  box-shadow: 0 0 0 2px rgba(34,211,238,0.12) !important;
-}
-.cl-formFieldLabel { color: #b8b8d0 !important; }
-
-/* Primary CTA button */
-.cl-formButtonPrimary {
-  background: #22d3ee !important;
-  color: #050508 !important;
-  font-family: 'Figtree', sans-serif !important;
-  font-weight: 600 !important;
-  border: none !important;
-}
-.cl-formButtonPrimary:hover { background: #67e8f9 !important; }
-
-/* Light mode Clerk overrides */
-html.light .cl-card,
-html.light .cl-modalContent,
-html.light .cl-userButtonPopoverCard {
-  background: rgb(255,255,255) !important;
-  border: 1px solid rgb(229,229,229) !important;
-  box-shadow: rgba(0,0,0,0.12) 0px 8px 40px !important;
-}
-html.light .cl-headerTitle { color: rgb(17,17,17) !important; }
-html.light .cl-headerSubtitle { color: rgb(100,100,100) !important; }
-html.light .cl-userButtonPopoverActionButton,
-html.light .cl-userButtonPopoverActionButton span,
-html.light .cl-userButtonPopoverActionButtonText,
-html.light .cl-userButtonPopoverActionButtonIcon {
-  color: rgb(17,17,17) !important;
-  fill: rgb(17,17,17) !important;
-}
-html.light .cl-formFieldInput {
-  background: #ffffff !important;
-  border-color: #d4d4d4 !important;
-  color: #111111 !important;
-}
-html.light .cl-formFieldInput:focus {
-  border-color: #0891b2 !important;
-  box-shadow: 0 0 0 2px rgba(8,145,178,0.12) !important;
-}
-html.light .cl-formButtonPrimary {
-  background: #0891b2 !important;
-  color: #ffffff !important;
-}
-
-
-
-/* ═══════════════════════════════════════════════════════════════
-   UNBUILT — DESIGN SYSTEM v3  ·  Scoped & Precise
-   All card rules anchored to [data-tool-grid] — zero collateral
-   ═══════════════════════════════════════════════════════════════ */
-
-/* ── FONTS (global) ───────────────────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Syne', -apple-system, sans-serif !important;
-}
 body, p, span, button, input, textarea, select, label, a {
   font-family: 'Figtree', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-/* ── HERO ─────────────────────────────────────────────────────── */
-h1 {
-  font-family: 'Syne', sans-serif !important;
-  font-weight: 800 !important;
-  letter-spacing: -0.04em !important;
-}
-
-/* "Claude says your idea is great." — first span, same size, dimmed */
-h1 span:first-of-type {
-  display: block !important;
-  font-size: 1em !important;
-  font-weight: 700 !important;
-  color: var(--clr-text-3) !important;
-  -webkit-text-fill-color: unset !important;
-  background: none !important;
-  letter-spacing: inherit !important;
-  line-height: 1.05 !important;
-  margin-bottom: 0 !important;
-  white-space: nowrap !important;
-}
-
-html.light h1 span:first-of-type {
-  color: #9ca3af !important;
-}
-
-/* "We'll tell you the truth." — second span, bold gradient */
-h1 span:last-of-type {
-  display: block !important;
-  background: linear-gradient(130deg, #ffffff 0%, #e0ecff 55%, #7dd3fc 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-  font-weight: 800 !important;
-  line-height: 1.05 !important;
-  white-space: nowrap !important;
-}
-
-html.light h1 span:last-of-type {
-  background: linear-gradient(130deg, #0f172a 0%, #1e40af 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-}
-
-/* Hero subtitle */
-h1 + p {
-  font-family: 'Figtree', sans-serif !important;
-  font-size: 1.05rem !important;
-  font-weight: 350 !important;
-  line-height: 1.7 !important;
-  color: var(--clr-text-3) !important;
-  letter-spacing: 0.01em !important;
-  text-transform: none !important;
-}
-
-html.light h1 + p {
-  color: #6b7280 !important;
-}
-
-/* ── TOOL CARDS GRID — scoped to [data-tool-grid] ────────────── */
-
-/* Grid container */
-[data-tool-grid] {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 1rem !important;
-  width: 100% !important;
-}
-
-@media (max-width: 768px) {
-  [data-tool-grid] {
-    grid-template-columns: 1fr !important;
-    gap: 0.75rem !important;
-  }
-}
-
-/* Card outer wrappers (A and DIV) — same look */
-[data-tool-grid] > a,
-[data-tool-grid] > div {
-  background: linear-gradient(155deg, rgba(18,18,32,0.97) 0%, rgba(11,11,20,0.99) 100%) !important;
-  border: 1px solid rgba(34,211,238,0.11) !important;
-  border-radius: 16px !important;
-  text-decoration: none !important;
-  color: inherit !important;
-  position: relative !important;
-  overflow: hidden !important;
-  transition: border-color 0.28s ease, transform 0.28s cubic-bezier(0.16,1,0.3,1), box-shadow 0.28s ease !important;
-  cursor: pointer !important;
-}
-
-/* Top shimmer line */
-[data-tool-grid] > a::before,
-[data-tool-grid] > div::before {
-  content: '' !important;
-  position: absolute !important;
-  top: 0 !important; left: 12% !important; right: 12% !important;
-  height: 1px !important;
-  background: linear-gradient(90deg, transparent, rgba(34,211,238,0.4), transparent) !important;
-  pointer-events: none !important;
-}
-
-/* Hover */
-[data-tool-grid] > a:hover,
-[data-tool-grid] > div:hover {
-  border-color: rgba(34,211,238,0.28) !important;
-  transform: translateY(-3px) !important;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.55), 0 0 30px rgba(34,211,238,0.04) !important;
-}
-
-/* Selected card */
-[data-tool-grid] > div[style*="border: 2px"] {
-  border-color: rgba(34,211,238,0.4) !important;
-  box-shadow: 0 0 0 1px rgba(34,211,238,0.2) !important;
-}
-
-/* Light mode cards */
-html.light [data-tool-grid] > a,
-html.light [data-tool-grid] > div {
-  background: #ffffff !important;
-  border: 1px solid #e5e7eb !important;
-}
-
-html.light [data-tool-grid] > a:hover,
-html.light [data-tool-grid] > div:hover {
-  border-color: #0891b2 !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
-}
-
-/* Pulse card: A > inner div (remove double-card effect) */
-[data-tool-grid] > a > div {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* ── CARD INTERNALS — via inline style fingerprints ──────────── */
-
-/* Label (WHAT'S RISING / I HAVE AN IDEA / HELP ME...) */
-[data-tool-grid] div[style*="0.625rem"],
-[data-tool-grid] div[style*="letter-spacing: 0.06"] {
-  font-family: 'Figtree', sans-serif !important;
-  font-size: 0.72rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.08em !important;
-  color: var(--clr-accent) !important;
-  text-transform: uppercase !important;
-}
-
-html.light [data-tool-grid] div[style*="0.625rem"],
-html.light [data-tool-grid] div[style*="letter-spacing: 0.06"] {
-  color: #0891b2 !important;
-}
-
-/* Icon box (36px square) */
-[data-tool-grid] div[style*="width: 36px"] {
-  width: 40px !important;
-  height: 40px !important;
-  border-radius: 10px !important;
-  background: rgba(34,211,238,0.08) !important;
-  border: 1px solid rgba(34,211,238,0.15) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-html.light [data-tool-grid] div[style*="width: 36px"] {
-  background: rgba(8,145,178,0.07) !important;
-  border-color: rgba(8,145,178,0.18) !important;
-}
-
-/* Card title (1.1rem, weight 700) */
-[data-tool-grid] div[style*="1.1rem"][style*="700"] {
-  font-family: 'Syne', sans-serif !important;
-  font-size: 1.15rem !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.022em !important;
-  color: var(--clr-text) !important;
-}
-
-html.light [data-tool-grid] div[style*="1.1rem"][style*="700"] {
-  color: #111827 !important;
-}
-
-/* Card subtitle (0.825rem weight 500) */
-[data-tool-grid] div[style*="0.825rem"][style*="500"] {
-  font-family: 'Figtree', sans-serif !important;
-  font-size: 0.78rem !important;
-  color: var(--clr-accent) !important;
-}
-
-html.light [data-tool-grid] div[style*="0.825rem"][style*="500"] {
-  color: #0891b2 !important;
-}
-
-/* Card body paragraph */
-[data-tool-grid] p {
-  font-family: 'Figtree', sans-serif !important;
-  font-size: 0.875rem !important;
-  line-height: 1.65 !important;
-  color: var(--clr-text-3) !important;
-  text-transform: none !important;
-  letter-spacing: normal !important;
-}
-
-html.light [data-tool-grid] p {
-  color: #6b7280 !important;
-}
-
-/* CTA row (Explore Pulse / Open → / Selected →) */
-[data-tool-grid] div[style*="margin-top: 0.875rem"] {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  color: var(--clr-accent) !important;
-  font-family: 'Figtree', sans-serif !important;
-  font-size: 0.875rem !important;
-  font-weight: 600 !important;
-}
-
-html.light [data-tool-grid] div[style*="margin-top: 0.875rem"] {
-  color: #0891b2 !important;
-}
-
-/* ── NAV POLISH ───────────────────────────────────────────────── */
-header {
-  backdrop-filter: blur(20px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
-  border-bottom: 1px solid rgba(34,211,238,0.07) !important;
-}
-
-html.light header {
-  border-bottom: 1px solid rgba(0,0,0,0.07) !important;
-}
-
-/* ── SCROLLBAR ────────────────────────────────────────────────── */
+/* ── Scrollbar ──────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.25); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: var(--clr-accent); }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+::selection { background: rgba(8,145,178,0.15); color: var(--clr-text); }
 
-::selection { background: rgba(34,211,238,0.15); color: #fff; }
-html.light ::selection { background: rgba(8,145,178,0.15); color: #000; }
-
-
-/* ── Clerk UserButton popup — dark mode text fix ── */
-.dark .cl-userPreviewTextContainer,
-.dark .cl-userPreviewMainIdentifier,
-.dark .cl-userPreviewSecondaryIdentifier,
-.dark .cl-userButtonPopoverCard,
-.dark .cl-userButtonPopoverActionButtonText,
-.dark .cl-userButtonPopoverFooterPagesLink {
-  color: #ffffff !important;
+/* ── Shimmer ────────────────────────────────────────────────── */
+.shimmer {
+  background: linear-gradient(90deg, var(--clr-surface) 25%, var(--clr-surface-2) 50%, var(--clr-surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
-.dark .cl-userButtonPopoverCard {
-  background-color: var(--clr-surface) !important;
-  border: 1px solid var(--clr-border) !important;
+/* ── Prose inside cards ─────────────────────────────────────── */
+.card-prose p { color: var(--clr-text-3); line-height: 1.75; margin-bottom: 0.625rem; font-size: 0.9375rem; }
+.card-prose ul { list-style: none; padding: 0; margin: 0 0 0.75rem 0; display: flex; flex-direction: column; gap: 0.375rem; }
+.card-prose ul li { color: var(--clr-text-3); padding: 0.4rem 0.5rem 0.4rem 1rem; position: relative; line-height: 1.65; font-size: 0.9375rem; border-radius: 6px; transition: background 0.15s; }
+.card-prose ul li:hover { background: rgba(0,0,0,0.03); }
+.card-prose ul li::before { content: "\25B8"; position: absolute; left: 0; color: var(--clr-text-5); font-size: 0.75rem; top: 0.45rem; }
+.card-prose ol { list-style: none; padding: 0; margin: 0 0 0.75rem 0; counter-reset: item; display: flex; flex-direction: column; gap: 0.375rem; }
+.card-prose ol li { color: var(--clr-text-3); padding: 0.4rem 0.5rem 0.4rem 1.75rem; position: relative; line-height: 1.65; font-size: 0.9375rem; border-radius: 6px; transition: background 0.15s; counter-increment: item; }
+.card-prose ol li:hover { background: rgba(0,0,0,0.03); }
+.card-prose ol li::before { content: counter(item) "."; position: absolute; left: 0.375rem; color: var(--clr-accent); font-size: 0.75rem; font-weight: 600; top: 0.45rem; }
+.card-prose h3, .card-prose h4 { font-family: 'Syne', sans-serif; color: var(--clr-text); }
+.card-prose strong { color: var(--clr-text-2); font-weight: 600; }
+.card-prose code { background: var(--clr-code-bg); color: var(--clr-code-text); padding: 0.125rem 0.375rem; border-radius: 4px; font-size: 0.85em; }
+.card-prose a { color: var(--clr-accent); }
+.card-prose a:hover { color: var(--clr-accent-hover); }
+
+/* ── Clerk Auth UI ──────────────────────────────────────────── */
+.cl-card, .cl-modalContent, .cl-userButtonPopoverCard {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.1) !important;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.12) !important;
 }
+.cl-headerTitle { color: #1a1a1a !important; }
+.cl-headerSubtitle { color: #666666 !important; }
+.cl-footer, .cl-userButtonPopoverFooter { display: none !important; }
+.cl-userButtonPopoverActionButton,
+.cl-userButtonPopoverActionButton span,
+.cl-userButtonPopoverActionButtonText,
+.cl-userButtonPopoverActionButtonIcon { color: #1a1a1a !important; fill: #1a1a1a !important; }
+.cl-socialButtonsBlockButton__github { background: #24292e !important; border: 1px solid #555 !important; color: #ffffff !important; }
+.cl-socialButtonsBlockButtonText__github { color: #ffffff !important; }
+.cl-socialButtonsBlockButton__google { background: #ffffff !important; border: 1px solid #ddd !important; color: #333333 !important; }
+.cl-socialButtonsBlockButtonText__google { color: #333333 !important; }
+.cl-socialButtonsBlockButton__apple { background: #000000 !important; border: 1px solid #333 !important; color: #ffffff !important; }
+.cl-socialButtonsBlockButtonText__apple { color: #ffffff !important; }
+.cl-formFieldInput { background: #ffffff !important; border-color: rgba(0,0,0,0.15) !important; color: #1a1a1a !important; }
+.cl-formFieldInput:focus { border-color: #0891b2 !important; box-shadow: 0 0 0 2px rgba(8,145,178,0.12) !important; }
+.cl-formFieldLabel { color: #3a3a3a !important; }
+.cl-formButtonPrimary { background: #0891b2 !important; color: #ffffff !important; font-family: 'Figtree', sans-serif !important; font-weight: 600 !important; border: none !important; }
+.cl-formButtonPrimary:hover { background: #0e7490 !important; }
+.cl-userPreviewMainIdentifier, .cl-userPreviewSecondaryIdentifier, .cl-userButtonPopoverActionButtonText { color: #1a1a1a !important; }
+.cl-userButtonPopoverCard { background-color: #ffffff !important; border: 1px solid rgba(0,0,0,0.1) !important; }
+
+/* ── Tool cards — scoped ────────────────────────────────────── */
+[data-tool-grid] { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 1rem !important; width: 100% !important; }
+@media (max-width: 768px) { [data-tool-grid] { grid-template-columns: 1fr !important; gap: 0.75rem !important; } }
+[data-tool-grid] > a, [data-tool-grid] > div {
+  background: #ffffff !important; border: 1px solid rgba(0,0,0,0.08) !important; border-radius: 16px !important;
+  text-decoration: none !important; color: inherit !important; position: relative !important; overflow: hidden !important;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s !important; cursor: pointer !important;
+}
+[data-tool-grid] > a:hover, [data-tool-grid] > div:hover {
+  border-color: rgba(8,145,178,0.3) !important; transform: translateY(-2px) !important; box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
+}
+[data-tool-grid] > a > div { background: transparent !important; border: none !important; box-shadow: none !important; }
+[data-tool-grid] div[style*="0.625rem"],
+[data-tool-grid] div[style*="letter-spacing: 0.06"] { font-size: 0.72rem !important; font-weight: 600 !important; letter-spacing: 0.08em !important; color: #0891b2 !important; text-transform: uppercase !important; }
+[data-tool-grid] div[style*="width: 36px"] { width: 40px !important; height: 40px !important; border-radius: 10px !important; background: rgba(8,145,178,0.07) !important; border: 1px solid rgba(8,145,178,0.15) !important; }
+[data-tool-grid] div[style*="1.1rem"][style*="700"] { font-size: 1.15rem !important; font-weight: 700 !important; color: #1a1a1a !important; }
+[data-tool-grid] div[style*="0.825rem"][style*="500"] { font-size: 0.78rem !important; color: #0891b2 !important; }
+[data-tool-grid] p { font-size: 0.875rem !important; line-height: 1.65 !important; color: #666666 !important; }
+[data-tool-grid] div[style*="margin-top: 0.875rem"] { color: #0891b2 !important; font-size: 0.875rem !important; font-weight: 600 !important; }
