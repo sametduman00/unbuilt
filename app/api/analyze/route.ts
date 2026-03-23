@@ -207,7 +207,7 @@ async function fetchRedditContext(idea: string): Promise<string> {
   const apiKey = process.env.SCRAPECREATORS_API_KEY;
   if (!apiKey) return "";
   try {
-    const query = encodeURIComponent(idea + " problem OR alternative OR "I wish" OR frustrating");
+    const query = encodeURIComponent(idea + ' problem OR alternative OR frustrating OR complaint');
     const res = await fetch(
       `https://api.scrapecreators.com/v1/reddit/search?query=${query}&sort=relevance&time=month&limit=8`,
       { headers: { "x-api-key": apiKey }, signal: AbortSignal.timeout(6000) }
