@@ -1208,11 +1208,17 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
   return (
     <div style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:16, overflow:"hidden", display:"flex", minHeight:600 }}>
       <div style={{ width:220, borderRight:"1px solid #e5e7eb", padding:"14px 8px", flexShrink:0, background:"#fafafa", display:"flex", flexDirection:"column" as const, gap:2 }}>
-        <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.09em", color:"#9ca3af", marginBottom:8, paddingLeft:8 }}>Analysis</div>
+        <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.09em", color:"#9ca3af", marginBottom:8, paddingLeft:8, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:8 }}>
+          <span>Analysis</span>
+          <span style={{ display:"inline-flex", alignItems:"center", gap:4, padding:"2px 7px", borderRadius:999, background:"#dcfce7", border:"1px solid #86efac", fontSize:9, fontWeight:700, color:"#16a34a" }}>
+              <span style={{ width:5, height:5, borderRadius:"50%", background:"#10b981", animation:"pulse 1.5s ease-in-out infinite", flexShrink:0, display:"inline-block" }} />
+              Live
+            </span>
+        </div>
         {tabs.map(tab => {
           const isActive = activeTab === tab.id;
           return (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ display:"flex", alignItems:"center", width:"100%", padding:"8px 10px", borderRadius:8, background:isActive?"white":"transparent", border:"1px solid "+(isActive?"#e5e7eb":"transparent"), cursor:"pointer", textAlign:"left" as const, boxShadow:isActive?"0 1px 2px rgba(0,0,0,0.05)":"none", gap:8 }}>
+            <button key={tab.id} onClick={() => { setActiveTab(tab.id); document.getElementById('gap-tab-content')?.scrollTo({top:0}); }} style={{ display:"flex", alignItems:"center", width:"100%", padding:"8px 10px", borderRadius:8, background:isActive?"white":"transparent", border:"1px solid "+(isActive?"#e5e7eb":"transparent"), cursor:"pointer", textAlign:"left" as const, boxShadow:isActive?"0 1px 2px rgba(0,0,0,0.05)":"none", gap:8 }}>
               <span style={{ fontSize:12, color:tab.id==="overview"?"#6366f1":"#10b981", flexShrink:0 }}>{tab.id==="overview"?"●":"✓"}</span>
               <span style={{ fontSize:13, fontWeight:isActive?600:400, color:isActive?"#111827":"#374151", flex:1 }}>{tab.label}</span>
               {tab.score !== undefined && <span style={{ background:"#6366f1", color:"white", padding:"1px 6px", borderRadius:4, fontSize:11, fontWeight:700, flexShrink:0 }}>{tab.score}</span>}
@@ -1221,7 +1227,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
           );
         })}
       </div>
-      <div style={{ flex:1, padding:22, overflowY:"auto" as const, background:"white", height:"calc(100vh - 280px)", minHeight:500 }}>
+      <div id="gap-tab-content" style={{ flex:1, padding:22, overflowY:"auto" as const, background:"white", height:"calc(100vh - 280px)", minHeight:500 }}>
         {renderTab()}
       </div>
     </div>
@@ -3801,27 +3807,6 @@ export default function Home() {
               )}
 
               {/* ââ Data source badges + cache badge ââ */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
-                {currentTool && <DataSourceBadges sources={currentTool.sources} noMargin />}
-                {resultCached !== null && (
-                  <span style={{
-                    display: "inline-flex", alignItems: "center", gap: 5,
-                    padding: "0.2rem 0.65rem", borderRadius: 999,
-                    background: "rgba(var(--clr-text-rgb),0.08)",
-                    border: "1px solid rgba(var(--clr-text-rgb),0.25)",
-                    fontSize: "0.68rem", fontWeight: 600,
-                    color: "var(--clr-text-2)",
-                    flexShrink: 0,
-                  }}>
-                    <span style={{
-                      width: 5, height: 5, borderRadius: "50%",
-                      background: resultCached ? "var(--clr-text-2)" : "#10b981",
-                      animation: resultCached ? "none" : "pulse 1.5s ease-in-out infinite",
-                    }} />
-                    {resultCached ? "Cached result" : "Live result"}
-                  </span>
-                )}
-              </div>
 
               {/* Loading skeleton — only while nothing has streamed yet */}
               {loading && (selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && <GapAnalysisSkeleton />}
