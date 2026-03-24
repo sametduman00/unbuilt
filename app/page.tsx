@@ -3716,29 +3716,41 @@ function HomeInner() {
                   </div>
 
                   {/* Actions */}
-                  <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                  <div style={{ display: "flex", gap: 8, flexShrink: 0, alignItems: "center" }}>
                     <button
-                      onClick={backToTools}
-                      style={{
-                        padding: "0.375rem 0.875rem", borderRadius: 9,
-                        background: `rgba(${currentTool.accentRgb},0.08)`,
-                        border: `1px solid rgba(${currentTool.accentRgb},0.2)`,
-                        color: currentTool.accentColor, fontSize: "0.775rem", fontWeight: 600,
-                        cursor: "pointer", fontFamily: "inherit", letterSpacing: "-0.01em",
+                      onClick={() => {
+                        const el = document.createElement("style");
+                        el.textContent = "@media print { aside, [style*=\"position: fixed\"] { display: none !important; } main { margin-left: 0 !important; } }";
+                        document.head.appendChild(el);
+                        window.print();
+                        setTimeout(() => document.head.removeChild(el), 2000);
                       }}
-                    >
-                      New analysis
-                    </button>
-                    <button
-                      onClick={fullReset}
                       style={{
+                        display: "flex", alignItems: "center", gap: 6,
                         padding: "0.375rem 0.875rem", borderRadius: 9,
                         background: "transparent", border: "1px solid var(--clr-border)",
-                        color: "var(--clr-text-4)", fontSize: "0.775rem", fontWeight: 600,
+                        color: "var(--clr-text-3)", fontSize: "0.775rem", fontWeight: 600,
                         cursor: "pointer", fontFamily: "inherit",
                       }}
                     >
-                      Switch tool
+                      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v7M5 6l3 3 3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/><path d="M3 10v2.5A1.5 1.5 0 004.5 14h7a1.5 1.5 0 001.5-1.5V10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+                      Download PDF
+                    </button>
+                    <button
+                      onClick={backToTools}
+                      style={{
+                        display: "flex", alignItems: "center", gap: 6,
+                        padding: "0.375rem 1rem", borderRadius: 9,
+                        background: "#7c6fff",
+                        border: "none",
+                        color: "white", fontSize: "0.775rem", fontWeight: 700,
+                        cursor: "pointer", fontFamily: "inherit", letterSpacing: "-0.01em",
+                      }}
+                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.9"}
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
+                    >
+                      <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="white" strokeWidth="1.8" strokeLinecap="round"/></svg>
+                      New analysis
                     </button>
                   </div>
                 </div>
