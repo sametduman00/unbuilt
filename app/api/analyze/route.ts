@@ -392,6 +392,14 @@ Respond with ONLY a JSON code block:
   "communitySignals": [
     { "quote": "Real quote from Reddit/Twitter data above", "source": "reddit", "sentiment": "pain", "subredditOrHandle": "r/example" }
   ],
+  "redditPosts": [
+    { "subreddit": "r/example", "title": "Post title from Reddit data", "body": "Post content or key quote", "upvotes": 123, "sentiment": "pain" },
+    { "subreddit": "r/example", "title": "Another post", "body": "Content", "upvotes": 45, "sentiment": "need" }
+  ],
+  "xPosts": [
+    { "handle": "@username", "text": "Tweet content from X/Twitter data", "likes": 89, "sentiment": "pain" },
+    { "handle": "@username", "text": "Another tweet", "likes": 34, "sentiment": "need" }
+  ],
   "oneLiner": "The only [X] that [Y] for [Z].",
   "marketSize": {
     "tam": "$X.XB â based on live market data",
