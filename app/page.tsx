@@ -1207,8 +1207,8 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
   };
 
   return (
-    <div style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:16, overflow:"hidden", display:"flex", minHeight:600 }}>
-      <div style={{ width:220, borderRight:"1px solid #e5e7eb", padding:"14px 8px", flexShrink:0, background:"#fafafa", display:"flex", flexDirection:"column" as const, gap:2 }}>
+    <div style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:16, overflow:"hidden", display:"flex", height:"calc(100vh - 76px)" }}>
+      <div style={{ width:220, borderRight:"1px solid #e5e7eb", padding:"14px 8px", flexShrink:0, background:"#fafafa", display:"flex", flexDirection:"column" as const, gap:2, overflowY:"auto" as const }}>
         <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.09em", color:"#9ca3af", marginBottom:8, paddingLeft:8, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:8 }}>
           <span>Analysis</span>
           <span style={{ display:"inline-flex", alignItems:"center", gap:4, padding:"2px 7px", borderRadius:999, background:"#dcfce7", border:"1px solid #86efac", fontSize:9, fontWeight:700, color:"#16a34a" }}>
@@ -1228,7 +1228,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
           );
         })}
       </div>
-      <div id="gap-tab-content" style={{ flex:1, padding:22, overflowY:"auto" as const, background:"white", height:"calc(100vh - 280px)", minHeight:500 }}>
+      <div id="gap-tab-content" style={{ flex:1, padding:22, overflowY:"auto" as const, background:"white" }}>
         {renderTab()}
       </div>
     </div>
@@ -3280,6 +3280,10 @@ function HomeInner() {
     scanTimersRef.current.forEach(clearTimeout);
     setScanStep(-1);
     setHasResults(false);
+    setTimeout(() => {
+      const main = document.querySelector("main");
+      if (main) main.scrollTo({ top: 0, behavior: "smooth" });
+    }, 50);
     setStreamedContent("");
     setError("")
     setOutOfCredits(false);;
