@@ -8,9 +8,9 @@ import { deductCredit } from "@/app/lib/credits";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = `You are a sharp, experienced market analyst and startup advisor. You produce highly actionable competitor analysis and market gap reports backed ONLY by the live data provided to you in this prompt. CRITICAL RULE: Every field you output MUST be derived from the live data sources provided below. Do NOT use your training data as a source — if the live data doesn't confirm something, say so or leave it minimal. Your tone is direct, insightful, and slightly contrarian. You MUST respond with ONLY a single JSON code block. No text before or after.`;
+const SYSTEM_PROMPT = `You are a sharp, experienced market analyst and startup advisor. You produce highly actionable competitor analysis and market gap reports backed ONLY by the live data provided to you in this prompt. CRITICAL RULE: Every field you output MUST be derived from the live data sources provided below. Do NOT use your training data as a source â if the live data doesn't confirm something, say so or leave it minimal. Your tone is direct, insightful, and slightly contrarian. You MUST respond with ONLY a single JSON code block. No text before or after.`;
 
-// ── Helper: run a single Serper query ────────────────────────────────────────
+// ââ Helper: run a single Serper query ââââââââââââââââââââââââââââââââââââââââ
 async function serperQuery(q: string, apiKey: string, num = 6): Promise<string> {
   try {
     const res = await fetch("https://google.serper.dev/search", {
@@ -31,7 +31,7 @@ async function serperQuery(q: string, apiKey: string, num = 6): Promise<string> 
   }
 }
 
-// ── 1. General competitors & tools ───────────────────────────────────────────
+// ââ 1. General competitors & tools âââââââââââââââââââââââââââââââââââââââââââ
 async function fetchSerperContext(idea: string): Promise<string> {
   const apiKey = process.env.SERPER_API_KEY;
   if (!apiKey) return "";
@@ -41,7 +41,7 @@ async function fetchSerperContext(idea: string): Promise<string> {
   return `\n=== LIVE GOOGLE SEARCH: General Competitors & Tools (fetched NOW) ===\n${results}\n`;
 }
 
-// ── 2. Industry trends ────────────────────────────────────────────────────────
+// ââ 2. Industry trends ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function fetchTrendsContext(idea: string): Promise<string> {
   const apiKey = process.env.SERPER_API_KEY;
   if (!apiKey) return "";
@@ -51,10 +51,10 @@ async function fetchTrendsContext(idea: string): Promise<string> {
   ]);
   if (!r1 && !r2) return "";
   console.log("[Analyze] Trends context fetched");
-  return `\n=== LIVE GOOGLE SEARCH: Industry Trends (fetched NOW — use ONLY these for trends) ===\nTrends & Forecast:\n${r1}\n\nGrowth Drivers & Shifts:\n${r2}\n`;
+  return `\n=== LIVE GOOGLE SEARCH: Industry Trends (fetched NOW â use ONLY these for trends) ===\nTrends & Forecast:\n${r1}\n\nGrowth Drivers & Shifts:\n${r2}\n`;
 }
 
-// ── 3. Market segments ────────────────────────────────────────────────────────
+// ââ 3. Market segments ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function fetchSegmentsContext(idea: string): Promise<string> {
   const apiKey = process.env.SERPER_API_KEY;
   if (!apiKey) return "";
@@ -64,10 +64,10 @@ async function fetchSegmentsContext(idea: string): Promise<string> {
   ]);
   if (!r1 && !r2) return "";
   console.log("[Analyze] Segments context fetched");
-  return `\n=== LIVE GOOGLE SEARCH: Market Segments (fetched NOW — use ONLY these for segments) ===\nSegment Data:\n${r1}\n\nTarget Audiences:\n${r2}\n`;
+  return `\n=== LIVE GOOGLE SEARCH: Market Segments (fetched NOW â use ONLY these for segments) ===\nSegment Data:\n${r1}\n\nTarget Audiences:\n${r2}\n`;
 }
 
-// ── 4. Customer behavior — triggers & buying ─────────────────────────────────
+// ââ 4. Customer behavior â triggers & buying âââââââââââââââââââââââââââââââââ
 async function fetchCustomerBehaviorContext(idea: string): Promise<string> {
   const apiKey = process.env.SERPER_API_KEY;
   if (!apiKey) return "";
@@ -80,7 +80,7 @@ async function fetchCustomerBehaviorContext(idea: string): Promise<string> {
   return `\n=== LIVE GOOGLE SEARCH: Customer Behavior & Triggers (fetched NOW) ===\nTrigger Events:\n${r1}\n\nBuying Process:\n${r2}\n`;
 }
 
-// ── 5. GTM channels & CAC ─────────────────────────────────────────────────────
+// ââ 5. GTM channels & CAC âââââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function fetchGTMContext(idea: string): Promise<string> {
   const apiKey = process.env.SERPER_API_KEY;
   if (!apiKey) return "";
@@ -93,7 +93,7 @@ async function fetchGTMContext(idea: string): Promise<string> {
   return `\n=== LIVE GOOGLE SEARCH: Go-to-Market & CAC (fetched NOW) ===\nGTM Strategy & CAC:\n${r1}\n\nMarketing Channels:\n${r2}\n`;
 }
 
-// ── 6. G2, Product Hunt, community reviews ───────────────────────────────────
+// ââ 6. G2, Product Hunt, community reviews âââââââââââââââââââââââââââââââââââ
 async function fetchReviewsContext(idea: string): Promise<string> {
   const apiKey = process.env.SERPER_API_KEY;
   if (!apiKey) return "";
@@ -106,7 +106,7 @@ async function fetchReviewsContext(idea: string): Promise<string> {
   return `\n=== LIVE GOOGLE SEARCH: G2 & Product Hunt Reviews (fetched NOW) ===\nG2 Reviews:\n${r1}\n\nProduct Hunt:\n${r2}\n`;
 }
 
-// ── 7. Financial benchmarks ───────────────────────────────────────────────────
+// ââ 7. Financial benchmarks âââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function fetchFinancialContext(idea: string): Promise<string> {
   const apiKey = process.env.SERPER_API_KEY;
   if (!apiKey) return "";
@@ -119,7 +119,7 @@ async function fetchFinancialContext(idea: string): Promise<string> {
   return `\n=== LIVE GOOGLE SEARCH: Financial Benchmarks (fetched NOW) ===\nBurn Rate & Costs:\n${r1}\n\nPricing & Revenue:\n${r2}\n`;
 }
 
-// ── 8. Fundability & investor landscape ──────────────────────────────────────
+// ââ 8. Fundability & investor landscape ââââââââââââââââââââââââââââââââââââââ
 async function fetchFundabilityContext(idea: string): Promise<string> {
   const apiKey = process.env.SERPER_API_KEY;
   if (!apiKey) return "";
@@ -132,7 +132,7 @@ async function fetchFundabilityContext(idea: string): Promise<string> {
   return `\n=== LIVE GOOGLE SEARCH: Funding & Investor Landscape (fetched NOW) ===\nVC & Funding:\n${r1}\n\nMarket Opportunity for Investors:\n${r2}\n`;
 }
 
-// ── App Store (iTunes, free) ───────────────────────────────────────────────────
+// ââ App Store (iTunes, free) âââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function fetchAppStoreContext(query: string): Promise<string> {
   try {
     const params = new URLSearchParams({ term: query, entity: "software", limit: "8", country: "us" });
@@ -146,13 +146,13 @@ async function fetchAppStoreContext(query: string): Promise<string> {
       const reviews = app.userRatingCount ? (app.userRatingCount >= 1000 ? `${Math.round(app.userRatingCount / 1000)}K reviews` : `${app.userRatingCount} reviews`) : "no reviews";
       const price = app.price === 0 ? "Free" : (app.formattedPrice || "Paid");
       const desc = (app.description || "").slice(0, 120).replace(/\n/g, " ");
-      return `- "${app.trackName}" by ${app.sellerName} | ${rating}★ ${reviews} | ${price} | ${desc}`;
+      return `- "${app.trackName}" by ${app.sellerName} | ${rating}â ${reviews} | ${price} | ${desc}`;
     });
     return `\n=== App Store (fetched NOW): Primary competitor sources ===\n${lines.join("\n")}\n`;
   } catch { return ""; }
 }
 
-// ── Google Play ───────────────────────────────────────────────────────────────
+// ââ Google Play âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function fetchGPlayContext(query: string): Promise<string> {
   try {
     const results = await gplay.search({ term: query, num: 6 });
@@ -161,13 +161,13 @@ async function fetchGPlayContext(query: string): Promise<string> {
       const rating = app.score ? app.score.toFixed(1) : "N/A";
       const price = app.free ? "Free" : (app.priceText || "Paid");
       const desc = (app.summary || "").slice(0, 100).replace(/\n/g, " ");
-      return `- "${app.title}" by ${app.developer} | ${rating}★ | ${price} | ${desc}`;
+      return `- "${app.title}" by ${app.developer} | ${rating}â | ${price} | ${desc}`;
     });
     return `\n=== Google Play (fetched NOW) ===\n${lines.join("\n")}\n`;
   } catch { return ""; }
 }
 
-// ── Reddit via ScrapeCreators ─────────────────────────────────────────────────
+// ââ Reddit via ScrapeCreators âââââââââââââââââââââââââââââââââââââââââââââââââ
 async function fetchRedditContext(idea: string): Promise<string> {
   const apiKey = process.env.SCRAPECREATORS_API_KEY;
   if (!apiKey) return "";
@@ -179,13 +179,13 @@ async function fetchRedditContext(idea: string): Promise<string> {
     const posts = data.posts ?? data.data ?? [];
     if (!posts.length) return "";
     const lines = posts.slice(0, 6).map((p: { title: string; subreddit: string; score?: number; selftext?: string }) =>
-      `- r/${p.subreddit} (${p.score ?? 0} upvotes): "${p.title}" — ${(p.selftext || "").slice(0, 120).replace(/\n/g, " ")}`
+      `- r/${p.subreddit} (${p.score ?? 0} upvotes): "${p.title}" â ${(p.selftext || "").slice(0, 120).replace(/\n/g, " ")}`
     );
     return `\n=== LIVE Reddit (fetched NOW): Real user pain points & demand signals ===\n${lines.join("\n")}\n`;
   } catch { return ""; }
 }
 
-// ── Twitter/X via ScrapeCreators ──────────────────────────────────────────────
+// ââ Twitter/X via ScrapeCreators ââââââââââââââââââââââââââââââââââââââââââââââ
 async function fetchTwitterContext(idea: string): Promise<string> {
   const apiKey = process.env.SCRAPECREATORS_API_KEY;
   if (!apiKey) return "";
@@ -203,7 +203,7 @@ async function fetchTwitterContext(idea: string): Promise<string> {
   } catch { return ""; }
 }
 
-// ── YouTube ───────────────────────────────────────────────────────────────────
+// ââ YouTube âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function fetchYouTubeContext(idea: string): Promise<string> {
   const apiKey = process.env.YOUTUBE_API_KEY;
   if (!apiKey) return "";
@@ -231,7 +231,7 @@ async function fetchYouTubeContext(idea: string): Promise<string> {
   } catch { return ""; }
 }
 
-// ── PROMPT ────────────────────────────────────────────────────────────────────
+// ââ PROMPT ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const USER_PROMPT = (
   idea: string,
   youtubeContext: string,
@@ -367,10 +367,10 @@ Respond with ONLY a JSON code block:
   "financialDeep": {
     "monthlyBurn": {
       "total": "$X,XXX",
-      "infrastructure": "$XXX — based on live pricing data",
-      "tools": "$XXX — based on live pricing data",
-      "marketing": "$XXX — based on live CAC data",
-      "acquisition": "$XXX — based on live CAC benchmarks"
+      "infrastructure": "$XXX â based on live pricing data",
+      "tools": "$XXX â based on live pricing data",
+      "marketing": "$XXX â based on live CAC data",
+      "acquisition": "$XXX â based on live CAC benchmarks"
     },
     "breakEvenMonth": "Month X",
     "twelveMonthMRR": "$XX,XXX",
@@ -394,9 +394,9 @@ Respond with ONLY a JSON code block:
   ],
   "oneLiner": "The only [X] that [Y] for [Z].",
   "marketSize": {
-    "tam": "$X.XB — based on live market data",
-    "sam": "$X.XM — based on live segment data",
-    "som": "$X.XM — realistic first 2 years",
+    "tam": "$X.XB â based on live market data",
+    "sam": "$X.XM â based on live segment data",
+    "som": "$X.XM â realistic first 2 years",
     "growthRate": "X% CAGR from live research"
   },
   "validationChecklist": [
@@ -410,7 +410,7 @@ Respond with ONLY a JSON code block:
 }
 \`\`\`
 
-RULES — follow exactly:
+RULES â follow exactly:
 - "marketScore" 1-100 integer. "marketScoreLabel": "No Gap"(0-20),"Crowded"(21-40),"Some Room"(41-60),"Real Opportunity"(61-80),"Wide Open"(81-100).
 - "competitors": 4-6 real companies from live data. "threatLevel" 1-5. Each strength/weakness 1 item max 12 words.
 - "painPoints": 4-6, from live Reddit/G2/Twitter data above. "severity": "high"|"medium"|"low".
@@ -422,14 +422,14 @@ RULES — follow exactly:
 - "goToMarket.channels": 3-5 channels with real CAC estimates from live GTM data. "type": "primary"|"secondary"|"experimental".
 - "goToMarket.launchPhases": 2-3 phases, concrete steps from live data.
 - "customerInterviewGuide": 5 non-leading questions. greenSignals/redSignals from live data patterns.
-- "financialDeep": ALL numbers from live financial/pricing benchmark data. No invented numbers. CRITICAL: Use SINGLE specific numbers (e.g. "$8,500" not "$7K-$10K", "Month 12" not "Month 10-14", "$22,000" not "$15K-$30K"). Pick the most realistic middle estimate from the live data. Ranges are NOT acceptable — they confuse founders. The three revenue scenarios (cautious/middle/optimistic) are the only place for variation; all other fields must be single values.
+- "financialDeep": ALL numbers from live financial/pricing benchmark data. No invented numbers. CRITICAL: Use SINGLE specific numbers (e.g. "$8,500" not "$7K-$10K", "Month 12" not "Month 10-14", "$22,000" not "$15K-$30K"). Pick the most realistic middle estimate from the live data. Ranges are NOT acceptable â they confuse founders. The three revenue scenarios (cautious/middle/optimistic) are the only place for variation; all other fields must be single values.
 - "fundabilityRadar": scores 1-10 per dimension, notes from live funding/investor data.
 - "communitySignals": 4-6 from live Reddit/Twitter data. "sentiment": "pain"|"need"|"positive".
 - "marketSize": from live market data, not training memory.
 - "validationChecklist": 4-5 assumptions. "howToTest": action doable in 1 week.
 - CRITICAL: If live data is sparse for a field, write what you found and flag uncertainty. Never fabricate specifics.`;
 
-// ── Main POST handler ──────────────────────────────────────────────────────────
+// ââ Main POST handler ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
@@ -457,7 +457,7 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        // Fetch ALL live data in parallel — 12 sources
+        // Fetch ALL live data in parallel â 12 sources
         const [
           youtubeContext,
           appStoreContext,
@@ -493,7 +493,7 @@ export async function POST(req: NextRequest) {
 
         let full = "";
         const anthropicStream = client.messages.stream({
-          model: "claude-opus-4-6",
+          model: "claude-haiku-4-5-20251001",
           max_tokens: 16000,
           thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM_PROMPT,
