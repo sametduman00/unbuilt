@@ -3661,7 +3661,7 @@ function HomeInner() {
               )}
 
               {/* ââ Input section ââ */}
-              {selectedTool && currentTool && (
+              {selectedTool && currentTool && !hasResults && !loading && (
                 <div ref={inputSectionRef}>
                   <InputSection
                     tool={currentTool}
@@ -3867,42 +3867,6 @@ function HomeInner() {
 
 
 
-              {/* ââ Footer ââ */}
-              {!loading && streamedContent && (
-                <div style={{
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                  marginTop: "2rem", paddingTop: "1.5rem", borderTop: "1px solid var(--clr-border-deep)",
-                }}>
-                  <span style={{ display: "flex", alignItems: "center", gap: 7, fontSize: "0.75rem", color: "var(--clr-text-7)" }}>
-                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--clr-text-2)", display: "inline-block" }} />
-                    Analysis complete
-                  </span>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <button
-                      onClick={backToTools}
-                      style={{
-                        padding: "0.5rem 1rem", borderRadius: 10,
-                        background: "transparent", border: "1px solid var(--clr-border)",
-                        color: "var(--clr-text-4)", fontSize: "0.8125rem", fontWeight: 600,
-                        cursor: "pointer", fontFamily: "inherit",
-                      }}
-                    >
-                      Try another idea
-                    </button>
-                    <button
-                      onClick={fullReset}
-                      style={{
-                        padding: "0.5rem 1rem", borderRadius: 10,
-                        background: "var(--clr-surface-2)", border: "1px solid var(--clr-border-2)",
-                        color: "var(--clr-text-3)", fontSize: "0.8125rem", fontWeight: 600,
-                        cursor: "pointer", fontFamily: "inherit",
-                      }}
-                    >
-                      Switch tool
-                    </button>
-                  </div>
-                </div>
-              )}
               </div>
               )}
             </div>
