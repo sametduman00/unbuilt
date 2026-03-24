@@ -3914,20 +3914,38 @@ export default function Home() {
                                   <div style={{ display:"flex", flexDirection:"column", gap:6, marginBottom:16 }}>
                                     {apps.map(app=>(
                                       <a key={app.app_id} href={app.store_url} target="_blank" rel="noopener noreferrer"
-                                        style={{ display:"flex", gap:"1rem", padding:"1rem", background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderLeft:day.isToday?"3px solid #007AFF":"1px solid var(--clr-border)", borderRadius:12, textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
-                                        onMouseEnter={e=>e.currentTarget.style.background="rgba(0,0,0,0.02)"}
-                                        onMouseLeave={e=>e.currentTarget.style.background="var(--clr-surface)"}
-                                      >
-                                        {app.icon_url?<img src={app.icon_url} alt="" width={52} height={52} style={{ borderRadius:12, flexShrink:0, objectFit:"cover", border:"1px solid var(--clr-border)" }}/>:<div style={{ width:52, height:52, borderRadius:12, background:"var(--clr-border)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.5rem" }}>📱</div>}
-                                        <div style={{ flex:1, minWidth:0 }}>
-                                          <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:2 }}>
-                                            <span style={{ fontSize:"0.9375rem", fontWeight:600, color:"var(--clr-text)" }}>{app.app_name}</span>
-                                            {app.category&&<span style={{ fontSize:"0.5625rem", fontWeight:700, padding:"0.1rem 0.4rem", borderRadius:999, background:"rgba(99,102,241,0.12)", color:"#6366f1", textTransform:"uppercase", letterSpacing:"0.04em" }}>{app.category}</span>}
-                                          </div>
-                                          <div style={{ fontSize:"0.8125rem", color:"var(--clr-text-3)" }}>{app.developer}</div>
-                                          <AiBlock what={app.claude_what} diff={app.claude_different} gap={app.claude_missing}/>
-                                        </div>
-                                      </a>
+                            style={{display:"flex",flexDirection:"column",gap:"0.875rem",padding:"1.25rem",background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderLeft:day.isToday?"3px solid #007AFF":"1px solid var(--clr-border)",borderRadius:12,textDecoration:"none",color:"inherit",transition:"background 0.15s"}}
+                            onMouseEnter={e=>e.currentTarget.style.background="rgba(var(--clr-text-rgb),0.02)"}
+                            onMouseLeave={e=>e.currentTarget.style.background="var(--clr-surface)"}>
+                            <div style={{display:"flex",alignItems:"flex-start",gap:"1rem"}}>
+                              {app.icon_url
+                                ? <img src={app.icon_url} alt="" width={64} height={64} style={{borderRadius:14,flexShrink:0,objectFit:"cover",border:"1px solid var(--clr-border)"}}/>
+                                : <div style={{width:64,height:64,borderRadius:14,background:"var(--clr-border)",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.75rem"}}>📱</div>}
+                              <div style={{flex:1,minWidth:0}}>
+                                <div style={{display:"flex",alignItems:"center",gap:"0.5rem",marginBottom:"0.25rem",flexWrap:"wrap"}}>
+                                  <span style={{fontSize:"1rem",fontWeight:650,color:"var(--clr-text)",letterSpacing:"-0.02em"}}>{app.app_name}</span>
+                                  {app.category&&<span style={{fontSize:"0.5625rem",fontWeight:700,letterSpacing:"0.04em",textTransform:"uppercase",padding:"0.1rem 0.4rem",borderRadius:999,background:"rgba(99,102,241,0.12)",color:"#6366f1"}}>{app.category}</span>}
+                                  {app.price&&app.price!=="Free"&&<span style={{fontSize:"0.6875rem",fontWeight:700,color:"#22c55e"}}>{app.price}</span>}
+                                  {app.age_rating&&<span style={{fontSize:"0.6875rem",color:"var(--clr-text-4)"}}>{app.age_rating}</span>}
+                                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{marginLeft:"auto",flexShrink:0,color:"var(--clr-text-4)"}}><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                </div>
+                                <div style={{fontSize:"0.8125rem",color:"var(--clr-text-3)",marginBottom:"0.25rem"}}>{app.developer}</div>
+                                <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap",fontSize:"0.75rem",color:"var(--clr-text-4)"}}>
+                                  {app.min_os&&<span>iOS {app.min_os}+</span>}
+                                  {app.file_size_mb&&<span>{app.file_size_mb} MB</span>}
+                                  {app.languages?.length>0&&<span>{app.languages.slice(0,3).join(", ")}{app.languages.length>3?" +"+(app.languages.length-3):""}</span>}
+                                </div>
+                              </div>
+                            </div>
+                            {app.screenshot_urls&&app.screenshot_urls.length>0&&(
+                              <div style={{overflowX:"auto",display:"flex",gap:"0.5rem",paddingBottom:"0.25rem"}} onClick={e=>e.preventDefault()}>
+                                {app.screenshot_urls.slice(0,5).map((url,si)=>(
+                                  <img key={si} src={url} alt={"Screenshot "+(si+1)} style={{height:160,width:"auto",borderRadius:8,flexShrink:0,border:"1px solid var(--clr-border)",objectFit:"cover"}}/>
+                                ))}
+                              </div>
+                            )}
+                            <AiBlock what={app.claude_what} diff={app.claude_different} gap={app.claude_missing}/>
+                          </a>
                                     ))}
                                   </div>
                                 </div>
