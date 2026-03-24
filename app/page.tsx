@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
 
-// ââ Types ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Types Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 type ToolId = "gap-analysis" | "competitor-radar" | "trend-feed" | "stack-advisor";
 type Budget = "bootstrap" | "growing" | "funded" | "scale";
 type TechLevel = "nocode" | "lowcode" | "developer";
@@ -39,7 +39,7 @@ interface Section {
   isLast: boolean;
 }
 
-// ââ SVG Icons ââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ SVG Icons Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function IconGap({ color }: { color: string }) {
   return (
     <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -83,14 +83,14 @@ const TOOL_ICONS: Record<ToolId, (c: string) => React.ReactNode> = {
   "stack-advisor": (c) => <IconStack color={c} />,
 };
 
-// ââ Tool definitions âââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Tool definitions Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const TOOLS: ToolConfig[] = [
   {
     id: "trend-feed",
     userLabel: "I need inspiration",
     name: "Trend Feed",
     tagline: "Real signals, no noise",
-    description: "What's actually rising in a market right now. Emerging niches, dying trends, and contrarian bets — powered by AI, not Twitter hype.",
+    description: "What's actually rising in a market right now. Emerging niches, dying trends, and contrarian bets â powered by AI, not Twitter hype.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/trend-feed",
@@ -108,7 +108,7 @@ const TOOLS: ToolConfig[] = [
     userLabel: "I have an idea",
     name: "Gap Analysis",
     tagline: "Find the gaps before you build",
-    description: "Spot what competitors are missing. Get a brutally honest read on where you actually have a shot — before you spend months building the wrong thing.",
+    description: "Spot what competitors are missing. Get a brutally honest read on where you actually have a shot â before you spend months building the wrong thing.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/analyze",
@@ -125,7 +125,7 @@ const TOOLS: ToolConfig[] = [
     userLabel: "I'm already building",
     name: "Competitor Radar",
     tagline: "Know your rivals inside out",
-    description: "Deep competitive intelligence on who you're really up against — their strategies, exploitable weaknesses, and exactly how to outmaneuver them.",
+    description: "Deep competitive intelligence on who you're really up against â their strategies, exploitable weaknesses, and exactly how to outmaneuver them.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/radar",
@@ -153,35 +153,35 @@ const TOOLS: ToolConfig[] = [
   },
 ];
 
-// ââ Section metadata (for results cards) ââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Section metadata (for results cards) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const SECTION_META: Record<string, { bg: string; color: string }> = {
-  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð¤": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð³ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "â¡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð¯": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "â ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ðª": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð©¸": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð£": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ðºï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "âï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð¥": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð¡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð§²": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð§ ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð°": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð®": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ð¡ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ¤": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ³Ã¯Â¸Â":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã¢ÂÂ¡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ¯": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã¢ÂÂ Ã¯Â¸Â":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂª": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂ©Â¸": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ£": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂºÃ¯Â¸Â":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã¢ÂÂÃ¯Â¸Â":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ¥": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ¡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂ§Â²": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂ§Â ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ Ã¯Â¸Â":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ°": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ®": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "Ã°ÂÂÂ¡Ã¯Â¸Â":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
 };
 
-// ââ Markdown component map âââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Markdown component map Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const MD: Record<string, (props: any) => React.ReactElement> = {
   table: ({ children }) => (
     <div className="table-wrap"><table>{children}</table></div>
@@ -213,7 +213,7 @@ function parseSections(markdown: string, isStreaming: boolean): Section[] {
       const isLast = idx === arr.length - 1 && isStreaming;
       if (!body.trim() && !isLast) return [];
       return [{
-        emoji: m ? m[0].trim() : "ð",
+        emoji: m ? m[0].trim() : "Ã°ÂÂÂ",
         title: raw.replace(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)\s*/u, "").trim(),
         body,
         isLast,
@@ -221,7 +221,7 @@ function parseSections(markdown: string, isStreaming: boolean): Section[] {
     });
 }
 
-// ââ Score parser âââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Score parser Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function parseScore(body: string): { score: number; label: string; summary: string } | null {
   const clean = (s: string) => s.replace(/\*\*/g, "").replace(/\*/g, "").replace(/---+/g, "").replace(/\s+/g, " ").trim();
   const scoreMatch = body.match(/Score:\s*\**(\d+)\**/i);
@@ -237,7 +237,7 @@ function parseScore(body: string): { score: number; label: string; summary: stri
   return { score, label, summary: summaryLines.join(" ").trim() };
 }
 
-// ââ Section Result Card ââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Section Result Card Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function SectionCard({ section, showCursor }: { section: Section; showCursor: boolean }) {
   const meta = SECTION_META[section.emoji] ?? { bg: "rgba(var(--clr-text-rgb),0.1)", color: "var(--clr-text-2)" };
   if (!section.body.trim() && !showCursor) return null;
@@ -259,19 +259,19 @@ function SectionCard({ section, showCursor }: { section: Section; showCursor: bo
   );
 }
 
-// ââ Trend Feed Visual Components âââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Trend Feed Visual Components Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 function parseBullets(body: string): { title: string; desc: string; badge?: string }[] {
   const lines = body.split("\n").filter((l) => l.trim());
   const bullets: { title: string; desc: string; badge?: string }[] = [];
   for (const line of lines) {
-    const clean = line.replace(/^[-*•]\s*/, "").trim();
+    const clean = line.replace(/^[-*â¢]\s*/, "").trim();
     if (!clean) continue;
-    // Extract badge like **ð¥ High Activity** or **ð Growing**
-    const badgeMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-—–:]\s*/);
+    // Extract badge like **Ã°ÂÂÂ¥ High Activity** or **Ã°ÂÂÂ Growing**
+    const badgeMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-ââ:]\s*/);
     const rest = badgeMatch ? clean.slice(badgeMatch[0].length) : clean;
     // Split on **: bold title followed by colon/dash
-    const titleMatch = rest.match(/^\*\*([^*]+)\*\*\s*[-—–:]?\s*([\s\S]*)/);
+    const titleMatch = rest.match(/^\*\*([^*]+)\*\*\s*[-ââ:]?\s*([\s\S]*)/);
     if (titleMatch) {
       bullets.push({
         title: titleMatch[1].trim(),
@@ -291,9 +291,9 @@ function parseNicheBullets(body: string): { title: string; desc: string; score: 
   const lines = body.split("\n").filter((l) => l.trim());
   const niches: { title: string; desc: string; score: number }[] = [];
   for (const line of lines) {
-    const clean = line.replace(/^[-*•]\s*/, "").trim();
+    const clean = line.replace(/^[-*â¢]\s*/, "").trim();
     if (!clean) continue;
-    const titleMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-—–:]?\s*([\s\S]*)/);
+    const titleMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-ââ:]?\s*([\s\S]*)/);
     const title = titleMatch ? titleMatch[1].trim() : "";
     const rest = titleMatch ? titleMatch[2].trim() : clean;
     // Estimate opportunity score from language cues
@@ -313,7 +313,7 @@ function TrendRisingSection({ section, isStreaming }: { section: Section; isStre
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-        <span style={{ fontSize: "1.25rem" }}>ð</span>
+        <span style={{ fontSize: "1.25rem" }}>Ã°ÂÂÂ</span>
         <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
@@ -368,7 +368,7 @@ function TrendDyingSection({ section, isStreaming }: { section: Section; isStrea
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-        <span style={{ fontSize: "1.25rem" }}>ð</span>
+        <span style={{ fontSize: "1.25rem" }}>Ã°ÂÂÂ</span>
         <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
@@ -419,7 +419,7 @@ function TrendNichesSection({ section, isStreaming }: { section: Section; isStre
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-        <span style={{ fontSize: "1.25rem" }}>ð¡</span>
+        <span style={{ fontSize: "1.25rem" }}>Ã°ÂÂÂ¡</span>
         <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
@@ -480,7 +480,7 @@ function TrendPatternHero({ section, isStreaming }: { section: Section; isStream
     }}>
       <div style={{ position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-          <span style={{ fontSize: "1.5rem" }}>ð¥</span>
+          <span style={{ fontSize: "1.5rem" }}>Ã°ÂÂÂ¥</span>
           <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
             {section.title}
           </h3>
@@ -573,920 +573,604 @@ function ThreatDots({ level }: { level: number }) {
 }
 
 function GapAnalysisResult({ data }: { data: GapAnalysisData }) {
-  // Filter out empty items
   data = {
     ...data,
-    competitors: data.competitors.filter(c => c.name?.trim()),
-    painPoints: data.painPoints.filter(p => p.quote?.trim()),
-    marketGaps: data.marketGaps.filter(g => g.title?.trim() || g.description?.trim()),
+    competitors: data.competitors?.filter((c: GapCompetitor) => c?.name) ?? [],
+    painPoints: data.painPoints?.filter((p: GapPainPoint) => p?.quote) ?? [],
+    marketGaps: data.marketGaps?.filter((g: GapMarketGap) => g?.title) ?? [],
   };
-  const ms = Math.max(0, Math.min(100, data.marketScore));
-  const msColor = "var(--clr-text)";
-  const msBg = "rgba(var(--clr-text-rgb),0.04)";
-  const msEmoji = ms >= 81 ? "ð¥" : ms >= 61 ? "ð¢" : ms >= 41 ? "ð¡" : ms >= 21 ? "ð " : "ð´";
-  const msR = 36;
-  const msCirc = 2 * Math.PI * msR;
-  const msDash = msCirc * ms / 100;
-  const msOffset = msCirc * 0.25;
 
-  const msSteps = [
-    { emoji: "ð´", label: "No Gap",          min: 0,  max: 20  },
-    { emoji: "ð ", label: "Crowded",         min: 21, max: 40  },
-    { emoji: "ð¡", label: "Some Room",       min: 41, max: 60  },
-    { emoji: "ð¢", label: "Real Opportunity", min: 61, max: 80  },
-    { emoji: "ð¥", label: "Wide Open",       min: 81, max: 100 },
+  const [activeTab, setActiveTab] = useState("overview");
+
+  const tabs = [
+    { id: "overview", label: "Overview", score: data.marketScore },
+    { id: "market-data", label: "Market Data" },
+    { id: "community", label: "Community Signals" },
+    { id: "competitors", label: "Competitors" },
+    { id: "market-gaps", label: "Market Gaps" },
+    { id: "go-to-market", label: "Go-to-Market" },
+    { id: "financials", label: "Financials" },
+    { id: "validate", label: "Validate" },
+    { id: "action-plan", label: "Action Plan" },
+    { id: "synthesis", label: "Synthesis" },
   ];
-  const msActiveIdx = msSteps.findIndex(s => ms >= s.min && ms <= s.max);
+
+  const scoreColor = (data.marketScore ?? 0) >= 70 ? "#10b981" : (data.marketScore ?? 0) >= 50 ? "#f59e0b" : "#ef4444";
+
+  const Badge = ({ label, color }: { label: string; color: string }) => {
+    const styles: Record<string, { bg: string; text: string }> = {
+      red: { bg: "#fee2e2", text: "#dc2626" },
+      orange: { bg: "#fff7ed", text: "#ea580c" },
+      green: { bg: "#dcfce7", text: "#16a34a" },
+      blue: { bg: "#eff6ff", text: "#2563eb" },
+      purple: { bg: "#f3e8ff", text: "#9333ea" },
+      default: { bg: "#f3f4f6", text: "#374151" },
+    };
+    const s = styles[color] ?? styles.default;
+    return (
+      <span style={{ display: "inline-flex", alignItems: "center", padding: "2px 8px", borderRadius: "999px", fontSize: "11px", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.05em", background: s.bg, color: s.text }}>{label}</span>
+    );
+  };
+
+  const SectionCard = ({ icon, title, subtitle, badge, children }: { icon: string; title: string; subtitle?: string; badge?: React.ReactNode; children: React.ReactNode }) => (
+    <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "24px", marginBottom: "16px" }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "16px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "36px", height: "36px", background: "#f0fdfb", border: "1px solid #ccfbf1", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>{icon}</div>
+          <div>
+            <div style={{ fontSize: "12px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "#374151" }}>{title}</div>
+            {subtitle && <div style={{ fontSize: "12px", color: "#9ca3af", marginTop: "2px" }}>{subtitle}</div>}
+          </div>
+        </div>
+        {badge}
+      </div>
+      {children}
+    </div>
+  );
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "overview":
+        return (
+          <div>
+            <SectionCard icon="⚡" title="TL;DR — Executive Summary" subtitle={`Market score: ${data.marketScore}/100`}
+              badge={<Badge label={data.marketScoreLabel ?? "Opportunity"} color={(data.marketScore ?? 0) >= 70 ? "green" : (data.marketScore ?? 0) >= 50 ? "orange" : "red"} />}>
+              <p style={{ fontSize: "14px", lineHeight: "1.7", color: "#374151", marginBottom: "16px" }}>{data.marketScoreSummary}</p>
+              <div style={{ display: "flex", gap: "12px" }}>
+                <div style={{ flex: 1, background: "#f0fdfb", border: "1px solid #ccfbf1", borderRadius: "10px", padding: "14px" }}>
+                  <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "#0d9488", marginBottom: "6px" }}>🎯 Biggest Opportunity</div>
+                  <div style={{ fontSize: "13px", fontWeight: 600, color: "#111827" }}>{data.marketGaps?.[0]?.title ?? "Untapped niche"}</div>
+                  <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "4px" }}>{(data.marketGaps?.[0]?.description ?? "").substring(0, 80)}</div>
+                </div>
+                <div style={{ flex: 1, background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: "10px", padding: "14px" }}>
+                  <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "#ea580c", marginBottom: "6px" }}>⚠ Biggest Risk</div>
+                  <div style={{ fontSize: "13px", fontWeight: 600, color: "#111827" }}>{data.swot?.threats?.[0] ?? "Market competition"}</div>
+                  <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "4px" }}>{data.swot?.threats?.[1] ?? ""}</div>
+                </div>
+                <div style={{ flex: 1, background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "10px", padding: "14px" }}>
+                  <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "#2563eb", marginBottom: "6px" }}>🚀 First Move</div>
+                  <div style={{ fontSize: "13px", fontWeight: 600, color: "#111827" }}>{data.opportunity?.actionItems?.[0]?.action ?? "Validate demand"}</div>
+                  <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "4px" }}>{(data.opportunity?.actionItems?.[0]?.detail ?? "").substring(0, 80)}</div>
+                </div>
+              </div>
+            </SectionCard>
+            {data.synthesis && (
+              <SectionCard icon="◎" title="Synthesis" subtitle="Your idea at a glance">
+                <p style={{ fontSize: "14px", lineHeight: "1.7", color: "#374151", marginBottom: "16px" }}>{data.synthesis.oneParagraph}</p>
+                {data.oneLiner && (
+                  <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: "10px", padding: "14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>
+                      <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#7c3aed", marginBottom: "4px" }}>Your One-Liner</div>
+                      <div style={{ fontSize: "13px", fontStyle: "italic" as const, color: "#1e1b4b" }}>"{data.oneLiner}"</div>
+                    </div>
+                    <button onClick={() => navigator.clipboard?.writeText(data.oneLiner ?? "")}
+                      style={{ padding: "6px 12px", borderRadius: "6px", border: "1px solid #ddd6fe", background: "white", cursor: "pointer", fontSize: "12px" }}>Copy</button>
+                  </div>
+                )}
+              </SectionCard>
+            )}
+          </div>
+        );
+
+      case "market-data":
+        return (
+          <div>
+            {data.marketSize && (
+              <SectionCard icon="📈" title="Market Sizing" subtitle="TAM → SAM → SOM funnel" badge={<Badge label="Multi-source" color="blue" />}>
+                <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px", padding: "20px", background: "#fafafa", borderRadius: "10px" }}>
+                  {[
+                    { val: data.marketSize.tam, label: "Everyone who could buy", tag: "TAM est." },
+                    null,
+                    { val: data.marketSize.sam, label: "People you can reach", tag: "SAM est." },
+                    null,
+                    { val: data.marketSize.som, label: "Realistic customers", tag: "SOM est." },
+                  ].map((item, i) => item === null
+                    ? <div key={i} style={{ fontSize: "24px", color: "#9ca3af" }}>→</div>
+                    : (
+                      <div key={i} style={{ textAlign: "center" as const, flex: 1 }}>
+                        <div style={{ fontSize: "28px", fontWeight: 800, color: "#111827" }}>{item.val}</div>
+                        <div style={{ fontSize: "12px", color: "#6b7280" }}>{item.label}</div>
+                        <div style={{ fontSize: "11px", color: "#0d9488", fontWeight: 600 }}>{item.tag}</div>
+                      </div>
+                    )
+                  )}
+                </div>
+                {data.marketSize.growthRate && (
+                  <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "8px", padding: "10px 14px", display: "flex", alignItems: "center", gap: "10px" }}>
+                    <span style={{ fontSize: "16px" }}>↗</span>
+                    <span style={{ fontSize: "13px", fontWeight: 600, color: "#15803d" }}>{data.marketSize.growthRate} annual growth</span>
+                    <Badge label="Growing" color="green" />
+                  </div>
+                )}
+              </SectionCard>
+            )}
+            {data.marketSegments && data.marketSegments.length > 0 && (
+              <SectionCard icon="◉" title="Market Segments" subtitle="Addressable sub-markets ranked by fit">
+                {data.marketSegments.map((seg, i) => (
+                  <div key={i} style={{ borderLeft: `4px solid ${seg.fit === "primary" ? "#0ea5e9" : seg.fit === "secondary" ? "#10b981" : "#f59e0b"}`, paddingLeft: "16px", marginBottom: "16px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px", flexWrap: "wrap" as const }}>
+                      <span style={{ fontSize: "14px", fontWeight: 700, color: "#111827" }}>{seg.name}</span>
+                      <Badge label={seg.fit.toUpperCase()} color={seg.fit === "primary" ? "blue" : seg.fit === "secondary" ? "green" : "orange"} />
+                      {seg.size && <span style={{ fontSize: "13px", fontWeight: 600, color: "#374151" }}>{seg.size}</span>}
+                      {seg.growth && <span style={{ fontSize: "12px", color: "#10b981", fontWeight: 600 }}>↑ {seg.growth}</span>}
+                    </div>
+                    <p style={{ fontSize: "13px", color: "#6b7280", margin: 0 }}>{seg.description}</p>
+                  </div>
+                ))}
+              </SectionCard>
+            )}
+          </div>
+        );
+
+      case "community":
+        return (
+          <div>
+            <SectionCard icon="📡" title="Community Signals" subtitle="What real users are saying">
+              <div style={{ display: "flex", gap: "12px", marginBottom: "4px" }}>
+                {[
+                  { label: "Pain Level", value: data.painPoints?.some(p => p.severity === "high") ? "HIGH" : "MEDIUM", note: "Frustration signals" },
+                  { label: "Signals Found", value: `${(data.painPoints?.length ?? 0) + (data.communitySignals?.length ?? 0)}+`, note: "Validated pain points" },
+                  { label: "Sources", value: "3+", note: "Platform coverage" },
+                ].map(m => (
+                  <div key={m.label} style={{ flex: 1, padding: "16px", borderRadius: "10px", border: "1px solid #e5e7eb", background: "#fafafa" }}>
+                    <div style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#6b7280", marginBottom: "6px" }}>{m.label}</div>
+                    <div style={{ fontSize: "22px", fontWeight: 700, color: "#111827" }}>{m.value}</div>
+                    <div style={{ fontSize: "12px", color: "#9ca3af", marginTop: "4px" }}>"{m.note}"</div>
+                  </div>
+                ))}
+              </div>
+            </SectionCard>
+            {(data.painPoints?.length ?? 0) > 0 && (
+              <SectionCard icon="🔥" title="Pain Points" subtitle="Real quotes from your target market">
+                {data.painPoints?.map((pp, i) => (
+                  <div key={i} style={{ borderLeft: "3px solid #e5e7eb", paddingLeft: "16px", marginBottom: "14px", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <p style={{ fontSize: "13px", fontStyle: "italic" as const, color: "#374151", margin: 0, flex: 1 }}>"{pp.quote}"</p>
+                    <div style={{ display: "flex", gap: "6px", marginLeft: "12px", flexShrink: 0 }}>
+                      {pp.source && <span style={{ fontSize: "11px", color: "#9ca3af" }}>{pp.source}</span>}
+                      <Badge label={pp.severity.toUpperCase()} color={pp.severity === "high" ? "red" : pp.severity === "medium" ? "orange" : "green"} />
+                    </div>
+                  </div>
+                ))}
+              </SectionCard>
+            )}
+            {(data.communitySignals?.length ?? 0) > 0 && (
+              <SectionCard icon="💬" title="Signal Feed" subtitle="Community discussions">
+                {data.communitySignals?.map((sig, i) => (
+                  <div key={i} style={{ background: "#fafafa", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "12px", marginBottom: "10px", display: "flex", justifyContent: "space-between", gap: "12px" }}>
+                    <div>
+                      <div style={{ fontSize: "11px", color: "#9ca3af", marginBottom: "4px" }}>{sig.subredditOrHandle} · {sig.source}</div>
+                      <p style={{ fontSize: "13px", color: "#374151", margin: 0 }}>"{sig.quote}"</p>
+                    </div>
+                    <Badge label={sig.sentiment.toUpperCase()} color={sig.sentiment === "pain" ? "red" : sig.sentiment === "need" ? "orange" : "green"} />
+                  </div>
+                ))}
+              </SectionCard>
+            )}
+          </div>
+        );
+
+      case "competitors":
+        return (
+          <div>
+            <SectionCard icon="⚔" title="Competitive Landscape" subtitle={`${data.competitors?.length ?? 0} competitors analyzed`}
+              badge={<Badge label={`${data.competitors?.length ?? 0} Active`} color="green" />}>
+              {(data.competitors?.length ?? 0) === 0 && (
+                <p style={{ fontSize: "14px", color: "#6b7280" }}>No direct competitors identified — this market may be genuinely underserved.</p>
+              )}
+              {data.competitors?.map((c, i) => (
+                <div key={i} style={{ border: "1px solid #e5e7eb", borderRadius: "10px", padding: "16px", marginBottom: "12px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
+                    <div>
+                      <div style={{ fontSize: "15px", fontWeight: 700, color: "#111827" }}>{c.name}</div>
+                      <div style={{ fontSize: "13px", color: "#6b7280", marginTop: "2px" }}>{c.tagline}</div>
+                    </div>
+                    <Badge label={c.threatLevel >= 8 ? "HIGH" : c.threatLevel >= 5 ? "MEDIUM" : "LOW"} color={c.threatLevel >= 8 ? "red" : c.threatLevel >= 5 ? "orange" : "green"} />
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                    <div>
+                      <div style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.06em", color: "#10b981", marginBottom: "6px" }}>Strengths</div>
+                      {c.strengths?.map((s, j) => <div key={j} style={{ fontSize: "12px", color: "#374151", marginBottom: "3px" }}>• {s}</div>)}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.06em", color: "#ef4444", marginBottom: "6px" }}>Weaknesses</div>
+                      {c.weaknesses?.map((w, j) => <div key={j} style={{ fontSize: "12px", color: "#374151", marginBottom: "3px" }}>• {w}</div>)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </SectionCard>
+          </div>
+        );
+
+      case "market-gaps":
+        return (
+          <div>
+            <SectionCard icon="🎯" title="Market Gaps" subtitle="Where competitors fall short">
+              {data.marketGaps?.map((gap, i) => (
+                <div key={i} style={{ border: "1px solid #e5e7eb", borderRadius: "10px", padding: "16px", marginBottom: "12px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                    <div style={{ fontSize: "14px", fontWeight: 700, color: "#111827", flex: 1, marginRight: "12px" }}>{gap.title}</div>
+                    <Badge label={gap.status.toUpperCase()} color={gap.status === "untapped" ? "blue" : gap.status === "emerging" ? "orange" : "red"} />
+                  </div>
+                  <p style={{ fontSize: "13px", color: "#6b7280", margin: "0 0 10px 0" }}>{gap.description}</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{ flex: 1, height: "4px", background: "#e5e7eb", borderRadius: "2px" }}>
+                      <div style={{ width: `${gap.opportunityScore * 10}%`, height: "100%", background: "#0ea5e9", borderRadius: "2px" }} />
+                    </div>
+                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#374151" }}>{gap.opportunityScore}</span>
+                  </div>
+                </div>
+              ))}
+            </SectionCard>
+            {data.swot && (
+              <SectionCard icon="⊞" title="SWOT Analysis" subtitle="Strategic position overview">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  {([
+                    { key: "strengths", label: "Strengths", bg: "#dcfce7", border: "#bbf7d0", tc: "#15803d" },
+                    { key: "weaknesses", label: "Weaknesses", bg: "#fff7ed", border: "#fed7aa", tc: "#ea580c" },
+                    { key: "opportunities", label: "Opportunities", bg: "#eff6ff", border: "#bfdbfe", tc: "#2563eb" },
+                    { key: "threats", label: "Threats", bg: "#fef2f2", border: "#fecaca", tc: "#dc2626" },
+                  ] as const).map(({ key, label, bg, border, tc }) => (
+                    <div key={key} style={{ background: bg, border: `1px solid ${border}`, borderRadius: "8px", padding: "14px" }}>
+                      <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: tc, marginBottom: "8px" }}>{label}</div>
+                      {(data.swot?.[key] as string[])?.map((item, i) => (
+                        <div key={i} style={{ fontSize: "12px", color: "#374151", marginBottom: "4px" }}>• {item}</div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </SectionCard>
+            )}
+          </div>
+        );
+
+      case "go-to-market":
+        return (
+          <div>
+            {data.targetCustomerDeep && (
+              <SectionCard icon="👤" title="Target Customer" subtitle="Who to sell to first">
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px", marginBottom: "16px" }}>
+                  {[
+                    { label: "Who They Are", value: data.targetCustomerDeep.whoTheyAre },
+                    { label: "How They Think", value: data.targetCustomerDeep.howTheyThink },
+                    { label: "Available Money", value: data.targetCustomerDeep.availableMoney },
+                    { label: "How They Buy", value: data.targetCustomerDeep.howTheyBuy },
+                  ].map(({ label, value }) => (
+                    <div key={label} style={{ background: "#fafafa", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "12px" }}>
+                      <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#0d9488", marginBottom: "6px" }}>{label}</div>
+                      <p style={{ fontSize: "12px", color: "#374151", margin: 0 }}>{value}</p>
+                    </div>
+                  ))}
+                </div>
+                {(data.targetCustomerDeep.triggerEvents?.length ?? 0) > 0 && (
+                  <div style={{ background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: "8px", padding: "14px", marginBottom: "12px" }}>
+                    <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#ea580c", marginBottom: "8px" }}>⚡ Trigger Events — When They Decide to Buy</div>
+                    {data.targetCustomerDeep.triggerEvents?.map((t, i) => <div key={i} style={{ fontSize: "13px", color: "#374151", marginBottom: "4px" }}>• {t}</div>)}
+                  </div>
+                )}
+                {(data.targetCustomerDeep.whereToFindThem?.length ?? 0) > 0 && (
+                  <div>
+                    <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#374151", marginBottom: "8px" }}>📍 Where to Find Them</div>
+                    <div style={{ display: "flex", flexWrap: "wrap" as const, gap: "8px" }}>
+                      {data.targetCustomerDeep.whereToFindThem?.map((w, i) => (
+                        <span key={i} style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "6px", padding: "4px 10px", fontSize: "12px", color: "#2563eb" }}>{w}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </SectionCard>
+            )}
+            {data.goToMarket && (
+              <SectionCard icon="🚀" title="Go-to-Market Channels" subtitle="Distribution strategy + estimated CAC">
+                {data.goToMarket.channels?.map((ch, i) => (
+                  <div key={i} style={{ border: "1px solid #e5e7eb", borderRadius: "10px", padding: "14px", marginBottom: "10px", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                        <span style={{ fontSize: "14px", fontWeight: 700, color: "#111827" }}>{ch.name}</span>
+                        <Badge label={ch.type.toUpperCase()} color={ch.type === "primary" ? "blue" : ch.type === "secondary" ? "green" : "orange"} />
+                      </div>
+                      <p style={{ fontSize: "12px", color: "#6b7280", margin: 0 }}>{ch.description}</p>
+                    </div>
+                    <div style={{ textAlign: "right" as const, marginLeft: "16px", flexShrink: 0 }}>
+                      <div style={{ fontSize: "10px", color: "#9ca3af", textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>Est. CAC</div>
+                      <div style={{ fontSize: "18px", fontWeight: 700, color: "#111827" }}>{ch.estimatedCAC}</div>
+                    </div>
+                  </div>
+                ))}
+              </SectionCard>
+            )}
+            {data.industryTrends && (
+              <SectionCard icon="📊" title="Industry Trends" subtitle="Forces shaping your market">
+                {([
+                  { key: "now" as const, label: "Current (Now)", color: "#0ea5e9" },
+                  { key: "emerging" as const, label: "Emerging (1–3yr)", color: "#f59e0b" },
+                  { key: "structural" as const, label: "Structural (3–5yr)", color: "#8b5cf6" },
+                ]).map(({ key, label, color }) => (
+                  (data.industryTrends?.[key]?.length ?? 0) > 0 ? (
+                    <div key={key} style={{ marginBottom: "16px" }}>
+                      <div style={{ display: "inline-block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color, background: color + "18", border: `1px solid ${color}40`, borderRadius: "4px", padding: "3px 8px", marginBottom: "8px" }}>{label}</div>
+                      {data.industryTrends[key].map((t, i) => (
+                        <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "10px", borderBottom: "1px solid #f3f4f6" }}>
+                          <div style={{ flex: 1, marginRight: "12px" }}>
+                            <div style={{ fontSize: "13px", fontWeight: 600, color: "#111827" }}>{t.trend}</div>
+                            <div style={{ fontSize: "12px", color: "#9ca3af", marginTop: "2px" }}>📎 {t.evidence}</div>
+                          </div>
+                          <Badge label={t.impact.toUpperCase()} color={t.impact === "high" ? "red" : t.impact === "medium" ? "orange" : "green"} />
+                        </div>
+                      ))}
+                    </div>
+                  ) : null
+                ))}
+              </SectionCard>
+            )}
+          </div>
+        );
+
+      case "financials":
+        return (
+          <div>
+            {data.financialDeep && (
+              <SectionCard icon="💰" title="Financial Snapshot" subtitle="Key metrics for your first year">
+                <div style={{ display: "flex", gap: "12px", marginBottom: "20px" }}>
+                  <div style={{ flex: 1, border: "1px solid #e5e7eb", borderRadius: "10px", padding: "16px" }}>
+                    <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#ef4444", marginBottom: "6px" }}>🔥 Monthly Burn</div>
+                    <div style={{ fontSize: "24px", fontWeight: 800, color: "#111827", marginBottom: "8px" }}>{data.financialDeep.monthlyBurn.total}</div>
+                    <div style={{ fontSize: "11px", color: "#6b7280" }}>Infra {data.financialDeep.monthlyBurn.infrastructure} · Tools {data.financialDeep.monthlyBurn.tools} · Mkt {data.financialDeep.monthlyBurn.marketing}</div>
+                  </div>
+                  <div style={{ flex: 1, border: "1px solid #e5e7eb", borderRadius: "10px", padding: "16px" }}>
+                    <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#10b981", marginBottom: "6px" }}>✓ Break-Even</div>
+                    <div style={{ fontSize: "24px", fontWeight: 800, color: "#111827", marginBottom: "4px" }}>Month {data.financialDeep.breakEvenMonth}</div>
+                    <div style={{ fontSize: "12px", color: "#6b7280" }}>When revenue covers monthly costs</div>
+                  </div>
+                  <div style={{ flex: 1, background: "#f0fdfe", border: "1px solid #a5f3fc", borderRadius: "10px", padding: "16px" }}>
+                    <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#0891b2", marginBottom: "6px" }}>🚀 12-Month Potential</div>
+                    <div style={{ fontSize: "24px", fontWeight: 800, color: "#111827", marginBottom: "4px" }}>{data.financialDeep.twelveMonthMRR}</div>
+                    <div style={{ fontSize: "12px", color: "#6b7280" }}>MRR (Middle estimate)</div>
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#374151", marginBottom: "12px" }}>Revenue Projections — Year 1 Scenarios</div>
+                  <div style={{ display: "flex", gap: "12px" }}>
+                    {([
+                      { key: "cautious" as const, label: "Cautious", color: "#6b7280", highlight: false },
+                      { key: "middle" as const, label: "Middle", color: "#0ea5e9", highlight: true },
+                      { key: "optimistic" as const, label: "Optimistic", color: "#10b981", highlight: false },
+                    ]).map(({ key, label, color, highlight }) => {
+                      const s = data.financialDeep?.revenueScenarios?.[key];
+                      if (!s) return null;
+                      return (
+                        <div key={key} style={{ flex: 1, border: `2px solid ${highlight ? color : "#e5e7eb"}`, borderRadius: "10px", padding: "16px", position: "relative" as const }}>
+                          {highlight && <div style={{ position: "absolute" as const, top: "-10px", left: "50%", transform: "translateX(-50%)", background: color, color: "white", padding: "2px 10px", borderRadius: "999px", fontSize: "11px", fontWeight: 600, whiteSpace: "nowrap" as const }}>Most Likely</div>}
+                          <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase" as const, color, marginBottom: "8px" }}>{label}</div>
+                          <div style={{ fontSize: "22px", fontWeight: 800, color: "#111827" }}>{s.mrr}</div>
+                          <div style={{ fontSize: "11px", color: "#9ca3af", marginTop: "4px" }}>{s.probability} likely</div>
+                          <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "8px" }}>{s.assumption}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </SectionCard>
+            )}
+            {data.fundabilityRadar && (
+              <SectionCard icon="📡" title="Fundability Radar" subtitle="Investor lens">
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}>
+                  {Object.entries(data.fundabilityRadar).map(([key, dim]) => {
+                    const d = dim as { score: number; note: string };
+                    const color = d.score >= 7 ? "#10b981" : d.score >= 5 ? "#f59e0b" : "#ef4444";
+                    return (
+                      <div key={key} style={{ border: "1px solid #e5e7eb", borderRadius: "10px", padding: "14px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                          <div style={{ fontSize: "13px", fontWeight: 600, color: "#374151", textTransform: "capitalize" as const }}>{key}</div>
+                          <div style={{ fontSize: "15px", fontWeight: 700, color }}>{d.score}/10</div>
+                        </div>
+                        <div style={{ height: "4px", background: "#e5e7eb", borderRadius: "2px", marginBottom: "8px" }}>
+                          <div style={{ width: `${d.score * 10}%`, height: "100%", background: color, borderRadius: "2px" }} />
+                        </div>
+                        <p style={{ fontSize: "11px", color: "#9ca3af", margin: 0 }}>{d.note}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </SectionCard>
+            )}
+          </div>
+        );
+
+      case "validate":
+        return (
+          <div>
+            {(data.validationChecklist?.length ?? 0) > 0 && (
+              <SectionCard icon="🧪" title="Validate Before Building" subtitle={`${data.validationChecklist?.length} assumptions to test`}>
+                {data.validationChecklist?.map((item, i) => (
+                  <div key={i} style={{ borderLeft: `4px solid ${item.risk === "high" ? "#ef4444" : item.risk === "medium" ? "#f59e0b" : "#10b981"}`, paddingLeft: "16px", marginBottom: "16px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
+                      <div style={{ fontSize: "14px", fontWeight: 600, color: "#111827", flex: 1, marginRight: "12px" }}>{i + 1}. {item.assumption}</div>
+                      <span style={{ display: "inline-flex", alignItems: "center", padding: "2px 8px", borderRadius: "999px", fontSize: "11px", fontWeight: 600, textTransform: "uppercase" as const, background: item.risk === "high" ? "#fee2e2" : item.risk === "medium" ? "#fff7ed" : "#dcfce7", color: item.risk === "high" ? "#dc2626" : item.risk === "medium" ? "#ea580c" : "#16a34a" }}>{item.risk.toUpperCase()} RISK</span>
+                    </div>
+                    <p style={{ fontSize: "12px", color: "#6b7280", margin: 0 }}>💡 {item.howToTest}</p>
+                  </div>
+                ))}
+              </SectionCard>
+            )}
+            {data.customerInterviewGuide && (
+              <SectionCard icon="🗣" title="Customer Interview Guide" subtitle={`Non-leading questions · Target: ${data.customerInterviewGuide.targetInterviews} interviews`}>
+                <div style={{ marginBottom: "16px" }}>
+                  <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#374151", marginBottom: "10px" }}>Questions to Ask</div>
+                  {data.customerInterviewGuide.questions.map((q, i) => (
+                    <div key={i} style={{ display: "flex", gap: "10px", marginBottom: "8px" }}>
+                      <span style={{ fontSize: "13px", fontWeight: 700, color: "#0ea5e9", minWidth: "20px" }}>{i + 1}.</span>
+                      <span style={{ fontSize: "13px", color: "#374151" }}>{q}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}>
+                  <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px", padding: "12px" }}>
+                    <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#2563eb", marginBottom: "8px" }}>📍 Where to Find</div>
+                    {data.customerInterviewGuide.whereToFindThem.map((w, i) => <div key={i} style={{ fontSize: "12px", color: "#374151", marginBottom: "3px" }}>• {w}</div>)}
+                  </div>
+                  <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "8px", padding: "12px" }}>
+                    <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#16a34a", marginBottom: "8px" }}>✅ Green Signals</div>
+                    {data.customerInterviewGuide.greenSignals.map((s, i) => <div key={i} style={{ fontSize: "12px", color: "#374151", marginBottom: "3px" }}>• {s}</div>)}
+                  </div>
+                  <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "8px", padding: "12px" }}>
+                    <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#dc2626", marginBottom: "8px" }}>🚩 Red Signals</div>
+                    {data.customerInterviewGuide.redSignals.map((s, i) => <div key={i} style={{ fontSize: "12px", color: "#374151", marginBottom: "3px" }}>• {s}</div>)}
+                  </div>
+                </div>
+              </SectionCard>
+            )}
+          </div>
+        );
+
+      case "action-plan":
+        return (
+          <div>
+            <SectionCard icon="🎯" title="Your Opportunity" subtitle="The gap you can own"
+              badge={<button style={{ background: "#111827", color: "white", padding: "4px 12px", borderRadius: "6px", border: "none", fontSize: "12px", cursor: "pointer" }}>⚡ Act Now</button>}>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "#111827", marginBottom: "16px", lineHeight: "1.4" }}>{data.opportunity?.headline}</div>
+              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" as const }}>
+                {data.opportunity?.actionItems?.map((item, i) => (
+                  <div key={i} style={{ flex: "1 1 200px", border: "1px solid #e5e7eb", borderRadius: "10px", padding: "14px" }}>
+                    <div style={{ width: "24px", height: "24px", background: "#f3f4f6", border: "1px solid #d1d5db", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: 700, marginBottom: "8px" }}>{item.step}</div>
+                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#111827", marginBottom: "6px" }}>{item.action}</div>
+                    <p style={{ fontSize: "12px", color: "#6b7280", margin: 0 }}>{item.detail}</p>
+                  </div>
+                ))}
+              </div>
+            </SectionCard>
+            {(data.goToMarket?.launchPhases?.length ?? 0) > 0 && (
+              <SectionCard icon="📋" title="Launch Roadmap" subtitle="Phased go-to-market plan">
+                {data.goToMarket?.launchPhases?.map((phase, i) => (
+                  <div key={i} style={{ border: "1px solid #e5e7eb", borderRadius: "10px", padding: "16px", marginBottom: "12px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <div style={{ width: "28px", height: "28px", background: "#111827", color: "white", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: 700 }}>{phase.phase}</div>
+                        <span style={{ fontSize: "14px", fontWeight: 700, color: "#111827" }}>{phase.name}</span>
+                      </div>
+                      <span style={{ fontSize: "12px", color: "#9ca3af" }}>{phase.duration}</span>
+                    </div>
+                    {phase.steps.map((step, j) => (
+                      <div key={j} style={{ display: "flex", gap: "8px", marginBottom: "6px" }}>
+                        <span style={{ color: "#10b981", fontSize: "13px", flexShrink: 0 }}>✓</span>
+                        <span style={{ fontSize: "13px", color: "#374151" }}>{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </SectionCard>
+            )}
+          </div>
+        );
+
+      case "synthesis":
+        return (
+          <div>
+            <SectionCard icon="◎" title="Synthesis" subtitle="Your idea, the full picture">
+              <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
+                <div style={{ position: "relative" as const, width: "80px", height: "80px", flexShrink: 0 }}>
+                  <svg viewBox="0 0 80 80" style={{ transform: "rotate(-90deg)", width: "80px", height: "80px" }}>
+                    <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
+                    <circle cx="40" cy="40" r="32" fill="none" stroke={scoreColor} strokeWidth="6"
+                      strokeDasharray={`${2 * Math.PI * 32 * ((data.marketScore ?? 0) / 100)} ${2 * Math.PI * 32}`} strokeLinecap="round" />
+                  </svg>
+                  <div style={{ position: "absolute" as const, inset: 0, display: "flex", flexDirection: "column" as const, alignItems: "center", justifyContent: "center" }}>
+                    <span style={{ fontSize: "18px", fontWeight: 800, color: "#111827" }}>{data.marketScore}</span>
+                    <span style={{ fontSize: "10px", color: "#9ca3af" }}>/100</span>
+                  </div>
+                </div>
+                <p style={{ fontSize: "14px", lineHeight: "1.7", color: "#374151", margin: 0, flex: 1 }}>{data.synthesis?.oneParagraph}</p>
+              </div>
+              {data.oneLiner && (
+                <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: "10px", padding: "14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#7c3aed", marginBottom: "4px" }}>Your One-Liner</div>
+                    <div style={{ fontSize: "13px", fontStyle: "italic" as const, color: "#1e1b4b" }}>"{data.oneLiner}"</div>
+                  </div>
+                  <button onClick={() => navigator.clipboard?.writeText(data.oneLiner ?? "")}
+                    style={{ padding: "6px 12px", borderRadius: "6px", border: "1px solid #ddd6fe", background: "white", cursor: "pointer", fontSize: "12px" }}>Copy</button>
+                </div>
+              )}
+            </SectionCard>
+            {data.synthesis && (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                <div style={{ border: "1px solid #e5e7eb", borderRadius: "10px", padding: "16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+                    <span style={{ fontSize: "18px" }}>✅</span>
+                    <span style={{ fontSize: "12px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#374151" }}>Working For You</span>
+                  </div>
+                  {data.synthesis.workingForYou.map((item, i) => (
+                    <div key={i} style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+                      <span style={{ color: "#10b981", fontSize: "13px", flexShrink: 0 }}>●</span>
+                      <span style={{ fontSize: "13px", color: "#374151" }}>{item}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ border: "1px solid #e5e7eb", borderRadius: "10px", padding: "16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+                    <span style={{ fontSize: "18px" }}>⚠️</span>
+                    <span style={{ fontSize: "12px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#374151" }}>Watch Out</span>
+                  </div>
+                  {data.synthesis.watchOutFor.map((item, i) => (
+                    <div key={i} style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+                      <span style={{ color: "#f59e0b", fontSize: "13px", flexShrink: 0 }}>●</span>
+                      <span style={{ fontSize: "13px", color: "#374151" }}>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-
-      {/* ── EXECUTIVE SUMMARY ── */}
-      {(data.synthesis?.oneParagraph || (data.marketGaps && data.marketGaps.length > 0)) && (
-        <div style={{
-          background: "linear-gradient(135deg, rgba(var(--clr-accent-rgb),0.08) 0%, rgba(var(--clr-accent-rgb),0.03) 100%)",
-          border: "1px solid rgba(var(--clr-accent-rgb),0.25)",
-          borderRadius: 14, padding: "1.5rem 1.75rem",
-          position: "relative", overflow: "hidden",
-        }}>
-          <div style={{
-            position: "absolute", top: -40, right: -40, width: 180, height: 180,
-            borderRadius: "50%", background: "rgba(var(--clr-accent-rgb),0.06)", filter: "blur(50px)", pointerEvents: "none",
-          }} />
-          <div style={{ position: "relative" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1rem" }}>
-              <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-accent-rgb),0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.9rem" }}>⚡</div>
-              <span style={{ fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--clr-accent)" }}>TL;DR — Executive Summary</span>
-            </div>
-            {data.synthesis?.oneParagraph && (
-              <p style={{ fontSize: "0.9rem", color: "var(--clr-text)", lineHeight: 1.7, margin: "0 0 1.25rem 0", fontWeight: 500 }}>
-                {data.synthesis.oneParagraph}
-              </p>
-            )}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
-              {data.marketGaps && data.marketGaps.length > 0 && (
-                <div style={{ background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 10, padding: "0.875rem" }}>
-                  <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgba(34,197,94,0.9)", marginBottom: 6 }}>🎯 BIGGEST OPPORTUNITY</div>
-                  <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.4 }}>{data.marketGaps[0].title}</div>
-                  <div style={{ fontSize: "0.65rem", color: "var(--clr-text-3)", marginTop: 4, lineHeight: 1.4 }}>{data.marketGaps[0].description?.split(".")[0]}.</div>
-                </div>
-              )}
-              {data.synthesis?.watchOutFor && data.synthesis.watchOutFor.length > 0 && (
-                <div style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.18)", borderRadius: 10, padding: "0.875rem" }}>
-                  <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgba(239,68,68,0.9)", marginBottom: 6 }}>⚠️ BIGGEST RISK</div>
-                  <div style={{ fontSize: "0.72rem", color: "var(--clr-text-2)", lineHeight: 1.5 }}>{data.synthesis.watchOutFor[0]}</div>
-                </div>
-              )}
-              {data.opportunity?.actionItems && data.opportunity.actionItems.length > 0 && (
-                <div style={{ background: "rgba(var(--clr-accent-rgb),0.07)", border: "1px solid rgba(var(--clr-accent-rgb),0.2)", borderRadius: 10, padding: "0.875rem" }}>
-                  <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-accent)", marginBottom: 6 }}>🚀 FIRST MOVE</div>
-                  <div style={{ fontSize: "0.72rem", color: "var(--clr-text-2)", lineHeight: 1.5 }}>{data.opportunity.actionItems[0].action}</div>
-                  <div style={{ fontSize: "0.62rem", color: "var(--clr-text-3)", marginTop: 3, lineHeight: 1.4 }}>{data.opportunity.actionItems[0].detail}</div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-
-      {/* ââ MARKET OPPORTUNITY SCORE ââ */}
-      <div style={{
-        background: "var(--clr-surface)", border: `1px solid ${msColor}40`,
-        borderRadius: 12, padding: "1.5rem 1.75rem",
-        position: "relative", overflow: "hidden",
-        boxShadow: `0 0 0 1px ${msColor}10, 0 8px 32px ${msColor}10`,
-      }}>
-        <div style={{
-          position: "absolute", top: -60, right: -60, width: 240, height: 240,
-          borderRadius: "50%", background: `${msColor}0a`, filter: "blur(60px)", pointerEvents: "none",
-        }} />
-        <div style={{ display: "flex", alignItems: "center", gap: "1.75rem", position: "relative" }}>
-          <div style={{ position: "relative", flexShrink: 0, width: 92, height: 92 }}>
-            <svg width="92" height="92" viewBox="0 0 92 92" style={{ transform: "rotate(-90deg)" }}>
-              <circle cx="46" cy="46" r={msR} fill="none" stroke="var(--clr-border)" strokeWidth="7" />
-              <circle cx="46" cy="46" r={msR} fill="none" stroke={msColor} strokeWidth="7"
-                strokeDasharray={`${msDash} ${msCirc - msDash}`} strokeDashoffset={-msOffset} strokeLinecap="round" />
-            </svg>
-            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontSize: "1.625rem", fontWeight: 800, color: msColor, lineHeight: 1, letterSpacing: "-0.03em" }}>{ms}</span>
-              <span style={{ fontSize: "0.6rem", color: "var(--clr-text-6)", fontWeight: 600, letterSpacing: "0.04em" }}>/100</span>
-            </div>
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.5rem" }}>
-              <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-text-5)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Market Opportunity</span>
-              {data.marketScoreLabel && (
-                <span style={{
-                  display: "inline-flex", alignItems: "center", gap: 4,
-                  padding: "0.175rem 0.6rem", borderRadius: 999,
-                  background: msBg, color: msColor, fontSize: "0.75rem", fontWeight: 700,
-                  border: `1px solid ${msColor}30`,
-                }}>
-                  {msEmoji} {data.marketScoreLabel}
-                </span>
-              )}
-            </div>
-            {data.marketScoreSummary && (
-              <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-2)", lineHeight: 1.65, margin: 0, fontWeight: 400 }}>
-                {data.marketScoreSummary}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* 5-step scale */}
-        <div style={{ marginTop: "1.25rem", display: "flex", gap: 6 }}>
-          {msSteps.map((step, i) => {
-            const isActive = i === msActiveIdx;
-            return (
-              <div key={step.label} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                <div style={{
-                  width: "100%", height: 6, borderRadius: 999,
-                  background: isActive ? msColor : "var(--clr-border)",
-                  boxShadow: isActive ? `0 0 8px ${msColor}60` : "none",
-                  transition: "background 0.3s",
-                }} />
-                <span style={{ fontSize: isActive ? "1rem" : "0.75rem", lineHeight: 1, transition: "font-size 0.2s", filter: isActive ? "none" : "grayscale(1) opacity(0.35)" }}>
-                  {step.emoji}
-                </span>
-                <span style={{
-                  fontSize: "0.58rem", fontWeight: isActive ? 700 : 400,
-                  color: isActive ? msColor : "var(--clr-text-7)",
-                  textAlign: "center", lineHeight: 1.2,
-                }}>
-                  {step.label}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+    <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "16px", overflow: "hidden", display: "flex", minHeight: "600px" }}>
+      <div style={{ width: "232px", borderRight: "1px solid #e5e7eb", padding: "16px 10px", flexShrink: 0, background: "#fafafa" }}>
+        <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "#9ca3af", marginBottom: "12px", paddingLeft: "8px" }}>Analysis</div>
+        {tabs.map(tab => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+              style={{ display: "flex", alignItems: "center", width: "100%", padding: "9px 10px", borderRadius: "8px", marginBottom: "3px", background: isActive ? "white" : "transparent", border: `1px solid ${isActive ? "#e5e7eb" : "transparent"}`, cursor: "pointer", textAlign: "left" as const, boxShadow: isActive ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}>
+              <span style={{ fontSize: "13px", color: tab.id === "overview" ? "#6366f1" : "#10b981", marginRight: "8px", flexShrink: 0 }}>{tab.id === "overview" ? "●" : "✓"}</span>
+              <span style={{ fontSize: "13px", fontWeight: isActive ? 600 : 400, color: isActive ? "#111827" : "#374151", flex: 1 }}>{tab.label}</span>
+              {tab.score !== undefined && <span style={{ background: "#6366f1", color: "white", padding: "1px 7px", borderRadius: "4px", fontSize: "11px", fontWeight: 700, marginLeft: "4px" }}>{tab.score}</span>}
+              <span style={{ fontSize: "14px", color: "#9ca3af", marginLeft: "4px" }}>{isActive ? "↓" : "›"}</span>
+            </button>
+          );
+        })}
       </div>
-
-      {/* ââ KEY COMPETITORS ââ */}
-      {data.competitors.length > 0 && <div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>ð</div>
-          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Key Competitors</h2>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "0.5rem" }}>
-          {data.competitors.map((c) => (
-            <div key={c.name} style={{
-              background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-              borderRadius: 12, padding: "0.75rem 0.875rem",
-            }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
-                <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--clr-text)" }}>{c.name}</span>
-                <div style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0 }}>
-                  <span style={{ fontSize: "0.5rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--clr-text-7)" }}>Threat</span>
-                  <ThreatDots level={c.threatLevel} />
-                </div>
-              </div>
-              {c.tagline && (
-                <p style={{ fontSize: "0.68rem", color: "var(--clr-text-5)", margin: "0 0 6px", lineHeight: 1.35 }}>{c.tagline}</p>
-              )}
-              <div style={{ display: "flex", gap: 8 }}>
-                <div style={{ fontSize: "0.68rem", color: "var(--clr-text-2)", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(var(--clr-text-rgb),0.3)", flex: 1, minWidth: 0 }}>
-                  {c.strengths[0] ?? "—"}
-                </div>
-                <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", lineHeight: 1.4, paddingLeft: 6, borderLeft: "2px solid rgba(var(--clr-text-rgb),0.3)", flex: 1, minWidth: 0 }}>
-                  {c.weaknesses[0] ?? "—"}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>}
-
-      {/* ââ PAIN POINTS ââ */}
-      {data.painPoints.length > 0 && <div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>ð¤</div>
-          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Pain Points</h2>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
-          {data.painPoints.map((p, i) => {
-            const sevColor = p.severity === "high" ? "var(--clr-text)" : p.severity === "medium" ? "var(--clr-text-2)" : "var(--clr-text-3)";
-            const sevBg = p.severity === "high" ? "rgba(var(--clr-text-rgb),0.12)" : p.severity === "medium" ? "rgba(var(--clr-text-rgb),0.08)" : "rgba(var(--clr-text-rgb),0.08)";
-            return (
-              <div key={i} style={{
-                display: "flex", alignItems: "center", gap: "0.625rem", padding: "0.5rem 0.75rem", borderRadius: 10,
-                background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-                borderLeft: `3px solid ${sevColor}`,
-              }}>
-                <p style={{ flex: 1, fontSize: "0.75rem", color: "var(--clr-text-2)", lineHeight: 1.5, margin: 0, fontStyle: "italic", minWidth: 0 }}>
-                  &ldquo;{p.quote}&rdquo;
-                </p>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-                  {p.source && (
-                    <span style={{ fontSize: "0.58rem", color: "var(--clr-text-7)" }}>{p.source}</span>
-                  )}
-                  <span style={{
-                    fontSize: "0.56rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em",
-                    padding: "0.1rem 0.45rem", borderRadius: 999, background: sevBg, color: sevColor,
-                    border: `1px solid ${sevColor}30`,
-                    boxShadow: p.severity === "high" ? `0 0 6px ${sevColor}25` : "none",
-                    display: "inline-flex", alignItems: "center", gap: 2,
-                  }}>
-                    {p.severity === "high" && <span style={{ fontSize: "0.58rem" }}>ð¥</span>}
-                    {p.severity}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>}
-
-      {/* ââ MARKET GAPS ââ */}
-      {data.marketGaps.length > 0 && <div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>ð³ï¸</div>
-          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text-2)", margin: 0 }}>Market Gaps</h2>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-          {data.marketGaps.map((g, i) => {
-            const statusColor = g.status === "untapped" ? "var(--clr-text)" : g.status === "emerging" ? "var(--clr-text-2)" : "var(--clr-text-3)";
-            const statusBg = g.status === "untapped" ? "rgba(var(--clr-text-rgb),0.1)" : g.status === "emerging" ? "rgba(var(--clr-text-rgb),0.08)" : "rgba(var(--clr-text-rgb),0.08)";
-            const barColor = g.opportunityScore >= 7 ? "var(--clr-text)" : g.opportunityScore >= 4 ? "var(--clr-text-2)" : "var(--clr-text-5)";
-            return (
-              <div key={i} style={{
-                background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-                borderRadius: 12, padding: "0.75rem 1rem",
-                boxShadow: g.opportunityScore >= 8 ? `0 0 0 1px ${barColor}20, 0 4px 16px ${barColor}08` : "none",
-              }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 4 }}>
-                  <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--clr-text)" }}>{g.title}</span>
-                  <span style={{
-                    fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em",
-                    padding: "0.1rem 0.45rem", borderRadius: 999, background: statusBg, color: statusColor,
-                    border: `1px solid ${statusColor}30`, flexShrink: 0,
-                  }}>
-                    {g.status}
-                  </span>
-                </div>
-                <p style={{ fontSize: "0.72rem", color: "var(--clr-text-4)", lineHeight: 1.5, margin: "0 0 8px" }}>
-                  {g.description}
-                </p>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <div style={{ flex: 1, display: "flex", gap: 2 }}>
-                    {[1,2,3,4,5,6,7,8,9,10].map(n => (
-                      <div key={n} style={{
-                        flex: 1, height: 5, borderRadius: 999,
-                        background: n <= g.opportunityScore ? barColor : "var(--clr-border)",
-                        boxShadow: n <= g.opportunityScore ? `0 0 3px ${barColor}40` : "none",
-                      }} />
-                    ))}
-                  </div>
-                  <span style={{ fontSize: "0.75rem", fontWeight: 800, color: barColor, minWidth: 16, textAlign: "right" }}>
-                    {g.opportunityScore}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>}
-
-      {/* ââ SWOT ââ */}
-      {(data.swot.strengths.length > 0 || data.swot.weaknesses.length > 0 || data.swot.opportunities.length > 0 || data.swot.threats.length > 0) && <div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>âï¸</div>
-          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>SWOT</h2>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-          {([
-            { key: "strengths" as const, label: "S", full: "Strengths", color: "var(--clr-text-2)", bg: "rgba(var(--clr-text-rgb),0.04)", border: "rgba(var(--clr-text-rgb),0.15)" },
-            { key: "weaknesses" as const, label: "W", full: "Weaknesses", color: "var(--clr-text-2)", bg: "rgba(var(--clr-text-rgb),0.04)", border: "rgba(var(--clr-text-rgb),0.15)" },
-            { key: "opportunities" as const, label: "O", full: "Opportunities", color: "var(--clr-text-2)", bg: "rgba(var(--clr-text-rgb),0.04)", border: "rgba(var(--clr-text-rgb),0.15)" },
-            { key: "threats" as const, label: "T", full: "Threats", color: "var(--clr-text-2)", bg: "rgba(var(--clr-text-rgb),0.04)", border: "rgba(var(--clr-text-rgb),0.15)" },
-          ]).map(q => (
-            <div key={q.key} style={{
-              background: q.bg, border: `1px solid ${q.border}`,
-              borderRadius: 10, padding: "0.625rem 0.75rem",
-            }}>
-              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: q.color, marginBottom: "0.375rem" }}>
-                {q.full}
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                {(data.swot[q.key] ?? []).slice(0, 3).map((item, i) => (
-                  <div key={i} style={{ display: "flex", gap: 5, fontSize: "0.68rem", color: "var(--clr-text-3)", lineHeight: 1.4 }}>
-                    <span style={{ color: q.color, flexShrink: 0 }}>•</span>
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>}
-
-      {/* ââ YOUR OPPORTUNITY ââ */}
-      {data.opportunity.headline && <div style={{
-        background: "linear-gradient(135deg, rgba(var(--clr-text-rgb),0.06), rgba(var(--clr-text-rgb),0.03))",
-        border: "1px solid rgba(var(--clr-text-rgb),0.2)",
-        borderRadius: 12, padding: "1rem 1.125rem",
-        position: "relative", overflow: "hidden",
-      }}>
-        <div style={{
-          position: "absolute", top: -30, right: -30, width: 160, height: 160,
-          borderRadius: "50%", background: "rgba(var(--clr-text-rgb),0.05)", filter: "blur(50px)", pointerEvents: "none",
-        }} />
-        <div style={{ position: "relative" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
-            <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>â¡</div>
-            <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Your Opportunity</h2>
-            {(() => {
-              const u = data.opportunity.urgency;
-              const uColor = u === "high" ? "var(--clr-text)" : u === "medium" ? "var(--clr-text-2)" : "var(--clr-text-3)";
-              const uBg = u === "high" ? "rgba(var(--clr-text-rgb),0.1)" : u === "medium" ? "rgba(var(--clr-text-rgb),0.08)" : "rgba(var(--clr-text-rgb),0.08)";
-              const uLabel = u === "high" ? "Act Now" : u === "medium" ? "6-12 Mo" : "Long Term";
-              return (
-                <span style={{
-                  marginLeft: "auto", fontSize: "0.56rem", fontWeight: 700, textTransform: "uppercase",
-                  letterSpacing: "0.05em", padding: "0.15rem 0.5rem", borderRadius: 999,
-                  background: uBg, color: uColor, border: `1px solid ${uColor}30`,
-                }}>
-                  â± {uLabel}
-                </span>
-              );
-            })()}
-          </div>
-
-          <p style={{
-            fontSize: "0.9375rem", fontWeight: 700, color: "var(--clr-text)",
-            lineHeight: 1.45, margin: "0 0 0.75rem",
-          }}>
-            {data.opportunity.headline}
-          </p>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "0.5rem" }}>
-            {data.opportunity.actionItems.slice(0, 3).map((item) => (
-              <div key={item.step} style={{
-                background: "rgba(var(--clr-text-rgb),0.06)", border: "1px solid rgba(var(--clr-text-rgb),0.15)",
-                borderRadius: 10, padding: "0.625rem 0.75rem",
-                display: "flex", gap: "0.5rem", alignItems: "flex-start",
-              }}>
-                <div style={{
-                  width: 22, height: 22, borderRadius: "50%", flexShrink: 0,
-                  background: "rgba(var(--clr-text-rgb),0.15)", border: "1px solid rgba(var(--clr-text-rgb),0.3)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "0.65rem", fontWeight: 800, color: "var(--clr-text-2)",
-                }}>
-                  {item.step}
-                </div>
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.3 }}>{item.action}</div>
-                  <div style={{
-                    fontSize: "0.62rem", color: "var(--clr-text-5)", lineHeight: 1.4, marginTop: 2,
-                  }}>{item.detail}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>}
-
-      {/* ââ IDEAL TARGET CUSTOMER ââ */}
-      {data.targetCustomer.persona && <div style={{
-        background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-        borderRadius: 12, padding: "0.875rem 1rem",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(var(--clr-text-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem" }}>ð¯</div>
-          <h2 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Target Customer</h2>
-        </div>
-
-        <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
-          {/* Avatar + identity */}
-          <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", width: 72 }}>
-            <div style={{
-              width: 44, height: 44, borderRadius: "50%",
-              background: "rgba(var(--clr-text-rgb),0.12)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text-2)" strokeWidth="1.5" strokeLinecap="round">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M20 21a8 8 0 1 0-16 0"/>
-              </svg>
-            </div>
-            <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--clr-text)", marginTop: 4, lineHeight: 1.2 }}>
-              {data.targetCustomer.persona}
-            </div>
-            <div style={{ fontSize: "0.58rem", color: "var(--clr-text-6)", marginTop: 1 }}>
-              {data.targetCustomer.jobTitle}
-            </div>
-          </div>
-
-          {/* Details — compact chips layout */}
-          <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            {/* Demographics + WTP */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <div style={{ fontSize: "0.65rem", color: "var(--clr-text-3)", lineHeight: 1.4 }}>
-                {data.targetCustomer.demographics}
-              </div>
-              <div style={{ fontSize: "0.65rem", color: "var(--clr-text-2)", fontWeight: 600, lineHeight: 1.4 }}>
-                ð° {data.targetCustomer.willingnessToPay}
-              </div>
-            </div>
-
-            {/* Pain points as compact list */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <span style={{ fontSize: "0.52rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--clr-text-3)" }}>Pains</span>
-              {data.targetCustomer.painPoints.slice(0, 3).map((p, i) => (
-                <div key={i} style={{ fontSize: "0.65rem", color: "var(--clr-text-4)", lineHeight: 1.35 }}>• {p}</div>
-              ))}
-            </div>
-
-            {/* Current tools as chips */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 3, alignItems: "center" }}>
-              <span style={{ fontSize: "0.52rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--clr-text-7)", marginRight: 2 }}>Uses</span>
-              {data.targetCustomer.currentTools.map((t, i) => (
-                <span key={i} style={{
-                  fontSize: "0.58rem", padding: "0.05rem 0.4rem", borderRadius: 999,
-                  background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
-                  color: "var(--clr-text-5)", fontWeight: 500,
-                }}>
-                  {t}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-      {/* ── INDUSTRY TRENDS ─────────────────────────────────────────────── */}
-      {data.industryTrends && (data.industryTrends.now?.length > 0 || data.industryTrends.emerging?.length > 0 || data.industryTrends.structural?.length > 0) && (
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>📡</div>
-            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Industry Trends</span>
-            <span style={{ fontSize: "0.62rem", color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 99, padding: "0.1rem 0.5rem" }}>Live data</span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-            {[
-              { key: "now" as const, label: "NOW (0–1yr)", color: "rgba(34,197,94,0.9)", bg: "rgba(34,197,94,0.07)", border: "rgba(34,197,94,0.25)" },
-              { key: "emerging" as const, label: "EMERGING (1–3yr)", color: "rgba(234,179,8,0.9)", bg: "rgba(234,179,8,0.07)", border: "rgba(234,179,8,0.25)" },
-              { key: "structural" as const, label: "STRUCTURAL (3–5yr)", color: "rgba(139,92,246,0.9)", bg: "rgba(139,92,246,0.07)", border: "rgba(139,92,246,0.25)" },
-            ].map(({ key, label, color, bg, border }) => {
-              const items = data.industryTrends![key] ?? [];
-              if (!items.length) return null;
-              return (
-                <div key={key} style={{ background: bg, border: `1px solid ${border}`, borderRadius: 12, padding: "1rem" }}>
-                  <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color, marginBottom: "0.6rem" }}>{label}</div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                    {items.map((item, i) => (
-                      <div key={i} style={{ display: "flex", gap: 10 }}>
-                        <div style={{ flexShrink: 0, width: 6, height: 6, borderRadius: "50%", background: color, marginTop: 5 }} />
-                        <div>
-                          <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text)", marginBottom: 2 }}>{item.trend}</div>
-                          <div style={{ fontSize: "0.65rem", color: "var(--clr-text-3)", lineHeight: 1.5 }}>📎 {item.evidence}</div>
-                        </div>
-                        <div style={{ marginLeft: "auto", flexShrink: 0 }}>
-                          <span style={{ fontSize: "0.52rem", fontWeight: 700, textTransform: "uppercase", background: item.impact === "high" ? "rgba(239,68,68,0.1)" : item.impact === "medium" ? "rgba(234,179,8,0.1)" : "rgba(34,197,94,0.1)", color: item.impact === "high" ? "rgba(239,68,68,0.9)" : item.impact === "medium" ? "rgba(234,179,8,0.9)" : "rgba(34,197,94,0.9)", borderRadius: 99, padding: "0.12rem 0.4rem" }}>{item.impact}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ── MARKET SEGMENTS ──────────────────────────────────────────────────── */}
-      {data.marketSegments && data.marketSegments.length > 0 && (
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(var(--clr-accent-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>🎯</div>
-            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Market Segments</span>
-            <span style={{ fontSize: "0.62rem", color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 99, padding: "0.1rem 0.5rem" }}>Addressable sub-markets ranked by fit</span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-            {data.marketSegments.map((seg, i) => {
-              const fitColor = seg.fit === "primary" ? "rgba(var(--clr-accent-rgb),0.9)" : seg.fit === "secondary" ? "rgba(234,179,8,0.9)" : "rgba(100,116,139,0.9)";
-              const fitBg = seg.fit === "primary" ? "rgba(var(--clr-accent-rgb),0.1)" : seg.fit === "secondary" ? "rgba(234,179,8,0.08)" : "rgba(100,116,139,0.08)";
-              return (
-                <div key={i} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "1rem", display: "flex", gap: 14 }}>
-                  <div style={{ flexShrink: 0, width: 4, borderRadius: 99, background: fitColor, alignSelf: "stretch" }} />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
-                      <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--clr-text)" }}>{seg.name}</span>
-                      <span style={{ fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", background: fitBg, color: fitColor, borderRadius: 99, padding: "0.1rem 0.5rem" }}>{seg.fit}</span>
-                      {seg.size && <span style={{ fontSize: "0.65rem", fontWeight: 600, color: "var(--clr-text-2)" }}>{seg.size}</span>}
-                      {seg.growth && <span style={{ fontSize: "0.65rem", color: "rgba(34,197,94,0.9)", fontWeight: 600 }}>↑ {seg.growth}</span>}
-                    </div>
-                    <div style={{ fontSize: "0.7rem", color: "var(--clr-text-3)", lineHeight: 1.55 }}>{seg.description}</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ── TARGET CUSTOMER DEEP ─────────────────────────────────────────────── */}
-      {data.targetCustomerDeep && (
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(236,72,153,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>👤</div>
-            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Customer Deep Dive</span>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.65rem", marginBottom: "0.75rem" }}>
-            {[
-              { label: "WHO THEY ARE", value: data.targetCustomerDeep.whoTheyAre },
-              { label: "HOW THEY THINK", value: data.targetCustomerDeep.howTheyThink },
-              { label: "AVAILABLE MONEY", value: data.targetCustomerDeep.availableMoney },
-              { label: "HOW THEY BUY", value: data.targetCustomerDeep.howTheyBuy },
-            ].map(({ label, value }) => (
-              <div key={label} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "0.875rem" }}>
-                <div style={{ fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--clr-accent)", marginBottom: 5 }}>{label}</div>
-                <div style={{ fontSize: "0.72rem", color: "var(--clr-text-2)", lineHeight: 1.55 }}>{value}</div>
-              </div>
-            ))}
-          </div>
-          {data.targetCustomerDeep.triggerEvents?.length > 0 && (
-            <div style={{ background: "rgba(236,72,153,0.05)", border: "1px solid rgba(236,72,153,0.2)", borderRadius: 10, padding: "0.875rem", marginBottom: "0.65rem" }}>
-              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgba(236,72,153,0.9)", marginBottom: 8 }}>⚡ TRIGGER EVENTS — when they decide to buy</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                {data.targetCustomerDeep.triggerEvents.map((t, i) => (
-                  <div key={i} style={{ fontSize: "0.7rem", color: "var(--clr-text-2)", lineHeight: 1.5 }}>• {t}</div>
-                ))}
-              </div>
-            </div>
-          )}
-          {data.targetCustomerDeep.whereToFindThem?.length > 0 && (
-            <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "0.875rem" }}>
-              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-text-3)", marginBottom: 8 }}>📍 WHERE TO FIND THEM</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {data.targetCustomerDeep.whereToFindThem.map((w, i) => (
-                  <span key={i} style={{ fontSize: "0.65rem", background: "rgba(var(--clr-accent-rgb),0.08)", color: "var(--clr-accent)", border: "1px solid rgba(var(--clr-accent-rgb),0.2)", borderRadius: 6, padding: "0.2rem 0.6rem", fontWeight: 500 }}>{w}</span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ── GO TO MARKET ─────────────────────────────────────────────────────── */}
-      {data.goToMarket && (
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(34,197,94,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>🚀</div>
-            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Go-to-Market</span>
-          </div>
-          {data.goToMarket.channels && data.goToMarket.channels.length > 0 && (
-            <div style={{ marginBottom: "1rem" }}>
-              <div style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-text-3)", marginBottom: "0.6rem" }}>Channels & Estimated CAC</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                {data.goToMarket.channels.map((ch, i) => {
-                  const typeColor = ch.type === "primary" ? "rgba(var(--clr-accent-rgb),0.9)" : ch.type === "secondary" ? "rgba(234,179,8,0.9)" : "rgba(100,116,139,0.8)";
-                  return (
-                    <div key={i} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "0.75rem 1rem", display: "flex", alignItems: "flex-start", gap: 12 }}>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
-                          <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--clr-text)" }}>{ch.name}</span>
-                          <span style={{ fontSize: "0.52rem", fontWeight: 700, textTransform: "uppercase", color: typeColor, background: typeColor.replace("0.9","0.1"), borderRadius: 99, padding: "0.1rem 0.4rem" }}>{ch.type}</span>
-                        </div>
-                        <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", lineHeight: 1.5 }}>{ch.description}</div>
-                      </div>
-                      <div style={{ flexShrink: 0, textAlign: "right" }}>
-                        <div style={{ fontSize: "0.6rem", color: "var(--clr-text-3)", marginBottom: 2 }}>Est. CAC</div>
-                        <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--clr-text)" }}>{ch.estimatedCAC}</div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          {data.goToMarket.launchTarget && (
-            <div style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 10, padding: "0.875rem", marginBottom: "0.75rem" }}>
-              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgba(34,197,94,0.9)", marginBottom: 5 }}>🎯 LAUNCH TARGET</div>
-              <div style={{ fontSize: "0.75rem", color: "var(--clr-text-2)", fontWeight: 500 }}>{data.goToMarket.launchTarget}</div>
-            </div>
-          )}
-          {data.goToMarket.launchPhases && data.goToMarket.launchPhases.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-              {data.goToMarket.launchPhases.map((phase, i) => (
-                <div key={i} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "0.875rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                    <div style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(var(--clr-accent-rgb),0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-accent)" }}>{phase.phase}</div>
-                    <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--clr-text)" }}>Phase {phase.phase}: {phase.name}</span>
-                    <span style={{ fontSize: "0.6rem", color: "var(--clr-text-3)", marginLeft: "auto" }}>{phase.duration}</span>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                    {(phase.steps ?? []).map((step, j) => (
-                      <div key={j} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-                        <span style={{ fontSize: "0.6rem", color: "rgba(34,197,94,0.9)", marginTop: 2, flexShrink: 0 }}>✓</span>
-                        <span style={{ fontSize: "0.7rem", color: "var(--clr-text-2)", lineHeight: 1.5 }}>{step}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ── CUSTOMER INTERVIEW GUIDE ─────────────────────────────────────────── */}
-      {data.customerInterviewGuide && (
-        <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, overflow: "hidden" }}>
-          <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid var(--clr-border)", display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(14,165,233,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>🎙️</div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Customer Interview Guide</div>
-              <div style={{ fontSize: "0.62rem", color: "var(--clr-text-3)" }}>Non-leading questions to validate real demand • Target: {data.customerInterviewGuide.targetInterviews} interviews</div>
-            </div>
-          </div>
-          <div style={{ padding: "1.25rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <div>
-              <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-text-3)", marginBottom: "0.6rem" }}>Questions to ask</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                {data.customerInterviewGuide.questions.map((q, i) => (
-                  <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                    <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-accent)", flexShrink: 0, width: 18 }}>{i + 1}.</span>
-                    <span style={{ fontSize: "0.72rem", color: "var(--clr-text-2)", lineHeight: 1.55 }}>{q}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {(data.customerInterviewGuide.whereToFindThem?.length > 0 || data.customerInterviewGuide.greenSignals?.length > 0 || data.customerInterviewGuide.redSignals?.length > 0) && (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.65rem" }}>
-                {data.customerInterviewGuide.whereToFindThem?.length > 0 && (
-                  <div style={{ background: "rgba(var(--clr-accent-rgb),0.05)", border: "1px solid rgba(var(--clr-accent-rgb),0.15)", borderRadius: 8, padding: "0.75rem" }}>
-                    <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", color: "var(--clr-accent)", marginBottom: 6 }}>📍 WHERE TO FIND</div>
-                    {data.customerInterviewGuide.whereToFindThem.map((w, i) => <div key={i} style={{ fontSize: "0.68rem", color: "var(--clr-text-2)", lineHeight: 1.5, marginBottom: 2 }}>• {w}</div>)}
-                  </div>
-                )}
-                {data.customerInterviewGuide.greenSignals?.length > 0 && (
-                  <div style={{ background: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 8, padding: "0.75rem" }}>
-                    <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", color: "rgba(34,197,94,0.9)", marginBottom: 6 }}>✅ GREEN SIGNALS</div>
-                    {data.customerInterviewGuide.greenSignals.map((s, i) => <div key={i} style={{ fontSize: "0.68rem", color: "var(--clr-text-2)", lineHeight: 1.5, marginBottom: 2 }}>• {s}</div>)}
-                  </div>
-                )}
-                {data.customerInterviewGuide.redSignals?.length > 0 && (
-                  <div style={{ background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "0.75rem" }}>
-                    <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", color: "rgba(239,68,68,0.9)", marginBottom: 6 }}>🚩 RED SIGNALS</div>
-                    {data.customerInterviewGuide.redSignals.map((s, i) => <div key={i} style={{ fontSize: "0.68rem", color: "var(--clr-text-2)", lineHeight: 1.5, marginBottom: 2 }}>• {s}</div>)}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* ── FINANCIAL DEEP ──────────────────────────────────────────────────── */}
-      {data.financialDeep && (
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(234,179,8,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>💰</div>
-            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Financial Snapshot</span>
-            <span style={{ fontSize: "0.62rem", color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 99, padding: "0.1rem 0.5rem" }}>Based on live benchmark data</span>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.65rem", marginBottom: "0.75rem" }}>
-            <div style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, padding: "1rem" }}>
-              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgba(239,68,68,0.9)", marginBottom: 6 }}>🔥 MONTHLY BURN</div>
-              <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--clr-text)", marginBottom: 8 }}>{data.financialDeep.monthlyBurn.total}</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                {[
-                  { label: "Infrastructure", val: data.financialDeep.monthlyBurn.infrastructure },
-                  { label: "Tools", val: data.financialDeep.monthlyBurn.tools },
-                  { label: "Marketing", val: data.financialDeep.monthlyBurn.marketing },
-                  { label: "Acquisition", val: data.financialDeep.monthlyBurn.acquisition },
-                ].map(({ label, val }) => (
-                  <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.63rem" }}>
-                    <span style={{ color: "var(--clr-text-3)" }}>{label}</span>
-                    <span style={{ color: "var(--clr-text-2)", fontWeight: 500 }}>{val}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 12, padding: "1rem" }}>
-              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgba(34,197,94,0.9)", marginBottom: 6 }}>✅ BREAK-EVEN</div>
-              <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--clr-text)", marginBottom: 4 }}>{data.financialDeep.breakEvenMonth}</div>
-              <div style={{ fontSize: "0.65rem", color: "var(--clr-text-3)" }}>When revenue covers monthly costs</div>
-            </div>
-            <div style={{ background: "rgba(var(--clr-accent-rgb),0.08)", border: "1px solid rgba(var(--clr-accent-rgb),0.25)", borderRadius: 12, padding: "1rem" }}>
-              <div style={{ fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-accent)", marginBottom: 6 }}>🚀 12-MONTH MRR</div>
-              <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--clr-text)", marginBottom: 4 }}>{data.financialDeep.twelveMonthMRR}</div>
-              <div style={{ fontSize: "0.65rem", color: "var(--clr-text-3)" }}>{data.financialDeep.pricingBenchmark}</div>
-            </div>
-          </div>
-          {data.financialDeep.revenueScenarios && (
-            <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, overflow: "hidden" }}>
-              <div style={{ padding: "0.6rem 1rem", borderBottom: "1px solid var(--clr-border)", fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-text-3)" }}>Revenue Projections — Year 1 Scenarios</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr" }}>
-                {[
-                  { key: "cautious" as const, label: "Cautious", color: "rgba(100,116,139,0.8)" },
-                  { key: "middle" as const, label: "Middle", color: "rgba(var(--clr-accent-rgb),0.9)", highlight: true },
-                  { key: "optimistic" as const, label: "Optimistic", color: "rgba(34,197,94,0.9)" },
-                ].map(({ key, label, color, highlight }) => {
-                  const sc = data.financialDeep!.revenueScenarios[key];
-                  return (
-                    <div key={key} style={{ padding: "0.875rem 1rem", background: highlight ? "rgba(var(--clr-accent-rgb),0.04)" : "transparent", borderRight: key !== "optimistic" ? "1px solid var(--clr-border)" : "none" }}>
-                      <div style={{ fontSize: "0.6rem", fontWeight: 700, color, textTransform: "uppercase", marginBottom: 5 }}>{highlight ? "📊 " : ""}{label}</div>
-                      <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 4 }}>{sc.mrr} MRR</div>
-                      <div style={{ fontSize: "0.6rem", color: "var(--clr-text-3)", marginBottom: 4 }}>{sc.probability} likely</div>
-                      <div style={{ fontSize: "0.63rem", color: "var(--clr-text-3)", lineHeight: 1.4 }}>{sc.assumption}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ── FUNDABILITY RADAR ────────────────────────────────────────────────── */}
-      {data.fundabilityRadar && (
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(139,92,246,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>📡</div>
-            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Fundability Radar</span>
-            <span style={{ fontSize: "0.62rem", color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 99, padding: "0.1rem 0.5rem" }}>Investor lens</span>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.65rem" }}>
-            {([
-              { key: "team" as const, label: "Team", icon: "👥" },
-              { key: "marketSize" as const, label: "Market Size", icon: "📊" },
-              { key: "product" as const, label: "Product", icon: "⚙️" },
-              { key: "competition" as const, label: "Competition", icon: "⚔️" },
-              { key: "marketing" as const, label: "Marketing", icon: "📣" },
-              { key: "fundingNeed" as const, label: "Funding Need", icon: "💵" },
-            ] as const).map(({ key, label, icon }) => {
-              const dim = data.fundabilityRadar![key];
-              const score = dim?.score ?? 0;
-              const pct = (score / 10) * 100;
-              const barColor = score >= 7 ? "rgba(34,197,94,0.8)" : score >= 5 ? "rgba(234,179,8,0.8)" : "rgba(239,68,68,0.8)";
-              return (
-                <div key={key} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "0.875rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-                    <span style={{ fontSize: "0.7rem", fontWeight: 600, color: "var(--clr-text)" }}>{icon} {label}</span>
-                    <span style={{ fontSize: "0.8rem", fontWeight: 800, color: barColor }}>{score}/10</span>
-                  </div>
-                  <div style={{ height: 4, background: "var(--clr-border)", borderRadius: 99, overflow: "hidden", marginBottom: 6 }}>
-                    <div style={{ height: "100%", width: `${pct}%`, background: barColor, borderRadius: 99, transition: "width 0.3s" }} />
-                  </div>
-                  <div style={{ fontSize: "0.63rem", color: "var(--clr-text-3)", lineHeight: 1.45 }}>{dim?.note}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ── COMMUNITY SIGNALS ────────────────────────────────── */}
-      {data.communitySignals && data.communitySignals.length > 0 && (
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "0.875rem" }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(255,140,0,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>💬</div>
-            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>What People Are Saying</span>
-            <span style={{ fontSize: "0.65rem", color: "var(--clr-text-3)" }}>Reddit & X</span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-            {data.communitySignals.map((signal, i) => {
-              const isPain = signal.sentiment === "pain";
-              const isNeed = signal.sentiment === "need";
-              const color = isPain ? "rgba(239,68,68,0.9)" : isNeed ? "rgba(234,179,8,0.9)" : "rgba(34,197,94,0.9)";
-              const bg    = isPain ? "rgba(239,68,68,0.06)" : isNeed ? "rgba(234,179,8,0.06)" : "rgba(34,197,94,0.06)";
-              const label = isPain ? "😤 Pain" : isNeed ? "🙋 Need" : "✅ Positive";
-              const icon  = signal.source === "reddit" ? "🟠" : "𝕏";
-              return (
-                <div key={i} style={{ background: bg, border: `1px solid ${color.replace("0.9", "0.25")}`, borderRadius: 12, padding: "0.875rem 1rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                    <span style={{ fontSize: "0.75rem" }}>{icon}</span>
-                    <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--clr-text-3)" }}>{signal.subredditOrHandle}</span>
-                    <span style={{ fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", background: color.replace("0.9","0.12"), color, borderRadius: 99, padding: "0.1rem 0.5rem", marginLeft: "auto" }}>{label}</span>
-                  </div>
-                  <div style={{ fontSize: "0.72rem", color: "var(--clr-text-2)", lineHeight: 1.55, fontStyle: "italic" }}>&ldquo;{signal.quote}&rdquo;</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ── YOUR ONE-LINER ─────────────────────────────────────── */}
-      {data.oneLiner && (
-        <div style={{
-          background: "linear-gradient(135deg, rgba(var(--clr-accent-rgb),0.08), rgba(var(--clr-accent-rgb),0.03))",
-          border: "1px solid rgba(var(--clr-accent-rgb),0.25)",
-          borderRadius: 14, padding: "1.25rem 1.5rem",
-          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16,
-        }}>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-            <span style={{ fontSize: "1.25rem" }}>💡</span>
-            <div>
-              <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--clr-accent)", marginBottom: 4 }}>Your One-Liner</div>
-              <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.45, fontStyle: "italic" }}>
-                &ldquo;{data.oneLiner}&rdquo;
-              </div>
-            </div>
-          </div>
-          <button
-            onClick={() => { navigator.clipboard.writeText(data.oneLiner!); }}
-            style={{
-              flexShrink: 0, padding: "0.4rem 0.9rem", borderRadius: 8,
-              background: "rgba(var(--clr-accent-rgb),0.12)",
-              border: "1px solid rgba(var(--clr-accent-rgb),0.3)",
-              color: "var(--clr-accent)", fontSize: "0.7rem", fontWeight: 600, cursor: "pointer",
-            }}
-          >Copy</button>
-        </div>
-      )}
-
-      {/* ── MARKET SIZE ──────────────────────────────────────────── */}
-      {data.marketSize && (
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "0.875rem" }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(var(--clr-accent-rgb),0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>📊</div>
-            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Market Size</span>
-            {data.marketSize.growthRate && (
-              <span style={{ fontSize: "0.65rem", background: "rgba(34,197,94,0.12)", color: "rgb(34,197,94)", borderRadius: 99, padding: "0.15rem 0.6rem", fontWeight: 600 }}>↑ {data.marketSize.growthRate}</span>
-            )}
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
-            {(["tam", "sam", "som"] as const).map((key) => {
-              const meta = {
-                tam: { label: "TAM", sub: "Total Addressable", bg: "rgba(var(--clr-accent-rgb),0.12)" },
-                sam: { label: "SAM", sub: "Serviceable",       bg: "rgba(var(--clr-accent-rgb),0.07)" },
-                som: { label: "SOM", sub: "Obtainable",        bg: "rgba(var(--clr-accent-rgb),0.04)" },
-              }[key];
-              return (
-                <div key={key} style={{ background: meta.bg, border: "1px solid var(--clr-border)", borderRadius: 12, padding: "0.875rem 1rem" }}>
-                  <div style={{ fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--clr-accent)", marginBottom: 4 }}>{meta.label} — {meta.sub}</div>
-                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.3 }}>{data.marketSize![key]}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ── VALIDATION CHECKLIST ─────────────────────────────────── */}
-      {data.validationChecklist && data.validationChecklist.length > 0 && (
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "0.875rem" }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(234,179,8,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>✅</div>
-            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Validate Before Building</span>
-            <span style={{ fontSize: "0.65rem", color: "var(--clr-text-3)" }}>{data.validationChecklist.length} assumptions to test</span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-            {data.validationChecklist.map((item, i) => {
-              const riskColor = item.risk === "high" ? "rgba(239,68,68,0.9)" : item.risk === "medium" ? "rgba(234,179,8,0.9)" : "rgba(34,197,94,0.9)";
-              const riskBg   = item.risk === "high" ? "rgba(239,68,68,0.08)" : item.risk === "medium" ? "rgba(234,179,8,0.08)" : "rgba(34,197,94,0.08)";
-              return (
-                <div key={i} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "0.875rem 1rem", display: "flex", gap: 12 }}>
-                  <div style={{ flexShrink: 0, width: 4, borderRadius: 99, background: riskColor, alignSelf: "stretch" }} />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5, flexWrap: "wrap" }}>
-                      <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text)" }}>{i + 1}. {item.assumption}</span>
-                      <span style={{ fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", background: riskBg, color: riskColor, borderRadius: 99, padding: "0.1rem 0.5rem", whiteSpace: "nowrap" }}>{item.risk} risk</span>
-                    </div>
-                    <div style={{ fontSize: "0.68rem", color: "var(--clr-text-3)", lineHeight: 1.5 }}>💡 Test: {item.howToTest}</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ── SYNTHESIS ────────────────────────────────────────────── */}
-      {data.synthesis && (
-        <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, overflow: "hidden" }}>
-          <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid var(--clr-border)", display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(139,92,246,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>🎯</div>
-            <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--clr-text)" }}>Synthesis</span>
-          </div>
-          <div style={{ padding: "1.25rem" }}>
-            <p style={{ fontSize: "0.78rem", color: "var(--clr-text-2)", lineHeight: 1.65, marginBottom: "1.25rem" }}>{data.synthesis.oneParagraph}</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-              <div style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 10, padding: "0.875rem" }}>
-                <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgb(34,197,94)", marginBottom: 8 }}>✓ Working For You</div>
-                {data.synthesis.workingForYou.map((item, i) => (
-                  <div key={i} style={{ fontSize: "0.7rem", color: "var(--clr-text-2)", lineHeight: 1.5, marginBottom: 3 }}>• {item}</div>
-                ))}
-              </div>
-              <div style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: "0.875rem" }}>
-                <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "rgb(239,68,68)", marginBottom: 8 }}>⚠ Watch Out For</div>
-                {data.synthesis.watchOutFor.map((item, i) => (
-                  <div key={i} style={{ fontSize: "0.7rem", color: "var(--clr-text-2)", lineHeight: 1.5, marginBottom: 3 }}>• {item}</div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      </div>}
+      <div style={{ flex: 1, padding: "24px", overflowY: "auto" as const, background: "white", maxHeight: "800px" }}>
+        {renderTabContent()}
+      </div>
     </div>
   );
 }
-
-// ââ Gap Analysis Loading Skeleton âââââââââââââââââââââââââââââ
 function GapAnalysisSkeleton() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -1533,7 +1217,7 @@ function GapAnalysisSkeleton() {
   );
 }
 
-// ââ Loading Skeleton âââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Loading Skeleton Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function LoadingSkeleton({ tool }: { tool: ToolConfig }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -1552,26 +1236,26 @@ function LoadingSkeleton({ tool }: { tool: ToolConfig }) {
       ))}
       <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--clr-text-6)", fontSize: "0.8125rem", paddingTop: 8 }}>
         <div style={{ width: 16, height: 16, border: `2px solid ${tool.accentColor}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-        Running {tool.name}â¦
+        Running {tool.name}Ã¢ÂÂ¦
       </div>
     </div>
   );
 }
 
-// ââ Space Score Card âââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Space Score Card Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function deriveScoreLabel(pct: number): { emoji: string; label: string } {
-  if (pct >= 81) return { emoji: "ð¥", label: "Explosive" };
-  if (pct >= 61) return { emoji: "ð¢", label: "Growing" };
-  if (pct >= 41) return { emoji: "ð¡", label: "Warming Up" };
-  if (pct >= 21) return { emoji: "ð ", label: "Crowded" };
-  return { emoji: "ð´", label: "Dead Zone" };
+  if (pct >= 81) return { emoji: "Ã°ÂÂÂ¥", label: "Explosive" };
+  if (pct >= 61) return { emoji: "Ã°ÂÂÂ¢", label: "Growing" };
+  if (pct >= 41) return { emoji: "Ã°ÂÂÂ¡", label: "Warming Up" };
+  if (pct >= 21) return { emoji: "Ã°ÂÂÂ ", label: "Crowded" };
+  return { emoji: "Ã°ÂÂÂ´", label: "Dead Zone" };
 }
 
 function SpaceScoreCard({ score, summary, label }: { score: number; summary: string; label?: string }) {
   const pct = Math.max(0, Math.min(100, score));
   const labelEmojiMap: Record<string, string> = {
-    "Dead Zone": "ð´", "Uncharted": "ð", "Fading": "ð«ï¸", "Crowded": "ð ",
-    "Warming Up": "ð¡", "Growing": "ð¢", "Explosive": "ð¥",
+    "Dead Zone": "Ã°ÂÂÂ´", "Uncharted": "Ã°ÂÂÂ", "Fading": "Ã°ÂÂÂ«Ã¯Â¸Â", "Crowded": "Ã°ÂÂÂ ",
+    "Warming Up": "Ã°ÂÂÂ¡", "Growing": "Ã°ÂÂÂ¢", "Explosive": "Ã°ÂÂÂ¥",
   };
   const tier = label && labelEmojiMap[label]
     ? { emoji: labelEmojiMap[label], label }
@@ -1630,7 +1314,7 @@ function SpaceScoreCard({ score, summary, label }: { score: number; summary: str
   );
 }
 
-/* ââ Trend Feed Result âââââââââââââââââââââââââââââââââââââââââââ */
+/* Ã¢ÂÂÃ¢ÂÂ Trend Feed Result Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function TrendFeedResult({ data }: { data: any }) {
   const a = data?.analysis ?? {};
@@ -1676,7 +1360,7 @@ function TrendFeedResult({ data }: { data: any }) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "0.5rem" }}>
             {(a.risingSubcategories ?? []).map((sub: any, i: number) => {
               const dirColor = sub.direction === "rising" ? "#4ade80" : sub.direction === "falling" ? "#f87171" : "var(--clr-text-5)";
-              const dirIcon = sub.direction === "rising" ? "â" : sub.direction === "falling" ? "â" : "â";
+              const dirIcon = sub.direction === "rising" ? "Ã¢ÂÂ" : sub.direction === "falling" ? "Ã¢ÂÂ" : "Ã¢ÂÂ";
               return (
                 <div key={i} style={{
                   padding: "0.875rem 1rem", borderRadius: 10,
@@ -1737,7 +1421,7 @@ function TrendFeedResult({ data }: { data: any }) {
                 </div>
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--clr-text)" }}>
-                    {"â".repeat(Math.round(app.rating ?? 0))} {(app.rating ?? 0).toFixed(1)}
+                    {"Ã¢ÂÂ".repeat(Math.round(app.rating ?? 0))} {(app.rating ?? 0).toFixed(1)}
                   </div>
                   <div style={{ fontSize: "0.65rem", color: "var(--clr-text-5)" }}>
                     {(app.reviews ?? 0).toLocaleString()} reviews
@@ -1771,7 +1455,7 @@ function TrendFeedResult({ data }: { data: any }) {
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: "0.8rem", fontWeight: 800, color: "var(--clr-text-3)",
                 }}>
-                  â² {ph.votes}
+                  Ã¢ÂÂ² {ph.votes}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)" }}>{ph.name}</div>
@@ -1871,7 +1555,7 @@ function TrendFeedResult({ data }: { data: any }) {
   );
 }
 
-// ââ Data Source Badges ââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Data Source Badges Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function DataSourceBadges({ sources, noMargin }: { sources: DataSource[]; noMargin?: boolean }) {
   return (
     <div style={{
@@ -1906,7 +1590,7 @@ function DataSourceBadges({ sources, noMargin }: { sources: DataSource[]; noMarg
   );
 }
 
-// ââ Tool Selector Card âââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Tool Selector Card Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function ToolSelectorCard({
   tool, isSelected, isOtherSelected, onClick,
 }: {
@@ -2020,7 +1704,7 @@ function ToolSelectorCard({
   );
 }
 
-// ââ Input Section ââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Input Section Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function InputSection({
   tool, idea, setIdea, budget, setBudget, techLevel, setTechLevel,
   onSubmit, loading, textareaRef,
@@ -2035,8 +1719,8 @@ function InputSection({
 
   const BUDGETS: { id: Budget; label: string; sub: string }[] = [
     { id: "bootstrap", label: "Bootstrapped", sub: "< $50/mo" },
-    { id: "growing",   label: "Growing",      sub: "$50–200/mo" },
-    { id: "funded",    label: "Funded",        sub: "$200–1k/mo" },
+    { id: "growing",   label: "Growing",      sub: "$50â200/mo" },
+    { id: "funded",    label: "Funded",        sub: "$200â1k/mo" },
     { id: "scale",     label: "Scale",         sub: "$1k+/mo" },
   ];
   const TECH_LEVELS: { id: TechLevel; label: string; sub: string }[] = [
@@ -2124,8 +1808,8 @@ function InputSection({
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   {[
                     { id: "bootstrap" as Budget, label: "Bootstrapped", sub: "< $50/mo" },
-                    { id: "growing"   as Budget, label: "Growing",      sub: "$50–200/mo" },
-                    { id: "funded"    as Budget, label: "Funded",        sub: "$200–1k/mo" },
+                    { id: "growing"   as Budget, label: "Growing",      sub: "$50â200/mo" },
+                    { id: "funded"    as Budget, label: "Funded",        sub: "$200â1k/mo" },
                     { id: "scale"     as Budget, label: "Scale",         sub: "$1k+/mo" },
                   ].map((opt) => (
                     <button
@@ -2185,7 +1869,7 @@ function InputSection({
             marginTop: "1.125rem", paddingTop: "1.125rem",
             borderTop: "1px solid var(--clr-border-deep)",
           }}>
-            <span style={{ fontSize: "0.7rem", color: "var(--clr-text-8)" }}>ââµ to run</span>
+            <span style={{ fontSize: "0.7rem", color: "var(--clr-text-8)" }}>Ã¢ÂÂÃ¢ÂÂµ to run</span>
             <button
               onClick={onSubmit}
               disabled={!canSubmit}
@@ -2204,7 +1888,7 @@ function InputSection({
               {loading ? (
                 <>
                   <div style={{ width: 14, height: 14, border: "2px solid rgba(var(--clr-text-rgb),0.3)", borderTopColor: "var(--clr-text)", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
-                  Runningâ¦
+                  RunningÃ¢ÂÂ¦
                 </>
               ) : (
                 <>
@@ -2222,7 +1906,7 @@ function InputSection({
   );
 }
 
-// ââ GitHub repo type ââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ GitHub repo type Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 interface GithubRepo {
   id: number;
   full_name: string;
@@ -2324,7 +2008,7 @@ interface ITunesApp {
   genres: string[];
 }
 
-// ââ Gap Analysis structured types âââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Gap Analysis structured types Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 interface GapCompetitor {
   name: string;
   tagline: string;
@@ -2492,7 +2176,7 @@ function parseGapAnalysisJSON(raw: string): GapAnalysisData | null {
   }
 }
 
-// ââ Stack Advisor structured types ââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Stack Advisor structured types Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 interface StackPhaseCosts {
   tools: { name: string; purpose: string; freeTier: boolean; monthlyCost: string }[];
   total: string;
@@ -2533,12 +2217,12 @@ function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
   }
 }
 
-// ââ Stack Advisor Visual Result ââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Stack Advisor Visual Result Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const PHASE_COLORS = ["var(--clr-text)", "var(--clr-text-2)", "var(--clr-text-3)", "var(--clr-text-5)", "var(--clr-text-6)"];
 const PHASE_BGS = ["rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)"];
 
 function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVideos?: YouTubeVideo[] }) {
-  // Build a lookup: tool name (lowercased) â best matching YouTube video
+  // Build a lookup: tool name (lowercased) Ã¢ÂÂ best matching YouTube video
   const ytToolMap = new Map<string, YouTubeVideo>();
   if (ytVideos && ytVideos.length > 0) {
     for (const v of ytVideos) {
@@ -2568,7 +2252,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
 
-      {/* ââ HEADLINE ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ HEADLINE Ã¢ÂÂÃ¢ÂÂ */}
       {data.headline && (
         <div style={{
           background: "var(--clr-surface)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
@@ -2610,7 +2294,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
         </div>
       )}
 
-      {/* ââ PHASES (with embedded cost breakdown) ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ PHASES (with embedded cost breakdown) Ã¢ÂÂÃ¢ÂÂ */}
       {data.phases.map((phase, pi) => {
         const isP0 = isPhaseZero(phase.name);
         const color = PHASE_COLORS[pi] ?? PHASE_COLORS[PHASE_COLORS.length - 1];
@@ -2698,7 +2382,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                                 border: "1px solid rgba(255,0,0,0.2)",
                               }}
                             >
-                              ðº {fmtV} tutorial views
+                              Ã°ÂÂÂº {fmtV} tutorial views
                             </a>
                           );
                         })()}
@@ -2724,7 +2408,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                 ))}
               </div>
 
-              {/* ââ Per-phase cost breakdown ââ */}
+              {/* Ã¢ÂÂÃ¢ÂÂ Per-phase cost breakdown Ã¢ÂÂÃ¢ÂÂ */}
               {phaseCosts && phaseCosts.tools.length > 0 && (
                 <div style={{ marginTop: "1rem", marginLeft: 38 }}>
                   <div style={{
@@ -2788,7 +2472,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
         );
       })}
 
-      {/* ââ BUILD ORDER TIMELINE ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ BUILD ORDER TIMELINE Ã¢ÂÂÃ¢ÂÂ */}
       {data.buildOrder.length > 0 && (
         <div style={{
           background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
@@ -2857,7 +2541,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
         </div>
       )}
 
-      {/* ââ MISTAKES TO AVOID ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ MISTAKES TO AVOID Ã¢ÂÂÃ¢ÂÂ */}
       {data.mistakes.length > 0 && (
         <div style={{
           background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
@@ -2890,7 +2574,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
         </div>
       )}
 
-      {/* ââ SCALABILITY CEILING ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ SCALABILITY CEILING Ã¢ÂÂÃ¢ÂÂ */}
       {data.scalability.length > 0 && (
         <div style={{
           background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
@@ -2946,7 +2630,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
         </div>
       )}
 
-      {/* ââ WHEN TO UPGRADE ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ WHEN TO UPGRADE Ã¢ÂÂÃ¢ÂÂ */}
       {data.upgrades.length > 0 && (
         <div style={{
           background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
@@ -2988,8 +2672,8 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
   );
 }
 
-// ââ Main âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// ── AI Analysis block ──────────────────────────────────────────────────────
+// Ã¢ÂÂÃ¢ÂÂ Main Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ââ AI Analysis block ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function AiBlock({ what, diff, gap }: { what:string|null; diff:string|null; gap:string|null }) {
   if (!what && !diff && !gap) return null;
   return (
@@ -3029,7 +2713,7 @@ export default function Home() {
   const [outOfCredits, setOutOfCredits] = useState(false);
   const [hasResults, setHasResults] = useState(false);
 
-  // ── Pulse inline state ────────────────────────────────────────────────────
+  // ââ Pulse inline state ââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const [pulseTab, setPulseTab] = useState<"ph"|"appstore">("ph");
   const [pulseSignals, setPulseSignals] = useState<Array<{source:string;sourceLabel:string;emoji:string;title:string;subtitle:string;signal:string;url:string;timestamp:string;movementType?:string;imageUrl?:string;topics?:string[];tagline?:string;externalUrl?:string;claudeGap?:string;}>>([]);
   const [pulseLoading, setPulseLoading] = useState(false);
@@ -3043,7 +2727,7 @@ export default function Home() {
   const PULSE_TOPIC_COLORS = ["#6366f1","#06b6d4","#f59e0b","#ec4899","#22c55e","#8b5cf6","#f97316","#14b8a6"];
   const PULSE_MOVE_COLORS: Record<string,string> = { rank_jump:"#22c55e",new_entry:"#3b82f6",review_spike:"#f59e0b",top_mover:"#8b5cf6",weekly_mover:"#06b6d4",monthly_mover:"#ec4899" };
   const pulseRelTime = (ts:string) => { const m=Math.floor((Date.now()-new Date(ts).getTime())/60000); if(m<1)return"just now"; if(m<60)return m+"m ago"; const h=Math.floor(m/60); if(h<24)return h+"h ago"; return Math.floor(h/24)+"d ago"; };
-  const pulseParseGap = (gap?:string) => { if(!gap)return null; const p=gap.split("✦").map(s=>s.trim()); if(p.length<3)return null; return{what:p[0].replace(/^What:\s*/i,""),different:p[1].replace(/^Different:\s*/i,""),missing:p[2].replace(/^Missing:\s*/i,"")}; };
+  const pulseParseGap = (gap?:string) => { if(!gap)return null; const p=gap.split("â¦").map(s=>s.trim()); if(p.length<3)return null; return{what:p[0].replace(/^What:\s*/i,""),different:p[1].replace(/^Different:\s*/i,""),missing:p[2].replace(/^Missing:\s*/i,"")}; };
   const pulseFmtDate = (d:string) => new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
   const fetchPulseSignals = useCallback(async()=>{ if(pulseSignals.length>0)return; setPulseLoading(true); try{const res=await fetch("/api/pulse");const data=await res.json();if(!res.ok)throw new Error(data.error||"Failed");setPulseSignals(data.signals??[]);setPulseError(null);}catch(e){setPulseError(e instanceof Error?e.message:"Error");}finally{setPulseLoading(false);} },[pulseSignals.length]);
   const fetchPulseAS = useCallback(async()=>{ if(pulseAsDays.length>0)return; setPulseAsLoading(true); try{const r=await fetch("/api/pulse/appstore");const d=await r.json();setPulseAsDays(d.days??[]);}catch{}finally{setPulseAsLoading(false);} },[pulseAsDays.length]);
@@ -3330,7 +3014,7 @@ export default function Home() {
       if (res.ok) {
         const meta = await res.json();
         const fullQuery = meta.searchQuery || idea;
-        // Limit to first 3 words — long queries reduce API result quality
+        // Limit to first 3 words â long queries reduce API result quality
         const q = fullQuery.split(/\s+/).slice(0, 3).join(" ");
         console.log("[meta] searchQuery from Haiku:", meta.searchQuery, "| truncated to:", q, "| keywords:", meta.keywords);
         setDomainKeywords(meta.keywords ?? []);
@@ -3342,7 +3026,7 @@ export default function Home() {
       }
     } catch (err) {
       const q = idea.split(/\s+/).slice(0, 3).join(" ");
-      console.log("[meta] fetch error:", err, "— falling back to truncated idea:", q);
+      console.log("[meta] fetch error:", err, "â falling back to truncated idea:", q);
       extraFetches?.(q);
     }
   };
@@ -3407,7 +3091,7 @@ export default function Home() {
       return;
     }
 
-    // ââ Other tools: existing flow ââ
+    // Ã¢ÂÂÃ¢ÂÂ Other tools: existing flow Ã¢ÂÂÃ¢ÂÂ
      else {
       const steps = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3);
       scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
@@ -3547,10 +3231,10 @@ export default function Home() {
   };
 
   const allSections = streamedContent ? parseSections(streamedContent, loading) : [];
-  // Normalize variation selectors so "ð¡ï¸" (with FE0F) and "ð¡" (without) both match
+  // Normalize variation selectors so "Ã°ÂÂÂ¡Ã¯Â¸Â" (with FE0F) and "Ã°ÂÂÂ¡" (without) both match
   const stripVS = (s: string) => s.replace(/\uFE0F/g, "");
-  const scoreSection = allSections.find((s) => stripVS(s.emoji) === stripVS("ð¡ï¸"));
-  const sections = allSections.filter((s) => stripVS(s.emoji) !== stripVS("ð¡ï¸"));
+  const scoreSection = allSections.find((s) => stripVS(s.emoji) === stripVS("Ã°ÂÂÂ¡Ã¯Â¸Â"));
+  const sections = allSections.filter((s) => stripVS(s.emoji) !== stripVS("Ã°ÂÂÂ¡Ã¯Â¸Â"));
   const scoreData = scoreSection ? parseScore(scoreSection.body) : null;
   const currentTool = TOOLS.find((t) => t.id === selectedTool);
 
@@ -3576,9 +3260,9 @@ export default function Home() {
         {/* Sidebar */}
         <aside style={{ width: 220, minWidth: 220, background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)", display: "flex", flexDirection: "column", position: "fixed", top: 52, bottom: 0, left: 0, zIndex: 50 }}>
 
-          {/* Nav items — logo is in header, nav starts right at top */}
+          {/* Nav items â logo is in header, nav starts right at top */}
           <div style={{ padding: "8px 10px 4px", flex: 1 }}>
-            {/* Pulse — default / home */}
+            {/* Pulse â default / home */}
             <div onClick={() => { handleSelectTool(null as unknown as ToolId); }}
               style={{ display: "flex", alignItems: "center", gap: 9, padding: "8px 10px", borderRadius: 8, cursor: "pointer", fontSize: 14, fontWeight: 500, position: "relative", transition: "background 0.1s",
                 color: "var(--clr-text)",
@@ -3662,7 +3346,7 @@ export default function Home() {
         {/* Main content */}
         <main style={{ marginLeft: 220, flex: 1, display: "flex", flexDirection: "column", overflowY: "auto" }}>
 
-          {/* ââ Scanning overlay ââ */}
+          {/* Ã¢ÂÂÃ¢ÂÂ Scanning overlay Ã¢ÂÂÃ¢ÂÂ */}
           {scanStep >= 0 ? (() => {
             const SCAN_STEPS_MAP: Record<string, { label: string; icon: React.ReactNode }[]> = {
               "gap-analysis": [
@@ -3710,7 +3394,7 @@ export default function Home() {
                       </div>
                     )}
                     <h2 style={{ fontSize: "1.125rem", fontWeight: 750, color: "var(--clr-text)", letterSpacing: "-0.025em", margin: "0 0 0.375rem" }}>
-                      {selectedTool === "stack-advisor" ? "Evaluating toolsâ¦" : "Gathering intelligenceâ¦"}
+                      {selectedTool === "stack-advisor" ? "Evaluating toolsÃ¢ÂÂ¦" : "Gathering intelligenceÃ¢ÂÂ¦"}
                     </h2>
                     <p style={{ fontSize: "0.8rem", color: "var(--clr-text-5)", margin: 0, lineHeight: 1.5, maxWidth: 280, marginInline: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "normal" }}>
                       {idea}
@@ -3729,7 +3413,7 @@ export default function Home() {
                         }}>
                           <span style={{ opacity: i <= scanStep ? 1 : 0.3 }}>{step.icon}</span>
                           <span>{step.label}</span>
-                          {i < scanStep && <span style={{ marginLeft: "auto", color: "var(--clr-accent)", fontSize: "0.7rem" }}>â</span>}
+                          {i < scanStep && <span style={{ marginLeft: "auto", color: "var(--clr-accent)", fontSize: "0.7rem" }}>Ã¢ÂÂ</span>}
                         </div>
                       ))}
                     </div>
@@ -3781,7 +3465,7 @@ export default function Home() {
                             transition: "color 0.3s", flex: 1,
                           }}>
                             {step.label}
-                            {isActive && <span style={{ animation: "blink 1.1s step-end infinite" }}>â¦</span>}
+                            {isActive && <span style={{ animation: "blink 1.1s step-end infinite" }}>Ã¢ÂÂ¦</span>}
                           </span>
 
                           {/* Done tag */}
@@ -3801,7 +3485,7 @@ export default function Home() {
           })() : (
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
 
-              {/* ── Pulse Panel (default view) ── */}
+              {/* ââ Pulse Panel (default view) ââ */}
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   {/* Section title */}
@@ -3821,7 +3505,7 @@ export default function Home() {
                   {/* Feed */}
                   <div style={{ flex:1, overflowY:"auto", padding:"1.25rem 1.5rem" }}>
 
-                    {/* ── PRODUCT HUNT ── */}
+                    {/* ââ PRODUCT HUNT ââ */}
                     {pulseTab==="ph" && (
                       <div>
                         {/* Filters */}
@@ -3866,7 +3550,7 @@ export default function Home() {
                                   <div style={{ flex:1, minWidth:0 }}>
                                     <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:3, flexWrap:"wrap" }}>
                                       <span style={{ fontSize:"0.9375rem", fontWeight:600, color:"var(--clr-text)", letterSpacing:"-0.015em" }}>{s.title}</span>
-                                      {mc&&s.movementType&&<span style={{ fontSize:"0.5625rem", fontWeight:700, padding:"0.1rem 0.4rem", borderRadius:999, background:mc+"20", color:mc, letterSpacing:"0.04em", textTransform:"uppercase" }}>{s.movementType==="rank_jump"?"RANK ↑":s.movementType==="new_entry"?"NEW":s.movementType==="review_spike"?"REVIEWS↑":"TOP"}</span>}
+                                      {mc&&s.movementType&&<span style={{ fontSize:"0.5625rem", fontWeight:700, padding:"0.1rem 0.4rem", borderRadius:999, background:mc+"20", color:mc, letterSpacing:"0.04em", textTransform:"uppercase" }}>{s.movementType==="rank_jump"?"RANK â":s.movementType==="new_entry"?"NEW":s.movementType==="review_spike"?"REVIEWSâ":"TOP"}</span>}
                                       <span style={{ fontSize:"0.6875rem", color:"var(--clr-text-4)", marginLeft:"auto" }}>{pulseRelTime(s.timestamp)}</span>
                                     </div>
                                     {s.tagline&&<p style={{ fontSize:"0.8125rem", color:"var(--clr-text-3)", margin:"0 0 6px", lineHeight:1.45 }}>{s.tagline}</p>}
@@ -3885,7 +3569,7 @@ export default function Home() {
                       </div>
                     )}
 
-                    {/* ── APP STORE ── */}
+                    {/* ââ APP STORE ââ */}
                     {pulseTab==="appstore" && (
                       <div>
                         <div style={{ display:"flex", gap:8, marginBottom:"1.25rem", flexWrap:"wrap" }}>
@@ -3920,7 +3604,7 @@ export default function Home() {
                             <div style={{display:"flex",alignItems:"flex-start",gap:"1rem"}}>
                               {app.icon_url
                                 ? <img src={app.icon_url} alt="" width={64} height={64} style={{borderRadius:14,flexShrink:0,objectFit:"cover",border:"1px solid var(--clr-border)"}}/>
-                                : <div style={{width:64,height:64,borderRadius:14,background:"var(--clr-border)",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.75rem"}}>📱</div>}
+                                : <div style={{width:64,height:64,borderRadius:14,background:"var(--clr-border)",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.75rem"}}>ð±</div>}
                               <div style={{flex:1,minWidth:0}}>
                                 <div style={{display:"flex",alignItems:"center",gap:"0.5rem",marginBottom:"0.25rem",flexWrap:"wrap"}}>
                                   <span style={{fontSize:"1rem",fontWeight:650,color:"var(--clr-text)",letterSpacing:"-0.02em"}}>{app.app_name}</span>
@@ -3959,7 +3643,7 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ââ Input section ââ */}
+              {/* Ã¢ÂÂÃ¢ÂÂ Input section Ã¢ÂÂÃ¢ÂÂ */}
               {selectedTool && currentTool && (
                 <div ref={inputSectionRef}>
                   <InputSection
@@ -3976,11 +3660,11 @@ export default function Home() {
                   />
                 </div>
               )}
-              {/* ââ Results — inline below input ââ */}
+              {/* Ã¢ÂÂÃ¢ÂÂ Results â inline below input Ã¢ÂÂÃ¢ÂÂ */}
               {hasResults && (
               <div ref={resultsRef} style={{ paddingTop: "1.5rem", paddingBottom: "5rem", animation: "fadeSlideIn 0.3s ease" }}>
 
-              {/* ââ Compact query bar ââ */}
+              {/* Ã¢ÂÂÃ¢ÂÂ Compact query bar Ã¢ÂÂÃ¢ÂÂ */}
               {currentTool && (
                 <div style={{
                   display: "flex", alignItems: "center", gap: 12,
@@ -4008,7 +3692,7 @@ export default function Home() {
                       {idea}
                       {selectedTool === "stack-advisor" && (
                         <span style={{ color: "var(--clr-text-6)", fontWeight: 400 }}>
-                          {" Â· "}{budget}{" Â· "}{techLevel}
+                          {" ÃÂ· "}{budget}{" ÃÂ· "}{techLevel}
                         </span>
                       )}
                     </div>
@@ -4043,7 +3727,7 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ââ Data source badges + cache badge ââ */}
+              {/* Ã¢ÂÂÃ¢ÂÂ Data source badges + cache badge Ã¢ÂÂÃ¢ÂÂ */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
                 {currentTool && <DataSourceBadges sources={currentTool.sources} noMargin />}
                 {resultCached !== null && (
@@ -4066,7 +3750,7 @@ export default function Home() {
                 )}
               </div>
 
-              {/* Loading skeleton — only while nothing has streamed yet */}
+              {/* Loading skeleton â only while nothing has streamed yet */}
               {loading && (selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && <GapAnalysisSkeleton />}
               {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
 
@@ -4077,7 +3761,7 @@ export default function Home() {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,80,80,0.9)" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "rgba(255,80,80,0.9)" }}>Out of credits</span>
                   </div>
-                  <a href="/pricing" style={{ fontSize: "0.8rem", fontWeight: 700, color: "#fff", background: "rgba(255,80,80,0.85)", padding: "6px 14px", borderRadius: 7, textDecoration: "none" }}>Buy credits →</a>
+                  <a href="/pricing" style={{ fontSize: "0.8rem", fontWeight: 700, color: "#fff", background: "rgba(255,80,80,0.85)", padding: "6px 14px", borderRadius: 7, textDecoration: "none" }}>Buy credits â</a>
                 </div>
               )}
               {error && (
@@ -4101,7 +3785,7 @@ export default function Home() {
                       </div>
                       <div style={{ color: "var(--clr-text-3)", lineHeight: 1.5 }}>
                         {error.includes("Overloaded") || error.includes("overloaded")
-                          ? "The AI is under heavy load. Wait a few seconds and try again — it usually clears quickly."
+                          ? "The AI is under heavy load. Wait a few seconds and try again â it usually clears quickly."
                           : error.includes("timeout") || error.includes("Timeout")
                           ? "The analysis took too long. Try a shorter or more specific description."
                           : error}
@@ -4182,7 +3866,7 @@ export default function Home() {
                 ) : null
               ) : null}
 
-              {/* ââ App Stores (Gap Analysis only) — unified merged list ââ */}
+              {/* Ã¢ÂÂÃ¢ÂÂ App Stores (Gap Analysis only) â unified merged list Ã¢ÂÂÃ¢ÂÂ */}
               {selectedTool === "gap-analysis" && (() => {
                 const storesLoading = (itunesLoading || !itunesFetched) && (gplayLoading || !gplayFetched);
                 const anyLoading = (itunesLoading || !itunesFetched) || (gplayLoading || !gplayFetched);
@@ -4200,7 +3884,7 @@ export default function Home() {
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       <span className="section-title">Existing Apps</span>
                       <span style={{ fontSize: "0.62rem", color: "var(--clr-text-7)", fontWeight: 500 }}>
-                        Showing top results Â· ranked by ratings
+                        Showing top results ÃÂ· ranked by ratings
                       </span>
                     </div>
                     <div style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
@@ -4225,7 +3909,7 @@ export default function Home() {
                     </div>
                   ) : merged.length === 0 && !anyLoading ? (
                     <div style={{ padding: "0.75rem 0", fontSize: "0.825rem", color: "var(--clr-text-6)", textAlign: "center" }}>
-                      No existing apps found in this niche — open opportunity
+                      No existing apps found in this niche â open opportunity
                     </div>
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -4316,7 +4000,7 @@ export default function Home() {
                                   </svg>
                                 ))}
                                 <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--clr-text-4)", marginLeft: 2 }}>
-                                  {app.rating > 0 ? app.rating.toFixed(1) : "—"}
+                                  {app.rating > 0 ? app.rating.toFixed(1) : "â"}
                                 </span>
                               </div>
                               <span style={{ fontSize: "0.68rem", color: "var(--clr-text-6)" }}>
@@ -4357,7 +4041,7 @@ export default function Home() {
 
 
 
-              {/* ââ Footer ââ */}
+              {/* Ã¢ÂÂÃ¢ÂÂ Footer Ã¢ÂÂÃ¢ÂÂ */}
               {!loading && streamedContent && (
                 <div style={{
                   display: "flex", alignItems: "center", justifyContent: "space-between",
