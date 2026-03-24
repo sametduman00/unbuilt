@@ -3498,7 +3498,7 @@ export default function Home() {
 
             {/* Buy Credits */}
             <div style={{ paddingTop: 4 }}>
-              <button onClick={() => { if (!isSignedIn) { openSignIn(); return; } setShowCreditModal(true); }}
+              <button onClick={() => { if (!isSignedIn) { openSignIn(); return; } window.location.href = "/pricing"; }}
                 style={{ background: "#7c6fff", borderRadius: 8, padding: "9px", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, width: "100%", border: "none", cursor: "pointer", transition: "opacity 0.1s" }}
                 onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.9"}
                 onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
