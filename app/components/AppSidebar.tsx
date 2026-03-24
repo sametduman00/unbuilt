@@ -90,11 +90,11 @@ export default function AppSidebar() {
     <aside style={{ width: 220, minWidth: 220, background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)", display: "flex", flexDirection: "column", position: "fixed", top: 0, bottom: 0, left: 0, zIndex: 50 }}>
 
       {/* Logo */}
-      <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, padding: "14px 16px 12px", borderBottom: "1px solid var(--clr-border)", textDecoration: "none", flexShrink: 0 }}>
-        <svg width="22" height="22" viewBox="0 0 19 19" fill="none">
+      <Link href="/" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "18px 16px 16px", borderBottom: "1px solid var(--clr-border)", textDecoration: "none", flexShrink: 0 }}>
+        <svg width="28" height="28" viewBox="0 0 19 19" fill="none">
           <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2.2" strokeLinecap="round" />
         </svg>
-        <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.025em" }}>Unbuilt</span>
+        <span style={{ fontWeight: 700, fontSize: "1.15rem", color: "var(--clr-text)", letterSpacing: "-0.025em" }}>Unbuilt</span>
       </Link>
 
       {/* EXPLORE */}
