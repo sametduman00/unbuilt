@@ -2989,6 +2989,33 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
 }
 
 // ââ Main âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── AI Analysis block ──────────────────────────────────────────────────────
+function AiBlock({ what, diff, gap }: { what:string|null; diff:string|null; gap:string|null }) {
+  if (!what && !diff && !gap) return null;
+  return (
+    <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginTop:"0.75rem"}}>
+      {what && (
+        <div style={{flex:"1 1 150px",background:"rgba(var(--clr-text-rgb),0.03)",border:"1px solid var(--clr-border)",borderRadius:8,padding:"8px 10px"}}>
+          <div style={{fontSize:"0.5625rem",fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",color:"#534AB7",marginBottom:3}}>What it does</div>
+          <div style={{fontSize:"0.75rem",color:"var(--clr-text-3)",lineHeight:1.5}}>{what}</div>
+        </div>
+      )}
+      {diff && (
+        <div style={{flex:"1 1 140px",background:"rgba(var(--clr-text-rgb),0.03)",border:"1px solid var(--clr-border)",borderRadius:8,padding:"8px 10px"}}>
+          <div style={{fontSize:"0.5625rem",fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",color:"#0F6E56",marginBottom:3}}>Different because</div>
+          <div style={{fontSize:"0.75rem",color:"var(--clr-text-3)",lineHeight:1.5}}>{diff}</div>
+        </div>
+      )}
+      {gap && (
+        <div style={{flex:"1 1 140px",background:"rgba(250,199,117,0.08)",border:"1px solid rgba(250,199,117,0.55)",borderRadius:8,padding:"8px 10px"}}>
+          <div style={{fontSize:"0.5625rem",fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",color:"#854F0B",marginBottom:3}}>Blind spot</div>
+          <div style={{fontSize:"0.75rem",color:"#633806",lineHeight:1.5}}>{gap}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Home() {
   const { isSignedIn } = useAuth();
   const { openSignIn } = useClerk();
@@ -3843,12 +3870,7 @@ export default function Home() {
                                         {s.topics.map((t,ti)=><span key={t} style={{ fontSize:"0.5625rem", fontWeight:600, padding:"0.15rem 0.5rem", borderRadius:999, background:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length]+"18", color:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length] }}>{t}</span>)}
                                       </div>
                                     )}
-                                    {gap&&(
-                                      <div style={{ marginTop:8, background:"rgba(0,0,0,0.03)", border:"1px solid var(--clr-border)", borderRadius:9, padding:"8px 10px", display:"flex", flexDirection:"column", gap:4 }}>
-                                        {gap.what&&<div style={{ display:"flex", gap:6, alignItems:"flex-start" }}><span style={{ fontSize:"0.5rem", fontWeight:700, color:"#6366f1", background:"rgba(99,102,241,0.12)", padding:"0.1rem 0.4rem", borderRadius:4, flexShrink:0, marginTop:1 }}>WHAT</span><span style={{ fontSize:"0.75rem", color:"var(--clr-text-3)", lineHeight:1.4 }}>{gap.what}</span></div>}
-                                        {gap.missing&&<div style={{ display:"flex", gap:6, alignItems:"flex-start" }}><span style={{ fontSize:"0.5rem", fontWeight:700, color:"#ef4444", background:"rgba(239,68,68,0.1)", padding:"0.1rem 0.4rem", borderRadius:4, flexShrink:0, marginTop:1 }}>MISS</span><span style={{ fontSize:"0.75rem", color:"var(--clr-text-3)", lineHeight:1.4 }}>{gap.missing}</span></div>}
-                                      </div>
-                                    )}
+                                    {gap&&<AiBlock what={gap.what??null} diff={gap.different??null} gap={gap.missing??null}/>}                                   )}
                                   </div>
                                 </a>
                               );
