@@ -672,12 +672,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
             <div style={{ display:"flex", gap:20, marginBottom:20 }}>
               <div style={{ display:"flex", flexDirection:"column" as const, alignItems:"center", gap:8, flexShrink:0 }}>
                 <ScoreCircle size={90} />
-                {data.oneLiner && (
-                  <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:8, padding:"8px 12px", width:90, textAlign:"center" as const }}>
-                    <div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#7c3aed", marginBottom:3, letterSpacing:"0.06em" }}>One-Liner</div>
-                    <button onClick={() => navigator.clipboard?.writeText(data.oneLiner??"")} style={{ fontSize:10, color:"#6d28d9", background:"none", border:"none", cursor:"pointer", padding:0, fontWeight:600, textDecoration:"underline" }}>Copy</button>
-                  </div>
-                )}
+
               </div>
               <div style={{ flex:1, minWidth:0 }}>
                 <p style={{ fontSize:14, lineHeight:1.7, color:"#374151", margin:"0 0 12px 0" }}>{data.marketScoreSummary}</p>
@@ -800,6 +795,46 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
                     <Pill text={sig.sentiment.toUpperCase()} color={sig.sentiment==="pain"?"red":sig.sentiment==="need"?"orange":"green"} />
                   </div>
                   <p style={{ fontSize:13, color:"#374151", margin:0 }}>"{sig.quote}"</p>
+                </div>
+              ))}
+            </Card>
+          )}
+          {data.redditPosts && data.redditPosts.length > 0 && (
+            <Card title="Reddit Posts" sub={"Live posts from Reddit — " + data.redditPosts.length + " found"} right={<Pill text="Reddit" color="orange" />}>
+              {data.redditPosts.map((post, i) => (
+                <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14, marginBottom:10 }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8, gap:10 }}>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:5, flexWrap:"wrap" as const }}>
+                        <Pill text={post.subreddit} color="orange" />
+                        <Pill text={post.sentiment.toUpperCase()} color={post.sentiment==="pain"?"red":post.sentiment==="need"?"orange":"green"} />
+                        {post.upvotes != null && <span style={{ fontSize:11, color:"#9ca3af" }}>↑ {post.upvotes.toLocaleString()}</span>}
+                      </div>
+                      <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:5 }}>{post.title}</div>
+                      <p style={{ fontSize:12, color:"#6b7280", margin:0, lineHeight:1.5 }}>{post.body}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Card>
+          )}
+          {data.xPosts && data.xPosts.length > 0 && (
+            <Card title="X / Twitter Posts" sub={"Live posts from X — " + data.xPosts.length + " found"} right={<Pill text="X / Twitter" color="dark" />}>
+              {data.xPosts.map((post, i) => (
+                <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:12, marginBottom:8 }}>
+                  <div style={{ display:"flex", alignItems:"flex-start", gap:10 }}>
+                    <div style={{ width:32, height:32, borderRadius:"50%", background:"#111827", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:4, flexWrap:"wrap" as const }}>
+                        <span style={{ fontSize:13, fontWeight:600, color:"#111827" }}>{post.handle}</span>
+                        <Pill text={post.sentiment.toUpperCase()} color={post.sentiment==="pain"?"red":post.sentiment==="need"?"orange":"green"} />
+                        {post.likes != null && <span style={{ fontSize:11, color:"#9ca3af" }}>♥ {post.likes.toLocaleString()}</span>}
+                      </div>
+                      <p style={{ fontSize:13, color:"#374151", margin:0, lineHeight:1.5 }}>{post.text}</p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </Card>
@@ -2073,6 +2108,19 @@ interface GapCommunitySignal {
   sentiment: "pain" | "need" | "positive";
   subredditOrHandle: string;
 }
+interface GapRedditPost {
+  subreddit: string;
+  title: string;
+  body: string;
+  upvotes?: number;
+  sentiment: "pain" | "need" | "positive";
+}
+interface GapXPost {
+  handle: string;
+  text: string;
+  likes?: number;
+  sentiment: "pain" | "need" | "positive";
+}
 interface GapValidationItem {
   assumption: string;
   risk: "high" | "medium" | "low";
@@ -2174,6 +2222,8 @@ interface GapAnalysisData {
   financialDeep?: GapFinancialDeep;
   fundabilityRadar?: GapFundabilityRadar;
   communitySignals?: GapCommunitySignal[];
+  redditPosts?: GapRedditPost[];
+  xPosts?: GapXPost[];
   oneLiner?: string;
   marketSize?: GapMarketSize;
   validationChecklist?: GapValidationItem[];
