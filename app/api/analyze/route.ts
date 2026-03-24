@@ -261,6 +261,12 @@ ${reviewsContext}
 ${financialContext}
 ${fundabilityContext}
 
+IMPORTANT FIELD RULES:
+- "redditPosts": Extract minimum 3-5 posts directly from the Reddit data above. Each must have subreddit, title, body, upvotes, sentiment. DO NOT leave empty if Reddit data exists.
+- "xPosts": Extract minimum 3-5 posts directly from the Twitter/X data above. Each must have handle, text, likes, sentiment. DO NOT leave empty if Twitter/X data exists.
+- "painPoints": Minimum 5 real quotes. Each quote must be a COMPLETE sentence — never cut off mid-word or mid-thought.
+- ALL text fields must contain COMPLETE sentences. Never truncate with "..." or cut off incomplete.
+
 Respond with ONLY a JSON code block:
 \`\`\`json
 {
@@ -393,12 +399,18 @@ Respond with ONLY a JSON code block:
     { "quote": "Real quote from Reddit/Twitter data above", "source": "reddit", "sentiment": "pain", "subredditOrHandle": "r/example" }
   ],
   "redditPosts": [
-    { "subreddit": "r/example", "title": "Post title from Reddit data", "body": "Post content or key quote", "upvotes": 123, "sentiment": "pain" },
-    { "subreddit": "r/example", "title": "Another post", "body": "Content", "upvotes": 45, "sentiment": "need" }
+    { "subreddit": "r/example", "title": "Real post title from Reddit data above — REQUIRED", "body": "Real post content", "upvotes": 123, "sentiment": "pain" },
+    { "subreddit": "r/example2", "title": "Second real Reddit post", "body": "Content from Reddit", "upvotes": 89, "sentiment": "need" },
+    { "subreddit": "r/example3", "title": "Third Reddit post", "body": "Content", "upvotes": 45, "sentiment": "positive" },
+    { "subreddit": "r/example4", "title": "Fourth Reddit post", "body": "Content", "upvotes": 34, "sentiment": "pain" },
+    { "subreddit": "r/example5", "title": "Fifth Reddit post", "body": "Content", "upvotes": 12, "sentiment": "need" }
   ],
   "xPosts": [
-    { "handle": "@username", "text": "Tweet content from X/Twitter data", "likes": 89, "sentiment": "pain" },
-    { "handle": "@username", "text": "Another tweet", "likes": 34, "sentiment": "need" }
+    { "handle": "@username", "text": "Real tweet from X/Twitter data above — REQUIRED", "likes": 89, "sentiment": "pain" },
+    { "handle": "@username2", "text": "Another real tweet from X data", "likes": 45, "sentiment": "need" },
+    { "handle": "@username3", "text": "Third tweet from X data", "likes": 12, "sentiment": "positive" },
+    { "handle": "@username4", "text": "Fourth tweet from X data", "likes": 67, "sentiment": "pain" },
+    { "handle": "@username5", "text": "Fifth tweet from X data", "likes": 23, "sentiment": "need" }
   ],
   "oneLiner": "The only [X] that [Y] for [Z].",
   "marketSize": {
