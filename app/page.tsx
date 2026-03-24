@@ -3925,7 +3925,7 @@ export default function Home() {
                                             {app.category&&<span style={{ fontSize:"0.5625rem", fontWeight:700, padding:"0.1rem 0.4rem", borderRadius:999, background:"rgba(99,102,241,0.12)", color:"#6366f1", textTransform:"uppercase", letterSpacing:"0.04em" }}>{app.category}</span>}
                                           </div>
                                           <div style={{ fontSize:"0.8125rem", color:"var(--clr-text-3)" }}>{app.developer}</div>
-                                          {app.claude_what&&<div style={{ fontSize:"0.75rem", color:"var(--clr-text-4)", marginTop:4, lineHeight:1.4 }}>{app.claude_what}</div>}
+                                          <AiBlock what={app.claude_what} diff={app.claude_different} gap={app.claude_missing}/>
                                         </div>
                                       </a>
                                     ))}
