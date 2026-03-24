@@ -694,17 +694,17 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
               <div style={{ background:"#f0fdfb", border:"1px solid #ccfbf1", borderRadius:10, padding:14 }}>
                 <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#0d9488", marginBottom:6, letterSpacing:"0.07em" }}>Biggest Opportunity</div>
                 <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.marketGaps?.[0]?.title??"-"}</div>
-                <div style={{ fontSize:12, color:"#6b7280", overflow:"hidden", display:"-webkit-box", WebkitLineClamp:3, WebkitBoxOrient:"vertical" as const }}>{data.marketGaps?.[0]?.description??""}</div>
+                <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.5 }}>{data.marketGaps?.[0]?.description??""}</div>
               </div>
               <div style={{ background:"#fff7ed", border:"1px solid #fed7aa", borderRadius:10, padding:14 }}>
                 <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ea580c", marginBottom:6, letterSpacing:"0.07em" }}>Biggest Risk</div>
                 <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.swot?.threats?.[0]??"-"}</div>
-                <div style={{ fontSize:12, color:"#6b7280", overflow:"hidden", display:"-webkit-box", WebkitLineClamp:3, WebkitBoxOrient:"vertical" as const }}>{data.swot?.threats?.[1]??""}</div>
+                <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.5 }}>{data.swot?.threats?.[1]??""}</div>
               </div>
               <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:10, padding:14 }}>
                 <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#2563eb", marginBottom:6, letterSpacing:"0.07em" }}>First Move</div>
                 <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.opportunity?.actionItems?.[0]?.action??"-"}</div>
-                <div style={{ fontSize:12, color:"#6b7280", overflow:"hidden", display:"-webkit-box", WebkitLineClamp:3, WebkitBoxOrient:"vertical" as const }}>{data.opportunity?.actionItems?.[0]?.detail??""}</div>
+                <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.5 }}>{data.opportunity?.actionItems?.[0]?.detail??""}</div>
               </div>
             </div>
           </Card>
