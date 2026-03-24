@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useAuth, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
+import { useAuth, useUser, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
 
 // ââ Types ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 type ToolId = "gap-analysis" | "competitor-radar" | "trend-feed" | "stack-advisor";
@@ -2781,6 +2781,7 @@ function AiBlock({ what, diff, gap }: { what:string|null; diff:string|null; gap:
 
 export default function Home() {
   const { isSignedIn } = useAuth();
+  const { user } = useUser();
   const { openSignIn } = useClerk();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
   const [idea, setIdea] = useState("");
