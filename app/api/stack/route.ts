@@ -6,6 +6,7 @@ import { getCached, setCached, TTL_MS } from "../_cache";
 import { normalizeQuery } from "../_normalize";
 import { auth } from "@clerk/nextjs/server";
 import { deductCredit } from "@/app/lib/credits";
+import { saveReport } from "@/app/lib/reports";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -156,6 +157,9 @@ export async function POST(req: NextRequest) {
           }
         }
         if (full) setCached(normalizedKey, full);
+        if (full && userId) {
+          saveReport(userId, "stack-advisor", idea, full).catch(() => {});
+        }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();
       } catch (err) {

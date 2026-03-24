@@ -472,6 +472,9 @@ export async function POST(req: NextRequest) {
 
       if (cached) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
+        if (userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
+          saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, cached).catch(() => {});
+        }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();
         return;

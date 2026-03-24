@@ -80,13 +80,11 @@ ${Array.isArray(parsed.painPoints) ? `<h2>Pain Points</h2><ul>${(parsed.painPoin
 </html>`;
 
     const blob = new Blob([html], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const win = window.open(url, "_blank");
-    if (win) {
-      win.onload = () => {
-        setTimeout(() => { win.print(); URL.revokeObjectURL(url); }, 500);
-      };
-    }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${report.idea.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-${report.tool}.html`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   };
 
   const toolColor = (tool: string) => tool === "gap-analysis" ? "#7c6fff" : "#38bdf8";
