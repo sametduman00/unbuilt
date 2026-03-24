@@ -1,16 +1,18 @@
 "use client";
-import { useAuth, useUser, SignInButton } from "@clerk/nextjs";
+import { useAuth, useUser, useClerk, SignInButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 
 function AppSidebarInner() {
   const { isSignedIn } = useAuth();
+  const { signOut } = useClerk();
   const { user } = useUser();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [credits, setCredits] = useState<number | null>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
     if (!isSignedIn) return;
@@ -182,26 +184,46 @@ function AppSidebarInner() {
         <div style={{ height: "0.5px", background: "var(--clr-border)", margin: "4px 0" }} />
 
         {isSignedIn ? (
-          <div
-            style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 10px", borderRadius: 8, cursor: "pointer", transition: "background 0.1s" }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "rgba(0,0,0,0.05)"}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = ""}
-          >
-            <div style={{ width: 26, height: 26, borderRadius: "50%", background: "var(--clr-accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <span style={{ fontSize: 11, fontWeight: 600, color: "white" }}>
-                {user?.firstName?.[0] ?? user?.emailAddresses?.[0]?.emailAddress?.[0]?.toUpperCase() ?? "U"}
-              </span>
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 12, fontWeight: 500, color: "var(--clr-text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                {user?.emailAddresses?.[0]?.emailAddress ?? "Account"}
+          <div style={{ position: "relative" }}>
+            <div
+              onClick={() => setProfileOpen(o => !o)}
+              style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 10px", borderRadius: 8, cursor: "pointer", transition: "background 0.1s", background: profileOpen ? "rgba(0,0,0,0.05)" : "" }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "rgba(0,0,0,0.05)"}
+              onMouseLeave={e => { if (!profileOpen) (e.currentTarget as HTMLElement).style.background = ""; }}
+            >
+              <div style={{ width: 26, height: 26, borderRadius: "50%", background: "var(--clr-accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, color: "white" }}>
+                  {user?.firstName?.[0] ?? user?.emailAddresses?.[0]?.emailAddress?.[0]?.toUpperCase() ?? "U"}
+                </span>
               </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 12, fontWeight: 500, color: "var(--clr-text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {user?.emailAddresses?.[0]?.emailAddress ?? "Account"}
+                </div>
+              </div>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0, opacity: 0.3, transition: "transform 0.15s", transform: profileOpen ? "rotate(180deg)" : "none" }}>
+                <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
-            <svg width="11" height="11" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0, opacity: 0.3 }}>
-              <circle cx="6" cy="3" r="1" fill="currentColor"/>
-              <circle cx="6" cy="6" r="1" fill="currentColor"/>
-              <circle cx="6" cy="9" r="1" fill="currentColor"/>
-            </svg>
+            {profileOpen && (
+              <div style={{ position: "absolute", left: "calc(100% + 8px)", bottom: 0, width: 220, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: 8, zIndex: 200, boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }}>
+                <div style={{ padding: "6px 10px 10px", borderBottom: "1px solid var(--clr-border)", marginBottom: 6 }}>
+                  <div style={{ fontSize: 11, color: "var(--clr-text-4)", marginBottom: 2 }}>Signed in as</div>
+                  <div style={{ fontSize: 13, fontWeight: 500, color: "var(--clr-text)", wordBreak: "break-all" as const }}>{user?.emailAddresses?.[0]?.emailAddress}</div>
+                </div>
+                <div
+                  onClick={() => { setProfileOpen(false); signOut({ redirectUrl: "/" }); }}
+                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 8, cursor: "pointer", color: "var(--clr-text-2)", fontSize: 13, transition: "background 0.1s" }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "rgba(0,0,0,0.05)"}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = ""}
+                >
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ opacity: 0.5, flexShrink: 0 }}>
+                    <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Sign out
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <SignInButton mode="modal">
