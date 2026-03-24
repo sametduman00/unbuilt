@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth, useUser, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
@@ -2779,7 +2780,7 @@ function AiBlock({ what, diff, gap }: { what:string|null; diff:string|null; gap:
   );
 }
 
-export default function Home() {
+function HomeInner() {
   const { isSignedIn } = useAuth();
   const { user } = useUser();
   const [credits, setCredits] = useState<number | null>(null);
@@ -2789,6 +2790,13 @@ export default function Home() {
   }, [isSignedIn]);
   const { openSignIn } = useClerk();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const tool = searchParams.get("tool");
+    if (tool === "gap-analysis" || tool === "stack-advisor") {
+      setSelectedTool(tool as ToolId);
+    }
+  }, [searchParams]);
   const [idea, setIdea] = useState("");
   const [budget, setBudget] = useState<Budget>("bootstrap");
   const [techLevel, setTechLevel] = useState<TechLevel>("nocode");
@@ -3897,5 +3905,13 @@ export default function Home() {
 
       </div>
     </>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <HomeInner />
+    </Suspense>
   );
 }

@@ -20,8 +20,8 @@ export default function AppSidebar() {
 
   const isActive = (path: string) => pathname === path;
 
-  const navItem = (href: string, label: string, dot: string, badge?: string, locked?: boolean) => (
-    <Link href={href} style={{
+  const navItem = (href: string, label: string, dot: string, badge?: string, locked?: boolean, tool?: string) => (
+    <Link href={tool ? `/?tool=${tool}` : href} style={{
       display: "flex", alignItems: "center", gap: 9, padding: "8px 10px",
       borderRadius: 8, cursor: "pointer", fontSize: 14, fontWeight: 500,
       textDecoration: "none", position: "relative", transition: "background 0.1s",
@@ -63,8 +63,8 @@ export default function AppSidebar() {
     sectionLabel: string;
   }) => (
     <div style={{ position: "relative" }}
-      onMouseEnter={e => { const f = e.currentTarget.querySelector(".flyout-panel") as HTMLElement; if (f) f.style.display = "flex"; }}
-      onMouseLeave={e => { const f = e.currentTarget.querySelector(".flyout-panel") as HTMLElement; if (f) f.style.display = "none"; }}
+      onMouseEnter={e => { const f = e.currentTarget.querySelector(".flyout-panel") as HTMLElement; if (f) { clearTimeout((e.currentTarget as any)._flyTimeout); f.style.display = "flex"; } }}
+      onMouseLeave={e => { const el = e.currentTarget as any; el._flyTimeout = setTimeout(() => { const f = el.querySelector(".flyout-panel"); if (f) f.style.display = "none"; }, 120); }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "7px 10px", borderRadius: 8, cursor: "pointer", color: "var(--clr-text-2)", fontSize: 13, transition: "background 0.1s" }}
         onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "rgba(0,0,0,0.05)"}
@@ -74,7 +74,7 @@ export default function AppSidebar() {
         <span style={{ flex: 1 }}>{label}</span>
         <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ opacity: 0.3, flexShrink: 0 }}><path d="M3 2l4 3-4 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
       </div>
-      <div className="flyout-panel" style={{ display: "none", position: "absolute", left: "calc(100% + 8px)", bottom: 0, width: 220, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: 6, flexDirection: "column", gap: 1, zIndex: 200, boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }}>
+      <div className="flyout-panel" style={{ display: "none", position: "absolute", left: "calc(100% + 4px)", bottom: 0, width: 220, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: 6, flexDirection: "column", gap: 1, zIndex: 200, boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }}>
         <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--clr-text-4)", padding: "5px 8px 3px" }}>{sectionLabel}</div>
         {items.map(([href, lbl]) => (
           <Link key={href} href={href} style={{ display: "flex", alignItems: "center", padding: "7px 10px", borderRadius: 7, fontSize: 12, fontWeight: 500, color: "var(--clr-text)", textDecoration: "none", transition: "background 0.1s" }}
@@ -106,8 +106,8 @@ export default function AppSidebar() {
       {/* ANALYZE */}
       <div style={{ padding: "0 10px 4px" }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.07em", color: "var(--clr-text-4)", textTransform: "uppercase", padding: "8px 8px 3px" }}>Analyze</div>
-        {navItem("/?tool=gap-analysis", "Gap Analysis", "#7c6fff", isSignedIn ? "1 credit" : undefined, true)}
-        {navItem("/?tool=stack-advisor", "Stack Advisor", "#38bdf8", isSignedIn ? "1 credit" : undefined, true)}
+        {navItem("/", "Gap Analysis", "#7c6fff", isSignedIn ? "1 credit" : undefined, true, "gap-analysis")}
+        {navItem("/", "Stack Advisor", "#38bdf8", isSignedIn ? "1 credit" : undefined, true, "stack-advisor")}
       </div>
 
       <div style={{ flex: 1 }} />
