@@ -595,14 +595,34 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
   const sc = data.marketScore ?? 0;
   const scoreColor = sc >= 70 ? "#10b981" : sc >= 50 ? "#f59e0b" : "#ef4444";
 
-  const Pill = ({ text, color }: { text: string; color: "green"|"red"|"orange"|"blue"|"purple"|"gray"|"teal"|"pink" }) => {
+  const Pill = ({ text, color }: { text: string; color: string }) => {
     const map: Record<string, [string,string]> = {
       green:["#dcfce7","#16a34a"], red:["#fee2e2","#dc2626"], orange:["#fff7ed","#ea580c"],
       blue:["#eff6ff","#2563eb"], purple:["#f3e8ff","#9333ea"], gray:["#f3f4f6","#374151"],
-      teal:["#f0fdfa","#0d9488"], pink:["#fdf2f8","#db2777"],
+      teal:["#f0fdfa","#0d9488"], pink:["#fdf2f8","#db2777"], dark:["#111827","#f9fafb"],
     };
     const [bg, fg] = map[color] ?? map.gray;
-    return <span style={{ display:"inline-flex", alignItems:"center", padding:"2px 7px", borderRadius:6, fontSize:10, fontWeight:700, letterSpacing:"0.05em", textTransform:"uppercase" as const, background:bg, color:fg, whiteSpace:"nowrap" as const }}>{text}</span>;
+    return <span style={{ display:"inline-flex", alignItems:"center", padding:"2px 7px", borderRadius:6, fontSize:10, fontWeight:700, letterSpacing:"0.04em", textTransform:"uppercase" as const, background:bg, color:fg, whiteSpace:"nowrap" as const, flexShrink:0 }}>{text}</span>;
+  };
+
+  const SourceBadge = ({ source }: { source: string }) => {
+    const s = source?.toLowerCase() ?? "";
+    if (s.includes("youtube")) return <Pill text="YouTube" color="red" />;
+    if (s.includes("reddit")) {
+      const sub = source.match(/r/(w+)/i)?.[1];
+      return <Pill text={sub ? "r/"+sub : "Reddit"} color="orange" />;
+    }
+    if (s.includes("instagram")) return <Pill text="Instagram" color="pink" />;
+    if (s.includes("twitter") || s.includes("x.com") || s.includes("x ")) return <Pill text="X / Twitter" color="dark" />;
+    if (s.includes("product hunt") || s.includes("producthunt")) return <Pill text="Product Hunt" color="orange" />;
+    if (s.includes("indie hacker") || s.includes("indiehacker")) return <Pill text="Indie Hackers" color="teal" />;
+    if (s.includes("google")) return <Pill text="Google" color="blue" />;
+    if (s.includes("app store") || s.includes("itunes") || s.includes("ios")) return <Pill text="App Store" color="blue" />;
+    if (s.includes("play store") || s.includes("google play") || s.includes("android")) return <Pill text="Google Play" color="green" />;
+    if (s.includes("facebook")) return <Pill text="Facebook" color="blue" />;
+    if (s.includes("linkedin")) return <Pill text="LinkedIn" color="blue" />;
+    const short = source.length > 20 ? source.substring(0,18)+"…" : source;
+    return <Pill text={short} color="gray" />;
   };
 
   const ScoreCircle = ({ size = 80 }: { size?: number }) => {
@@ -613,7 +633,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
         <svg viewBox={`0 0 ${size} ${size}`} style={{ transform:"rotate(-90deg)", width:size, height:size }}>
           <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#e5e7eb" strokeWidth={size*0.075} />
           <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={scoreColor} strokeWidth={size*0.075}
-            strokeDasharray={`${circ * sc / 100} ${circ}`} strokeLinecap="round" />
+            strokeDasharray={`${circ*sc/100} ${circ}`} strokeLinecap="round" />
         </svg>
         <div style={{ position:"absolute" as const, inset:0, display:"flex", flexDirection:"column" as const, alignItems:"center", justifyContent:"center" }}>
           <span style={{ fontSize:size*0.22, fontWeight:800, color:"#111827", lineHeight:1 }}>{sc}</span>
@@ -636,11 +656,13 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
     </div>
   );
 
+  const allApps = [...((itunesApps??[]) as any[]).map((a:any)=>({...a,_src:"App Store"})), ...((gplayApps??[]) as any[]).map((a:any)=>({...a,_src:"Google Play"}))];
+
   const renderTab = () => {
     switch (activeTab) {
       case "overview": return (
         <div>
-          <Card title="TL;DR - Executive Summary" sub={"Market score: " + sc + "/100"} right={<Pill text={data.marketScoreLabel ?? "Opportunity"} color={sc>=70?"green":sc>=50?"orange":"red"} />}>
+          <Card title="TL;DR - Executive Summary" sub={"Market score: "+sc+"/100"} right={<Pill text={data.marketScoreLabel??"Opportunity"} color={sc>=70?"green":sc>=50?"orange":"red"} />}>
             <div style={{ display:"flex", gap:16, marginBottom:16 }}>
               <ScoreCircle size={72} />
               <p style={{ fontSize:14, lineHeight:1.7, color:"#374151", margin:0, flex:1 }}>{data.marketScoreSummary}</p>
@@ -648,18 +670,18 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:10 }}>
               <div style={{ background:"#f0fdfb", border:"1px solid #ccfbf1", borderRadius:10, padding:14 }}>
                 <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#0d9488", marginBottom:6, letterSpacing:"0.07em" }}>Biggest Opportunity</div>
-                <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.marketGaps?.[0]?.title ?? "-"}</div>
-                <div style={{ fontSize:12, color:"#6b7280" }}>{(data.marketGaps?.[0]?.description ?? "").substring(0,90)}</div>
+                <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.marketGaps?.[0]?.title??"-"}</div>
+                <div style={{ fontSize:12, color:"#6b7280" }}>{(data.marketGaps?.[0]?.description??"").substring(0,90)}</div>
               </div>
               <div style={{ background:"#fff7ed", border:"1px solid #fed7aa", borderRadius:10, padding:14 }}>
                 <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ea580c", marginBottom:6, letterSpacing:"0.07em" }}>Biggest Risk</div>
-                <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.swot?.threats?.[0] ?? "-"}</div>
-                <div style={{ fontSize:12, color:"#6b7280" }}>{data.swot?.threats?.[1] ?? ""}</div>
+                <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.swot?.threats?.[0]??"-"}</div>
+                <div style={{ fontSize:12, color:"#6b7280" }}>{data.swot?.threats?.[1]??""}</div>
               </div>
               <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:10, padding:14 }}>
                 <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#2563eb", marginBottom:6, letterSpacing:"0.07em" }}>First Move</div>
-                <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.opportunity?.actionItems?.[0]?.action ?? "-"}</div>
-                <div style={{ fontSize:12, color:"#6b7280" }}>{(data.opportunity?.actionItems?.[0]?.detail ?? "").substring(0,80)}</div>
+                <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.opportunity?.actionItems?.[0]?.action??"-"}</div>
+                <div style={{ fontSize:12, color:"#6b7280" }}>{(data.opportunity?.actionItems?.[0]?.detail??"").substring(0,80)}</div>
               </div>
             </div>
           </Card>
@@ -672,7 +694,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#7c3aed", marginBottom:4, letterSpacing:"0.07em" }}>Your One-Liner</div>
                     <div style={{ fontSize:13, fontStyle:"italic" as const, color:"#1e1b4b" }}>"{data.oneLiner}"</div>
                   </div>
-                  <button onClick={() => navigator.clipboard?.writeText(data.oneLiner ?? "")} style={{ padding:"5px 12px", borderRadius:6, border:"1px solid #ddd6fe", background:"white", cursor:"pointer", fontSize:12, flexShrink:0, marginLeft:12 }}>Copy</button>
+                  <button onClick={() => navigator.clipboard?.writeText(data.oneLiner??"")} style={{ padding:"5px 12px", borderRadius:6, border:"1px solid #ddd6fe", background:"white", cursor:"pointer", fontSize:12, flexShrink:0, marginLeft:12 }}>Copy</button>
                 </div>
               )}
             </Card>
@@ -683,13 +705,13 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
         <div>
           {data.marketSize && (
             <Card title="Market Sizing" sub="TAM to SAM to SOM funnel" right={<Pill text="Multi-source" color="blue" />}>
-              <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16, padding:"16px 0" }}>
-                {[{ val:data.marketSize.tam, label:"Everyone who could buy", tag:"TAM" }, null, { val:data.marketSize.sam, label:"People you can reach", tag:"SAM" }, null, { val:data.marketSize.som, label:"Realistic customers", tag:"SOM" }].map((item,i) =>
-                  item === null ? <div key={i} style={{ fontSize:20, color:"#9ca3af", flexShrink:0 }}>→</div> : (
-                    <div key={i} style={{ flex:1, textAlign:"center" as const, background:"#fafafa", borderRadius:10, padding:"14px 8px", border:"1px solid #f3f4f6" }}>
-                      <div style={{ fontSize:22, fontWeight:800, color:"#111827", lineHeight:1.2, wordBreak:"break-word" as const }}>{item.val}</div>
-                      <div style={{ fontSize:11, color:"#6b7280", marginTop:4 }}>{item.label}</div>
-                      <div style={{ fontSize:11, color:"#0d9488", fontWeight:600, marginTop:2 }}>{item.tag} est.</div>
+              <div style={{ display:"flex", alignItems:"stretch", gap:10, marginBottom:16 }}>
+                {[{ val:data.marketSize.tam, label:"TAM", sub:"Everyone who could buy" }, null, { val:data.marketSize.sam, label:"SAM", sub:"People you can reach" }, null, { val:data.marketSize.som, label:"SOM", sub:"Realistic customers" }].map((item,i) =>
+                  item===null ? <div key={i} style={{ display:"flex", alignItems:"center", color:"#9ca3af", fontSize:18 }}>→</div> : (
+                    <div key={i} style={{ flex:1, background:"#fafafa", borderRadius:10, padding:"14px 10px", border:"1px solid #f3f4f6", display:"flex", flexDirection:"column" as const, alignItems:"center", justifyContent:"center", textAlign:"center" as const, minHeight:100 }}>
+                      <div style={{ fontSize:11, fontWeight:700, color:"#0d9488", marginBottom:6, letterSpacing:"0.06em" }}>{item.label} est.</div>
+                      <div style={{ fontSize: item.val.length > 10 ? (item.val.length > 20 ? 12 : 14) : 22, fontWeight:800, color:"#111827", lineHeight:1.3, wordBreak:"break-word" as const }}>{item.val}</div>
+                      <div style={{ fontSize:11, color:"#6b7280", marginTop:6 }}>{item.sub}</div>
                     </div>
                   )
                 )}
@@ -718,39 +740,6 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
               ))}
             </Card>
           )}
-          {((itunesApps && itunesApps.length > 0) || (gplayApps && gplayApps.length > 0)) && (
-            <Card title="Existing Apps" sub="Showing top results ranked by ratings" right={
-              <div style={{ display:"flex", gap:6 }}>
-                {itunesApps && itunesApps.length > 0 && <Pill text="App Store" color="blue" />}
-                {gplayApps && gplayApps.length > 0 && <Pill text="Google Play" color="green" />}
-              </div>
-            }>
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10, marginBottom:12 }}>
-                {[
-                  { label:"Apps Found", val:((itunesApps?.length??0)+(gplayApps?.length??0)) },
-                  { label:"Total Ratings", val:([...((itunesApps??[]) as any[]),...((gplayApps??[]) as any[])]).reduce((s:number,a:any)=>s+(a.userRatingCount??a.ratings??0),0).toLocaleString() },
-                  { label:"Unique Apps", val:new Set([...((itunesApps??[]) as any[]).map((a:any)=>a.trackName??a.name??""),...((gplayApps??[]) as any[]).map((a:any)=>a.name??"")]).size },
-                ].map(m => (
-                  <div key={m.label} style={{ background:"#fafafa", border:"1px solid #e5e7eb", borderRadius:8, padding:"12px", textAlign:"center" as const }}>
-                    <div style={{ fontSize:22, fontWeight:800, color:"#111827" }}>{m.val}</div>
-                    <div style={{ fontSize:11, color:"#9ca3af", marginTop:4 }}>{m.label}</div>
-                  </div>
-                ))}
-              </div>
-              {([...((itunesApps??[]) as any[]).map((a:any)=>({...a,_src:"App Store"})),...((gplayApps??[]) as any[]).map((a:any)=>({...a,_src:"Google Play"}))]).slice(0,10).map((app:any,i:number) => (
-                <div key={i} style={{ display:"flex", gap:12, padding:"12px 0", borderBottom:i<9?"1px solid #f3f4f6":"none", alignItems:"flex-start" }}>
-                  {app.artworkUrl60 && <img src={app.artworkUrl60} alt={app.trackName??app.name??""} style={{ width:40, height:40, borderRadius:8, flexShrink:0, objectFit:"cover" as const }} />}
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" as const, marginBottom:3 }}>
-                      <span style={{ fontSize:14, fontWeight:600, color:"#111827" }}>{app.trackName??app.name??app.title??"Unknown"}</span>
-                      <Pill text={app._src} color={app._src==="App Store"?"blue":"green"} />
-                    </div>
-                    <p style={{ fontSize:12, color:"#6b7280", margin:0, overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" as const }}>{app.description??""}</p>
-                  </div>
-                </div>
-              ))}
-            </Card>
-          )}
         </div>
       );
       case "community": return (
@@ -768,41 +757,30 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
           </Card>
           {data.painPoints && data.painPoints.length > 0 && (
             <Card title="Pain Points" sub="Real quotes from your target market">
-              {data.painPoints.map((pp,i) => {
-                const srcColor = pp.source?.toLowerCase().includes('reddit') ? "orange" :
-                  pp.source?.toLowerCase().includes('twitter') || pp.source?.toLowerCase().includes('x.com') ? "blue" :
-                  pp.source?.toLowerCase().includes('instagram') ? "pink" :
-                  pp.source?.toLowerCase().includes('youtube') ? "red" : "gray";
-                return (
-                  <div key={i} style={{ borderLeft:"3px solid #e5e7eb", paddingLeft:14, marginBottom:14, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10 }}>
-                    <p style={{ fontSize:13, fontStyle:"italic" as const, color:"#374151", margin:0, flex:1 }}>"{pp.quote}"</p>
-                    <div style={{ display:"flex", gap:6, alignItems:"center", flexShrink:0 }}>
-                      {pp.source && <Pill text={pp.source.length > 25 ? pp.source.substring(0,25)+"…" : pp.source} color={srcColor} />}
-                      <Pill text={pp.severity.toUpperCase()} color={pp.severity==="high"?"red":pp.severity==="medium"?"orange":"green"} />
-                    </div>
+              {data.painPoints.map((pp,i) => (
+                <div key={i} style={{ borderLeft:"3px solid #e5e7eb", paddingLeft:14, marginBottom:14, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10 }}>
+                  <p style={{ fontSize:13, fontStyle:"italic" as const, color:"#374151", margin:0, flex:1 }}>"{pp.quote}"</p>
+                  <div style={{ display:"flex", gap:5, alignItems:"center", flexShrink:0, flexWrap:"wrap" as const, maxWidth:200, justifyContent:"flex-end" as const }}>
+                    {pp.source && <SourceBadge source={pp.source} />}
+                    <Pill text={pp.severity.toUpperCase()} color={pp.severity==="high"?"red":pp.severity==="medium"?"orange":"green"} />
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </Card>
           )}
           {data.communitySignals && data.communitySignals.length > 0 && (
             <Card title="Signal Feed" sub="Community discussions">
-              {data.communitySignals.map((sig,i) => {
-                const srcColor = sig.source?.toLowerCase().includes('reddit') ? "orange" :
-                  sig.source?.toLowerCase().includes('twitter') || sig.source?.toLowerCase().includes('x') ? "blue" : "gray";
-                const sentColor = sig.sentiment==="pain" ? "red" : sig.sentiment==="need" ? "orange" : "green";
-                return (
-                  <div key={i} style={{ background:"#fafafa", border:"1px solid #e5e7eb", borderRadius:8, padding:12, marginBottom:8, display:"flex", justifyContent:"space-between", gap:10 }}>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ display:"flex", gap:6, marginBottom:5, flexWrap:"wrap" as const }}>
-                        <Pill text={sig.subredditOrHandle || sig.source} color={srcColor} />
-                        <Pill text={sig.sentiment.toUpperCase()} color={sentColor} />
-                      </div>
-                      <p style={{ fontSize:13, color:"#374151", margin:0 }}>"{sig.quote}"</p>
+              {data.communitySignals.map((sig,i) => (
+                <div key={i} style={{ background:"#fafafa", border:"1px solid #e5e7eb", borderRadius:8, padding:12, marginBottom:8, display:"flex", justifyContent:"space-between", gap:10 }}>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ display:"flex", gap:5, marginBottom:6, flexWrap:"wrap" as const, alignItems:"center" }}>
+                      <SourceBadge source={sig.subredditOrHandle||sig.source} />
+                      <Pill text={sig.sentiment.toUpperCase()} color={sig.sentiment==="pain"?"red":sig.sentiment==="need"?"orange":"green"} />
                     </div>
+                    <p style={{ fontSize:13, color:"#374151", margin:0 }}>"{sig.quote}"</p>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </Card>
           )}
         </div>
@@ -811,19 +789,15 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
         <div>
           <Card title="Competitive Landscape" sub={(data.competitors?.length??0)+" competitors analyzed"} right={<Pill text={(data.competitors?.length??0)+" Active"} color="green" />}>
             {data.competitors?.map((c,i) => {
-              const url = (c as any).trackViewUrl || (c as any).url || (c as any).website || null;
+              const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(c.name)}`;
               return (
                 <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14, marginBottom:10 }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10 }}>
                     <div>
-                      {url ? (
-                        <a href={url} target="_blank" rel="noopener noreferrer" style={{ fontSize:14, fontWeight:700, color:"#2563eb", textDecoration:"none", display:"flex", alignItems:"center", gap:6 }}>
-                          {c.name}
-                          <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3.5 1H11M11 1V8.5M11 1L4 8M1 4.5V11H7.5" stroke="#2563eb" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        </a>
-                      ) : (
-                        <div style={{ fontSize:14, fontWeight:700, color:"#111827" }}>{c.name}</div>
-                      )}
+                      <a href={searchUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize:14, fontWeight:700, color:"#2563eb", textDecoration:"none", display:"inline-flex", alignItems:"center", gap:5 }}>
+                        {c.name}
+                        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3.5 1H11M11 1V8.5M11 1L4 8M1 4.5V11H7.5" stroke="#2563eb" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </a>
                       <div style={{ fontSize:12, color:"#6b7280", marginTop:2 }}>{c.tagline}</div>
                     </div>
                     <Pill text={c.threatLevel>=8?"HIGH":c.threatLevel>=5?"MEDIUM":"LOW"} color={c.threatLevel>=8?"red":c.threatLevel>=5?"orange":"green"} />
@@ -842,6 +816,40 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
               );
             })}
           </Card>
+          {allApps.length > 0 && (
+            <Card title="Existing Apps" sub="Top results from App Store and Google Play" right={
+              <div style={{ display:"flex", gap:6 }}>
+                {(itunesApps?.length??0) > 0 && <Pill text={"App Store "+itunesApps!.length} color="blue" />}
+                {(gplayApps?.length??0) > 0 && <Pill text={"Google Play "+gplayApps!.length} color="green" />}
+              </div>
+            }>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10, marginBottom:14 }}>
+                {[
+                  { label:"Apps Found", val:allApps.length },
+                  { label:"Total Ratings", val:allApps.reduce((s:number,a:any)=>s+(a.userRatingCount??a.ratings??0),0).toLocaleString() },
+                  { label:"Sources", val:[(itunesApps?.length??0)>0?"App Store":null,(gplayApps?.length??0)>0?"Google Play":null].filter(Boolean).join(" + ") },
+                ].map(m => (
+                  <div key={String(m.label)} style={{ background:"#fafafa", border:"1px solid #e5e7eb", borderRadius:8, padding:"10px", textAlign:"center" as const }}>
+                    <div style={{ fontSize:20, fontWeight:800, color:"#111827" }}>{m.val}</div>
+                    <div style={{ fontSize:11, color:"#9ca3af", marginTop:3 }}>{m.label}</div>
+                  </div>
+                ))}
+              </div>
+              {allApps.slice(0,10).map((app:any,i:number) => (
+                <div key={i} style={{ display:"flex", gap:10, padding:"10px 0", borderBottom:i<9?"1px solid #f3f4f6":"none", alignItems:"flex-start" }}>
+                  {app.artworkUrl60 && <img src={app.artworkUrl60} alt="" style={{ width:36, height:36, borderRadius:7, flexShrink:0, objectFit:"cover" as const }} />}
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:7, flexWrap:"wrap" as const, marginBottom:2 }}>
+                      <span style={{ fontSize:13, fontWeight:600, color:"#111827" }}>{app.trackName??app.name??app.title??"Unknown"}</span>
+                      <Pill text={app._src} color={app._src==="App Store"?"blue":"green"} />
+                      {(app.averageUserRating||app.rating) && <span style={{ fontSize:11, color:"#f59e0b", fontWeight:600 }}>★ {(app.averageUserRating||app.rating)?.toFixed(1)}</span>}
+                    </div>
+                    <p style={{ fontSize:11, color:"#6b7280", margin:0, overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" as const }}>{app.description??""}</p>
+                  </div>
+                </div>
+              ))}
+            </Card>
+          )}
         </div>
       );
       case "gaps": return (
@@ -910,15 +918,15 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
               {data.goToMarket.channels?.map((ch,i) => (
                 <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:"12px 14px", marginBottom:8, display:"flex", alignItems:"flex-start", gap:12 }}>
                   <div style={{ flex:1, minWidth:0, overflow:"hidden" }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6, flexWrap:"wrap" as const }}>
-                      <span style={{ fontSize:13, fontWeight:700, color:"#111827", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" as const, maxWidth:280 }}>{ch.name}</span>
+                    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:5, flexWrap:"wrap" as const }}>
+                      <span style={{ fontSize:13, fontWeight:700, color:"#111827", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" as const, maxWidth:260 }}>{ch.name}</span>
                       <Pill text={ch.type.toUpperCase()} color={ch.type==="primary"?"blue":ch.type==="secondary"?"green":"orange"} />
                     </div>
-                    <p style={{ fontSize:12, color:"#6b7280", margin:0, lineHeight:1.5, overflow:"hidden", display:"-webkit-box", WebkitLineClamp:3, WebkitBoxOrient:"vertical" as const }}>{ch.description}</p>
+                    <p style={{ fontSize:12, color:"#6b7280", margin:0, lineHeight:1.5, overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" as const }}>{ch.description}</p>
                   </div>
-                  <div style={{ textAlign:"right" as const, flexShrink:0, minWidth:70 }}>
+                  <div style={{ textAlign:"right" as const, flexShrink:0, minWidth:65 }}>
                     <div style={{ fontSize:10, color:"#9ca3af", textTransform:"uppercase" as const, letterSpacing:"0.06em", marginBottom:2 }}>Est. CAC</div>
-                    <div style={{ fontSize:15, fontWeight:700, color:"#111827", wordBreak:"break-word" as const }}>{ch.estimatedCAC}</div>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#111827", wordBreak:"break-word" as const }}>{ch.estimatedCAC}</div>
                   </div>
                 </div>
               ))}
@@ -952,22 +960,22 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
             <Card title="Financial Snapshot" sub="Key metrics for your first year">
               <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10, marginBottom:20 }}>
                 <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14 }}>
-                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ef4444", marginBottom:6, letterSpacing:"0.07em" }}>Monthly Burn</div>
+                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ef4444", marginBottom:6 }}>Monthly Burn</div>
                   <div style={{ fontSize:22, fontWeight:800, color:"#111827", marginBottom:6 }}>{data.financialDeep.monthlyBurn.total}</div>
                   <div style={{ fontSize:11, color:"#6b7280" }}>Infra {data.financialDeep.monthlyBurn.infrastructure} · Tools {data.financialDeep.monthlyBurn.tools} · Mkt {data.financialDeep.monthlyBurn.marketing}</div>
                 </div>
                 <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14 }}>
-                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#10b981", marginBottom:6, letterSpacing:"0.07em" }}>Break-Even</div>
+                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#10b981", marginBottom:6 }}>Break-Even</div>
                   <div style={{ fontSize:22, fontWeight:800, color:"#111827", marginBottom:6 }}>Month {data.financialDeep.breakEvenMonth}</div>
                   <div style={{ fontSize:12, color:"#6b7280" }}>When revenue covers costs</div>
                 </div>
                 <div style={{ background:"#f0fdfe", border:"1px solid #a5f3fc", borderRadius:10, padding:14 }}>
-                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#0891b2", marginBottom:6, letterSpacing:"0.07em" }}>12-Month Potential</div>
+                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#0891b2", marginBottom:6 }}>12-Month Potential</div>
                   <div style={{ fontSize:22, fontWeight:800, color:"#111827", marginBottom:4 }}>{data.financialDeep.twelveMonthMRR}</div>
                   <div style={{ fontSize:12, color:"#6b7280" }}>MRR (Middle estimate)</div>
                 </div>
               </div>
-              <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:10, letterSpacing:"0.07em" }}>Revenue Projections — Year 1 Scenarios</div>
+              <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:10, letterSpacing:"0.07em" }}>Revenue Projections — Year 1</div>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10 }}>
                 {([{ key:"cautious" as const, label:"Cautious", color:"#6b7280", highlight:false }, { key:"middle" as const, label:"Middle", color:"#0ea5e9", highlight:true }, { key:"optimistic" as const, label:"Optimistic", color:"#10b981", highlight:false }]).map(({ key, label, color, highlight }) => {
                   const s = data.financialDeep?.revenueScenarios?.[key];
@@ -975,7 +983,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
                   return (
                     <div key={key} style={{ border:"2px solid "+(highlight?color:"#e5e7eb"), borderRadius:10, padding:14, position:"relative" as const }}>
                       {highlight && <div style={{ position:"absolute" as const, top:-10, left:"50%", transform:"translateX(-50%)", background:color, color:"white", padding:"2px 10px", borderRadius:999, fontSize:11, fontWeight:600, whiteSpace:"nowrap" as const }}>Most Likely</div>}
-                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color, marginBottom:7, letterSpacing:"0.07em" }}>{label}</div>
+                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color, marginBottom:7 }}>{label}</div>
                       <div style={{ fontSize:20, fontWeight:800, color:"#111827" }}>{s.mrr}</div>
                       <div style={{ fontSize:11, color:"#9ca3af", marginTop:3 }}>{s.probability} likely</div>
                       <div style={{ fontSize:11, color:"#6b7280", marginTop:6 }}>{s.assumption}</div>
@@ -1037,15 +1045,15 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
               </div>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10 }}>
                 <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:8, padding:12 }}>
-                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#2563eb", marginBottom:7, letterSpacing:"0.07em" }}>Where to Find</div>
+                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#2563eb", marginBottom:7 }}>Where to Find</div>
                   {data.customerInterviewGuide.whereToFindThem.map((w,i) => <div key={i} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>• {w}</div>)}
                 </div>
                 <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8, padding:12 }}>
-                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#16a34a", marginBottom:7, letterSpacing:"0.07em" }}>Green Signals</div>
+                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#16a34a", marginBottom:7 }}>Green Signals</div>
                   {data.customerInterviewGuide.greenSignals.map((s,i) => <div key={i} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>• {s}</div>)}
                 </div>
                 <div style={{ background:"#fef2f2", border:"1px solid #fecaca", borderRadius:8, padding:12 }}>
-                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#dc2626", marginBottom:7, letterSpacing:"0.07em" }}>Red Signals</div>
+                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#dc2626", marginBottom:7 }}>Red Signals</div>
                   {data.customerInterviewGuide.redSignals.map((s,i) => <div key={i} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>• {s}</div>)}
                 </div>
               </div>
@@ -1103,7 +1111,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#7c3aed", marginBottom:4, letterSpacing:"0.07em" }}>Your One-Liner</div>
                   <div style={{ fontSize:13, fontStyle:"italic" as const, color:"#1e1b4b" }}>"{data.oneLiner}"</div>
                 </div>
-                <button onClick={() => navigator.clipboard?.writeText(data.oneLiner ?? "")} style={{ padding:"5px 12px", borderRadius:6, border:"1px solid #ddd6fe", background:"white", cursor:"pointer", fontSize:12, flexShrink:0, marginLeft:12 }}>Copy</button>
+                <button onClick={() => navigator.clipboard?.writeText(data.oneLiner??"")} style={{ padding:"5px 12px", borderRadius:6, border:"1px solid #ddd6fe", background:"white", cursor:"pointer", fontSize:12, flexShrink:0, marginLeft:12 }}>Copy</button>
               </div>
             )}
           </Card>
