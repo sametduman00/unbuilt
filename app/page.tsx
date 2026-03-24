@@ -609,7 +609,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
     const s = source?.toLowerCase() ?? "";
     if (s.includes("youtube")) return <Pill text="YouTube" color="red" />;
     if (s.includes("reddit")) {
-      const sub = source.match(/r/(w+)/i)?.[1];
+      const sub = source.match(/r\/([\w]+)/i)?.[1];
       return <Pill text={sub ? "r/"+sub : "Reddit"} color="orange" />;
     }
     if (s.includes("instagram")) return <Pill text="Instagram" color="pink" />;
