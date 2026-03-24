@@ -27,7 +27,7 @@ function relativeTime(ts: string): string {
   const diff = Date.now() - new Date(ts).getTime();
   const mins = Math.floor(diff/60000);
   if (mins < 1) return "just now";
- Blind spot if (mins < 60) return mins+"m ago";
+  if (mins < 60) return mins+"m ago";
   const h = Math.floor(mins/60);
   if (h < 24) return h+"h ago";
   return Math.floor(h/24)+"d ago";
