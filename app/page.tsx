@@ -776,12 +776,12 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
           {data.painPoints && data.painPoints.length > 0 && (
             <Card title="Pain Points" sub="Real quotes from your target market">
               {data.painPoints.map((pp,i) => (
-                <div key={i} style={{ borderLeft:"3px solid #e5e7eb", paddingLeft:14, marginBottom:12, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10 }}>
-                  <p style={{ fontSize:13, fontStyle:"italic" as const, color:"#374151", margin:0, flex:1, overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" as const }}>"{pp.quote}"</p>
-                  <div style={{ display:"flex", gap:5, alignItems:"flex-start", flexShrink:0, flexDirection:"column" as const }}>
+                <div key={i} style={{ borderLeft:"3px solid #e5e7eb", paddingLeft:14, marginBottom:14 }}>
+                  <div style={{ display:"flex", gap:6, marginBottom:6, flexWrap:"wrap" as const, alignItems:"center" }}>
                     {pp.source && <SourceBadge source={pp.source} />}
                     <Pill text={pp.severity.toUpperCase()} color={pp.severity==="high"?"red":pp.severity==="medium"?"orange":"green"} />
                   </div>
+                  <p style={{ fontSize:13, fontStyle:"italic" as const, color:"#374151", margin:0, lineHeight:1.6 }}>"{pp.quote}"</p>
                 </div>
               ))}
             </Card>
