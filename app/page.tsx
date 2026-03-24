@@ -3202,7 +3202,7 @@ function HomeInner() {
       });
     }
 
-    const body: Record<string, string> = { idea };
+    const body: Record<string, string> = { idea, tool: selectedTool ?? "" };
     if (selectedTool === "stack-advisor") {
       body.budget = budget;
       body.techLevel = techLevel;
@@ -3719,11 +3719,14 @@ function HomeInner() {
                   <div style={{ display: "flex", gap: 8, flexShrink: 0, alignItems: "center" }}>
                     <button
                       onClick={() => {
-                        const el = document.createElement("style");
-                        el.textContent = "@media print { aside, [style*=\"position: fixed\"] { display: none !important; } main { margin-left: 0 !important; } }";
-                        document.head.appendChild(el);
-                        window.print();
-                        setTimeout(() => document.head.removeChild(el), 2000);
+                        // Grab rendered report HTML and open in new window for printing
+                        const reportEl = document.querySelector(".gap-analysis-report, [id='gap-tab-content']")?.closest("[style*='border: 1px solid #e5e7eb']") as HTMLElement;
+                        const content = reportEl ? reportEl.outerHTML : document.querySelector("main")?.innerHTML ?? "";
+                        const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${idea} — Gap Analysis</title><style>body{font-family:system-ui,sans-serif;color:#111;padding:32px;} @media print{}</style></head><body>${content}</body></html>`;
+                        const blob = new Blob([html], { type: "text/html" });
+                        const url = URL.createObjectURL(blob);
+                        const win = window.open(url, "_blank");
+                        if (win) { win.onload = () => { setTimeout(() => { win.print(); URL.revokeObjectURL(url); }, 400); }; }
                       }}
                       style={{
                         display: "flex", alignItems: "center", gap: 6,
