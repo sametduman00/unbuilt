@@ -3870,7 +3870,7 @@ export default function Home() {
                                         {s.topics.map((t,ti)=><span key={t} style={{ fontSize:"0.5625rem", fontWeight:600, padding:"0.15rem 0.5rem", borderRadius:999, background:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length]+"18", color:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length] }}>{t}</span>)}
                                       </div>
                                     )}
-                                    {gap&&<AiBlock what={gap.what??null} diff={gap.different??null} gap={gap.missing??null}/>}                                   )}
+                                    {gap&&<AiBlock what={gap.what??null} diff={gap.different??null} gap={gap.missing??null}/>}
                                   </div>
                                 </a>
                               );
