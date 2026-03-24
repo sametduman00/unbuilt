@@ -16,26 +16,26 @@ const compactToolsDB = (stacksDB.tools as { name: string; category: string; desc
   .join("\n");
 
 const BUDGET_LABELS: Record<string, string> = {
-  bootstrap: "Bootstrapped â under $50/month total",
-  growing: "Growing â $50â200/month",
-  funded: "Funded â $200â1,000/month",
-  scale: "Scale â $1,000+/month",
+  bootstrap: "Bootstrapped Ã¢ÂÂ under $50/month total",
+  growing: "Growing Ã¢ÂÂ $50Ã¢ÂÂ200/month",
+  funded: "Funded Ã¢ÂÂ $200Ã¢ÂÂ1,000/month",
+  scale: "Scale Ã¢ÂÂ $1,000+/month",
 };
 
 const TECH_LABELS: Record<string, string> = {
-  nocode: "No-code (uses tools like Notion, Webflow, Zapier â no real coding)",
+  nocode: "No-code (uses tools like Notion, Webflow, Zapier Ã¢ÂÂ no real coding)",
   lowcode: "Low-code (can edit HTML/CSS, use APIs, follow tutorials)",
   developer: "Developer (can code, comfortable with CLIs, databases, deployment)",
 };
 
 const SYSTEM = `You are a pragmatic CTO who has launched dozens of products.
 You hate over-engineering and gold-plating. Your job is to give founders the fastest, cheapest,
-most appropriate path to a working product â matched exactly to their skill level and budget.
+most appropriate path to a working product Ã¢ÂÂ matched exactly to their skill level and budget.
 
 IMPORTANT: You MUST respond with ONLY a single JSON code block. No text before or after.
 The JSON must match the exact schema provided.
 You have a curated database of developer tools with verified March 2026 pricing.
-Use ONLY tools from this database â do NOT invent tools or guess prices. Use the exact pricing from the database.`;
+Use ONLY tools from this database Ã¢ÂÂ do NOT invent tools or guess prices. Use the exact pricing from the database.`;
 
 const PROMPT = (idea: string, budget: string, techLevel: string) =>
   `Stack recommendation for:
@@ -93,10 +93,10 @@ Respond with ONLY a JSON code block matching this exact schema:
 \`\`\`
 
 Rules:
-- "phases": MUST start with Phase 0 (Validate) â the fastest $0 way to test demand before building. Use a Telegram bot, WhatsApp group, Google Form, landing page with waitlist, or similar zero-cost tool. Phase 0 should ALWAYS cost $0. Then 2-3 more phases (MVP, Growth, Scale). Each phase has 2-5 tools. "price": show real monthly cost or "Free". "free": boolean. Each phase must include a "costs" object (see below).
-- Each phase object must also include: "costs": { "tools": [{ "name": "Tool", "purpose": "What", "freeTier": true, "monthlyCost": "$0" }], "total": "$0/mo" } â listing ONLY the tools in that phase with their costs and the phase total.
-- "buildOrder": 2-4 time blocks. Use realistic labels based on project complexity: simple projects use "Day 1-2", "Day 3-5", "Week 2"; medium projects use "Week 1", "Week 2", "Week 3-4"; complex projects use "Week 1", "Week 2-3", "Week 4-6", "Month 2+". Do NOT default to "Month 2" for simple projects â most no-code MVPs ship in 1-2 weeks. Be aggressive: if a skilled developer follows your plan, how long does it ACTUALLY take?
-- "timeToMvp": Single realistic estimate for Phase 1 MVP completion. Examples: "3-5 days" (simple no-code), "1-2 weeks" (standard MVP), "3-4 weeks" (complex with integrations). Be honest â do NOT overestimate. Most MVPs take days to weeks, not months.
+- "phases": MUST start with Phase 0 (Validate) Ã¢ÂÂ the fastest $0 way to test demand before building. Use a Telegram bot, WhatsApp group, Google Form, landing page with waitlist, or similar zero-cost tool. Phase 0 should ALWAYS cost $0. Then 2-3 more phases (MVP, Growth, Scale). Each phase has 2-5 tools. "price": show real monthly cost or "Free". "free": boolean. Each phase must include a "costs" object (see below).
+- Each phase object must also include: "costs": { "tools": [{ "name": "Tool", "purpose": "What", "freeTier": true, "monthlyCost": "$0" }], "total": "$0/mo" } Ã¢ÂÂ listing ONLY the tools in that phase with their costs and the phase total.
+- "buildOrder": 2-4 time blocks. Use realistic labels based on project complexity: simple projects use "Day 1-2", "Day 3-5", "Week 2"; medium projects use "Week 1", "Week 2", "Week 3-4"; complex projects use "Week 1", "Week 2-3", "Week 4-6", "Month 2+". Do NOT default to "Month 2" for simple projects Ã¢ÂÂ most no-code MVPs ship in 1-2 weeks. Be aggressive: if a skilled developer follows your plan, how long does it ACTUALLY take?
+- "timeToMvp": Single realistic estimate for Phase 1 MVP completion. Examples: "3-5 days" (simple no-code), "1-2 weeks" (standard MVP), "3-4 weeks" (complex with integrations). Be honest Ã¢ÂÂ do NOT overestimate. Most MVPs take days to weeks, not months.
 - Each tool in phases must include "alternatives": array of 1-2 backup options from the database. Format: [{ "name": "Tool", "reason": "Use if primary is too expensive / requires coding / unavailable in your region" }]. Pick real alternatives that genuinely replace the primary tool.
 - "mistakes": exactly 3 common mistakes for someone at this skill+budget level. Be blunt. Max 2 sentences each.
 - "scalability": 2-4 items. "severity": "low" | "medium" | "high". "trigger": specific metric.
@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
   if (!idea || typeof idea !== "string" || idea.trim().length < 3)
     return Response.json({ error: "Please describe what you want to build (min 3 chars)." }, { status: 400 });
   if (idea.length > 600)
-    return Response.json({ error: "Too long â keep it under 600 characters." }, { status: 400 });
+    return Response.json({ error: "Too long Ã¢ÂÂ keep it under 600 characters." }, { status: 400 });
   if (!budget || !techLevel)
     return Response.json({ error: "Please select a budget and technical level." }, { status: 400 });
 
@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
       try {
         let full = "";
         const s = client.messages.stream({
-          model: "claude-opus-4-6",
+          model: "claude-haiku-4-5-20251001",
           max_tokens: 16000,
           thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM,
