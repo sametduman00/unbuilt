@@ -2782,6 +2782,11 @@ function AiBlock({ what, diff, gap }: { what:string|null; diff:string|null; gap:
 export default function Home() {
   const { isSignedIn } = useAuth();
   const { user } = useUser();
+  const [credits, setCredits] = useState<number | null>(null);
+  useEffect(() => {
+    if (!isSignedIn) return;
+    fetch("/api/credits").then(r => r.json()).then(d => setCredits(d.credits ?? 0)).catch(() => {});
+  }, [isSignedIn]);
   const { openSignIn } = useClerk();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
   const [idea, setIdea] = useState("");
