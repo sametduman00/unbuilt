@@ -2795,6 +2795,8 @@ function HomeInner() {
     const tool = searchParams.get("tool");
     if (tool === "gap-analysis" || tool === "stack-advisor") {
       setSelectedTool(tool as ToolId);
+    } else {
+      setSelectedTool(null);
     }
   }, [searchParams]);
   const [idea, setIdea] = useState("");
