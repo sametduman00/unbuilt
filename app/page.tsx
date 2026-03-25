@@ -2027,7 +2027,8 @@ function InputSection({
         boxShadow: `0 1px 2px rgba(0,0,0,0.1)`,
         overflow: "hidden",
       }}>
-        {/* Card header */}
+        {/* Card header — only for non-Dig tools */}
+        {tool.id !== "gap-analysis" && (
         <div style={{
           display: "flex", alignItems: "center", gap: 10,
           padding: "1rem 1.5rem",
@@ -2050,6 +2051,7 @@ function InputSection({
             </div>
           </div>
         </div>
+        )}
 
         <div style={{ padding: "1.375rem 1.5rem" }}>
           {/* Idea textarea */}
@@ -2210,21 +2212,24 @@ function InputSection({
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--clr-surface-2)"; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
                 >
-                  see a sample
+                  Sample Report
                 </button>
               )}
               <button
                 onClick={onSubmit}
                 disabled={!canSubmit}
+                title={!canSubmit && tool.id === "gap-analysis" ? "Write at least 40 characters to unlock" : undefined}
                 style={{
                   display: "flex", alignItems: "center", gap: 8,
                   padding: "0.5625rem 1.25rem", borderRadius: 8,
-                  background: canSubmit ? "var(--clr-btn-bg)" : "var(--clr-surface-3)",
-                  color: canSubmit ? "var(--clr-btn-text)" : "var(--clr-text-8)",
+                  background: "var(--clr-btn-bg)",
+                  color: "var(--clr-btn-text)",
                   fontSize: "0.875rem", fontWeight: 600, border: "none",
-                  cursor: canSubmit ? "pointer" : "not-allowed",
+                  cursor: canSubmit ? "pointer" : "default",
                   fontFamily: "inherit", letterSpacing: "-0.01em",
-                  transition: "all 0.15s",
+                  transition: "opacity 0.2s, filter 0.2s",
+                  opacity: (tool.id === "gap-analysis" && !canSubmit) ? 0.3 : 1,
+                  filter: (tool.id === "gap-analysis" && !canSubmit) ? "blur(1px)" : "none",
                 }}
               >
                 {loading ? (
@@ -3943,18 +3948,7 @@ function HomeInner() {
                     textareaRef={textareaRef}
                   />
 
-                  {selectedTool === "gap-analysis" && (
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginTop: 14, fontSize: "0.75rem", color: "var(--clr-text-4)" }}>
-                      <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                        <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 4.5H14L10 9l1.5 4.5L8 11 4.5 13.5 6 9 2 6.5h4.5L8 2z" fill="currentColor"/></svg>
-                        Claude Opus · Extended Thinking
-                      </span>
-                      <span style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--clr-border)" }} />
-                      <button onClick={() => { const el = document.getElementById("dig-sample-report"); if (el) el.scrollIntoView({ behavior: "smooth" }); }} style={{ background: "none", border: "none", color: "var(--clr-text-4)", fontSize: "0.75rem", cursor: "pointer", fontFamily: "inherit", padding: 0, textDecoration: "underline", textUnderlineOffset: "2px" }}>
-                        {"see a sample →"}
-                      </button>
-                    </div>
-                  )}
+
                 </div>
               )}
               {/* ââ Results — inline below input ââ */}
