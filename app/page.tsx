@@ -2464,25 +2464,25 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
             )}
           </div>
 
-          {/* Tools grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 10 }}>
+          {/* Tools list */}
+          <div style={{ display: "flex", flexDirection: "column" as const, gap: 8 }}>
             {phase.tools.map((tool, ti) => {
               const ytVid = ytToolMap.get(tool.name.toLowerCase());
               return (
-                <div key={ti} style={{ border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 14px", background: "#fafafa" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 7 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{tool.name}</div>
-                    <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 5, background: tool.free ? "#dcfce7" : "#fff7ed", color: tool.free ? "#16a34a" : "#ea580c", flexShrink: 0, marginLeft: 6 }}>{tool.free ? "Free" : tool.price}</span>
+                <div key={ti} style={{ border: "1px solid #e5e7eb", borderRadius: 10, padding: "11px 14px", background: "#fafafa" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", flex: 1 }}>{tool.name}</div>
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 5, background: tool.free ? "#dcfce7" : "#fff7ed", color: tool.free ? "#16a34a" : "#ea580c", flexShrink: 0 }}>{tool.free ? "Free" : tool.price}</span>
                   </div>
-                  <p style={{ fontSize: 12, color: "#6b7280", margin: "0 0 8px 0", lineHeight: 1.5 }}>{tool.purpose}</p>
+                  <p style={{ fontSize: 12, color: "#6b7280", margin: "0 0 6px 0", lineHeight: 1.5 }}>{tool.purpose}</p>
                   {tool.alternatives && tool.alternatives.length > 0 && (
                     <div style={{ display: "flex", flexDirection: "column" as const, gap: 5, marginTop: 6, borderTop: "1px solid #f3f4f6", paddingTop: 6 }}>
                       {tool.alternatives.map((alt, ai) => (
                         <div key={ai} style={{ display: "flex", alignItems: "flex-start", gap: 6, minWidth: 0 }}>
                           <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 5px", borderRadius: 3, background: "#f3f4f6", border: "1px solid #e5e7eb", color: "#9ca3af", flexShrink: 0, marginTop: 1, letterSpacing: "0.04em" }}>ALT</span>
-                          <div style={{ minWidth: 0 }}>
+                          <div style={{ minWidth: 0, flex: 1 }}>
                             <span style={{ fontSize: 11, color: "#374151", fontWeight: 600 }}>{alt.name}</span>
-                            {alt.reason && <span style={{ fontSize: 11, color: "#9ca3af", display: "block", lineHeight: 1.4 }}>{alt.reason}</span>}
+                            {alt.reason && <span style={{ fontSize: 11, color: "#9ca3af" }}> — {alt.reason}</span>}
                           </div>
                         </div>
                       ))}
