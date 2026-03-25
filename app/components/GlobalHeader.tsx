@@ -55,6 +55,10 @@ export default function GlobalHeader() {
 
       {/* Right: credits + auth */}
       <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8, paddingRight: 20 }}>
+        <Link href="/?tool=gap-analysis" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 8, background: "var(--clr-text)", color: "var(--clr-bg)", fontSize: "0.8rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 4.5H14L10 9l1.5 4.5L8 11 4.5 13.5 6 9 2 6.5h4.5L8 2z" fill="currentColor"/></svg>
+          Dig my idea
+        </Link>
         {isLoaded && isSignedIn && credits !== null && (
           <Link href="/pricing" style={{ textDecoration: "none" }}>
             <div style={{
