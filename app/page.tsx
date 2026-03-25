@@ -2208,7 +2208,7 @@ function InputSection({
               {(tool.id === "gap-analysis" || tool.id === "stack-advisor") && (
                 charsLeft > 0 ? (
                   <span id="char-counter" style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", transition: "all 0.2s" }}>
-                    <span style={{ fontWeight: 700, color: charCount > 20 ? "var(--clr-text-2)" : "var(--clr-text-4)" }}>{charsLeft}</span> more to unlock
+                    <span style={{ fontWeight: 700, color: charCount > 20 ? "var(--clr-text-2)" : "var(--clr-text-4)" }}>{charsLeft}</span> more chars to unlock
                   </span>
                 ) : (
                   <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 600, animation: "fadeSlideIn 0.2s ease" }}>
