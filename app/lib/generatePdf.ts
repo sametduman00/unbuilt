@@ -58,7 +58,7 @@ export function generatePdf(report: ReportData, jsPDF: any) {
       const tl = doc.splitTextToSize(e(item.title), cw - 6);
       doc.setFontSize(8.5); doc.setFont("helvetica", "bold"); doc.setTextColor(17, 24, 39);
       doc.text(tl, cx + 3, cy + 10);
-      const bl = doc.splitTextToSize(e(item.body).substring(0, 200), cw - 6);
+      const bl = doc.splitTextToSize(e(item.body), cw - 6);
       doc.setFontSize(7.5); doc.setFont("helvetica", "normal"); doc.setTextColor(100, 100, 100);
       doc.text(bl, cx + 3, cy + 10 + tl.length * 4 + 2);
       maxH = Math.max(maxH, 10 + tl.length * 4 + 2 + bl.length * 3.5 + 4);
@@ -101,7 +101,7 @@ export function generatePdf(report: ReportData, jsPDF: any) {
   const kn: string[] = [];
   const ms0 = o(p.marketSize); if (ms0.tam) kn.push("TAM: " + str(ms0.tam).split(" ")[0]);
   const comp0 = arr<{ name: string }>(p.competitors)[0]; if (comp0) kn.push("Top threat: " + str(comp0.name));
-  const gap0 = arr<{ title: string }>(p.marketGaps)[0]; if (gap0) kn.push("Best gap: " + str(gap0.title).substring(0, 40));
+  const gap0 = arr<{ title: string }>(p.marketGaps)[0]; if (gap0) kn.push("Best gap: " + str(gap0.title));
   if (kn.length) { y += 2; t(kn.join("   |   "), 9, false, [80, 80, 80]); }
 
   // 3 cards
@@ -160,7 +160,7 @@ export function generatePdf(report: ReportData, jsPDF: any) {
     y += 2; t("Reddit Posts", 10, true, [200, 80, 20]);
     reddit.forEach(r => {
       t(str(r.title) + (r.upvotes ? "  (↑ " + r.upvotes + ")" : "") + (r.subreddit ? "  r/" + str(r.subreddit) : ""), 10, true, [17, 24, 39], 4);
-      if (r.body) t(str(r.body).substring(0, 200), 9, false, [107, 114, 128], 8);
+      if (r.body) t(str(r.body), 9, false, [107, 114, 128], 8);
       y += 1;
     });
   }
@@ -183,6 +183,20 @@ export function generatePdf(report: ReportData, jsPDF: any) {
     if (wks.length) { t("Weaknesses:", 9, true, [239, 68, 68], 4); wks.forEach(w => bul(str(w), 8)); }
     y += 2;
   });
+
+  // Existing Apps (App Store)
+  const itunesApps = arr<{trackName?:string;artworkUrl60?:string;averageUserRating?:number;userRatingCount?:number;description?:string;formattedPrice?:string;sellerName?:string}>(p.itunesApps);
+  if (itunesApps.length) {
+    y += 4; t("Existing Apps (App Store)", 10, true, [60, 60, 120]);
+    itunesApps.forEach(app => {
+      const rating = app.averageUserRating ? app.averageUserRating.toFixed(1) : "";
+      const reviews = app.userRatingCount ? (app.userRatingCount >= 1000 ? Math.round(app.userRatingCount/1000)+"K reviews" : app.userRatingCount+" reviews") : "";
+      t(str(app.trackName) + (rating ? "  ★" + rating : "") + (reviews ? "  (" + reviews + ")" : "") + (app.formattedPrice ? "  " + str(app.formattedPrice) : "  Free"), 10, true, [17, 24, 39], 4);
+      if (app.sellerName) t("by " + str(app.sellerName), 8.5, false, [150, 150, 150], 8);
+      if (app.description) t(str(app.description), 9, false, [107, 114, 128], 8);
+      y += 1;
+    });
+  }
 
   // ── TAB 5: MARKET GAPS ───────────────────────────────────────
   sec("MARKET GAPS");
@@ -228,8 +242,8 @@ export function generatePdf(report: ReportData, jsPDF: any) {
     if (gtm.launchTarget) t("Launch target: " + str(gtm.launchTarget), 9.5, false, [55, 65, 81]);
     arr<{ name?: string; type?: string; estimatedCAC?: string; description?: string }>(gtm.channels).forEach(c => {
       const tc: [number, number, number] = c.type === "primary" ? [14, 165, 233] : c.type === "secondary" ? [16, 185, 129] : [245, 158, 11];
-      t(str(c.name) + (c.type ? "  [" + str(c.type).toUpperCase() + "]" : "") + (c.estimatedCAC ? "  Est. CAC: " + str(c.estimatedCAC).substring(0, 30) : ""), 10, true, tc, 4);
-      if (c.description) t(str(c.description).substring(0, 180), 9, false, [107, 114, 128], 8);
+      t(str(c.name) + (c.type ? "  [" + str(c.type).toUpperCase() + "]" : "") + (c.estimatedCAC ? "  Est. CAC: " + str(c.estimatedCAC) : ""), 10, true, tc, 4);
+      if (c.description) t(str(c.description), 9, false, [107, 114, 128], 8);
       y += 1;
     });
   }
@@ -248,7 +262,7 @@ export function generatePdf(report: ReportData, jsPDF: any) {
       t(label, 9.5, true, color, 4);
       items.forEach(ti => {
         t(str(ti.trend) + (ti.impact ? "  [" + str(ti.impact).toUpperCase() + "]" : ""), 9.5, false, [17, 24, 39], 8);
-        if (ti.evidence) t(str(ti.evidence).substring(0, 150), 8.5, false, [150, 150, 150], 10);
+        if (ti.evidence) t(str(ti.evidence), 8.5, false, [150, 150, 150], 10);
         y += 1;
       });
     });
@@ -261,10 +275,10 @@ export function generatePdf(report: ReportData, jsPDF: any) {
     const burn = o(fin.monthlyBurn);
     if (burn.total) {
       t("Monthly Burn: " + str(burn.total), 11, true, [239, 68, 68]);
-      if (burn.infrastructure) t("Infrastructure: " + str(burn.infrastructure).substring(0, 100), 9, false, [107, 114, 128], 6);
-      if (burn.tools) t("Tools: " + str(burn.tools).substring(0, 100), 9, false, [107, 114, 128], 6);
-      if (burn.marketing) t("Marketing: " + str(burn.marketing).substring(0, 100), 9, false, [107, 114, 128], 6);
-      if (burn.acquisition) t("Acquisition: " + str(burn.acquisition).substring(0, 100), 9, false, [107, 114, 128], 6);
+      if (burn.infrastructure) t("Infrastructure: " + str(burn.infrastructure), 9, false, [107, 114, 128], 6);
+      if (burn.tools) t("Tools: " + str(burn.tools), 9, false, [107, 114, 128], 6);
+      if (burn.marketing) t("Marketing: " + str(burn.marketing), 9, false, [107, 114, 128], 6);
+      if (burn.acquisition) t("Acquisition: " + str(burn.acquisition), 9, false, [107, 114, 128], 6);
     }
     y += 2;
     if (fin.breakEvenMonth) t("Break-Even: Month " + str(fin.breakEvenMonth), 10, true, [16, 185, 129]);
@@ -278,7 +292,7 @@ export function generatePdf(report: ReportData, jsPDF: any) {
       Object.entries(sc2).forEach(([k2, v2]) => {
         const sv = o(v2);
         t(k2.toUpperCase() + ": " + str(sv.mrr) + "  (" + str(sv.probability) + " likely)", 10, true, scColors[k2] || [30, 30, 30], 4);
-        if (sv.assumption) t(str(sv.assumption).substring(0, 150), 9, false, [107, 114, 128], 8);
+        if (sv.assumption) t(str(sv.assumption), 9, false, [107, 114, 128], 8);
       });
     }
   }
@@ -290,7 +304,7 @@ export function generatePdf(report: ReportData, jsPDF: any) {
       const vv = o(v); const sc = Number(vv.score ?? 0);
       const fc: [number, number, number] = sc >= 7 ? [16, 185, 129] : sc >= 5 ? [245, 158, 11] : [239, 68, 68];
       t(k.charAt(0).toUpperCase() + k.slice(1) + ": " + str(sc) + "/10", 10, true, fc, 4);
-      if (vv.note) t(str(vv.note).substring(0, 180), 9, false, [107, 114, 128], 8);
+      if (vv.note) t(str(vv.note), 9, false, [107, 114, 128], 8);
       y += 1;
     });
   }
@@ -303,7 +317,7 @@ export function generatePdf(report: ReportData, jsPDF: any) {
     vc.forEach((v, i) => {
       const rc: [number, number, number] = v.risk === "high" ? [220, 38, 38] : v.risk === "medium" ? [245, 158, 11] : [22, 163, 74];
       t((i + 1) + ". " + str(v.assumption) + (v.risk ? "  [" + str(v.risk).toUpperCase() + " RISK]" : ""), 10, true, rc, 2);
-      if (v.howToTest) t("Test: " + str(v.howToTest).substring(0, 250), 9, false, [107, 114, 128], 8);
+      if (v.howToTest) t("Test: " + str(v.howToTest), 9, false, [107, 114, 128], 8);
       y += 2;
     });
   }

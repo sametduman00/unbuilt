@@ -549,7 +549,26 @@ export async function POST(req: NextRequest) {
 
         if (full) setCached(normalizedKey, full);
         if (full && userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
-          try { await saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, full); } catch(e) { console.error("saveReport live:", e); }
+          try {
+            // Inject raw app store data into JSON before saving
+            let jsonToSave = full;
+            try {
+              const fenceMatch = full.match(/```json\s*([\s\S]*?)```/);
+              if (fenceMatch) {
+                const parsed = JSON.parse(fenceMatch[1]);
+                // Fetch raw app data for the report
+                const [itunesRaw, gplayRaw] = await Promise.allSettled([
+                  fetch(`https://itunes.apple.com/search?${new URLSearchParams({term:idea,entity:"software",limit:"8",country:"us"})}`, {signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(d=>d.results??[]).catch(()=>[]),
+                  Promise.resolve([]), // gplay already done above, skip re-fetch
+                ]);
+                if (itunesRaw.status === "fulfilled" && itunesRaw.value.length > 0) {
+                  parsed.itunesApps = itunesRaw.value.slice(0,8).map((a: Record<string,unknown>) => ({ trackName: a.trackName, artworkUrl60: a.artworkUrl60, averageUserRating: a.averageUserRating, userRatingCount: a.userRatingCount, description: String(a.description||"").slice(0,200), formattedPrice: a.formattedPrice, sellerName: a.sellerName }));
+                }
+                jsonToSave = full.replace(fenceMatch[1], JSON.stringify(parsed));
+              }
+            } catch { /* keep original if parse fails */ }
+            await saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, jsonToSave);
+          } catch(e) { console.error("saveReport live:", e); }
         }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();
