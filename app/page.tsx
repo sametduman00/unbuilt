@@ -1407,11 +1407,11 @@ function DigSampleReport() {
   };
 
   return (
-    <div style={{ padding: "20px 0 40px" }}>
+    <div id="dig-sample-report" style={{ padding: "20px 0 40px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-4)" }}>What you'll get</span>
         <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>« AI habit tracker with social accountability »</span>
-        <span style={{ marginLeft: "auto", fontSize: 10, color: "var(--clr-text-4)" }}>Click the tabs ↓</span>
+        <span id="dig-sample-report" style={{ marginLeft: "auto", fontSize: 10, color: "var(--clr-text-4)" }}>Click the tabs ↓</span>
       </div>
       <div style={{ background: "var(--clr-surface)", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden", display: "flex", height: 420 }}>
         {/* Sidebar */}
@@ -1992,7 +1992,9 @@ function InputSection({
   onSubmit: () => void; loading: boolean;
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 }) {
-  const canSubmit = idea.trim().length >= 3 && !loading;
+  const canSubmit = idea.trim().length >= 40 && !loading;
+  const charCount = idea.trim().length;
+  const charsLeft = Math.max(0, 40 - charCount);
 
   const BUDGETS: { id: Budget; label: string; sub: string }[] = [
     { id: "bootstrap", label: "Bootstrapped", sub: "< $50/mo" },
@@ -2177,36 +2179,69 @@ function InputSection({
             marginTop: "1.125rem", paddingTop: "1.125rem",
             borderTop: "1px solid var(--clr-border-deep)",
           }}>
-            <span style={{ fontSize: "0.7rem", color: "var(--clr-text-8)" }}>ââµ to run</span>
-            <button
-              onClick={onSubmit}
-              disabled={!canSubmit}
-              style={{
-                display: "flex", alignItems: "center", gap: 8,
-                padding: "0.5625rem 1.25rem", borderRadius: 8,
-                background: canSubmit ? "var(--clr-btn-bg)" : "var(--clr-surface-3)",
-                color: canSubmit ? "var(--clr-btn-text)" : "var(--clr-text-8)",
-                fontSize: "0.875rem", fontWeight: 600, border: "none",
-                cursor: canSubmit ? "pointer" : "not-allowed",
-                fontFamily: "inherit", letterSpacing: "-0.01em",
-                boxShadow: "none",
-                transition: "all 0.15s",
-              }}
-            >
-              {loading ? (
-                <>
-                  <div style={{ width: 14, height: 14, border: "2px solid rgba(var(--clr-text-rgb),0.3)", borderTopColor: "var(--clr-text)", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
-                  Runningâ¦
-                </>
+            {/* Char counter for Dig */}
+            {tool.id === "gap-analysis" ? (
+              charsLeft > 0 ? (
+                <span style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", transition: "all 0.2s" }}>
+                  <span style={{ fontWeight: 700, color: charCount > 20 ? "var(--clr-text-2)" : "var(--clr-text-4)" }}>{charsLeft}</span> more to unlock
+                </span>
               ) : (
-                <>
-                  Run {tool.name}
-                  <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                    <path d="M1 6.5h11M6.5 1l5.5 5.5-5.5 5.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </>
+                <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 600, animation: "fadeSlideIn 0.2s ease" }}>
+                  ✓ ready
+                </span>
+              )
+            ) : (
+              <span style={{ fontSize: "0.7rem", color: "var(--clr-text-8)" }}>⌘↵ to run</span>
+            )}
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              {tool.id === "gap-analysis" && (
+                <button
+                  onClick={() => { const el = document.getElementById("dig-sample-report"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 6,
+                    padding: "0.5rem 1rem", borderRadius: 8,
+                    background: "transparent",
+                    color: "var(--clr-text-3)",
+                    fontSize: "0.8125rem", fontWeight: 500,
+                    border: "1px solid var(--clr-border)",
+                    cursor: "pointer", fontFamily: "inherit",
+                    transition: "all 0.15s",
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--clr-surface-2)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+                >
+                  see a sample
+                </button>
               )}
-            </button>
+              <button
+                onClick={onSubmit}
+                disabled={!canSubmit}
+                style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  padding: "0.5625rem 1.25rem", borderRadius: 8,
+                  background: canSubmit ? "var(--clr-btn-bg)" : "var(--clr-surface-3)",
+                  color: canSubmit ? "var(--clr-btn-text)" : "var(--clr-text-8)",
+                  fontSize: "0.875rem", fontWeight: 600, border: "none",
+                  cursor: canSubmit ? "pointer" : "not-allowed",
+                  fontFamily: "inherit", letterSpacing: "-0.01em",
+                  transition: "all 0.15s",
+                }}
+              >
+                {loading ? (
+                  <>
+                    <div style={{ width: 14, height: 14, border: "2px solid rgba(var(--clr-text-rgb),0.3)", borderTopColor: "var(--clr-text)", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+                    Running…
+                  </>
+                ) : (
+                  <>
+                    {tool.id === "gap-analysis" ? "Dig" : tool.name}
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                      <path d="M1 6.5h11M6.5 1l5.5 5.5-5.5 5.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
