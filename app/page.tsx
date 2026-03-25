@@ -3752,7 +3752,7 @@ ${sections.join("\n")}
                         if (!jsPDFLib) { alert("PDF library loading, please try again."); return; }
                         const reportObj = {
                           id: "live",
-                          tool: "gap-analysis" as const,
+                          tool: (selectedTool === "stack-advisor" ? "stack-advisor" : "gap-analysis") as "gap-analysis" | "stack-advisor",
                           idea,
                           created_at: new Date().toISOString(),
                           json_content: streamedContent,
