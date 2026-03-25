@@ -3928,6 +3928,7 @@ function HomeInner() {
                       </p>
                     </div>
                   )}
+                  <InputSection
                     tool={currentTool}
                     idea={idea}
                     setIdea={setIdea}
@@ -3950,7 +3951,7 @@ function HomeInner() {
                       </span>
                       <span style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--clr-border)" }} />
                       <button onClick={() => { const el = document.getElementById("dig-sample-report"); if (el) el.scrollIntoView({ behavior: "smooth" }); }} style={{ background: "none", border: "none", color: "var(--clr-text-4)", fontSize: "0.75rem", cursor: "pointer", fontFamily: "inherit", padding: 0, textDecoration: "underline", textUnderlineOffset: "2px" }}>
-                        see a sample &#8594;
+                        {"see a sample →"}
                       </button>
                     </div>
                   )}
