@@ -2644,7 +2644,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
               <span style={{ fontSize: 11, color: dotColor, flexShrink: 0, fontWeight: 700, marginTop: 1 }}>{isActive ? "●" : isPhase ? "✓" : tab.icon}</span>
               <span style={{ fontSize: 12, fontWeight: isActive ? 600 : 400, color: isActive ? "#111827" : "#374151", flex: 1, lineHeight: 1.35, wordBreak: "break-word" as const }}>{tab.label}</span>
               {isPhase && data.phases[ti-1].costs?.total && (
-                <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", flexShrink: 0, marginTop: 1 }}>{data.phases[ti-1].costs.total.split(' ')[0]}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", flexShrink: 0, marginTop: 1 }}>{data.phases[ti-1].costs?.total?.split(' ')[0]}</span>
               )}
             </button>
           );
