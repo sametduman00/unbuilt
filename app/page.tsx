@@ -1928,34 +1928,35 @@ function InputSection({
                 </div>
               </div>
             </div>
+          )}
 
-              {/* Platform */}
-              <div style={{ marginTop: 12 }}>
-                <label style={{ display: "block", fontSize: "0.7rem", fontWeight: 600, color: "var(--clr-text-4)", marginBottom: "0.5rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                  Target platform
-                </label>
-                <div style={{ display: "flex", gap: 6 }}>
-                  {[
-                    { id: "web" as Platform, label: "Web", sub: "Browser / SaaS" },
-                    { id: "mobile" as Platform, label: "Mobile", sub: "iOS / Android" },
-                    { id: "both" as Platform, label: "Both", sub: "Web + Mobile" },
-                  ].map((opt) => (
-                    <button
-                      key={opt.id}
-                      onClick={() => setPlatform(opt.id)}
-                      style={{
-                        flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                        padding: "0.5rem 0.4rem", borderRadius: 9, gap: 2,
-                        background: platform === opt.id ? "rgba(var(--clr-text-rgb),0.08)" : "transparent",
-                        border: platform === opt.id ? "1px solid rgba(var(--clr-text-rgb),0.3)" : "1px solid var(--clr-border)",
-                        cursor: "pointer", fontFamily: "inherit", transition: "all 0.12s",
-                      }}
-                    >
-                      <span style={{ fontSize: "0.8rem", fontWeight: 600, color: platform === opt.id ? "var(--clr-text)" : "var(--clr-text-3)" }}>{opt.label}</span>
-                      <span style={{ fontSize: "0.65rem", color: platform === opt.id ? "var(--clr-text-3)" : "var(--clr-text-6)" }}>{opt.sub}</span>
-                    </button>
-                  ))}
-                </div>
+          {/* Platform */}
+          {tool.id === "stack-advisor" && (
+            <div style={{ marginTop: 10 }}>
+              <label style={{ display: "block", fontSize: "0.7rem", fontWeight: 600, color: "var(--clr-text-4)", marginBottom: "0.5rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                Target platform
+              </label>
+              <div style={{ display: "flex", gap: 6 }}>
+                {[
+                  { id: "web" as Platform, label: "Web", sub: "Browser / SaaS" },
+                  { id: "mobile" as Platform, label: "Mobile", sub: "iOS / Android" },
+                  { id: "both" as Platform, label: "Both", sub: "Web + Mobile" },
+                ].map((opt) => (
+                  <button
+                    key={opt.id}
+                    onClick={() => setPlatform(opt.id)}
+                    style={{
+                      flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                      padding: "0.5rem 0.4rem", borderRadius: 9, gap: 2,
+                      background: platform === opt.id ? "rgba(var(--clr-text-rgb),0.08)" : "transparent",
+                      border: platform === opt.id ? "1px solid rgba(var(--clr-text-rgb),0.3)" : "1px solid var(--clr-border)",
+                      cursor: "pointer", fontFamily: "inherit", transition: "all 0.12s",
+                    }}
+                  >
+                    <span style={{ fontSize: "0.8rem", fontWeight: 600, color: platform === opt.id ? "var(--clr-text)" : "var(--clr-text-3)" }}>{opt.label}</span>
+                    <span style={{ fontSize: "0.65rem", color: platform === opt.id ? "var(--clr-text-3)" : "var(--clr-text-6)" }}>{opt.sub}</span>
+                  </button>
+                ))}
               </div>
             </div>
           )}
