@@ -141,6 +141,61 @@ function buildHtml(report: Report): string {
     sec.push(html);
   }
 
+  // 10b. Market Segments
+  const segs = arr<{segment:string;size:string;willingnessToPay:string}>(p.marketSegments);
+  if (segs.length) {
+    sec.push(`<h2>Market Segments</h2>
+    <table><tr><th>Segment</th><th>Size</th><th>Willingness to pay</th></tr>
+    ${segs.map(s=>`<tr><td><strong>${e(s.segment)}</strong></td><td>${e(s.size)}</td><td>${e(s.willingnessToPay)}</td></tr>`).join("")}</table>`);
+  }
+
+  // 10c. Opportunity
+  const opp = o(p.opportunity);
+  if (opp.headline || opp.urgency) {
+    let html = `<h2>Opportunity</h2>`;
+    if (opp.headline) html += `<p><strong>${e(opp.headline)}</strong></p>`;
+    if (opp.urgency) html += `<p>${e(opp.urgency)}</p>`;
+    const actions = arr<string>(opp.actionItems);
+    if (actions.length) html += `<ol>${actions.map(a=>`<li>${e(a)}</li>`).join("")}</ol>`;
+    sec.push(html);
+  }
+
+  // 10d. Target Customer Deep
+  const tcd = o(p.targetCustomerDeep);
+  if (Object.keys(tcd).length) {
+    let html = `<h2>Target Customer (Deep)</h2>`;
+    if (tcd.whoTheyAre) html += `<p><strong>Who they are:</strong> ${e(tcd.whoTheyAre)}</p>`;
+    if (tcd.howTheyThink) html += `<p><strong>How they think:</strong> ${e(tcd.howTheyThink)}</p>`;
+    if (tcd.availableMoney) html += `<p><strong>Budget:</strong> ${e(tcd.availableMoney)}</p>`;
+    if (tcd.howTheyBuy) html += `<p><strong>How they buy:</strong> ${e(tcd.howTheyBuy)}</p>`;
+    const triggers = arr<string>(tcd.triggerEvents);
+    if (triggers.length) html += `<h3>Trigger Events</h3><ul>${triggers.map(x=>`<li>${e(x)}</li>`).join("")}</ul>`;
+    const where = arr<string>(tcd.whereToFindThem);
+    if (where.length) html += `<h3>Where to find them</h3><ul>${where.map(x=>`<li>${e(x)}</li>`).join("")}</ul>`;
+    sec.push(html);
+  }
+
+  // 12b. Customer Interview Guide
+  const cig = o(p.customerInterviewGuide);
+  if (Object.keys(cig).length) {
+    let html = `<h2>Customer Interview Guide</h2>`;
+    const qs = arr<string>(cig.questions);
+    if (qs.length) html += `<h3>Questions</h3><ol>${qs.map(q=>`<li>${e(q)}</li>`).join("")}</ol>`;
+    const green = arr<string>(cig.greenSignals);
+    const red = arr<string>(cig.redSignals);
+    if (green.length) html += `<h3>✓ Green signals</h3><ul>${green.map(x=>`<li>${e(x)}</li>`).join("")}</ul>`;
+    if (red.length) html += `<h3>✗ Red signals</h3><ul>${red.map(x=>`<li>${e(x)}</li>`).join("")}</ul>`;
+    sec.push(html);
+  }
+
+  // 12c. Fundability Radar
+  const fund = o(p.fundabilityRadar);
+  if (Object.keys(fund).length) {
+    const fields = ['team','market','traction','timing','competition','uniqueness'];
+    const rows = fields.filter(f => fund[f] != null).map(f => `<tr><td>${f.charAt(0).toUpperCase()+f.slice(1)}</td><td>${e(fund[f])}/10</td></tr>`).join("");
+    if (rows) sec.push(`<h2>Fundability Radar</h2><table><tr><th>Dimension</th><th>Score</th></tr>${rows}</table>`);
+  }
+
   // 13. Validation Checklist
   const vc = arr<{item:string;status:string;how:string}>(p.validationChecklist);
   if (vc.length) {
@@ -229,7 +284,7 @@ export default function ReportsPage() {
 
   const handlePdf = (report: Report) => {
     const html = buildHtml(report);
-    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const blob = new Blob([html], { type: "application/octet-stream" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `${report.idea.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-unbuilt.html`;
