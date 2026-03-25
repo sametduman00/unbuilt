@@ -2624,7 +2624,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
   };
 
   return (
-    <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden", display: "flex", height: "calc(100vh - 76px)" }}>
+    <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden", display: "flex", height: "calc(100vh - 168px)" }}>
       {/* Left tab sidebar */}
       <div style={{ width: 220, borderRight: "1px solid #e5e7eb", padding: "14px 8px", flexShrink: 0, background: "#fafafa", display: "flex", flexDirection: "column" as const, gap: 2, overflowY: "auto" as const }}>
         <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.09em", color: "#9ca3af", marginBottom: 8, paddingLeft: 8, display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: 8 }}>
