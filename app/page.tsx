@@ -3944,7 +3944,7 @@ function HomeInner() {
                         Stop Googling<br/><em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>"best tools for vibecoding"</em>
                       </h1>
                       <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 440, margin: "0 auto" }}>
-                        Describe what you're building. We'll give you exact tools,<br/>real costs and build order — matched to your budget and skill level.
+                        Describe what you're building. We'll give you exact tools,<br/>real costs and build order — matched to your budget and level.
                       </p>
                     </div>
                   )}
