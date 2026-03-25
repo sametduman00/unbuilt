@@ -1408,30 +1408,6 @@ function DigSampleReport() {
 
   return (
     <div style={{ padding: "0 0 40px" }}>
-      {/* Hero integrated into flow */}
-      <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "center", padding: "16px 0 12px", borderBottom: "1px solid var(--clr-border)", marginBottom: 12 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--clr-text-4)", marginBottom: 8 }}>
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
-          Live data · Updated continuously
-        </div>
-        <h2 style={{ fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1.1, color: "var(--clr-text)", textAlign: "center" as const, marginBottom: 6 }}>
-          Your idea is 3 hours old.{" "}
-          <span style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>So is our data.</span>
-        </h2>
-        <p style={{ fontSize: "0.8rem", color: "var(--clr-text-3)", textAlign: "center" as const, lineHeight: 1.5, marginBottom: 14, fontStyle: "italic" as const }}>
-          Other tools guess from 2023 training data. We read Reddit from this morning.
-        </p>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, flexWrap: "wrap" as const }}>
-          {[{ label: "70+ live sources", color: "#7c3aed", bg: "#f5f3ff", border: "#ddd6fe" }, { label: "Reddit · X · YouTube", color: "#c2410c", bg: "#fff7ed", border: "#fed7aa" }, { label: "App Store · Google Play", color: "#2563eb", bg: "#eff6ff", border: "#bfdbfe" }].map(b => (
-            <span key={b.label} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.625rem", fontWeight: 700, padding: "4px 10px", borderRadius: 20, background: b.bg, border: `1px solid ${b.border}`, color: b.color, whiteSpace: "nowrap" as const }}>
-              <span style={{ width: 5, height: 5, borderRadius: "50%", background: b.color, opacity: 0.7 }} />
-              {b.label}
-            </span>
-          ))}
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.625rem", fontWeight: 700, padding: "4px 10px", borderRadius: 20, background: "#111", border: "1px solid #111", color: "#fff", whiteSpace: "nowrap" as const }}>★ Claude Opus · Extended Thinking</span>
-        </div>
-      </div>
-
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-4)" }}>What you'll get</span>
         <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>« AI habit tracker with social accountability »</span>
@@ -3902,6 +3878,31 @@ function HomeInner() {
               {/* ââ Input section ââ */}
               {selectedTool && currentTool && !hasResults && !loading && (
                 <div ref={inputSectionRef}>
+                  {/* Hero above prompt */}
+                  {selectedTool === "gap-analysis" && (
+                    <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "center", padding: "22px 24px 18px", borderBottom: "1px solid var(--clr-border)", marginBottom: 0, background: "var(--clr-surface)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--clr-text-4)", marginBottom: 8 }}>
+                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
+                        Live data · Updated continuously
+                      </div>
+                      <h2 style={{ fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1.1, color: "var(--clr-text)", textAlign: "center" as const, marginBottom: 6 }}>
+                        Your idea is 3 hours old.{" "}
+                        <span style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>So is our data.</span>
+                      </h2>
+                      <p style={{ fontSize: "0.8rem", color: "var(--clr-text-3)", textAlign: "center" as const, lineHeight: 1.5, marginBottom: 14, fontStyle: "italic" as const }}>
+                        Other tools guess from 2023 training data. We read Reddit from this morning.
+                      </p>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, flexWrap: "wrap" as const }}>
+                        {[{ label: "70+ live sources", color: "#7c3aed", bg: "#f5f3ff", border: "#ddd6fe" }, { label: "Reddit · X · YouTube", color: "#c2410c", bg: "#fff7ed", border: "#fed7aa" }, { label: "App Store · Google Play", color: "#2563eb", bg: "#eff6ff", border: "#bfdbfe" }].map(b => (
+                          <span key={b.label} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.6rem", fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: b.bg, border: `1px solid ${b.border}`, color: b.color, whiteSpace: "nowrap" as const }}>
+                            <span style={{ width: 5, height: 5, borderRadius: "50%", background: b.color, opacity: 0.7 }} />
+                            {b.label}
+                          </span>
+                        ))}
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.6rem", fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: "#111", border: "1px solid #111", color: "#fff", whiteSpace: "nowrap" as const }}>★ Claude Opus · Extended Thinking</span>
+                      </div>
+                    </div>
+                  )}
                   <InputSection
                     tool={currentTool}
                     idea={idea}
