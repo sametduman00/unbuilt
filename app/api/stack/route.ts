@@ -158,7 +158,7 @@ export async function POST(req: NextRequest) {
         }
         if (full) setCached(normalizedKey, full);
         if (full && userId) {
-          saveReport(userId, "stack-advisor", idea, full).catch(() => {});
+          try { await saveReport(userId, "stack-advisor", idea, full); } catch(e) { console.error("saveReport stack:", e); }
         }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();

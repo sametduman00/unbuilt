@@ -473,7 +473,7 @@ export async function POST(req: NextRequest) {
       if (cached) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
         if (userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
-          saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, cached).catch(() => {});
+          try { await saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, cached); } catch(e) { console.error("saveReport cached:", e); }
         }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();
@@ -549,7 +549,7 @@ export async function POST(req: NextRequest) {
 
         if (full) setCached(normalizedKey, full);
         if (full && userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
-          saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, full).catch(() => {});
+          try { await saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, full); } catch(e) { console.error("saveReport live:", e); }
         }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();
