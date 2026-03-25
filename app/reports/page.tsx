@@ -304,36 +304,46 @@ export default function ReportsPage() {
     const html = buildHtml(report);
     const filename = report.idea.replace(/[^a-z0-9]+/gi,"-").toLowerCase() + "-report.pdf";
 
-    // Parse the HTML and render into a hidden div in the current page
+    // Overlay to hide the render container from user
+    const overlay = document.createElement("div");
+    overlay.style.cssText = "position:fixed;inset:0;background:white;z-index:9998;";
+    document.body.appendChild(overlay);
+
+    // Container must be VISIBLE (not hidden) for html2canvas to capture it
     const container = document.createElement("div");
-    container.style.cssText = "position:fixed;top:0;left:0;width:820px;background:white;visibility:hidden;z-index:-1;pointer-events:none;";
-    container.innerHTML = html.replace(/<!DOCTYPE[^>]*>/i,"").replace(/<html[^>]*>/i,"").replace(/<\/html>/i,"").replace(/<head>[\s\S]*?<\/head>/i,"").replace(/<body[^>]*>/i,"").replace(/<\/body>/i,"");
+    container.style.cssText = "position:fixed;top:0;left:0;width:820px;background:white;z-index:9999;pointer-events:none;";
+    container.innerHTML = html
+      .replace(/<!DOCTYPE[^>]*>/i,"")
+      .replace(/<html[^>]*>/i,"")
+      .replace(/<\/html>/i,"")
+      .replace(/<head>[\s\S]*?<\/head>/i,"")
+      .replace(/<body[^>]*>/i,"")
+      .replace(/<\/body>/i,"");
     document.body.appendChild(container);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const h2p = (window as any).html2pdf;
     if (!h2p) {
       document.body.removeChild(container);
+      document.body.removeChild(overlay);
       setGenerating(null);
-      alert("PDF library not loaded yet. Please try again in a moment.");
+      alert("PDF library not loaded yet. Please wait a moment and try again.");
       return;
     }
 
+    const cleanup = () => {
+      if (container.parentNode) document.body.removeChild(container);
+      if (overlay.parentNode) document.body.removeChild(overlay);
+      setGenerating(null);
+    };
+
     h2p().set({
-      margin: 12,
+      margin: 10,
       filename,
       image: { type: "jpeg", quality: 0.97 },
-      html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff" },
+      html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff", windowWidth: 820 },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-    }).from(container).save().then(() => {
-      document.body.removeChild(container);
-      setGenerating(null);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }).catch((err: any) => {
-      console.error("pdf error:", err);
-      document.body.removeChild(container);
-      setGenerating(null);
-    });
+    }).from(container).save().then(cleanup).catch(cleanup);
   };
 
   const toolColor = (t: string) => t==="gap-analysis"?"#7c6fff":"#38bdf8";
