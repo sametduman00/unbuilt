@@ -2181,39 +2181,40 @@ function InputSection({
             marginTop: "1.125rem", paddingTop: "1.125rem",
             borderTop: "1px solid var(--clr-border-deep)",
           }}>
-            {/* Char counter for Dig */}
+            {/* Sample Report on left */}
             {(tool.id === "gap-analysis" || tool.id === "stack-advisor") ? (
-              charsLeft > 0 ? (
-                <span id="char-counter" style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", transition: "all 0.2s" }}>
-                  <span style={{ fontWeight: 700, color: charCount > 20 ? "var(--clr-text-2)" : "var(--clr-text-4)" }}>{charsLeft}</span> more to unlock
-                </span>
-              ) : (
-                <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 600, animation: "fadeSlideIn 0.2s ease" }}>
-                  ✓ ready
-                </span>
-              )
+              <button
+                onClick={() => { const el = document.getElementById("dig-sample-report"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
+                style={{
+                  display: "flex", alignItems: "center", gap: 6,
+                  padding: "0.5rem 1rem", borderRadius: 8,
+                  background: "transparent",
+                  color: "var(--clr-text-3)",
+                  fontSize: "0.8125rem", fontWeight: 500,
+                  border: "1px solid var(--clr-border)",
+                  cursor: "pointer", fontFamily: "inherit",
+                  transition: "all 0.15s",
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--clr-surface-2)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+              >
+                Sample Report
+              </button>
             ) : (
               <span style={{ fontSize: "0.7rem", color: "var(--clr-text-8)" }}>⌘↵ to run</span>
             )}
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              {/* Char counter on right */}
               {(tool.id === "gap-analysis" || tool.id === "stack-advisor") && (
-                <button
-                  onClick={() => { const el = document.getElementById("dig-sample-report"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 6,
-                    padding: "0.5rem 1rem", borderRadius: 8,
-                    background: "transparent",
-                    color: "var(--clr-text-3)",
-                    fontSize: "0.8125rem", fontWeight: 500,
-                    border: "1px solid var(--clr-border)",
-                    cursor: "pointer", fontFamily: "inherit",
-                    transition: "all 0.15s",
-                  }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--clr-surface-2)"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
-                >
-                  Sample Report
-                </button>
+                charsLeft > 0 ? (
+                  <span id="char-counter" style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", transition: "all 0.2s" }}>
+                    <span style={{ fontWeight: 700, color: charCount > 20 ? "var(--clr-text-2)" : "var(--clr-text-4)" }}>{charsLeft}</span> more to unlock
+                  </span>
+                ) : (
+                  <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 600, animation: "fadeSlideIn 0.2s ease" }}>
+                    ✓ ready
+                  </span>
+                )
               )}
               <div title={!canSubmit ? "Write at least 40 characters" : undefined} style={{ display: "inline-flex" }}>
               <button
