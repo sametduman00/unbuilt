@@ -272,8 +272,8 @@ Respond with ONLY a JSON code block:
 \`\`\`json
 {
   "appStoreQuery": "2-3 word niche query for App Store",
-  "marketScore": 72,
-  "marketScoreLabel": "Real Opportunity",
+  "marketScore": 54,
+  "marketScoreLabel": "Some Room",
   "marketScoreSummary": "One sentence summary based on live data above",
   "competitors": [
     { "name": "Real Competitor", "tagline": "What they do", "threatLevel": 3, "strengths": ["One strength"], "weaknesses": ["One weakness"] }
@@ -432,7 +432,7 @@ Respond with ONLY a JSON code block:
 \`\`\`
 
 RULES â follow exactly:
-- "marketScore" 1-100 integer. "marketScoreLabel": "No Gap"(0-20),"Crowded"(21-40),"Some Room"(41-60),"Real Opportunity"(61-80),"Wide Open"(81-100).
+- "marketScore" 1-100 integer based ONLY on live data. Score 0-20 if dominant players with millions of reviews exist. Score 80-100 only if truly no competitors found. Average well-served markets score 30-55. Emerging niches with some competition score 55-75. "marketScoreLabel": "No Gap"(0-20),"Crowded"(21-40),"Some Room"(41-60),"Real Opportunity"(61-80),"Wide Open"(81-100). DO NOT anchor to the example score of 54 — derive the real score from data.
 - "competitors": 4-6 real companies from live data. "threatLevel" 1-5. Each strength/weakness 1 item max 12 words.
 - "painPoints": 4-6, from live Reddit/G2/Twitter data above. "severity": "high"|"medium"|"low".
 - "marketGaps": 3-5 items. "opportunityScore" 1-10. "status": "untapped"|"emerging"|"contested".
