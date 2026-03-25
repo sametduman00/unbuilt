@@ -193,14 +193,16 @@ export default function ReportsPage() {
     script.onload = () => {
       const win = iframe.contentWindow as any;
       win.html2pdf().set({
-        margin: [10, 10, 10, 10],
+        margin: 10,
         filename,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        pagebreak: { mode: ["avoid-all", "css", "legacy"] }
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
       }).from(doc.body).save().then(() => {
         setTimeout(() => document.body.removeChild(iframe), 3000);
+      }).catch((err: unknown) => {
+        console.error("pdf error:", err);
+        document.body.removeChild(iframe);
       });
     };
     doc.head.appendChild(script);
