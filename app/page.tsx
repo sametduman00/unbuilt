@@ -2188,15 +2188,15 @@ function InputSection({
                 style={{
                   display: "flex", alignItems: "center", gap: 6,
                   padding: "0.5rem 1rem", borderRadius: 8,
-                  background: "transparent",
-                  color: "var(--clr-text-3)",
-                  fontSize: "0.8125rem", fontWeight: 500,
-                  border: "1px solid var(--clr-border)",
+                  background: "rgba(99,102,241,0.07)",
+                  color: "#6366f1",
+                  fontSize: "0.8125rem", fontWeight: 600,
+                  border: "1px solid rgba(99,102,241,0.2)",
                   cursor: "pointer", fontFamily: "inherit",
                   transition: "all 0.15s",
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--clr-surface-2)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(99,102,241,0.13)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(99,102,241,0.07)"; }}
               >
                 Sample Report
               </button>
