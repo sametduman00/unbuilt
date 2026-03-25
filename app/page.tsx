@@ -2478,12 +2478,12 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                   {tool.alternatives && tool.alternatives.length > 0 && (
                     <div style={{ display: "flex", flexDirection: "column" as const, gap: 5, marginTop: 6, borderTop: "1px solid #f3f4f6", paddingTop: 6 }}>
                       {tool.alternatives.map((alt, ai) => (
-                        <div key={ai} style={{ display: "flex", alignItems: "flex-start", gap: 6, minWidth: 0 }}>
-                          <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 5px", borderRadius: 3, background: "#f3f4f6", border: "1px solid #e5e7eb", color: "#9ca3af", flexShrink: 0, marginTop: 1, letterSpacing: "0.04em" }}>ALT</span>
-                          <div style={{ minWidth: 0, flex: 1 }}>
+                        <div key={ai} style={{ display: "flex", flexDirection: "column" as const, gap: 2 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                            <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 5px", borderRadius: 3, background: "#f3f4f6", border: "1px solid #e5e7eb", color: "#9ca3af", flexShrink: 0, letterSpacing: "0.04em" }}>ALT</span>
                             <span style={{ fontSize: 11, color: "#374151", fontWeight: 600 }}>{alt.name}</span>
-                            {alt.reason && <span style={{ fontSize: 11, color: "#9ca3af" }}> — {alt.reason}</span>}
                           </div>
+                          {alt.reason && <p style={{ margin: 0, fontSize: 11, color: "#9ca3af", lineHeight: 1.4 }}>{alt.reason}</p>}
                         </div>
                       ))}
                     </div>
