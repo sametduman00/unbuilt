@@ -3941,7 +3941,7 @@ function HomeInner() {
                         updated monthly for new tools
                       </div>
                       <h1 style={{ fontSize: "3rem", fontWeight: 800, letterSpacing: "-0.05em", lineHeight: 1.05, color: "var(--clr-text)", marginBottom: 14 }}>
-                        Stop Googling<br/><em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>"best tools for X."</em>
+                        Stop Googling<br/><em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>"best tools for vibecoding"</em>
                       </h1>
                       <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 440, margin: "0 auto" }}>
                         Describe what you're building.<br/>We'll give you exact tools, real costs and build order — matched to your budget and skill level.
