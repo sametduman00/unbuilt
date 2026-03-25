@@ -3442,10 +3442,10 @@ function HomeInner() {
                     <h1 style={{ fontSize: "1.6rem", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.15, color: "var(--clr-text)", margin: "0 0 6px" }}>
                       Hello, Vibecoder!
                     </h1>
-                    <p style={{ fontSize: "1rem", fontWeight: 400, color: "var(--clr-text-3)", fontStyle: "italic", margin: "0 0 12px", letterSpacing: "-0.01em" }}>
+                    <p style={{ fontSize: "1.4rem", fontWeight: 400, color: "var(--clr-text-3)", fontStyle: "italic", margin: "0 0 14px", letterSpacing: "-0.02em" }}>
                       Another idea dropped?
                     </p>
-                    <p style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", lineHeight: 1.6, margin: "0 0 18px", maxWidth: 520 }}>
+                    <p style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", lineHeight: 1.6, margin: "0 0 18px", whiteSpace: "nowrap" as const }}>
                       <strong style={{ color: "var(--clr-text)", fontWeight: 700 }}>Don't build what already exists.</strong>
                       {" "}We'll show you what doesn't — and exactly how to build it.
                     </p>
