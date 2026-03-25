@@ -2400,35 +2400,29 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
           </div>
         )}
         {/* Phase overview cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 10 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(170px,1fr))", gap: 10 }}>
           {data.phases.map((phase, pi) => {
             const isP0 = isPhaseZero(phase.name);
             const colors = ["#6366f1","#10b981","#0ea5e9","#f59e0b","#8b5cf6"];
             const bgs = ["#f5f3ff","#f0fdf4","#f0f9ff","#fffbeb","#faf5ff"];
             const c = colors[pi] ?? colors[0];
             const bg = bgs[pi] ?? bgs[0];
+            const phaseName = phase.name.replace(/^Phase\s*\d+:\s*/i, '');
             return (
               <button key={pi} onClick={() => setStackTab(pi + 1)}
-                style={{ background: bg, border: `1px solid ${c}33`, borderRadius: 10, padding: "12px 14px", cursor: "pointer", textAlign: "left" as const, fontFamily: "inherit" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-                  <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: c }}>{isP0 ? "Start here" : `Phase ${pi}`}</span>
-                  {phase.costs?.total && <span style={{ fontSize: 12, fontWeight: 700, color: c }}>{phase.costs.total}</span>}
+                style={{ background: bg, border: `1px solid ${c}33`, borderRadius: 10, padding: "12px 14px", cursor: "pointer", textAlign: "left" as const, fontFamily: "inherit", display: "flex", flexDirection: "column" as const, gap: 0, minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6, gap: 6 }}>
+                  <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: c, flexShrink: 0 }}>{isP0 ? "Start here" : `Phase ${pi}`}</span>
+                  {phase.costs?.total && <span style={{ fontSize: 11, fontWeight: 700, color: c, flexShrink: 0 }}>{phase.costs.total}</span>}
                 </div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#111827", marginBottom: 4 }}>{phase.name.replace(/^Phase \d+:\s*/i, '')}</div>
-                <div style={{ fontSize: 11, color: "#6b7280" }}>{phase.subtitle}</div>
-                <div style={{ fontSize: 10, color: c, marginTop: 6 }}>{phase.tools.length} tools →</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 4, lineHeight: 1.3 }}>{phaseName}</div>
+                <div style={{ fontSize: 11, color: "#6b7280", lineHeight: 1.4, marginBottom: 8, flex: 1 }}>{phase.subtitle}</div>
+                <div style={{ fontSize: 10, fontWeight: 600, color: c }}>{phase.tools.length} tools →</div>
               </button>
             );
           })}
         </div>
-        {/* Mistakes preview */}
-        {data.mistakes.length > 0 && (
-          <div style={{ background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 10, padding: "12px 14px" }}>
-            <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, color: "#ea580c", marginBottom: 8, letterSpacing: "0.07em" }}>⚠ Common Mistakes to Avoid</div>
-            {data.mistakes.slice(0,2).map((m, i) => <div key={i} style={{ fontSize: 12, color: "#374151", marginBottom: 4 }}>• <strong>{m.title}</strong></div>)}
-            {data.mistakes.length > 2 && <button onClick={() => setStackTab(stackTabs.findIndex(t => t.label === "Avoid These"))} style={{ fontSize: 11, color: "#ea580c", background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "inherit" }}>See all {data.mistakes.length} →</button>}
-          </div>
-        )}
+
       </div>
     );
 
@@ -2510,21 +2504,21 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
 
           {/* Vibe Guide */}
           {(phase as any).vibeGuide && (phase as any).vibeGuide.length > 0 && (
-            <div style={{ background: "linear-gradient(135deg, #faf5ff 0%, #f0f9ff 100%)", border: "1px solid #e9d5ff", borderRadius: 10, padding: "14px 16px" }}>
+            <div style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #f0f9ff 100%)", border: "1px solid #d1fae5", borderRadius: 10, padding: "14px 16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
                 <span style={{ fontSize: 14 }}>🚀</span>
-                <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#7c3aed" }}>How to actually do this</span>
+                <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#0d9488" }}>How to actually do this</span>
               </div>
               <div style={{ display: "flex", flexDirection: "column" as const, gap: 10 }}>
                 {(phase as any).vibeGuide.map((step: any, si: number) => (
-                  <div key={si} style={{ background: "white", borderRadius: 8, padding: "12px 14px", border: "1px solid #ede9fe" }}>
+                  <div key={si} style={{ background: "white", borderRadius: 8, padding: "12px 14px", border: "1px solid #d1fae5" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                      <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#7c3aed", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.65rem", fontWeight: 700, flexShrink: 0 }}>{si + 1}</div>
-                      <a href={step.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, color: "#7c3aed", textDecoration: "none" }}>Open {step.tool} →</a>
+                      <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#0d9488", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.65rem", fontWeight: 700, flexShrink: 0 }}>{si + 1}</div>
+                      <a href={step.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, color: "#0d9488", textDecoration: "none" }}>Open {step.tool} →</a>
                     </div>
-                    <div style={{ background: "#f5f3ff", borderRadius: 6, padding: "8px 10px", marginBottom: step.tip ? 8 : 0 }}>
-                      <div style={{ fontSize: 9, fontWeight: 700, color: "#7c3aed", textTransform: "uppercase" as const, letterSpacing: "0.05em", marginBottom: 4 }}>Type this:</div>
-                      <p style={{ fontSize: 13, color: "#4c1d95", margin: 0, lineHeight: 1.6 }}>{step.prompt}</p>
+                    <div style={{ background: "#f0fdfa", borderRadius: 6, padding: "8px 10px", marginBottom: step.tip ? 8 : 0 }}>
+                      <div style={{ fontSize: 9, fontWeight: 700, color: "#0d9488", textTransform: "uppercase" as const, letterSpacing: "0.05em", marginBottom: 4 }}>Type this:</div>
+                      <p style={{ fontSize: 13, color: "#134e4a", margin: 0, lineHeight: 1.6 }}>{step.prompt}</p>
                     </div>
                     {step.tip && (
                       <div style={{ display: "flex", alignItems: "flex-start", gap: 6, marginTop: 8 }}>
@@ -2646,13 +2640,12 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
           const dotColor = ti === 0 ? "#6366f1" : isPhase ? (phaseColors[(ti-1) % phaseColors.length]) : "#9ca3af";
           return (
             <button key={ti} onClick={() => { setStackTab(ti); document.getElementById('stack-tab-content')?.scrollTo({top:0}); }}
-              style={{ display: "flex", alignItems: "center", width: "100%", padding: "8px 10px", borderRadius: 8, background: isActive ? "white" : "transparent", border: `1px solid ${isActive ? "#e5e7eb" : "transparent"}`, cursor: "pointer", textAlign: "left" as const, boxShadow: isActive ? "0 1px 2px rgba(0,0,0,0.05)" : "none", gap: 8 }}>
-              <span style={{ fontSize: 11, color: dotColor, flexShrink: 0, fontWeight: 700 }}>{isActive ? "●" : isPhase ? "✓" : tab.icon}</span>
-              <span style={{ fontSize: 13, fontWeight: isActive ? 600 : 400, color: isActive ? "#111827" : "#374151", flex: 1 }}>{tab.label}</span>
+              style={{ display: "flex", alignItems: "flex-start", width: "100%", padding: "8px 10px", borderRadius: 8, background: isActive ? "white" : "transparent", border: `1px solid ${isActive ? "#e5e7eb" : "transparent"}`, cursor: "pointer", textAlign: "left" as const, boxShadow: isActive ? "0 1px 2px rgba(0,0,0,0.05)" : "none", gap: 6 }}>
+              <span style={{ fontSize: 11, color: dotColor, flexShrink: 0, fontWeight: 700, marginTop: 1 }}>{isActive ? "●" : isPhase ? "✓" : tab.icon}</span>
+              <span style={{ fontSize: 12, fontWeight: isActive ? 600 : 400, color: isActive ? "#111827" : "#374151", flex: 1, lineHeight: 1.35, wordBreak: "break-word" as const }}>{tab.label}</span>
               {isPhase && data.phases[ti-1].costs?.total && (
-                <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", flexShrink: 0 }}>{data.phases[ti-1].costs?.total}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", flexShrink: 0, marginTop: 1 }}>{data.phases[ti-1].costs.total.split(' ')[0]}</span>
               )}
-              <span style={{ fontSize: 12, color: "#9ca3af", flexShrink: 0 }}>{isActive ? "↓" : "›"}</span>
             </button>
           );
         })}
