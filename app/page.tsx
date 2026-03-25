@@ -2215,10 +2215,10 @@ function InputSection({
                   Sample Report
                 </button>
               )}
+              <div title={!canSubmit ? "Write at least 40 characters" : undefined} style={{ display: "inline-flex" }}>
               <button
                 onClick={onSubmit}
                 disabled={!canSubmit}
-                title={!canSubmit ? "Write at least 40 characters" : undefined}
                 style={{
                   display: "flex", alignItems: "center", gap: 8,
                   padding: "0.5625rem 1.25rem", borderRadius: 8,
@@ -2230,6 +2230,7 @@ function InputSection({
                   transition: "opacity 0.2s, filter 0.2s",
                   opacity: ((tool.id === "gap-analysis" || tool.id === "stack-advisor") && !canSubmit) ? 0.3 : 1,
                   filter: ((tool.id === "gap-analysis" || tool.id === "stack-advisor") && !canSubmit) ? "blur(1px)" : "none",
+                  pointerEvents: ((tool.id === "gap-analysis" || tool.id === "stack-advisor") && !canSubmit) ? "none" : "auto",
                 }}
               >
                 {loading ? (
@@ -2246,6 +2247,7 @@ function InputSection({
                   </>
                 )}
               </button>
+              </div>
             </div>
           </div>
         </div>
