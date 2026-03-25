@@ -304,21 +304,21 @@ export default function ReportsPage() {
     const html = buildHtml(report);
     const filename = report.idea.replace(/[^a-z0-9]+/gi,"-").toLowerCase() + "-report.pdf";
 
-    // Overlay to hide the render container from user
+    // Parse HTML properly with DOMParser instead of regex
     const overlay = document.createElement("div");
     overlay.style.cssText = "position:fixed;inset:0;background:white;z-index:9998;";
     document.body.appendChild(overlay);
 
-    // Container must be VISIBLE (not hidden) for html2canvas to capture it
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
     const container = document.createElement("div");
-    container.style.cssText = "position:fixed;top:0;left:0;width:820px;background:white;z-index:9999;pointer-events:none;";
-    container.innerHTML = html
-      .replace(/<!DOCTYPE[^>]*>/i,"")
-      .replace(/<html[^>]*>/i,"")
-      .replace(/<\/html>/i,"")
-      .replace(/<head>[\s\S]*?<\/head>/i,"")
-      .replace(/<body[^>]*>/i,"")
-      .replace(/<\/body>/i,"");
+    container.style.cssText = "position:fixed;top:0;left:0;width:820px;background:white;z-index:9999;pointer-events:none;font-family:system-ui,sans-serif;";
+    // Copy styles from parsed doc
+    const styleEl = document.createElement("style");
+    styleEl.textContent = Array.from(doc.querySelectorAll("style")).map(s => s.textContent).join("\n");
+    container.appendChild(styleEl);
+    // Copy body content
+    container.appendChild(doc.body);
     document.body.appendChild(container);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
