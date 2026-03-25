@@ -1407,7 +1407,7 @@ function DigSampleReport() {
   };
 
   return (
-    <div style={{ padding: "0 0 40px" }}>
+    <div style={{ padding: "20px 0 40px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-4)" }}>What you'll get</span>
         <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>« AI habit tracker with social accountability »</span>
@@ -2007,9 +2007,9 @@ function InputSection({
   ];
 
   return (
-    <div style={{ animation: "fadeSlideIn 0.28s ease", marginTop: "1rem", marginBottom: "0" }}>
+    <div style={{ animation: "fadeSlideIn 0.28s ease", marginTop: "0", marginBottom: "0" }}>
       {/* Connection line from cards */}
-      <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
+      <div style={{ display: "none", justifyContent: "center", marginBottom: "1.5rem" }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
           <div style={{ width: 1, height: 24, background: `linear-gradient(to bottom, transparent, rgba(${tool.accentRgb},0.4))` }} />
           <div style={{ width: 6, height: 6, borderRadius: "50%", background: tool.accentColor }} />
@@ -3880,7 +3880,7 @@ function HomeInner() {
                 <div ref={inputSectionRef}>
                   {/* Hero above prompt */}
                   {selectedTool === "gap-analysis" && (
-                    <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "center", padding: "22px 24px 18px", borderBottom: "1px solid var(--clr-border)", marginBottom: 0, background: "var(--clr-surface)" }}>
+                    <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "center", padding: "28px 24px 20px", borderBottom: "1px solid var(--clr-border)", marginBottom: 0, background: "var(--clr-surface)", marginTop: 12 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--clr-text-4)", marginBottom: 8 }}>
                         <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
                         Live data · Updated continuously
