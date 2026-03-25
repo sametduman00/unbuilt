@@ -3811,7 +3811,7 @@ ${sections.join("\n")}
 
                         // Use html2pdf directly - no new tab
                         const container = document.createElement("div");
-                        container.style.cssText = "position:fixed;left:-9999px;top:-9999px;width:820px;background:white;font-family:system-ui,sans-serif;";
+                        container.style.cssText = "position:fixed;top:0;left:0;width:820px;background:white;font-family:system-ui,sans-serif;visibility:hidden;z-index:-1;pointer-events:none;";
                         container.innerHTML = html.replace(/<!DOCTYPE[^>]*>/i,"").replace(/<html[^>]*>/i,"").replace(/<\/html>/i,"").replace(/<head>[\s\S]*?<\/head>/i,"").replace(/<body[^>]*>/i,"").replace(/<\/body>/i,"");
                         document.body.appendChild(container);
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any

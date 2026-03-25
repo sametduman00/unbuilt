@@ -306,7 +306,7 @@ export default function ReportsPage() {
 
     // Parse the HTML and render into a hidden div in the current page
     const container = document.createElement("div");
-    container.style.cssText = "position:fixed;left:-9999px;top:-9999px;width:820px;background:white;";
+    container.style.cssText = "position:fixed;top:0;left:0;width:820px;background:white;visibility:hidden;z-index:-1;pointer-events:none;";
     container.innerHTML = html.replace(/<!DOCTYPE[^>]*>/i,"").replace(/<html[^>]*>/i,"").replace(/<\/html>/i,"").replace(/<head>[\s\S]*?<\/head>/i,"").replace(/<body[^>]*>/i,"").replace(/<\/body>/i,"");
     document.body.appendChild(container);
 
