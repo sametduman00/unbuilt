@@ -2228,8 +2228,8 @@ function InputSection({
                   cursor: canSubmit ? "pointer" : "default",
                   fontFamily: "inherit", letterSpacing: "-0.01em",
                   transition: "opacity 0.2s, filter 0.2s",
-                  opacity: (tool.id === "gap-analysis" && !canSubmit) ? 0.3 : 1,
-                  filter: (tool.id === "gap-analysis" && !canSubmit) ? "blur(1px)" : "none",
+                  opacity: ((tool.id === "gap-analysis" || tool.id === "stack-advisor") && !canSubmit) ? 0.3 : 1,
+                  filter: ((tool.id === "gap-analysis" || tool.id === "stack-advisor") && !canSubmit) ? "blur(1px)" : "none",
                 }}
               >
                 {loading ? (
@@ -3944,7 +3944,7 @@ function HomeInner() {
                         Stop Googling<br/><em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>"best tools for X."</em>
                       </h1>
                       <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 440, margin: "0 auto" }}>
-                        Describe what you're building. We'll give you a phased stack — exact tools, real costs, build order —<br/>matched to your budget and skill level.
+                        Describe what you're building.<br/>We'll give you exact tools, real costs and build order — matched to your budget and skill level.
                       </p>
                     </div>
                   )}
