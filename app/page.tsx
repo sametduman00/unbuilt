@@ -2217,8 +2217,7 @@ function InputSection({
               )}
               <div title={!canSubmit ? "Write at least 40 characters" : undefined} style={{ display: "inline-flex" }}>
               <button
-                onClick={onSubmit}
-                disabled={!canSubmit}
+                onClick={() => { if (!canSubmit) { const el = document.getElementById("char-counter"); if (el) { el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); } } else { onSubmit(); } }}
                 style={{
                   display: "flex", alignItems: "center", gap: 8,
                   padding: "0.5625rem 1.25rem", borderRadius: 8,
@@ -2228,9 +2227,8 @@ function InputSection({
                   cursor: canSubmit ? "pointer" : "default",
                   fontFamily: "inherit", letterSpacing: "-0.01em",
                   transition: "opacity 0.2s, filter 0.2s",
-                  opacity: ((tool.id === "gap-analysis" || tool.id === "stack-advisor") && !canSubmit) ? 0.3 : 1,
-                  filter: ((tool.id === "gap-analysis" || tool.id === "stack-advisor") && !canSubmit) ? "blur(1px)" : "none",
-                  pointerEvents: ((tool.id === "gap-analysis" || tool.id === "stack-advisor") && !canSubmit) ? "none" : "auto",
+                  opacity: 1,
+                  filter: "none",
                 }}
               >
                 {loading ? (
@@ -3523,7 +3521,7 @@ function HomeInner() {
     <>
       <style>{`
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin { to { transform: rotate(360deg); } } @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} } #char-counter.shake { animation: shake 0.35s ease; }
         @keyframes fadeSlideIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:none; } }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
         @keyframes scanCardIn { from { opacity:0; transform:translateY(20px) scale(0.98); } to { opacity:1; transform:none; } }
