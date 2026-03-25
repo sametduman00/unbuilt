@@ -2028,7 +2028,7 @@ function InputSection({
         overflow: "hidden",
       }}>
         {/* Card header — only for non-Dig tools */}
-        {tool.id !== "gap-analysis" && (
+        {tool.id !== "gap-analysis" && tool.id !== "stack-advisor" && (
         <div style={{
           display: "flex", alignItems: "center", gap: 10,
           padding: "1rem 1.5rem",
@@ -2182,7 +2182,7 @@ function InputSection({
             borderTop: "1px solid var(--clr-border-deep)",
           }}>
             {/* Char counter for Dig */}
-            {tool.id === "gap-analysis" ? (
+            {(tool.id === "gap-analysis" || tool.id === "stack-advisor") ? (
               charsLeft > 0 ? (
                 <span style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", transition: "all 0.2s" }}>
                   <span style={{ fontWeight: 700, color: charCount > 20 ? "var(--clr-text-2)" : "var(--clr-text-4)" }}>{charsLeft}</span> more to unlock
@@ -2196,7 +2196,7 @@ function InputSection({
               <span style={{ fontSize: "0.7rem", color: "var(--clr-text-8)" }}>⌘↵ to run</span>
             )}
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              {tool.id === "gap-analysis" && (
+              {(tool.id === "gap-analysis" || tool.id === "stack-advisor") && (
                 <button
                   onClick={() => { const el = document.getElementById("dig-sample-report"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
                   style={{
@@ -3930,6 +3930,21 @@ function HomeInner() {
                       </h1>
                       <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 440, margin: "0 auto" }}>
                         Describe your idea. We'll scan 70+ live sources — Reddit, App Store, X, competitors — and tell you exactly where the gap is.
+                      </p>
+                    </div>
+                  )}
+                  {/* Stack hero */}
+                  {selectedTool === "stack-advisor" && (
+                    <div style={{ textAlign: "center" as const, padding: "36px 24px 20px" }}>
+                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "0.6875rem", color: "var(--clr-text-3)", marginBottom: 14, letterSpacing: "0.03em" }}>
+                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#0ea5e9", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
+                        updated monthly for new tools
+                      </div>
+                      <h1 style={{ fontSize: "3rem", fontWeight: 800, letterSpacing: "-0.05em", lineHeight: 1.05, color: "var(--clr-text)", marginBottom: 14 }}>
+                        Stop Googling<br/><em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>"best tools for X."</em>
+                      </h1>
+                      <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 440, margin: "0 auto" }}>
+                        Describe what you're building. We'll give you a phased stack — exact tools, real costs, build order — matched to your budget and skill level.
                       </p>
                     </div>
                   )}
