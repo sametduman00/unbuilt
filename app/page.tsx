@@ -2476,12 +2476,14 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                   </div>
                   <p style={{ fontSize: 12, color: "#6b7280", margin: "0 0 8px 0", lineHeight: 1.5 }}>{tool.purpose}</p>
                   {tool.alternatives && tool.alternatives.length > 0 && (
-                    <div style={{ display: "flex", flexDirection: "column" as const, gap: 4, marginTop: 4 }}>
+                    <div style={{ display: "flex", flexDirection: "column" as const, gap: 5, marginTop: 6, borderTop: "1px solid #f3f4f6", paddingTop: 6 }}>
                       {tool.alternatives.map((alt, ai) => (
-                        <div key={ai} style={{ display: "flex", alignItems: "flex-start", gap: 6 }}>
-                          <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 3, background: "#f3f4f6", border: "1px solid #e5e7eb", color: "#9ca3af", flexShrink: 0, marginTop: 1 }}>ALT</span>
-                          <span style={{ fontSize: 11, color: "#374151", fontWeight: 600 }}>{alt.name}</span>
-                          {alt.reason && <span style={{ fontSize: 11, color: "#9ca3af" }}>— {alt.reason}</span>}
+                        <div key={ai} style={{ display: "flex", alignItems: "flex-start", gap: 6, minWidth: 0 }}>
+                          <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 5px", borderRadius: 3, background: "#f3f4f6", border: "1px solid #e5e7eb", color: "#9ca3af", flexShrink: 0, marginTop: 1, letterSpacing: "0.04em" }}>ALT</span>
+                          <div style={{ minWidth: 0 }}>
+                            <span style={{ fontSize: 11, color: "#374151", fontWeight: 600 }}>{alt.name}</span>
+                            {alt.reason && <span style={{ fontSize: 11, color: "#9ca3af", display: "block", lineHeight: 1.4 }}>{alt.reason}</span>}
+                          </div>
                         </div>
                       ))}
                     </div>
