@@ -2365,455 +2365,303 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
   };
   if (!data.headline && data.phases.length === 0) return null;
   const isPhaseZero = (name: string) => /phase\s*0/i.test(name) || /validate/i.test(name);
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+  const [stackTab, setStackTab] = useState(0);
+  const stackTabs = [
+    { label: "Overview", icon: "●" },
+    ...data.phases.map((p, i) => ({ label: p.name.replace(/^Phase \d+:\s*/i, ''), icon: isPhaseZero(p.name) ? "0" : String(i) })),
+    ...(data.buildOrder.length > 0 ? [{ label: "Build Order", icon: "→" }] : []),
+    ...(data.mistakes.length > 0 ? [{ label: "Avoid These", icon: "✗" }] : []),
+    ...((data.scalability.length > 0 || data.upgrades.length > 0) ? [{ label: "Scale Up", icon: "↑" }] : []),
+  ];
+  const totalCost = data.phases.reduce((sum, p) => {
+    const t = p.costs?.total ?? "";
+    const m = t.match(/\$([\d.]+)/);
+    return sum + (m ? parseFloat(m[1]) : 0);
+  }, 0);
 
-      {/* ââ HEADLINE ââ */}
-      {data.headline && (
-        <div style={{
-          background: "var(--clr-surface)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
-          borderRadius: 12, padding: "1.25rem 1.5rem",
-          borderTop: "3px solid var(--clr-accent)",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: "0.5rem" }}>
-            <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--clr-text-6)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              Recommendation
-            </span>
-            <span style={{
-              fontSize: "0.55rem", fontWeight: 700, padding: "0.12rem 0.5rem",
-              borderRadius: 999, background: "rgba(var(--clr-text-rgb),0.1)",
-              color: "var(--clr-text-2)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
-              letterSpacing: "0.03em",
-            }}>
-              Pricing verified March 2026
-            </span>
+  const renderStackTab = () => {
+    // Overview tab
+    if (stackTab === 0) return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {data.headline && (
+          <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: 10, padding: "14px 16px" }}>
+            <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, color: "#7c3aed", marginBottom: 4, letterSpacing: "0.07em" }}>Recommendation</div>
+            <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: "#111827", lineHeight: 1.55 }}>{data.headline}</p>
+            {data.timeToMvp && (
+              <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap" as const }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 10px", borderRadius: 6, background: "rgba(99,102,241,0.08)", border: "1px solid #ddd6fe", fontSize: 12, fontWeight: 600, color: "#4f46e5" }}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  MVP: {data.timeToMvp}
+                </span>
+                {totalCost > 0 && <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 10px", borderRadius: 6, background: "#f0fdf4", border: "1px solid #bbf7d0", fontSize: 12, fontWeight: 600, color: "#16a34a" }}>~${totalCost}/mo total</span>}
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 10px", borderRadius: 6, background: "rgba(99,102,241,0.06)", border: "1px solid #e0e7ff", fontSize: 12, fontWeight: 600, color: "#6366f1" }}>{data.phases.length} phases</span>
+              </div>
+            )}
           </div>
-          <p style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.5, letterSpacing: "-0.01em" }}>
-            {data.headline}
-          </p>
-          {data.timeToMvp && (
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: "0.5rem" }}>
-              <span style={{
-                display: "inline-flex", alignItems: "center", gap: 5,
-                padding: "3px 10px", borderRadius: 6,
-                background: "rgba(var(--clr-text-rgb),0.06)",
-                border: "1px solid var(--clr-border-2)",
-                fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text-3)",
-              }}>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                </svg>
-                MVP: {data.timeToMvp}
-              </span>
+        )}
+        {/* Phase overview cards */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 10 }}>
+          {data.phases.map((phase, pi) => {
+            const isP0 = isPhaseZero(phase.name);
+            const colors = ["#6366f1","#10b981","#0ea5e9","#f59e0b","#8b5cf6"];
+            const bgs = ["#f5f3ff","#f0fdf4","#f0f9ff","#fffbeb","#faf5ff"];
+            const c = colors[pi] ?? colors[0];
+            const bg = bgs[pi] ?? bgs[0];
+            return (
+              <button key={pi} onClick={() => setStackTab(pi + 1)}
+                style={{ background: bg, border: `1px solid ${c}33`, borderRadius: 10, padding: "12px 14px", cursor: "pointer", textAlign: "left" as const, fontFamily: "inherit" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                  <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: c }}>{isP0 ? "Start here" : `Phase ${pi}`}</span>
+                  {phase.costs?.total && <span style={{ fontSize: 12, fontWeight: 700, color: c }}>{phase.costs.total}</span>}
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#111827", marginBottom: 4 }}>{phase.name.replace(/^Phase \d+:\s*/i, '')}</div>
+                <div style={{ fontSize: 11, color: "#6b7280" }}>{phase.subtitle}</div>
+                <div style={{ fontSize: 10, color: c, marginTop: 6 }}>{phase.tools.length} tools →</div>
+              </button>
+            );
+          })}
+        </div>
+        {/* Mistakes preview */}
+        {data.mistakes.length > 0 && (
+          <div style={{ background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 10, padding: "12px 14px" }}>
+            <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, color: "#ea580c", marginBottom: 8, letterSpacing: "0.07em" }}>⚠ Common Mistakes to Avoid</div>
+            {data.mistakes.slice(0,2).map((m, i) => <div key={i} style={{ fontSize: 12, color: "#374151", marginBottom: 4 }}>• <strong>{m.title}</strong></div>)}
+            {data.mistakes.length > 2 && <button onClick={() => setStackTab(stackTabs.findIndex(t => t.label === "Avoid These"))} style={{ fontSize: 11, color: "#ea580c", background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "inherit" }}>See all {data.mistakes.length} →</button>}
+          </div>
+        )}
+      </div>
+    );
+
+    // Phase tabs
+    const phaseIdx = stackTab - 1;
+    if (phaseIdx >= 0 && phaseIdx < data.phases.length) {
+      const phase = data.phases[phaseIdx];
+      const isP0 = isPhaseZero(phase.name);
+      const colors = ["#6366f1","#10b981","#0ea5e9","#f59e0b","#8b5cf6"];
+      const c = colors[phaseIdx] ?? colors[0];
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: c, marginBottom: 3 }}>
+                {isP0 ? "● Do This First" : `● Phase ${phaseIdx}`}
+              </div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: "#111827" }}>{phase.name.replace(/^Phase \d+:\s*/i, '')}</div>
+              {phase.subtitle && <div style={{ fontSize: 13, color: "#6b7280", marginTop: 2 }}>{phase.subtitle}</div>}
+            </div>
+            {phase.costs?.total && (
+              <div style={{ textAlign: "right" as const, flexShrink: 0 }}>
+                <div style={{ fontSize: 9, color: "#9ca3af", textTransform: "uppercase" as const, letterSpacing: "0.06em", marginBottom: 2 }}>Phase total</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: "#111827" }}>{phase.costs.total}</div>
+              </div>
+            )}
+          </div>
+
+          {/* Tools grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 10 }}>
+            {phase.tools.map((tool, ti) => {
+              const ytVid = ytToolMap.get(tool.name.toLowerCase());
+              return (
+                <div key={ti} style={{ border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 14px", background: "#fafafa" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 7 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{tool.name}</div>
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 5, background: tool.free ? "#dcfce7" : "#fff7ed", color: tool.free ? "#16a34a" : "#ea580c", flexShrink: 0, marginLeft: 6 }}>{tool.free ? "Free" : tool.price}</span>
+                  </div>
+                  <p style={{ fontSize: 12, color: "#6b7280", margin: "0 0 8px 0", lineHeight: 1.5 }}>{tool.purpose}</p>
+                  {tool.alternatives && tool.alternatives.length > 0 && (
+                    <div style={{ display: "flex", gap: 5, flexWrap: "wrap" as const }}>
+                      {tool.alternatives.map((alt, ai) => (
+                        <span key={ai} title={alt.reason} style={{ fontSize: 10, padding: "2px 7px", borderRadius: 4, background: "#f3f4f6", border: "1px solid #e5e7eb", color: "#6b7280" }}>alt: {alt.name}</span>
+                      ))}
+                    </div>
+                  )}
+                  {ytVid && (
+                    <a href={`https://youtube.com/watch?v=${ytVid.videoId}`} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 8, padding: "5px 8px", borderRadius: 6, background: "#fef2f2", border: "1px solid #fecaca", textDecoration: "none" }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="#dc2626"><path d="M23 7s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.2 2.8 12 2.8 12 2.8s-4.2 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.3v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.6 12 21.6 12 21.6s4.2 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zm-13.5 8.6V8.4l8.1 3.6-8.1 3.6z"/></svg>
+                      <span style={{ fontSize: 10, color: "#dc2626", fontWeight: 600 }}>{ytVid.title.substring(0, 45)}…</span>
+                    </a>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Cost breakdown */}
+          {phase.costs && phase.costs.tools.length > 0 && (
+            <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 14px" }}>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, color: "#9ca3af", marginBottom: 9, letterSpacing: "0.07em" }}>Cost Breakdown</div>
+              {phase.costs.tools.map((ct, ci) => (
+                <div key={ci} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px 0", borderBottom: ci < phase.costs!.tools.length - 1 ? "1px solid #f3f4f6" : "none" }}>
+                  <div>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>{ct.name}</span>
+                    <span style={{ fontSize: 11, color: "#9ca3af", marginLeft: 6 }}>{ct.purpose}</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    {ct.freeTier && <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 5px", borderRadius: 3, background: "#dcfce7", color: "#16a34a" }}>FREE</span>}
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "#111827" }}>{ct.monthlyCost}</span>
+                  </div>
+                </div>
+              ))}
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8, paddingTop: 8, borderTop: "1px solid #e5e7eb" }}>
+                <span style={{ fontSize: 13, fontWeight: 800, color: "#111827" }}>{phase.costs.total}</span>
+              </div>
             </div>
           )}
-        </div>
-      )}
 
-      {/* ââ PHASES (with embedded cost breakdown) ââ */}
-      {data.phases.map((phase, pi) => {
-        const isP0 = isPhaseZero(phase.name);
-        const color = PHASE_COLORS[pi] ?? PHASE_COLORS[PHASE_COLORS.length - 1];
-        const bg = PHASE_BGS[pi] ?? PHASE_BGS[PHASE_BGS.length - 1];
-        const phaseCosts = phase.costs;
-        return (
-          <div key={pi} style={{
-            background: "var(--clr-surface)", border: `1px solid ${isP0 ? "rgba(234,179,8,0.3)" : "var(--clr-border)"}`,
-            borderRadius: 12, overflow: "hidden",
-          }}>
-            <div style={{
-              height: 3, background: `linear-gradient(90deg, ${color}, ${color}80)`,
-            }} />
-            <div style={{ padding: "1.25rem 1.5rem" }}>
-              {/* Phase header */}
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "0.2rem" }}>
-                <div style={{
-                  width: 28, height: 28, borderRadius: 8,
-                  background: bg, border: `1px solid ${color}30`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "0.75rem", fontWeight: 800, color,
-                }}>
-                  {pi}
-                </div>
-                <span style={{ fontSize: "1rem", fontWeight: 750, color: "var(--clr-text)", letterSpacing: "-0.02em" }}>
-                  {phase.name}
-                </span>
-                {isP0 && (
-                  <span style={{
-                    fontSize: "0.58rem", fontWeight: 800, padding: "0.15rem 0.6rem",
-                    borderRadius: 999, letterSpacing: "0.05em",
-                    background: "rgba(var(--clr-text-rgb),0.15)", color: "var(--clr-text-2)",
-                    border: "1px solid rgba(var(--clr-text-rgb),0.35)",
-                    animation: "pulse 2s ease-in-out infinite",
-                  }}>
-                    DO THIS FIRST
-                  </span>
-                )}
+          {/* Vibe Guide */}
+          {(phase as any).vibeGuide && (phase as any).vibeGuide.length > 0 && (
+            <div style={{ background: "linear-gradient(135deg, #faf5ff 0%, #f0f9ff 100%)", border: "1px solid #e9d5ff", borderRadius: 10, padding: "14px 16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
+                <span style={{ fontSize: 14 }}>🚀</span>
+                <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#7c3aed" }}>How to actually do this</span>
               </div>
-              {phase.subtitle && (
-                <p style={{ margin: "0 0 1rem 38px", fontSize: "0.78rem", color: "var(--clr-text-5)", lineHeight: 1.4 }}>
-                  {phase.subtitle}
-                </p>
-              )}
-
-              {/* Tool chips */}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginLeft: 38 }}>
-                {phase.tools.map((tool, ti) => (
-                  <div key={ti} style={{
-                    display: "flex", alignItems: "center", gap: 8,
-                    padding: "0.5rem 0.875rem", borderRadius: 10,
-                    background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
-                  }}>
-                    <div style={{
-                      width: 6, height: 6, borderRadius: "50%",
-                      background: color, flexShrink: 0,
-                    }} />
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                        <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--clr-text)" }}>
-                          {tool.name}
-                        </span>
-                        <span style={{
-                          fontSize: "0.58rem", fontWeight: 700, padding: "0.08rem 0.4rem",
-                          borderRadius: 999,
-                          background: tool.free ? "rgba(var(--clr-text-rgb),0.1)" : "rgba(var(--clr-text-rgb),0.08)",
-                          color: tool.free ? "var(--clr-text-2)" : "var(--clr-text-3)",
-                          border: `1px solid ${tool.free ? "rgba(var(--clr-text-rgb),0.25)" : "rgba(var(--clr-text-rgb),0.2)"}`,
-                        }}>
-                          {tool.price}
-                        </span>
-                        {(() => {
-                          const ytMatch = ytToolMap.get(tool.name.toLowerCase());
-                          if (!ytMatch) return null;
-                          const fmtV = ytMatch.viewCount >= 1_000_000 ? `${(ytMatch.viewCount / 1_000_000).toFixed(1)}M` : ytMatch.viewCount >= 1_000 ? `${(ytMatch.viewCount / 1_000).toFixed(0)}K` : String(ytMatch.viewCount);
-                          return (
-                            <a
-                              href={`https://youtube.com/watch?v=${ytMatch.videoId}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{
-                                fontSize: "0.55rem", fontWeight: 700, padding: "0.08rem 0.4rem",
-                                borderRadius: 999, textDecoration: "none",
-                                background: "rgba(255,0,0,0.08)", color: "var(--clr-text-3)",
-                                border: "1px solid rgba(255,0,0,0.2)",
-                              }}
-                            >
-                              ðº {fmtV} tutorial views
-                            </a>
-                          );
-                        })()}
-                      </div>
-                      <div style={{ fontSize: "0.68rem", color: "var(--clr-text-5)", marginTop: 2 }}>
-                        {tool.purpose}
-                      </div>
-                      {tool.alternatives && tool.alternatives.length > 0 && (
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 5 }}>
-                          {tool.alternatives.map((alt: { name: string; reason: string }, i: number) => (
-                            <span key={i} style={{
-                              fontSize: "0.6rem", padding: "2px 7px", borderRadius: 4,
-                              border: "1px dashed var(--clr-border-2)",
-                              color: "var(--clr-text-5)",
-                            }}>
-                              alt: {alt.name}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+              <div style={{ display: "flex", flexDirection: "column" as const, gap: 10 }}>
+                {(phase as any).vibeGuide.map((step: any, si: number) => (
+                  <div key={si} style={{ background: "white", borderRadius: 8, padding: "12px 14px", border: "1px solid #ede9fe" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                      <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#7c3aed", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.65rem", fontWeight: 700, flexShrink: 0 }}>{si + 1}</div>
+                      <a href={step.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, color: "#7c3aed", textDecoration: "none" }}>Open {step.tool} →</a>
                     </div>
+                    <div style={{ background: "#f5f3ff", borderRadius: 6, padding: "8px 10px", marginBottom: step.tip ? 8 : 0 }}>
+                      <div style={{ fontSize: 9, fontWeight: 700, color: "#7c3aed", textTransform: "uppercase" as const, letterSpacing: "0.05em", marginBottom: 4 }}>Type this:</div>
+                      <p style={{ fontSize: 13, color: "#4c1d95", margin: 0, lineHeight: 1.6 }}>{step.prompt}</p>
+                    </div>
+                    {step.tip && (
+                      <div style={{ display: "flex", alignItems: "flex-start", gap: 6, marginTop: 8 }}>
+                        <span style={{ fontSize: 12 }}>💡</span>
+                        <p style={{ fontSize: 12, color: "#6b7280", margin: 0, lineHeight: 1.5 }}>{step.tip}</p>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
-
-              {/* ââ Per-phase cost breakdown ââ */}
-              {phaseCosts && phaseCosts.tools.length > 0 && (
-                <div style={{ marginTop: "1rem", marginLeft: 38 }}>
-                  <div style={{
-                    padding: "0.75rem 1rem", borderRadius: 12,
-                    background: `${color}08`, border: `1px solid ${color}20`,
-                  }}>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                      {phaseCosts.tools.map((ct, ci) => (
-                        <div key={ci} style={{
-                          display: "flex", alignItems: "center", gap: 8,
-                          padding: "0.3rem 0",
-                        }}>
-                          <div style={{
-                            width: 5, height: 5, borderRadius: "50%", flexShrink: 0,
-                            background: ct.freeTier ? "var(--clr-text-2)" : "var(--clr-text-3)",
-                          }} />
-                          <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text-3)" }}>
-                            {ct.name}
-                          </span>
-                          <span style={{ fontSize: "0.65rem", color: "var(--clr-text-6)", flex: 1 }}>
-                            {ct.purpose}
-                          </span>
-                          <span style={{
-                            fontSize: "0.56rem", fontWeight: 700, padding: "0.05rem 0.35rem",
-                            borderRadius: 999, flexShrink: 0,
-                            background: ct.freeTier ? "rgba(var(--clr-text-rgb),0.1)" : "rgba(var(--clr-text-rgb),0.08)",
-                            color: ct.freeTier ? "var(--clr-text-2)" : "var(--clr-text-3)",
-                          }}>
-                            {ct.freeTier ? "FREE" : "PAID"}
-                          </span>
-                          <span style={{ fontSize: "0.8125rem", fontWeight: 800, color: "var(--clr-text)", minWidth: 45, textAlign: "right" }}>
-                            {ct.monthlyCost}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                    {/* Phase total pill */}
-                    <div style={{
-                      marginTop: "0.5rem", paddingTop: "0.5rem",
-                      borderTop: `1px solid ${color}20`,
-                      display: "flex", justifyContent: "flex-end",
-                    }}>
-                      <div style={{
-                        display: "inline-flex", alignItems: "center", gap: 6,
-                        padding: "0.3rem 0.875rem", borderRadius: 999,
-                        background: `${color}15`, border: `1px solid ${color}30`,
-                      }}>
-                        <span style={{ fontSize: "0.65rem", fontWeight: 600, color: "var(--clr-text-4)" }}>
-                          {phase.name.split(":")[0]} Total
-                        </span>
-                        <span style={{ fontSize: "1rem", fontWeight: 800, color, letterSpacing: "-0.02em" }}>
-                          {phaseCosts.total}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
-
-              {/* VIBE GUIDE */}
-              {(phase as any).vibeGuide && (phase as any).vibeGuide.length > 0 && (
-                <div style={{ marginTop: 12, background: "linear-gradient(135deg, #faf5ff 0%, #f0f9ff 100%)", border: "1px solid #e9d5ff", borderRadius: 10, padding: "14px 16px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
-                    <span style={{ fontSize: 14 }}>🚀</span>
-                    <span style={{ fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#7c3aed" }}>How to actually do this</span>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column" as const, gap: 10 }}>
-                    {(phase as any).vibeGuide.map((step: any, si: number) => (
-                      <div key={si} style={{ background: "white", borderRadius: 8, padding: "12px 14px", border: "1px solid #ede9fe" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                          <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#7c3aed", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.65rem", fontWeight: 700, flexShrink: 0 }}>{si + 1}</div>
-                          <a href={step.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.825rem", fontWeight: 700, color: "#7c3aed", textDecoration: "none" }}>Open {step.tool} →</a>
-                        </div>
-                        <div style={{ background: "#f5f3ff", borderRadius: 6, padding: "8px 10px", marginBottom: step.tip ? 8 : 0 }}>
-                          <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#7c3aed", textTransform: "uppercase" as const, letterSpacing: "0.05em", marginBottom: 4 }}>Type this:</div>
-                          <p style={{ fontSize: "0.8rem", color: "#4c1d95", margin: 0, lineHeight: 1.6 }}>{step.prompt}</p>
-                        </div>
-                        {step.tip && (
-                          <div style={{ display: "flex", alignItems: "flex-start", gap: 6, marginTop: 8 }}>
-                            <span style={{ fontSize: 12 }}>💡</span>
-                            <p style={{ fontSize: "0.75rem", color: "#6b7280", margin: 0, lineHeight: 1.5 }}>{step.tip}</p>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-          </div>
-        );
-      })}
-
-      {/* ââ BUILD ORDER TIMELINE ââ */}
-      {data.buildOrder.length > 0 && (
-        <div style={{
-          background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-          borderRadius: 12, padding: "1.25rem 1.5rem",
-        }}>
-          <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-text-5)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
-            Build Order
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 0, position: "relative" }}>
-            {data.buildOrder.map((block, bi) => {
-              const isLast = bi === data.buildOrder.length - 1;
-              const color = PHASE_COLORS[bi] ?? PHASE_COLORS[0];
-              return (
-                <div key={bi} style={{ display: "flex", gap: "1rem", position: "relative", paddingBottom: isLast ? 0 : "1.5rem" }}>
-                  {/* Timeline column */}
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 32, flexShrink: 0 }}>
-                    <div style={{
-                      width: 32, height: 32, borderRadius: "50%",
-                      background: `${color}18`, border: `2px solid ${color}`,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: "0.75rem", fontWeight: 800, color, zIndex: 1,
-                    }}>
-                      {bi + 1}
-                    </div>
-                    {!isLast && (
-                      <div style={{ width: 2, flex: 1, background: "var(--clr-border)", marginTop: 4 }} />
-                    )}
-                  </div>
-                  {/* Content */}
-                  <div style={{
-                    flex: 1, padding: "0.625rem 1rem", borderRadius: 12,
-                    background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
-                    marginTop: 0,
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.5rem" }}>
-                      <span style={{ fontSize: "0.68rem", fontWeight: 700, color, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                        {block.week}
-                      </span>
-                      <span style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)" }}>
-                        {block.title}
-                      </span>
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                      {block.steps.map((step, si) => (
-                        <div key={si} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                          <span style={{
-                            fontSize: "0.6rem", fontWeight: 700, color: "var(--clr-text-6)",
-                            width: 16, height: 16, borderRadius: "50%",
-                            background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            flexShrink: 0, marginTop: 1,
-                          }}>
-                            {si + 1}
-                          </span>
-                          <span style={{ fontSize: "0.78rem", color: "var(--clr-text-3)", lineHeight: 1.5 }}>
-                            {step}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          )}
         </div>
-      )}
+      );
+    }
 
-      {/* ââ MISTAKES TO AVOID ââ */}
-      {data.mistakes.length > 0 && (
-        <div style={{
-          background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-          borderRadius: 12, padding: "1.25rem 1.5rem",
-        }}>
-          <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-text-5)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
-            Mistakes to Avoid
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {data.mistakes.map((m, i) => {
-              const mColor = i === 0 ? "var(--clr-text)" : i === 1 ? "var(--clr-text-2)" : "var(--clr-text-3)";
-              return (
-                <div key={i} style={{
-                  display: "flex", gap: 0, borderRadius: 12, overflow: "hidden",
-                  background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
-                }}>
-                  <div style={{ width: 4, background: mColor, flexShrink: 0 }} />
-                  <div style={{ padding: "0.75rem 1rem" }}>
-                    <div style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 3 }}>
-                      {m.title}
-                    </div>
-                    <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", lineHeight: 1.55 }}>
-                      {m.description}
-                    </div>
-                  </div>
+    // Build Order tab
+    const buildOrderTabIdx = data.phases.length + 1;
+    const avoidTabIdx = buildOrderTabIdx + (data.buildOrder.length > 0 ? 1 : 0);
+    const scaleTabIdx = avoidTabIdx + (data.mistakes.length > 0 ? 1 : 0);
+
+    if (stackTab === buildOrderTabIdx && data.buildOrder.length > 0) return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 0, position: "relative" }}>
+        {data.buildOrder.map((block, bi) => {
+          const isLast = bi === data.buildOrder.length - 1;
+          const colors = ["#6366f1","#10b981","#0ea5e9","#f59e0b","#8b5cf6"];
+          const c = colors[bi % colors.length];
+          return (
+            <div key={bi} style={{ display: "flex", gap: "1rem", position: "relative", paddingBottom: isLast ? 0 : "1.25rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 32, flexShrink: 0 }}>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: `${c}18`, border: `2px solid ${c}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: c, zIndex: 1 }}>{bi + 1}</div>
+                {!isLast && <div style={{ width: 2, flex: 1, background: "#e5e7eb", marginTop: 4 }} />}
+              </div>
+              <div style={{ flex: 1, padding: "0.625rem 1rem", borderRadius: 12, background: "#fafafa", border: "1px solid #e5e7eb", marginTop: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.5rem" }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: c, textTransform: "uppercase" as const, letterSpacing: "0.05em" }}>{block.week}</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>{block.title}</span>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  {block.steps.map((step, si) => (
+                    <div key={si} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: "#9ca3af", width: 16, height: 16, borderRadius: "50%", background: "white", border: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 2 }}>{si + 1}</span>
+                      <span style={{ fontSize: 13, color: "#374151", lineHeight: 1.5 }}>{step}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
 
-      {/* ââ SCALABILITY CEILING ââ */}
-      {data.scalability.length > 0 && (
-        <div style={{
-          background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-          borderRadius: 12, padding: "1.25rem 1.5rem",
-        }}>
-          <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-text-5)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
-            Scalability Ceiling
+    // Avoid These tab
+    if (stackTab === avoidTabIdx && data.mistakes.length > 0) return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {data.mistakes.map((m, i) => (
+          <div key={i} style={{ borderLeft: "4px solid #ef4444", paddingLeft: 14, background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 10, padding: "12px 14px" }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 5 }}>⚠ {m.title}</div>
+            <p style={{ fontSize: 12, color: "#6b7280", margin: 0, lineHeight: 1.6 }}>{m.description}</p>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        ))}
+      </div>
+    );
+
+    // Scale Up tab
+    if (stackTab === scaleTabIdx && (data.scalability.length > 0 || data.upgrades.length > 0)) return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {data.scalability.length > 0 && (
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, color: "#9ca3af", letterSpacing: "0.07em", marginBottom: 8 }}>Scalability Triggers</div>
             {data.scalability.map((s, i) => {
-              const sevColor = s.severity === "high" ? "var(--clr-text)" : s.severity === "medium" ? "var(--clr-text-2)" : "var(--clr-text-3)";
+              const sevColor = s.severity === "high" ? "#ef4444" : s.severity === "medium" ? "#f59e0b" : "#10b981";
               return (
-                <div key={i} style={{
-                  display: "flex", alignItems: "center", gap: 10,
-                  padding: "0.625rem 1rem", borderRadius: 12,
-                  background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
-                  flexWrap: "wrap",
-                }}>
-                  {/* Trigger */}
-                  <span style={{
-                    fontSize: "0.75rem", fontWeight: 800, color: sevColor,
-                    padding: "0.15rem 0.6rem", borderRadius: 999,
-                    background: `${sevColor}15`, border: `1px solid ${sevColor}30`,
-                    flexShrink: 0,
-                  }}>
-                    {s.trigger}
-                  </span>
-                  {/* Arrow */}
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
-                    <path d="M2 7h10m0 0L9 4m3 3L9 10" stroke="var(--clr-text-6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  {/* What breaks */}
-                  <span style={{ fontSize: "0.75rem", color: "var(--clr-text-3)", flex: 1, minWidth: 100 }}>
-                    {s.whatBreaks}
-                  </span>
-                  {/* Arrow */}
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
-                    <path d="M2 7h10m0 0L9 4m3 3L9 10" stroke="var(--clr-text-6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  {/* Upgrade to */}
-                  <span style={{
-                    fontSize: "0.72rem", fontWeight: 700, color: "var(--clr-text-2)",
-                    padding: "0.15rem 0.6rem", borderRadius: 999,
-                    background: "rgba(var(--clr-text-rgb),0.1)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
-                    flexShrink: 0,
-                  }}>
-                    {s.upgradeTo}
-                  </span>
+                <div key={i} style={{ border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 14px", marginBottom: 8 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{s.trigger}</div>
+                    <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 4, background: `${sevColor}18`, color: sevColor, flexShrink: 0, marginLeft: 8 }}>{s.severity.toUpperCase()}</span>
+                  </div>
+                  <p style={{ fontSize: 12, color: "#6b7280", margin: "0 0 6px 0" }}>🔴 {s.whatBreaks}</p>
+                  <p style={{ fontSize: 12, color: "#10b981", margin: 0 }}>→ Upgrade to: {s.upgradeTo}</p>
                 </div>
               );
             })}
           </div>
-        </div>
-      )}
-
-      {/* ââ WHEN TO UPGRADE ââ */}
-      {data.upgrades.length > 0 && (
-        <div style={{
-          background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-          borderRadius: 12, padding: "1.25rem 1.5rem",
-        }}>
-          <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--clr-text-5)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
-            When to Upgrade
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        )}
+        {data.upgrades.length > 0 && (
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, color: "#9ca3af", letterSpacing: "0.07em", marginBottom: 8 }}>Upgrade Path</div>
             {data.upgrades.map((u, i) => (
-              <div key={i} style={{
-                display: "flex", alignItems: "center", gap: 10,
-                padding: "0.5rem 0.875rem", borderRadius: 10,
-                background: "var(--clr-bg)",
-              }}>
-                <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--clr-text)", minWidth: 80 }}>
-                  {u.tool}
-                </span>
-                <span style={{ fontSize: "0.72rem", color: "var(--clr-text-5)", flex: 1 }}>
-                  {u.trigger}
-                </span>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
-                  <path d="M2 7h10m0 0L9 4m3 3L9 10" stroke="var(--clr-text-6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <span style={{
-                  fontSize: "0.72rem", fontWeight: 700, color: "var(--clr-text-2)",
-                  padding: "0.1rem 0.5rem", borderRadius: 999,
-                  background: "rgba(var(--clr-text-rgb),0.12)", border: "1px solid rgba(var(--clr-text-rgb),0.25)",
-                  flexShrink: 0,
-                }}>
-                  {u.migrateTo}
-                </span>
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 14px", background: "#fafafa", border: "1px solid #e5e7eb", borderRadius: 8, marginBottom: 6 }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>{u.tool}</span>
+                <span style={{ fontSize: 11, color: "#9ca3af" }}>{u.trigger}</span>
+                <span style={{ fontSize: 11, color: "#6366f1", marginLeft: "auto", fontWeight: 600 }}>→ {u.migrateTo}</span>
               </div>
             ))}
           </div>
+        )}
+      </div>
+    );
+
+    return null;
+  };
+
+  return (
+    <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden", display: "flex", height: "calc(100vh - 76px)" }}>
+      {/* Left tab sidebar */}
+      <div style={{ width: 220, borderRight: "1px solid #e5e7eb", padding: "14px 8px", flexShrink: 0, background: "#fafafa", display: "flex", flexDirection: "column" as const, gap: 2, overflowY: "auto" as const }}>
+        <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.09em", color: "#9ca3af", marginBottom: 8, paddingLeft: 8, display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: 8 }}>
+          <span>Stack</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 7px", borderRadius: 999, background: "#dbeafe", border: "1px solid #93c5fd", fontSize: 9, fontWeight: 700, color: "#1d4ed8" }}>
+            March 2026
+          </span>
         </div>
-      )}
+        {stackTabs.map((tab, ti) => {
+          const isActive = stackTab === ti;
+          const isPhase = ti > 0 && ti <= data.phases.length;
+          const phaseColors = ["#6366f1","#10b981","#0ea5e9","#f59e0b","#8b5cf6"];
+          const dotColor = ti === 0 ? "#6366f1" : isPhase ? (phaseColors[(ti-1) % phaseColors.length]) : "#9ca3af";
+          return (
+            <button key={ti} onClick={() => { setStackTab(ti); document.getElementById('stack-tab-content')?.scrollTo({top:0}); }}
+              style={{ display: "flex", alignItems: "center", width: "100%", padding: "8px 10px", borderRadius: 8, background: isActive ? "white" : "transparent", border: `1px solid ${isActive ? "#e5e7eb" : "transparent"}`, cursor: "pointer", textAlign: "left" as const, boxShadow: isActive ? "0 1px 2px rgba(0,0,0,0.05)" : "none", gap: 8 }}>
+              <span style={{ fontSize: 11, color: dotColor, flexShrink: 0, fontWeight: 700 }}>{isActive ? "●" : isPhase ? "✓" : tab.icon}</span>
+              <span style={{ fontSize: 13, fontWeight: isActive ? 600 : 400, color: isActive ? "#111827" : "#374151", flex: 1 }}>{tab.label}</span>
+              {isPhase && data.phases[ti-1].costs?.total && (
+                <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", flexShrink: 0 }}>{data.phases[ti-1].costs?.total}</span>
+              )}
+              <span style={{ fontSize: 12, color: "#9ca3af", flexShrink: 0 }}>{isActive ? "↓" : "›"}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Right content */}
+      <div id="stack-tab-content" style={{ flex: 1, padding: 22, overflowY: "auto" as const, background: "white" }}>
+        {renderStackTab()}
+      </div>
     </div>
   );
 }
