@@ -307,13 +307,7 @@ export default function ReportsPage() {
             <div key={report.id} style={{display:"grid",gridTemplateColumns:"1fr 130px 150px 120px 36px",alignItems:"center",padding:"14px 20px",borderBottom:i<reports.length-1?"1px solid var(--clr-border)":"none",transition:"background 0.1s"}}
               onMouseEnter={e=>(e.currentTarget as HTMLElement).style.background="var(--clr-surface-2)"}
               onMouseLeave={e=>(e.currentTarget as HTMLElement).style.background=""}>
-              <div style={{fontSize:14,fontWeight:500,color:"var(--clr-text)",paddingRight:16,position:"relative"}}
-                title={report.idea}
-                onMouseEnter={e=>{const el=e.currentTarget;el.style.whiteSpace="normal";el.style.zIndex="10";el.style.background="var(--clr-surface)";el.style.boxShadow="0 2px 12px rgba(0,0,0,0.10)";el.style.borderRadius="6px";el.style.padding="4px 8px";el.style.margin="-4px -8px";}}
-                onMouseLeave={e=>{const el=e.currentTarget;el.style.whiteSpace="";el.style.zIndex="";el.style.background="";el.style.boxShadow="";el.style.borderRadius="";el.style.padding="";el.style.margin="";}}
-              >
-                <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",display:"block"}}>{report.idea}</span>
-              </div>
+              <div title={report.idea} style={{fontSize:14,fontWeight:500,color:"var(--clr-text)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",paddingRight:16,cursor:"default"}}>{report.idea}</div>
               <div><span style={{fontSize:10,fontWeight:700,textTransform:"uppercase" as const,letterSpacing:"0.05em",padding:"3px 8px",borderRadius:5,background:`${toolColor(report.tool)}18`,color:toolColor(report.tool)}}>{toolLabel(report.tool)}</span></div>
               <div style={{fontSize:13,color:"var(--clr-text-3)"}}>{new Date(report.created_at).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}</div>
               <div>
