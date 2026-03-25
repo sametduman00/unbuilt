@@ -3913,24 +3913,21 @@ function HomeInner() {
               {/* ââ Input section ââ */}
               {selectedTool && currentTool && !hasResults && !loading && (
                 <div ref={inputSectionRef}>
-                  {/* Hero above prompt */}
+                  {/* Dig hero — clean */}
                   {selectedTool === "gap-analysis" && (
-                    <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "center", padding: "28px 24px 20px", borderBottom: "1px solid var(--clr-border)", marginBottom: 0, background: "var(--clr-surface)", marginTop: 12 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--clr-text-4)", marginBottom: 8 }}>
+                    <div style={{ textAlign: "center" as const, padding: "36px 24px 20px" }}>
+                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "0.6875rem", color: "var(--clr-text-3)", marginBottom: 14, letterSpacing: "0.03em" }}>
                         <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
-                        Live data · Updated continuously
+                        live data, updated every hour
                       </div>
-                      <h2 style={{ fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1.1, color: "var(--clr-text)", textAlign: "center" as const, marginBottom: 6 }}>
-                        Your idea is 3 hours old.{" "}
-                        <span style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>So is our data.</span>
-                      </h2>
-                      <p style={{ fontSize: "0.8rem", color: "var(--clr-text-3)", textAlign: "center" as const, lineHeight: 1.5, marginBottom: 14, fontStyle: "italic" as const }}>
-                        Other tools guess from 2023 training data. We read Reddit from this morning.
+                      <h1 style={{ fontSize: "1.75rem", fontWeight: 700, letterSpacing: "-0.04em", lineHeight: 1.15, color: "var(--clr-text)", marginBottom: 10 }}>
+                        Don't build what{" "}<em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>already exists.</em>
+                      </h1>
+                      <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 440, margin: "0 auto" }}>
+                        Describe your idea. We'll scan 70+ live sources — Reddit, App Store, X, competitors — and tell you exactly where the gap is.
                       </p>
-
                     </div>
                   )}
-                  <InputSection
                     tool={currentTool}
                     idea={idea}
                     setIdea={setIdea}
@@ -3944,9 +3941,18 @@ function HomeInner() {
                     loading={loading}
                     textareaRef={textareaRef}
                   />
-                  {/* Dig sample report */}
+
                   {selectedTool === "gap-analysis" && (
-                    <DigSampleReport />
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginTop: 14, fontSize: "0.75rem", color: "var(--clr-text-4)" }}>
+                      <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 4.5H14L10 9l1.5 4.5L8 11 4.5 13.5 6 9 2 6.5h4.5L8 2z" fill="currentColor"/></svg>
+                        Claude Opus · Extended Thinking
+                      </span>
+                      <span style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--clr-border)" }} />
+                      <button onClick={() => { const el = document.getElementById("dig-sample-report"); if (el) el.scrollIntoView({ behavior: "smooth" }); }} style={{ background: "none", border: "none", color: "var(--clr-text-4)", fontSize: "0.75rem", cursor: "pointer", fontFamily: "inherit", padding: 0, textDecoration: "underline", textUnderlineOffset: "2px" }}>
+                        see a sample &#8594;
+                      </button>
+                    </div>
                   )}
                 </div>
               )}
