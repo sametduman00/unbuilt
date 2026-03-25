@@ -1983,7 +1983,7 @@ function ToolSelectorCard({
 // ââ Input Section ââââââââââââââââââââââââââââââââââââââââââââââ
 function InputSection({
   tool, idea, setIdea, budget, setBudget, techLevel, setTechLevel, platform, setPlatform,
-  onSubmit, loading, textareaRef,
+  onSubmit, loading, textareaRef, showSampleReport, setShowSampleReport,
 }: {
   tool: ToolConfig; idea: string; setIdea: (v: string) => void;
   budget: Budget; setBudget: (v: Budget) => void;
@@ -1991,6 +1991,7 @@ function InputSection({
   platform: Platform; setPlatform: (v: Platform) => void;
   onSubmit: () => void; loading: boolean;
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;
+  showSampleReport: boolean; setShowSampleReport: (v: (prev: boolean) => boolean) => void;
 }) {
   const canSubmit = idea.trim().length >= 40 && !loading;
   const charCount = idea.trim().length;
@@ -2184,11 +2185,11 @@ function InputSection({
             {/* Sample Report on left */}
             {(tool.id === "gap-analysis" || tool.id === "stack-advisor") ? (
               <button
-                onClick={() => { const el = document.getElementById("dig-sample-report"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
+                onClick={() => setShowSampleReport(v => !v)}
                 style={{
                   display: "flex", alignItems: "center", gap: 6,
                   padding: "0.5rem 1rem", borderRadius: 8,
-                  background: "rgba(99,102,241,0.07)",
+                  background: showSampleReport ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.07)",
                   color: "#6366f1",
                   fontSize: "0.8125rem", fontWeight: 600,
                   border: "1px solid rgba(99,102,241,0.2)",
@@ -2196,9 +2197,9 @@ function InputSection({
                   transition: "all 0.15s",
                 }}
                 onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(99,102,241,0.13)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(99,102,241,0.07)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = showSampleReport ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.07)"; }}
               >
-                Sample Report
+                {showSampleReport ? "Hide Sample ↑" : "Sample Report ↓"}
               </button>
             ) : (
               <span style={{ fontSize: "0.7rem", color: "var(--clr-text-8)" }}>⌘↵ to run</span>
@@ -2988,6 +2989,7 @@ function HomeInner() {
 
   // ── Pulse inline state ────────────────────────────────────────────────────
   const [pulseTab, setPulseTab] = useState<"ph"|"appstore">("ph");
+  const [showSampleReport, setShowSampleReport] = useState(false);
   const [pulseSignals, setPulseSignals] = useState<Array<{source:string;sourceLabel:string;emoji:string;title:string;subtitle:string;signal:string;url:string;timestamp:string;movementType?:string;imageUrl?:string;topics?:string[];tagline?:string;externalUrl?:string;claudeGap?:string;}>>([]);
   const [pulseLoading, setPulseLoading] = useState(false);
   const [pulseError, setPulseError] = useState<string|null>(null);
@@ -3962,7 +3964,15 @@ function HomeInner() {
                     onSubmit={handleSubmit}
                     loading={loading}
                     textareaRef={textareaRef}
+                    showSampleReport={showSampleReport}
+                    setShowSampleReport={setShowSampleReport}
                   />
+                  {/* Inline sample report toggle */}
+                  {(selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && showSampleReport && (
+                    <div style={{ animation: "fadeSlideIn 0.25s ease", marginTop: 8 }}>
+                      <DigSampleReport />
+                    </div>
+                  )}
 
 
                 </div>
