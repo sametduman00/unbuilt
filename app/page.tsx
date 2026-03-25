@@ -3926,7 +3926,7 @@ function HomeInner() {
                         live data, updated every hour
                       </div>
                       <h1 style={{ fontSize: "3rem", fontWeight: 800, letterSpacing: "-0.05em", lineHeight: 1.05, color: "var(--clr-text)", marginBottom: 14 }}>
-                        Don't build what<br/><em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>already exists.</em>
+                        Don't build what <em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>already exists.</em>
                       </h1>
                       <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 440, margin: "0 auto" }}>
                         Describe your idea. We'll scan 70+ live sources — Reddit, App Store, X, competitors — and tell you exactly where the gap is.
