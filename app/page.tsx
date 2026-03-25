@@ -2184,7 +2184,7 @@ function InputSection({
             {/* Char counter for Dig */}
             {(tool.id === "gap-analysis" || tool.id === "stack-advisor") ? (
               charsLeft > 0 ? (
-                <span style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", transition: "all 0.2s" }}>
+                <span id="char-counter" style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", transition: "all 0.2s" }}>
                   <span style={{ fontWeight: 700, color: charCount > 20 ? "var(--clr-text-2)" : "var(--clr-text-4)" }}>{charsLeft}</span> more to unlock
                 </span>
               ) : (
