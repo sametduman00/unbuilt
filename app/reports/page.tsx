@@ -2,6 +2,8 @@
 import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Script from "next/script";
+import Script from "next/script";
 
 interface Report {
   id: string;
@@ -302,29 +304,37 @@ export default function ReportsPage() {
     setGenerating(report.id);
     const html = buildHtml(report);
     const filename = report.idea.replace(/[^a-z0-9]+/gi,"-").toLowerCase() + "-report.pdf";
-    const iframe = document.createElement("iframe");
-    iframe.style.cssText = "position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;border:none;left:-9999px;top:-9999px;";
-    document.body.appendChild(iframe);
-    const doc = iframe.contentDocument!;
-    doc.open(); doc.write(html); doc.close();
-    const script = doc.createElement("script");
-    script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-    script.onload = () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const win = iframe.contentWindow as any;
-      win.html2pdf().set({
-        margin: 10,
-        filename,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-      }).from(doc.body).save().then(() => {
-        document.body.removeChild(iframe);
-        setGenerating(null);
-      }).catch(() => { document.body.removeChild(iframe); setGenerating(null); });
-    };
-    script.onerror = () => { document.body.removeChild(iframe); setGenerating(null); };
-    doc.head.appendChild(script);
+
+    // Parse the HTML and render into a hidden div in the current page
+    const container = document.createElement("div");
+    container.style.cssText = "position:fixed;left:-9999px;top:-9999px;width:820px;background:white;";
+    container.innerHTML = html.replace(/<!DOCTYPE[^>]*>/i,"").replace(/<html[^>]*>/i,"").replace(/<\/html>/i,"").replace(/<head>[\s\S]*?<\/head>/i,"").replace(/<body[^>]*>/i,"").replace(/<\/body>/i,"");
+    document.body.appendChild(container);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const h2p = (window as any).html2pdf;
+    if (!h2p) {
+      document.body.removeChild(container);
+      setGenerating(null);
+      alert("PDF library not loaded yet. Please try again in a moment.");
+      return;
+    }
+
+    h2p().set({
+      margin: 12,
+      filename,
+      image: { type: "jpeg", quality: 0.97 },
+      html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff" },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+    }).from(container).save().then(() => {
+      document.body.removeChild(container);
+      setGenerating(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }).catch((err: any) => {
+      console.error("pdf error:", err);
+      document.body.removeChild(container);
+      setGenerating(null);
+    });
   };
 
   const toolColor = (t: string) => t==="gap-analysis"?"#7c6fff":"#38bdf8";
@@ -384,6 +394,7 @@ export default function ReportsPage() {
         </div>
       )}
       <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+      <Script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" strategy="lazyOnload" />
     </div>
   );
 }
