@@ -90,6 +90,42 @@ function generatePdf(report: Report, jsPDF: any) {
     if (p.marketScoreSummary) text(str(p.marketScoreSummary), 10, false, [60,60,60]);
   }
 
+  // Overview cards: Biggest Opportunity, Biggest Risk, First Move
+  const firstGap = (arr<{title:string;description:string}>(p.marketGaps))[0];
+  const firstThreat = (arr<string>(o(p.swot)["threats"]))[0];
+  const firstMove = (arr<{action?:string;detail?:string}>(o(p.opportunity)["actionItems"]))[0];
+  if (firstGap || firstThreat || firstMove) {
+    y += 4;
+    checkPage(30);
+    const cardW = (cW - 8) / 3;
+    const cardX = [margin, margin + cardW + 4, margin + (cardW + 4) * 2];
+    const cardY = y;
+    const labels = ["BIGGEST OPPORTUNITY", "BIGGEST RISK", "FIRST MOVE"];
+    const labelColors: [number,number,number][] = [[13,148,136],[234,88,12],[37,99,235]];
+    const fills: [number,number,number][] = [[240,253,250],[255,247,237],[239,246,255]];
+    const cards = [
+      { title: str(firstGap?.title), body: str(firstGap?.description) },
+      { title: str(firstThreat), body: str((arr<string>(o(p.swot)["threats"]))[1] || "") },
+      { title: str(firstMove?.action), body: str(firstMove?.detail || "") },
+    ];
+    let maxH = 0;
+    cards.forEach((card, i) => {
+      doc.setFillColor(...fills[i]);
+      const titleLines = doc.splitTextToSize(e(card.title), cardW - 6);
+      const bodyLines = doc.splitTextToSize(e(card.body).substring(0, 200), cardW - 6);
+      const cardH = 8 + titleLines.length * 4 + 4 + bodyLines.length * 3.5 + 6;
+      maxH = Math.max(maxH, cardH);
+      doc.roundedRect(cardX[i], cardY, cardW, cardH, 2, 2, "F");
+      doc.setFontSize(7.5); doc.setFont("helvetica","bold"); doc.setTextColor(...labelColors[i]);
+      doc.text(labels[i], cardX[i] + 3, cardY + 5);
+      doc.setFontSize(9); doc.setFont("helvetica","bold"); doc.setTextColor(17,24,39);
+      doc.text(titleLines, cardX[i] + 3, cardY + 10);
+      doc.setFontSize(8); doc.setFont("helvetica","normal"); doc.setTextColor(107,114,128);
+      doc.text(bodyLines, cardX[i] + 3, cardY + 10 + titleLines.length * 4 + 3);
+    });
+    y = cardY + maxH + 6;
+  }
+
   if (p.oneLiner) { section("One-Liner"); text(str(p.oneLiner), 10, false, [80,40,160]); }
 
   const ms = o(p.marketSize);
@@ -109,8 +145,8 @@ function generatePdf(report: Report, jsPDF: any) {
     comps.forEach(c => {
       text(str(c.name)+(c.threatLevel!=null?"  Threat: "+c.threatLevel+"/5":""), 10, true);
       if(c.tagline) text(str(c.tagline), 9, false, [100,100,100], 4);
-      arr<string>(c.strengths).slice(0,2).forEach(s => bullet("+ "+str(s), 6));
-      arr<string>(c.weaknesses).slice(0,1).forEach(w => bullet("- "+str(w), 6));
+      arr<string>(c.strengths).forEach(s => bullet("+ "+str(s), 6));
+      arr<string>(c.weaknesses).forEach(w => bullet("- "+str(w), 6));
     });
   }
 
