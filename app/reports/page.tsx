@@ -310,7 +310,8 @@ export default function ReportsPage() {
     const script = doc.createElement("script");
     script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
     script.onload = () => {
-      const win = iframe.contentWindow as Window & {html2pdf: () => {set:(o:object)=>object;from:(el:Element)=>{save:()=>Promise<void>}}};
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const win = iframe.contentWindow as any;
       win.html2pdf().set({
         margin: 10,
         filename,
