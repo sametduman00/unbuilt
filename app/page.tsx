@@ -1409,7 +1409,7 @@ function DigSampleReport() {
   return (
     <div style={{ padding: "0 0 40px" }}>
       {/* Hero integrated into flow */}
-      <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "center", padding: "20px 0 18px", borderBottom: "1px solid var(--clr-border)", marginBottom: 20 }}>
+      <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "center", padding: "16px 0 12px", borderBottom: "1px solid var(--clr-border)", marginBottom: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--clr-text-4)", marginBottom: 8 }}>
           <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
           Live data · Updated continuously
@@ -2031,7 +2031,7 @@ function InputSection({
   ];
 
   return (
-    <div style={{ animation: "fadeSlideIn 0.28s ease", marginTop: "2rem", marginBottom: "3.5rem" }}>
+    <div style={{ animation: "fadeSlideIn 0.28s ease", marginTop: "1rem", marginBottom: "0" }}>
       {/* Connection line from cards */}
       <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
