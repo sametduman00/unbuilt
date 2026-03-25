@@ -2425,7 +2425,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                 </div>
                 {/* Right: cost + tools count */}
                 <div style={{ textAlign: "right" as const, flexShrink: 0 }}>
-                  {phase.costs?.total && <div style={{ fontSize: 11, fontWeight: 700, color: c, marginBottom: 2, maxWidth: 100, wordBreak: "break-word" as const }}>{phase.costs.total}</div>}
+                  {phase.costs?.total && <div style={{ fontSize: 11, fontWeight: 700, color: c, marginBottom: 2 }}>{phase.costs.total.split("(")[0].trim()}</div>}
                   <div style={{ fontSize: 10, color: "#9ca3af" }}>{phase.tools.length} tools →</div>
                 </div>
               </button>
