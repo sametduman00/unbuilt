@@ -2400,7 +2400,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
           </div>
         )}
         {/* Phase overview cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(170px,1fr))", gap: 10 }}>
+        <div style={{ display: "flex", flexDirection: "column" as const, gap: 8 }}>
           {data.phases.map((phase, pi) => {
             const isP0 = isPhaseZero(phase.name);
             const colors = ["#6366f1","#10b981","#0ea5e9","#f59e0b","#8b5cf6"];
@@ -2410,14 +2410,24 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
             const phaseName = phase.name.replace(/^Phase\s*\d+:\s*/i, '');
             return (
               <button key={pi} onClick={() => setStackTab(pi + 1)}
-                style={{ background: bg, border: `1px solid ${c}33`, borderRadius: 10, padding: "12px 14px", cursor: "pointer", textAlign: "left" as const, fontFamily: "inherit", display: "flex", flexDirection: "column" as const, gap: 0, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6, gap: 6 }}>
-                  <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: c, flexShrink: 0 }}>{isP0 ? "Start here" : `Phase ${pi}`}</span>
-                  {phase.costs?.total && <span style={{ fontSize: 11, fontWeight: 700, color: c, flexShrink: 0 }}>{phase.costs.total}</span>}
+                style={{ background: bg, border: `1px solid ${c}33`, borderRadius: 10, padding: "12px 16px", cursor: "pointer", textAlign: "left" as const, fontFamily: "inherit", display: "flex", alignItems: "center", gap: 14, minWidth: 0 }}>
+                {/* Phase number circle */}
+                <div style={{ width: 36, height: 36, borderRadius: "50%", background: `${c}18`, border: `2px solid ${c}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: c }}>{isP0 ? "0" : String(pi)}</span>
                 </div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 4, lineHeight: 1.3 }}>{phaseName}</div>
-                <div style={{ fontSize: 11, color: "#6b7280", lineHeight: 1.4, marginBottom: 8, flex: 1 }}>{phase.subtitle}</div>
-                <div style={{ fontSize: 10, fontWeight: 600, color: c }}>{phase.tools.length} tools →</div>
+                {/* Content */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3, flexWrap: "wrap" as const }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: c }}>{isP0 ? "Start here" : `Phase ${pi}`}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "#111827" }}>{phaseName}</span>
+                  </div>
+                  <div style={{ fontSize: 11, color: "#6b7280", lineHeight: 1.4 }}>{phase.subtitle}</div>
+                </div>
+                {/* Right: cost + tools count */}
+                <div style={{ textAlign: "right" as const, flexShrink: 0 }}>
+                  {phase.costs?.total && <div style={{ fontSize: 11, fontWeight: 700, color: c, marginBottom: 2, maxWidth: 100, wordBreak: "break-word" as const }}>{phase.costs.total}</div>}
+                  <div style={{ fontSize: 10, color: "#9ca3af" }}>{phase.tools.length} tools →</div>
+                </div>
               </button>
             );
           })}
