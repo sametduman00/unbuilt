@@ -2218,7 +2218,7 @@ function InputSection({
               <button
                 onClick={onSubmit}
                 disabled={!canSubmit}
-                title={!canSubmit && tool.id === "gap-analysis" ? "Write at least 40 characters to unlock" : undefined}
+                title={!canSubmit ? `Write at least 40 characters — describe what you're building, your budget, and who it's for` : undefined}
                 style={{
                   display: "flex", alignItems: "center", gap: 8,
                   padding: "0.5625rem 1.25rem", borderRadius: 8,
