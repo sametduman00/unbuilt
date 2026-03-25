@@ -22,12 +22,17 @@ export function generatePdf(report: ReportData, jsPDF: any) {
 
   const chk = (n = 10) => { if (y + n > 282) { doc.addPage(); y = 16; } };
 
+  const lineH = (sz: number) => sz * 0.39;
   const t = (content: string, sz = 10, bold = false, color: [number, number, number] = [30, 30, 30], ind = 0) => {
     doc.setFontSize(sz); doc.setFont("helvetica", bold ? "bold" : "normal"); doc.setTextColor(...color);
     const lines = doc.splitTextToSize(e(content), CW - ind);
-    chk(lines.length * sz * 0.38 + 2);
-    doc.text(lines, M + ind, y);
-    y += lines.length * sz * 0.38 + 2;
+    // Render line by line, adding new page as needed
+    for (const line of lines) {
+      if (y + lineH(sz) + 2 > 285) { doc.addPage(); y = 16; doc.setFontSize(sz); doc.setFont("helvetica", bold ? "bold" : "normal"); doc.setTextColor(...color); }
+      doc.text(line, M + ind, y);
+      y += lineH(sz);
+    }
+    y += 2;
   };
 
   const sec = (title: string, sub?: string) => {
@@ -43,9 +48,14 @@ export function generatePdf(report: ReportData, jsPDF: any) {
   const bul = (content: string, ind = 4) => {
     doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(30, 30, 30);
     const lines = doc.splitTextToSize(e(content), CW - ind - 4);
-    chk(lines.length * 4 + 2);
-    doc.text("•", M + ind, y); doc.text(lines, M + ind + 4, y);
-    y += lines.length * 4 + 2;
+    // Print bullet on first line, continuation lines indented
+    lines.forEach((line: string, i: number) => {
+      if (y + lineH(10) + 2 > 285) { doc.addPage(); y = 16; doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(30, 30, 30); }
+      if (i === 0) doc.text("•", M + ind, y);
+      doc.text(line, M + ind + 4, y);
+      y += lineH(10);
+    });
+    y += 2;
   };
 
   const card3 = (items: { label: string; title: string; body: string; lc: [number, number, number]; bg: [number, number, number] }[]) => {
