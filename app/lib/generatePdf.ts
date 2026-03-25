@@ -10,7 +10,230 @@ export interface ReportData {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+function generateStackPdf(report: ReportData, jsPDF: any) {
+  const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+  const M = 14, PW = 210, CW = PW - M * 2;
+  let y = 18;
+
+  const e = (s: unknown) => String(s ?? "").replace(/[\u0080-\uFFFF]/g, "");
+  const arr = <T,>(v: unknown): T[] => Array.isArray(v) ? v as T[] : [];
+  const str = (v: unknown) => String(v ?? "");
+
+  const lH = (sz: number) => sz * 0.39;
+  const chk = (n = 10) => { if (y + n > 285) { doc.addPage(); y = 16; } };
+
+  const t = (content: string, sz = 10, bold = false, color: [number,number,number] = [30,30,30], ind = 0) => {
+    doc.setFontSize(sz); doc.setFont("helvetica", bold ? "bold" : "normal"); doc.setTextColor(...color);
+    const lines = doc.splitTextToSize(e(content), CW - ind);
+    for (const line of lines) {
+      if (y + lH(sz) + 2 > 285) { doc.addPage(); y = 16; doc.setFontSize(sz); doc.setFont("helvetica", bold ? "bold" : "normal"); doc.setTextColor(...color); }
+      doc.text(line, M + ind, y);
+      y += lH(sz);
+    }
+    y += 2;
+  };
+
+  const bul = (content: string, ind = 4) => {
+    doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(30,30,30);
+    const lines = doc.splitTextToSize(e(content), CW - ind - 4);
+    lines.forEach((line: string, i: number) => {
+      if (y + lH(10) + 2 > 285) { doc.addPage(); y = 16; doc.setFontSize(10); doc.setFont("helvetica","normal"); doc.setTextColor(30,30,30); }
+      if (i === 0) doc.text("•", M + ind, y);
+      doc.text(line, M + ind + 4, y);
+      y += lH(10);
+    });
+    y += 2;
+  };
+
+  const sec = (title: string, sub?: string) => {
+    chk(14); y += 5;
+    doc.setFillColor(248,248,255); doc.rect(M-2, y-4, CW+4, 10, "F");
+    doc.setDrawColor(200,200,230); doc.line(M-2, y-4, M-2, y+6);
+    doc.setFontSize(9); doc.setFont("helvetica","bold"); doc.setTextColor(60,60,120);
+    doc.text(e(title), M+2, y+2);
+    if (sub) { doc.setFontSize(8); doc.setFont("helvetica","normal"); doc.setTextColor(150,150,150); doc.text(e(sub), M+2+doc.getTextWidth(title)*0.9+4, y+2); }
+    y += 10; doc.setTextColor(30,30,30);
+  };
+
+  let p: Record<string,unknown> = {};
+  try {
+    const m = report.json_content.match(/```json\s*([\s\S]*?)```/);
+    p = JSON.parse(m ? m[1] : report.json_content);
+  } catch { /* ignore */ }
+
+  const dateStr = new Date(report.created_at).toLocaleDateString("en-GB");
+
+  // Header bar
+  doc.setFillColor(99,102,241); doc.rect(0,0,210,12,"F");
+  doc.setFontSize(9); doc.setFont("helvetica","bold"); doc.setTextColor(255,255,255);
+  doc.text("STACK ADVISOR  |  UNBUILT.ME", M, 8);
+  doc.text(dateStr, PW-M, 8, { align: "right" });
+  y = 22;
+
+  // Title
+  t(e(report.idea), 15, true, [30,30,30]); y += 2;
+
+  // Headline
+  if (p.headline) {
+    doc.setFillColor(245,243,255); doc.roundedRect(M, y-2, CW, 16, 2, 2, "F");
+    doc.setFontSize(8); doc.setFont("helvetica","bold"); doc.setTextColor(124,58,237);
+    doc.text("RECOMMENDATION", M+4, y+3);
+    const hlLines = doc.splitTextToSize(e(p.headline), CW-8);
+    doc.setFontSize(10); doc.setFont("helvetica","bold"); doc.setTextColor(17,24,39);
+    doc.text(hlLines, M+4, y+8);
+    y += 8 + hlLines.length*4 + 6;
+  }
+
+  // Summary badges
+  const badges: string[] = [];
+  if (p.timeToMvp) badges.push("MVP: " + str(p.timeToMvp));
+  const phases = arr<{name:string;subtitle:string;tools:{name:string;purpose:string;price:string;free:boolean;alternatives?:{name:string;reason:string}[]}[];costs?:{tools:{name:string;purpose:string;freeTier:boolean;monthlyCost:string}[];total:string};vibeGuide?:{tool:string;url:string;prompt:string;tip?:string}[]}>(p.phases);
+  if (phases.length) badges.push(phases.length + " phases");
+  if (badges.length) { t(badges.join("   |   "), 9, false, [80,80,80]); y += 2; }
+
+  // PHASES — each phase in order
+  phases.forEach((phase, pi) => {
+    const phaseColors: [number,number,number][] = [[99,102,241],[16,185,129],[14,165,233],[245,158,11],[139,92,246]];
+    const c = phaseColors[pi] ?? phaseColors[0];
+    const isP0 = /phase\s*0/i.test(phase.name) || /validate/i.test(phase.name);
+
+    sec(phase.name.replace(/^Phase\s*\d+:\s*/i,''), phase.subtitle);
+
+    if (isP0) {
+      doc.setFillColor(...c.map(x=>Math.min(255,x+180)) as [number,number,number]);
+      doc.roundedRect(M, y-3, 60, 6, 1, 1, "F");
+      doc.setFontSize(7.5); doc.setFont("helvetica","bold"); doc.setTextColor(...c);
+      doc.text("START HERE — DO THIS FIRST", M+3, y+1.5);
+      y += 8;
+    }
+
+    // Tools
+    t("Tools", 9, true, c, 0);
+    phase.tools.forEach(tool => {
+      chk(16);
+      const priceTag = tool.free ? "Free" : tool.price;
+      t(tool.name + "  [" + priceTag + "]", 10, true, [17,24,39], 4);
+      t(tool.purpose, 9.5, false, [55,65,81], 8);
+      const alts = arr<{name:string;reason:string}>(tool.alternatives);
+      if (alts.length) {
+        t("Alternatives: " + alts.map(a => a.name + " — " + a.reason).join("  |  "), 8.5, false, [150,150,150], 8);
+      }
+      y += 1;
+    });
+
+    // Cost breakdown
+    if (phase.costs && phase.costs.tools.length > 0) {
+      y += 2; t("Cost Breakdown", 9, true, [100,100,100], 0);
+      phase.costs.tools.forEach(ct => {
+        t(ct.name + ":  " + ct.monthlyCost + (ct.freeTier ? "  (free tier)" : "") + "  — " + ct.purpose, 9, false, [80,80,80], 4);
+      });
+      doc.setFontSize(10); doc.setFont("helvetica","bold"); doc.setTextColor(...c);
+      chk(6);
+      doc.text("Phase total: " + str(phase.costs.total), PW-M, y, { align: "right" });
+      y += 6;
+    }
+
+    // Vibe Guide
+    const vg = arr<{tool:string;url:string;prompt:string;tip?:string}>(phase.vibeGuide);
+    if (vg.length) {
+      y += 3;
+      doc.setFillColor(240,253,250); doc.roundedRect(M, y-3, CW, 8, 2, 2, "F");
+      doc.setFontSize(8.5); doc.setFont("helvetica","bold"); doc.setTextColor(13,148,136);
+      doc.text("🚀 HOW TO ACTUALLY DO THIS", M+4, y+2);
+      y += 9;
+      vg.forEach((step, si) => {
+        doc.setFillColor(13,148,136); doc.circle(M+4, y+1.5, 3, "F");
+        doc.setFontSize(8.5); doc.setFont("helvetica","bold"); doc.setTextColor(255,255,255);
+        doc.text(String(si+1), M+3.2, y+2.2);
+        t("Open " + step.tool + " → " + step.url, 9.5, true, [13,148,136], 10);
+        t("Type this: " + step.prompt, 9, false, [20,78,74], 14);
+        if (step.tip) t("💡 " + step.tip, 8.5, false, [107,114,128], 14);
+        y += 3;
+      });
+    }
+    y += 4;
+  });
+
+  // BUILD ORDER
+  const buildOrder = arr<{week:string;title:string;steps:string[]}>(p.buildOrder);
+  if (buildOrder.length) {
+    sec("BUILD ORDER");
+    buildOrder.forEach((block, bi) => {
+      const bColors: [number,number,number][] = [[99,102,241],[16,185,129],[14,165,233],[245,158,11],[139,92,246]];
+      const c = bColors[bi % bColors.length];
+      doc.setFillColor(...c.map(x=>Math.min(255,x+170)) as [number,number,number]);
+      doc.circle(M+5, y+2, 4, "F");
+      doc.setFontSize(8.5); doc.setFont("helvetica","bold"); doc.setTextColor(...c);
+      doc.text(String(bi+1), M+3.5, y+3.2);
+      t(block.week + " — " + block.title, 10, true, [17,24,39], 12);
+      arr<string>(block.steps).forEach((step, si) => {
+        bul((si+1) + ". " + str(step), 8);
+      });
+      y += 3;
+    });
+  }
+
+  // AVOID THESE (Mistakes)
+  const mistakes = arr<{title:string;description:string}>(p.mistakes);
+  if (mistakes.length) {
+    sec("AVOID THESE");
+    mistakes.forEach(m => {
+      chk(18);
+      doc.setFillColor(254,242,242); doc.roundedRect(M, y-2, CW, 8, 2, 2, "F");
+      doc.setFontSize(8.5); doc.setFont("helvetica","bold"); doc.setTextColor(220,38,38);
+      doc.text("⚠", M+3, y+3);
+      t(str(m.title), 10, true, [220,38,38], 10);
+      t(str(m.description), 9.5, false, [107,114,128], 4);
+      y += 4;
+    });
+  }
+
+  // SCALE UP (Scalability + Upgrades)
+  const scalability = arr<{trigger:string;whatBreaks:string;upgradeTo:string;severity:string}>(p.scalability);
+  const upgrades = arr<{tool:string;trigger:string;migrateTo:string}>(p.upgrades);
+  if (scalability.length || upgrades.length) {
+    sec("SCALE UP");
+    if (scalability.length) {
+      t("Scalability Triggers", 10, true, [60,60,120]);
+      scalability.forEach(s => {
+        const sc: [number,number,number] = s.severity === "high" ? [220,38,38] : s.severity === "medium" ? [245,158,11] : [16,185,129];
+        t(str(s.trigger) + "  [" + str(s.severity).toUpperCase() + "]", 10, true, sc, 4);
+        t("🔴 " + str(s.whatBreaks), 9.5, false, [107,114,128], 8);
+        t("→ Upgrade to: " + str(s.upgradeTo), 9.5, false, [16,185,129], 8);
+        y += 2;
+      });
+    }
+    if (upgrades.length) {
+      y += 3; t("Upgrade Path", 10, true, [60,60,120]);
+      upgrades.forEach(u => {
+        t(str(u.tool), 10, true, [30,30,30], 4);
+        t("When: " + str(u.trigger), 9, false, [107,114,128], 8);
+        t("→ Migrate to: " + str(u.migrateTo), 9.5, false, [99,102,241], 8);
+        y += 2;
+      });
+    }
+  }
+
+  // Page footers
+  const total = doc.getNumberOfPages();
+  for (let i=1; i<=total; i++) {
+    doc.setPage(i);
+    doc.setFontSize(7); doc.setFont("helvetica","normal"); doc.setTextColor(180,180,180);
+    doc.text("Generated by Unbuilt.me  |  " + dateStr, M, 292);
+    doc.text("Page " + i + " / " + total, PW-M, 292, { align: "right" });
+  }
+
+  doc.save(e(report.idea).replace(/[^a-z0-9]+/gi,"-").toLowerCase().substring(0,50) + "-stack-report.pdf");
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function generatePdf(report: ReportData, jsPDF: any) {
+  // Route to Stack Advisor renderer
+  if (report.tool === 'stack-advisor') {
+    generateStackPdf(report, jsPDF);
+    return;
+  }
+
   const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
   const M = 14, PW = 210, CW = PW - M * 2;
   let y = 18;
