@@ -3,7 +3,6 @@ import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
-import Script from "next/script";
 
 interface Report {
   id: string;
