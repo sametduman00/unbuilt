@@ -13,6 +13,7 @@ import { useAuth, useUser, useClerk, UserButton, SignInButton } from "@clerk/nex
 type ToolId = "gap-analysis" | "competitor-radar" | "trend-feed" | "stack-advisor";
 type Budget = "bootstrap" | "growing" | "funded" | "scale";
 type TechLevel = "nocode" | "lowcode" | "developer";
+type Platform = "web" | "mobile" | "both";
 
 interface DataSource {
   name: string;
@@ -1771,12 +1772,13 @@ function ToolSelectorCard({
 
 // ââ Input Section ââââââââââââââââââââââââââââââââââââââââââââââ
 function InputSection({
-  tool, idea, setIdea, budget, setBudget, techLevel, setTechLevel,
+  tool, idea, setIdea, budget, setBudget, techLevel, setTechLevel, platform, setPlatform,
   onSubmit, loading, textareaRef,
 }: {
   tool: ToolConfig; idea: string; setIdea: (v: string) => void;
   budget: Budget; setBudget: (v: Budget) => void;
   techLevel: TechLevel; setTechLevel: (v: TechLevel) => void;
+  platform: Platform; setPlatform: (v: Platform) => void;
   onSubmit: () => void; loading: boolean;
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 }) {
@@ -1921,6 +1923,36 @@ function InputSection({
                     >
                       <span style={{ fontSize: "0.8rem", fontWeight: 600, color: techLevel === opt.id ? "var(--clr-text)" : "var(--clr-text-3)" }}>{opt.label}</span>
                       <span style={{ fontSize: "0.7rem", color: techLevel === opt.id ? "var(--clr-text-3)" : "var(--clr-text-6)" }}>{opt.sub}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+              {/* Platform */}
+              <div style={{ marginTop: 12 }}>
+                <label style={{ display: "block", fontSize: "0.7rem", fontWeight: 600, color: "var(--clr-text-4)", marginBottom: "0.5rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                  Target platform
+                </label>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {[
+                    { id: "web" as Platform, label: "Web", sub: "Browser / SaaS" },
+                    { id: "mobile" as Platform, label: "Mobile", sub: "iOS / Android" },
+                    { id: "both" as Platform, label: "Both", sub: "Web + Mobile" },
+                  ].map((opt) => (
+                    <button
+                      key={opt.id}
+                      onClick={() => setPlatform(opt.id)}
+                      style={{
+                        flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                        padding: "0.5rem 0.4rem", borderRadius: 9, gap: 2,
+                        background: platform === opt.id ? "rgba(var(--clr-text-rgb),0.08)" : "transparent",
+                        border: platform === opt.id ? "1px solid rgba(var(--clr-text-rgb),0.3)" : "1px solid var(--clr-border)",
+                        cursor: "pointer", fontFamily: "inherit", transition: "all 0.12s",
+                      }}
+                    >
+                      <span style={{ fontSize: "0.8rem", fontWeight: 600, color: platform === opt.id ? "var(--clr-text)" : "var(--clr-text-3)" }}>{opt.label}</span>
+                      <span style={{ fontSize: "0.65rem", color: platform === opt.id ? "var(--clr-text-3)" : "var(--clr-text-6)" }}>{opt.sub}</span>
                     </button>
                   ))}
                 </div>
@@ -2804,6 +2836,7 @@ function HomeInner() {
   const [idea, setIdea] = useState("");
   const [budget, setBudget] = useState<Budget>("bootstrap");
   const [techLevel, setTechLevel] = useState<TechLevel>("nocode");
+  const [platform, setPlatform] = useState<Platform>("web");
   const [loading, setLoading] = useState(false);
   const [streamedContent, setStreamedContent] = useState("");
   const [error, setError] = useState("");
@@ -3208,6 +3241,7 @@ function HomeInner() {
     if (selectedTool === "stack-advisor") {
       body.budget = budget;
       body.techLevel = techLevel;
+      body.platform = platform;
     }
 
     try {
@@ -3673,6 +3707,8 @@ function HomeInner() {
                     setBudget={setBudget}
                     techLevel={techLevel}
                     setTechLevel={setTechLevel}
+                    platform={platform}
+                    setPlatform={setPlatform}
                     onSubmit={handleSubmit}
                     loading={loading}
                     textareaRef={textareaRef}

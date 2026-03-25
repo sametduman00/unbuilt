@@ -16,6 +16,11 @@ const compactToolsDB = (stacksDB.tools as { name: string; category: string; desc
   .map((t) => `${t.name} [${t.category}${t.noCode ? ",nocode" : ""}${t.openSource ? ",oss" : ""}]: ${t.description}. Free: ${t.freeTier}. Plans: ${t.pricing.map((p) => `${p.plan}=${p.price}`).join(", ")}. Best for: ${t.bestFor.join(", ")}`)
   .join("\n");
 
+const PLATFORM_LABELS: Record<string, string> = {
+  web:    "Web app (browser/SaaS)",
+  mobile: "Mobile app (iOS and/or Android)",
+  both:   "Web + Mobile (cross-platform)",
+};
 const BUDGET_LABELS: Record<string, string> = {
   bootstrap: "Bootstrapped Ã¢ÂÂ under $50/month total",
   growing: "Growing Ã¢ÂÂ $50Ã¢ÂÂ200/month",
@@ -38,11 +43,12 @@ The JSON must match the exact schema provided.
 You have a curated database of developer tools with verified March 2026 pricing.
 Use ONLY tools from this database Ã¢ÂÂ do NOT invent tools or guess prices. Use the exact pricing from the database.`;
 
-const PROMPT = (idea: string, budget: string, techLevel: string) =>
+const PROMPT = (idea: string, budget: string, techLevel: string, platform: string) =>
   `Stack recommendation for:
 **What they're building:** ${idea}
 **Budget:** ${BUDGET_LABELS[budget] ?? budget}
 **Technical level:** ${TECH_LABELS[techLevel] ?? techLevel}
+**Target platform:** ${PLATFORM_LABELS[platform] ?? platform}
 
 Respond with ONLY a JSON code block matching this exact schema:
 
@@ -113,7 +119,7 @@ export async function POST(req: NextRequest) {
   if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
   const hasCredits = await deductCredit(userId);
   if (!hasCredits) return new Response(JSON.stringify({ error: "No credits remaining" }), { status: 402, headers: { "Content-Type": "application/json" } });
-  const { idea, budget, techLevel } = await req.json();
+  const { idea, budget, techLevel, platform } = await req.json();
 
   if (!idea || typeof idea !== "string" || idea.trim().length < 3)
     return Response.json({ error: "Please describe what you want to build (min 3 chars)." }, { status: 400 });
@@ -124,7 +130,7 @@ export async function POST(req: NextRequest) {
 
   // Cache key includes budget + tech level so different configs get different results
   const normalizedIdea = await normalizeQuery(idea);
-  const normalizedKey = `${normalizedIdea}::${budget}::${techLevel}`;
+  const normalizedKey = `${normalizedIdea}::${budget}::${techLevel}::${platform ?? "web"}`;
   const cached = getCached(normalizedKey, TTL_MS.stack);
 
   const encoder = new TextEncoder();
@@ -148,7 +154,7 @@ export async function POST(req: NextRequest) {
           max_tokens: 16000,
           thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM,
-          messages: [{ role: "user", content: PROMPT(idea, budget, techLevel) }],
+          messages: [{ role: "user", content: PROMPT(idea, budget, techLevel, platform ?? "web") }],
         });
         for await (const event of s) {
           if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
