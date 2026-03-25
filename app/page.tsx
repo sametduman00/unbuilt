@@ -1210,7 +1210,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
   };
 
   return (
-    <div style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:16, overflow:"hidden", display:"flex", height:"calc(100vh - 76px)" }}>
+    <div style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:16, overflow:"hidden", display:"flex", height:"calc(100vh - 76px)", marginTop:8 }}>
       <div style={{ width:220, borderRight:"1px solid #e5e7eb", padding:"14px 8px", flexShrink:0, background:"#fafafa", display:"flex", flexDirection:"column" as const, gap:2, overflowY:"auto" as const }}>
         <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.09em", color:"#9ca3af", marginBottom:8, paddingLeft:8, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:8 }}>
           <span>Analysis</span>
@@ -2637,7 +2637,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
   };
 
   return (
-    <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden", display: "flex", height: "calc(100vh - 168px)" }}>
+    <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden", display: "flex", height: "calc(100vh - 180px)", marginTop: 8 }}>
       {/* Left tab sidebar */}
       <div style={{ width: 220, borderRight: "1px solid #e5e7eb", padding: "14px 8px", flexShrink: 0, background: "#fafafa", display: "flex", flexDirection: "column" as const, gap: 2, overflowY: "auto" as const }}>
         <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.09em", color: "#9ca3af", marginBottom: 8, paddingLeft: 8, display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: 8 }}>
@@ -3603,7 +3603,7 @@ function HomeInner() {
               )}
               {/* ââ Results — inline below input ââ */}
               {hasResults && (
-              <div ref={resultsRef} style={{ paddingTop: "1.5rem", paddingBottom: "5rem", animation: "fadeSlideIn 0.3s ease" }}>
+              <div ref={resultsRef} style={{ paddingTop: "1rem", paddingBottom: "5rem", animation: "fadeSlideIn 0.3s ease" }}>
 
               {/* ââ Compact query bar ââ */}
               {currentTool && (
