@@ -3605,10 +3605,11 @@ function HomeInner() {
                                   </div>
                                   <div style={{ display:"flex", flexDirection:"column", gap:6, marginBottom:16 }}>
                                     {apps.map(app=>(
-                                      <a key={app.app_id} href={app.store_url} target="_blank" rel="noopener noreferrer"
-                            style={{display:"flex",flexDirection:"column",gap:"0.875rem",padding:"1.25rem",background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderLeft:day.isToday?"3px solid #007AFF":"1px solid var(--clr-border)",borderRadius:12,textDecoration:"none",color:"inherit",transition:"background 0.15s"}}
+                                      <div key={app.app_id} style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderLeft:day.isToday?"3px solid #007AFF":"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden"}}>
+                                        <a href={app.store_url} target="_blank" rel="noopener noreferrer"
+                            style={{display:"flex",flexDirection:"column",gap:"0.875rem",padding:"1.25rem",textDecoration:"none",color:"inherit",transition:"background 0.15s"}}
                             onMouseEnter={e=>e.currentTarget.style.background="rgba(var(--clr-text-rgb),0.02)"}
-                            onMouseLeave={e=>e.currentTarget.style.background="var(--clr-surface)"}>
+                            onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
                             <div style={{display:"flex",alignItems:"flex-start",gap:"1rem"}}>
                               {app.icon_url
                                 ? <img src={app.icon_url} alt="" width={64} height={64} style={{borderRadius:14,flexShrink:0,objectFit:"cover",border:"1px solid var(--clr-border)"}}/>
@@ -3638,6 +3639,19 @@ function HomeInner() {
                             )}
                             <AiBlock what={app.claude_what} diff={app.claude_different} gap={app.claude_missing}/>
                           </a>
+                          {/* CTA strip */}
+                          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 14px 10px",background:"var(--clr-bg)",borderTop:"1px solid var(--clr-border)",gap:12}}>
+                            <span style={{fontSize:"0.75rem",color:"var(--clr-text-3)"}}>
+                              {app.category ? <><strong>{app.category}</strong> space just got a new player.</> : <>A new app just launched in this space.</>}
+                            </span>
+                            <button
+                              onClick={e=>{e.preventDefault();setSelectedTool("gap-analysis");}}
+                              style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:"0.7rem",fontWeight:700,padding:"5px 12px",borderRadius:6,background:"var(--clr-text)",color:"var(--clr-bg)",cursor:"pointer",border:"none",fontFamily:"inherit",letterSpacing:"-0.01em",whiteSpace:"nowrap",flexShrink:0,transition:"opacity 0.12s"}}
+                              onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
+                              onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
+                            >Dig my angle →</button>
+                          </div>
+                        </div>
                                     ))}
                                   </div>
                                 </div>
