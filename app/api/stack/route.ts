@@ -48,7 +48,13 @@ const PROMPT = (idea: string, budget: string, techLevel: string, platform: strin
 **What they're building:** ${idea}
 **Budget:** ${BUDGET_LABELS[budget] ?? budget}
 **Technical level:** ${TECH_LABELS[techLevel] ?? techLevel}
-**Target platform:** ${PLATFORM_LABELS[platform] ?? platform}
+**Target platform:** ${PLATFORM_LABELS[platform] ?? platform}${platform === "both" ? `
+
+PLATFORM INSTRUCTION: The user wants BOTH web and mobile. Structure your response so that:
+- Each phase clearly separates web tools vs mobile tools where they differ (e.g. "Web: Next.js | Mobile: React Native")
+- When a tool works for both, just list it once
+- The headline should reflect the cross-platform strategy
+- In build order, note which steps are web-specific, mobile-specific, or shared` : ""}
 
 Respond with ONLY a JSON code block matching this exact schema:
 
