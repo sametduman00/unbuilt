@@ -3927,15 +3927,7 @@ function HomeInner() {
                       <p style={{ fontSize: "0.8rem", color: "var(--clr-text-3)", textAlign: "center" as const, lineHeight: 1.5, marginBottom: 14, fontStyle: "italic" as const }}>
                         Other tools guess from 2023 training data. We read Reddit from this morning.
                       </p>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, flexWrap: "wrap" as const }}>
-                        {[{ label: "70+ live sources", color: "#7c3aed", bg: "#f5f3ff", border: "#ddd6fe" }, { label: "Reddit · X · YouTube", color: "#c2410c", bg: "#fff7ed", border: "#fed7aa" }, { label: "App Store · Google Play", color: "#2563eb", bg: "#eff6ff", border: "#bfdbfe" }].map(b => (
-                          <span key={b.label} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.6rem", fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: b.bg, border: `1px solid ${b.border}`, color: b.color, whiteSpace: "nowrap" as const }}>
-                            <span style={{ width: 5, height: 5, borderRadius: "50%", background: b.color, opacity: 0.7 }} />
-                            {b.label}
-                          </span>
-                        ))}
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "0.6rem", fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: "#111", border: "1px solid #111", color: "#fff", whiteSpace: "nowrap" as const }}>★ Claude Opus · Extended Thinking</span>
-                      </div>
+
                     </div>
                   )}
                   <InputSection
