@@ -1238,210 +1238,532 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
   );
 }
 
+// ── DIG SAMPLE REPORT — "AI habit tracker with social accountability" ──
 function DigSampleReport() {
   const [activeTab, setActiveTab] = useState(0);
   const tabs = ["Overview","Market Data","Community Signals","Competitors","Market Gaps","Go-to-Market","Financials","Validate","Action Plan","Synthesis"];
 
-  const tabContent: Record<number, React.ReactNode> = {
-    0: (
-      <div style={{ display:"flex", flexDirection:"column" as const, gap:12 }}>
-        <div style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:12, padding:14 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:12 }}>
-            <div style={{ width:68, height:68, borderRadius:"50%", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, fontWeight:800, flexShrink:0 }}>74</div>
-            <div>
-              <div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#7c3aed", marginBottom:3 }}>Market Score · Real Opportunity</div>
-              <div style={{ fontSize:14, fontWeight:700, color:"#111", marginBottom:4 }}>Strong gap in the social accountability layer</div>
-              <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.5 }}>Apps track habits. None make you prove it to someone who actually cares. Gen Z wants to be watched — not just streaked.</div>
+  const renderContent = () => {
+    switch(activeTab) {
+      case 0: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:12 }}>
+          <div style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:12, padding:14 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:12 }}>
+              <div style={{ width:68, height:68, borderRadius:"50%", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, fontWeight:800, flexShrink:0 }}>74</div>
+              <div>
+                <div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#7c3aed", marginBottom:3 }}>Market Score · Real Opportunity</div>
+                <div style={{ fontSize:15, fontWeight:700, color:"#111", marginBottom:4 }}>Strong gap in the social accountability layer</div>
+                <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.55 }}>Every habit app tracks what you do. None make you prove it to someone who actually cares. The missing layer is human accountability — not AI nudges, not leaderboards, but a real person checking on you.</div>
+              </div>
+            </div>
+            <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:8, padding:"9px 12px" }}>
+              <div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#7c3aed", marginBottom:3 }}>One-Liner Positioning</div>
+              <div style={{ fontSize:13, fontStyle:"italic" as const, color:"#1e1b4b" }}>"The habit app that makes you prove it — to your friends."</div>
             </div>
           </div>
-          <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:8, padding:"9px 12px" }}>
-            <div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#7c3aed", marginBottom:2 }}>Your One-Liner</div>
-            <div style={{ fontSize:12, fontStyle:"italic" as const, color:"#1e1b4b" }}>"The habit app that makes you prove it — to your friends."</div>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+            <div style={{ background:"#f0fdfb", border:"1px solid #ccfbf1", borderRadius:9, padding:"10px 12px" }}>
+              <div style={{ fontSize:8, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#0d9488", marginBottom:4 }}>Biggest Opportunity</div>
+              <div style={{ fontSize:12, fontWeight:700, color:"#111", marginBottom:3 }}>BeReal-style habit proof</div>
+              <div style={{ fontSize:11, color:"#6b7280", lineHeight:1.5 }}>No app forces you to show friends you actually did the thing. Streaks are solo and break silently with zero social cost.</div>
+            </div>
+            <div style={{ background:"#fff7ed", border:"1px solid #fed7aa", borderRadius:9, padding:"10px 12px" }}>
+              <div style={{ fontSize:8, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#ea580c", marginBottom:4 }}>Biggest Risk</div>
+              <div style={{ fontSize:12, fontWeight:700, color:"#111", marginBottom:3 }}>Habitica has brand loyalty</div>
+              <div style={{ fontSize:11, color:"#6b7280", lineHeight:1.5 }}>Strong gamification but weak Gen Z retention after week 2. Their social layer is just leaderboards nobody checks.</div>
+            </div>
+            <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:9, padding:"10px 12px" }}>
+              <div style={{ fontSize:8, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#2563eb", marginBottom:4 }}>First Move</div>
+              <div style={{ fontSize:12, fontWeight:700, color:"#111", marginBottom:3 }}>Post in r/getdisciplined</div>
+              <div style={{ fontSize:11, color:"#6b7280", lineHeight:1.5 }}>2.3K upvotes on "I need someone to actually check on me." Your early adopters are writing your ad copy right now.</div>
+            </div>
           </div>
         </div>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
-          <div style={{ background:"#f0fdfb", border:"1px solid #ccfbf1", borderRadius:9, padding:"10px 12px" }}><div style={{ fontSize:8, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#0d9488", marginBottom:4 }}>Biggest Opportunity</div><div style={{ fontSize:11.5, fontWeight:700, color:"#111", marginBottom:3 }}>BeReal-style habit proof</div><div style={{ fontSize:10.5, color:"#6b7280", lineHeight:1.45 }}>No app forces you to show friends you did the thing. Streaks break silently with zero social cost.</div></div>
-          <div style={{ background:"#fff7ed", border:"1px solid #fed7aa", borderRadius:9, padding:"10px 12px" }}><div style={{ fontSize:8, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#ea580c", marginBottom:4 }}>Biggest Risk</div><div style={{ fontSize:11.5, fontWeight:700, color:"#111", marginBottom:3 }}>Habitica has brand loyalty</div><div style={{ fontSize:10.5, color:"#6b7280", lineHeight:1.45 }}>Strong gamification, weak Gen Z retention after week 2. Social layer is just leaderboards nobody checks.</div></div>
-          <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:9, padding:"10px 12px" }}><div style={{ fontSize:8, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#2563eb", marginBottom:4 }}>First Move</div><div style={{ fontSize:11.5, fontWeight:700, color:"#111", marginBottom:3 }}>Post in r/getdisciplined</div><div style={{ fontSize:10.5, color:"#6b7280", lineHeight:1.45 }}>2.3K upvotes: "I need someone to check on me." Your early adopters are writing your marketing copy.</div></div>
+      );
+      case 1: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          <div style={{ display:"flex", gap:10 }}>
+            {[{lbl:"TAM",val:"$4.2B",sub:"Global wellness apps 2024",c:"#7c3aed",bg:"#f5f3ff",br:"#ddd6fe"},{lbl:"SAM",val:"$800M",sub:"Gen Z habit tracking segment",c:"#16a34a",bg:"#f0fdf4",br:"#bbf7d0"},{lbl:"SOM",val:"$24M",sub:"Realistic 3-year capture",c:"#2563eb",bg:"#eff6ff",br:"#bfdbfe"}].map((m,i)=>(
+              <div key={i} style={{ flex:1, background:m.bg, border:`1px solid ${m.br}`, borderRadius:10, padding:14, textAlign:"center" as const }}>
+                <div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:m.c, marginBottom:6 }}>{m.lbl}</div>
+                <div style={{ fontSize:26, fontWeight:800, color:"#111", lineHeight:1 }}>{m.val}</div>
+                <div style={{ fontSize:10, color:"#9ca3af", marginTop:4 }}>{m.sub}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8, padding:"10px 14px", display:"flex", alignItems:"center", gap:10 }}>
+            <span style={{ color:"#16a34a", fontWeight:700, fontSize:18 }}>↗</span>
+            <div>
+              <span style={{ fontSize:13, fontWeight:700, color:"#15803d" }}>18% CAGR through 2027</span>
+              <span style={{ fontSize:11, color:"#6b7280", marginLeft:8 }}>Mental wellness apps outpacing physical fitness apps 3:1</span>
+            </div>
+          </div>
+          <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:"12px 14px" }}>
+            <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#9ca3af", marginBottom:8, letterSpacing:".06em" }}>App Store Landscape</div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+              {[{name:"Habitica",rating:"4.6",reviews:"87K",price:"Freemium"},{name:"Streaks",rating:"4.8",reviews:"41K",price:"$4.99"},{name:"HabitNow",rating:"4.4",reviews:"23K",price:"Free"}].map(a=>(
+                <div key={a.name} style={{ background:"#fafafa", borderRadius:7, padding:"8px 10px", border:"1px solid #f3f4f6" }}>
+                  <div style={{ fontSize:12, fontWeight:700, color:"#111", marginBottom:2 }}>{a.name}</div>
+                  <div style={{ fontSize:10, color:"#6b7280" }}>★ {a.rating} · {a.reviews} reviews</div>
+                  <div style={{ fontSize:10, color:"#9ca3af" }}>{a.price}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
-    ),
-    1: (
-      <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
-        <div style={{ display:"flex", gap:10 }}>
-          {[{lbl:"TAM",val:"$4.2B",sub:"Global wellness apps",c:"#7c3aed",bg:"#f5f3ff",br:"#ddd6fe"},{lbl:"SAM",val:"$800M",sub:"Gen Z segment",c:"#16a34a",bg:"#f0fdf4",br:"#bbf7d0"},{lbl:"SOM",val:"$24M",sub:"Realistic 3yr capture",c:"#2563eb",bg:"#eff6ff",br:"#bfdbfe"}].map((m,i)=>(
-            <div key={m.lbl} style={{ display:"flex", alignItems:"center", gap:10, flex:1 }}>
-              {i>0 && <div style={{ display:"flex", alignItems:"center", color:"#9ca3af", fontSize:18 }}>→</div>}
-              <div style={{ flex:1, background:m.bg, border:`1px solid ${m.br}`, borderRadius:10, padding:14, textAlign:"center" as const }}>
-                <div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:m.c, marginBottom:6 }}>{m.lbl} est.</div>
-                <div style={{ fontSize:28, fontWeight:800, color:"#111", lineHeight:1 }}>{m.val}</div>
-                <div style={{ fontSize:11, color:"#9ca3af", marginTop:4 }}>{m.sub}</div>
+      );
+      case 2: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#9ca3af", marginBottom:2 }}>Live signals from Reddit, X, YouTube</div>
+          {[
+            {src:"r/getdisciplined",badge:"HIGH PAIN",bc:"#fef2f2",tc:"#dc2626",border:"#ef4444",votes:"↑ 2,341",q:'"I need someone to actually check on me, not an app that sends push notifications I swipe away."'},
+            {src:"r/habittracking",badge:"NEED",bc:"#fff7ed",tc:"#d97706",border:"#f59e0b",votes:"↑ 891",q:'"The only habit that stuck was when my friend texted me every morning asking if I did it. Apps can\'t replicate that."'},
+            {src:"@user on X",badge:"PAIN",bc:"#fef2f2",tc:"#dc2626",border:"#0ea5e9",votes:"♥ 1.2K",q:'"Why is there no BeReal but for habits. I would pay for this immediately. Someone build it please."'},
+            {src:"YouTube comment",badge:"INSIGHT",bc:"#f0fdf4",tc:"#16a34a",border:"#22c55e",votes:"👍 445",q:'"I tried every habit app. The only thing that works is telling another person you\'ll do it. Apps don\'t judge you."'},
+          ].map((s,i)=>(
+            <div key={i} style={{ borderLeft:`3px solid ${s.border}`, paddingLeft:14 }}>
+              <div style={{ display:"flex", gap:6, marginBottom:5, alignItems:"center" }}>
+                <span style={{ fontSize:9, fontWeight:700, padding:"2px 7px", borderRadius:4, background:"#f3f4f6", color:"#374151" }}>{s.src}</span>
+                <span style={{ fontSize:9, fontWeight:700, padding:"2px 7px", borderRadius:4, background:s.bc, color:s.tc }}>{s.badge}</span>
+                <span style={{ fontSize:10, color:"#9ca3af" }}>{s.votes}</span>
+              </div>
+              <p style={{ fontSize:12, fontStyle:"italic" as const, color:"#374151", lineHeight:1.5 }}>{s.q}</p>
+            </div>
+          ))}
+        </div>
+      );
+      case 3: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          {[
+            {name:"Habitica",tag:"RPG-style gamification",threat:6,tc:"#ea580c",str:["12M+ users, strong brand","Deep gamification system","Cross-platform"],wk:["UI too complex for Gen Z","No real social accountability","Engagement drops after week 3"]},
+            {name:"Streaks",tag:"Minimalist iOS tracker",threat:3,tc:"#16a34a",str:["Beautiful design","Apple Watch native","Privacy-focused"],wk:["Solo experience only","iOS only","No community features"]},
+            {name:"Coach.me",tag:"Human coaching platform",threat:5,tc:"#d97706",str:["Real human coaches","Accountability built-in","Proven model"],wk:["$15-50/mo too expensive","Not social/peer-based","Feels like therapy not fun"]},
+          ].map(c=>(
+            <div key={c.name} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:10 }}>
+                <div>
+                  <div style={{ fontSize:13, fontWeight:700, color:"#2563eb" }}>{c.name}</div>
+                  <div style={{ fontSize:11, color:"#6b7280" }}>{c.tag}</div>
+                </div>
+                <div style={{ textAlign:"right" as const }}>
+                  <div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#9ca3af", marginBottom:2 }}>Threat Level</div>
+                  <div style={{ fontSize:13, fontWeight:800, color:c.tc }}>{c.threat}/10</div>
+                </div>
+              </div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+                <div><div style={{ fontSize:9, fontWeight:700, color:"#10b981", textTransform:"uppercase" as const, marginBottom:4 }}>Strengths</div>{c.str.map(s=><div key={s} style={{ fontSize:11, color:"#374151", marginBottom:2 }}>✓ {s}</div>)}</div>
+                <div><div style={{ fontSize:9, fontWeight:700, color:"#ef4444", textTransform:"uppercase" as const, marginBottom:4 }}>Weaknesses</div>{c.wk.map(w=><div key={w} style={{ fontSize:11, color:"#374151", marginBottom:2 }}>✗ {w}</div>)}</div>
               </div>
             </div>
           ))}
         </div>
-        <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8, padding:"10px 14px", display:"flex", alignItems:"center", gap:10 }}>
-          <span style={{ color:"#16a34a", fontWeight:700, fontSize:16 }}>↗</span>
-          <span style={{ fontSize:13, fontWeight:600, color:"#15803d" }}>18% annual growth</span>
-          <span style={{ fontSize:10, padding:"2px 7px", borderRadius:4, background:"#dcfce7", color:"#16a34a", fontWeight:700 }}>Growing</span>
+      );
+      case 4: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          {[
+            {title:"Peer accountability pairs",status:"UNTAPPED",score:92,c:"#2563eb",desc:"Two strangers matched by goal type check in on each other daily. Shame of letting someone down is 10x stronger than breaking a streak."},
+            {title:"Proof-of-completion photo",status:"UNTAPPED",score:88,c:"#7c3aed",desc:"BeReal-style timed photo to prove you actually did the habit. Cannot be faked. Creates viral sharing potential."},
+            {title:"Group commitment contracts",status:"EMERGING",score:71,c:"#ea580c",desc:"3-5 person groups with real money on the line. Lose $5 if you miss. Winner takes all. Apps like Beeminder do this poorly."},
+          ].map(g=>(
+            <div key={g.title} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:6 }}>
+                <div style={{ fontSize:13, fontWeight:700, color:"#111" }}>{g.title}</div>
+                <span style={{ fontSize:9, fontWeight:700, padding:"2px 7px", borderRadius:4, background:g.c==="#2563eb"?"#eff6ff":g.c==="#7c3aed"?"#f5f3ff":"#fff7ed", color:g.c }}>{g.status}</span>
+              </div>
+              <p style={{ fontSize:12, color:"#6b7280", lineHeight:1.5, marginBottom:8 }}>{g.desc}</p>
+              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <div style={{ flex:1, height:4, background:"#e5e7eb", borderRadius:2 }}><div style={{ width:`${g.score}%`, height:"100%", background:g.c, borderRadius:2 }} /></div>
+                <span style={{ fontSize:10, fontWeight:700, color:g.c }}>{g.score}/100</span>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
-    ),
-    2: (
-      <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
-        {[{sub:"r/getdisciplined",c:"#ea580c",badge:"HIGH PAIN",bc:"#fef2f2",votes:"↑ 2,341",q:'"I need someone to actually check on me, not an app that sends push notifications I swipe away."'},{sub:"r/habittracking",c:"#7c3aed",badge:"NEED",bc:"#fff7ed",votes:"↑ 891",q:'"The only habit that stuck was when my friend texted every morning asking if I did it."'},{sub:"@user on X",c:"#0ea5e9",badge:"PAIN",bc:"#fef2f2",votes:"♥ 1.2K",q:'"Why is there no BeReal but for habits. Someone build this please."'}].map((s,i)=>(
-          <div key={i} style={{ borderLeft:`3px solid ${s.c}`, paddingLeft:14 }}>
-            <div style={{ display:"flex", gap:6, marginBottom:5, alignItems:"center" }}>
-              <span style={{ fontSize:9, fontWeight:700, padding:"2px 7px", borderRadius:4, background:s.bc, color:s.c }}>{s.sub}</span>
-              <span style={{ fontSize:9, fontWeight:700, padding:"2px 7px", borderRadius:4, background:"#fef2f2", color:"#dc2626" }}>{s.badge}</span>
-              <span style={{ fontSize:10, color:"#9ca3af" }}>{s.votes}</span>
-            </div>
-            <p style={{ fontSize:12, fontStyle:"italic" as const, color:"#374151" }}>{s.q}</p>
-          </div>
-        ))}
-      </div>
-    ),
-    3: (
-      <div style={{ display:"flex", flexDirection:"column" as const, gap:8 }}>
-        {[{name:"Habitica",tag:"RPG habit tracker",threat:"MEDIUM 6/10",tc:"#ea580c",str:["Strong gamification","Large community"],wk:["Complex UI, Gen Z drops week 2","No real social proof layer"]},{name:"Streaks",tag:"Minimalist iOS tracker",threat:"LOW 3/10",tc:"#16a34a",str:["Beautiful design","Apple Watch support"],wk:["Completely solo","No social layer at all"]}].map((c,i)=>(
-          <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
-              <div><div style={{ fontSize:13, fontWeight:700, color:"#2563eb" }}>{c.name}</div><div style={{ fontSize:11, color:"#6b7280" }}>{c.tag}</div></div>
-              <span style={{ fontSize:9, fontWeight:700, padding:"2px 7px", borderRadius:4, background:c.tc==="#16a34a"?"#f0fdf4":"#fff7ed", color:c.tc }}>{c.threat}</span>
-            </div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
-              <div><div style={{ fontSize:9, fontWeight:700, color:"#10b981", textTransform:"uppercase" as const, marginBottom:4 }}>Strengths</div>{c.str.map(s=><div key={s} style={{ fontSize:11, color:"#374151" }}>• {s}</div>)}</div>
-              <div><div style={{ fontSize:9, fontWeight:700, color:"#ef4444", textTransform:"uppercase" as const, marginBottom:4 }}>Weaknesses</div>{c.wk.map(w=><div key={w} style={{ fontSize:11, color:"#374151" }}>• {w}</div>)}</div>
+      );
+      case 5: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
+            <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#0d9488", marginBottom:10, letterSpacing:".06em" }}>Target Customer Profile</div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8 }}>
+              {[{l:"WHO",v:"Gen Z 18-24, college or first job"},{l:"PAIN",v:"Starts habits, quits after 2 weeks, no accountability"},{l:"BUDGET",v:"$3-8/mo. Pays for Spotify, won't pay for boring apps."},{l:"WHERE",v:"TikTok, Discord, Reddit r/selfimprovement"}].map(c=>(
+                <div key={c.l} style={{ background:"#fafafa", border:"1px solid #e5e7eb", borderRadius:7, padding:8 }}>
+                  <div style={{ fontSize:9, fontWeight:700, color:"#0d9488", marginBottom:3 }}>{c.l}</div>
+                  <div style={{ fontSize:11, color:"#374151", lineHeight:1.4 }}>{c.v}</div>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
-    ),
-    4: (
-      <div style={{ display:"flex", flexDirection:"column" as const, gap:8 }}>
-        {[{title:"Social accountability layer",status:"UNTAPPED",sc:"#2563eb",desc:"No app currently makes habit completion a social event. The proof-of-work concept applied to personal growth.",score:9},{title:"AI nudge timing",status:"EMERGING",sc:"#ea580c",desc:"Personalized nudges based on calendar, energy patterns, and past slip-up times. Nobody has done this well for Gen Z.",score:7}].map((g,i)=>(
-          <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:7 }}>
-              <div style={{ fontSize:13, fontWeight:700, color:"#111" }}>{g.title}</div>
-              <span style={{ fontSize:9, fontWeight:700, padding:"2px 7px", borderRadius:4, background:"#eff6ff", color:g.sc }}>{g.status}</span>
-            </div>
-            <p style={{ fontSize:12, color:"#6b7280", marginBottom:8 }}>{g.desc}</p>
-            <div style={{ height:4, background:"#e5e7eb", borderRadius:2 }}><div style={{ width:`${g.score*10}%`, height:"100%", background:"#0ea5e9", borderRadius:2 }} /></div>
-          </div>
-        ))}
-      </div>
-    ),
-    5: (
-      <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
-        <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
-          <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#0d9488", marginBottom:10 }}>Target Customer</div>
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8 }}>
-            {[{lbl:"WHO",v:"Gen Z 18-24, college or first job"},{lbl:"PAIN",v:"Starts strong, drops week 2, no accountability"},{lbl:"BUDGET",v:"$3-8/mo. Pays for Spotify. Won't pay for boring."},{lbl:"WHERE",v:"TikTok, Discord, r/selfimprovement"}].map(c=>(
-              <div key={c.lbl} style={{ background:"#fafafa", border:"1px solid #e5e7eb", borderRadius:7, padding:8 }}><div style={{ fontSize:9, fontWeight:700, color:"#0d9488", marginBottom:3 }}>{c.lbl}</div><div style={{ fontSize:11, color:"#374151" }}>{c.v}</div></div>
+          <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
+            <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#9ca3af", marginBottom:8, letterSpacing:".06em" }}>Launch Channels (ranked by CAC)</div>
+            {[{name:"Reddit organic (r/getdisciplined, r/selfimprovement)",type:"PRIMARY",cac:"$0",roi:"⬆⬆⬆"},{name:"TikTok — accountability challenge content",type:"SECONDARY",cac:"~$4",roi:"⬆⬆"},{name:"Influencer collab (productivity/self-improvement niche)",type:"SECONDARY",cac:"~$8",roi:"⬆"},{name:"Product Hunt launch",type:"AMPLIFIER",cac:"$0",roi:"⬆⬆"}].map(c=>(
+              <div key={c.name} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"7px 0", borderBottom:"1px solid #f3f4f6" }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <span style={{ fontSize:11, fontWeight:600, color:"#111" }}>{c.name}</span>
+                  <span style={{ fontSize:9, padding:"1px 6px", borderRadius:4, background:c.type==="PRIMARY"?"#eff6ff":c.type==="AMPLIFIER"?"#f0fdf4":"#f5f5f5", color:c.type==="PRIMARY"?"#2563eb":c.type==="AMPLIFIER"?"#16a34a":"#6b7280", fontWeight:700 }}>{c.type}</span>
+                </div>
+                <div style={{ textAlign:"right" as const, flexShrink:0, marginLeft:8 }}>
+                  <span style={{ fontSize:11, fontWeight:700, color:"#111" }}>CAC: {c.cac}</span>
+                </div>
+              </div>
             ))}
           </div>
         </div>
-        <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
-          <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#9ca3af", marginBottom:8 }}>GTM Channels</div>
-          {[{name:"Reddit organic",type:"PRIMARY",cac:"$0"},{name:"TikTok accountability content",type:"SECONDARY",cac:"$4"}].map(c=>(
-            <div key={c.name} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"7px 0", borderBottom:"1px solid #f3f4f6" }}>
-              <div style={{ display:"flex", alignItems:"center", gap:8 }}><span style={{ fontSize:12, fontWeight:700, color:"#111" }}>{c.name}</span><span style={{ fontSize:9, padding:"2px 6px", borderRadius:4, background:c.type==="PRIMARY"?"#eff6ff":"#f0fdf4", color:c.type==="PRIMARY"?"#2563eb":"#16a34a", fontWeight:700 }}>{c.type}</span></div>
-              <div style={{ fontSize:11, fontWeight:700, color:"#111" }}>Est. CAC: {c.cac}</div>
+      );
+      case 6: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10 }}>
+            <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}><div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#ef4444", marginBottom:5 }}>Monthly Burn</div><div style={{ fontSize:22, fontWeight:800, color:"#111" }}>$45</div><div style={{ fontSize:10, color:"#6b7280", marginTop:3 }}>Infra $15 · Push $10 · Ads $20</div></div>
+            <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}><div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#10b981", marginBottom:5 }}>Break-Even</div><div style={{ fontSize:22, fontWeight:800, color:"#111" }}>Month 4</div><div style={{ fontSize:10, color:"#6b7280", marginTop:3 }}>150 paying users @ $5/mo</div></div>
+            <div style={{ background:"#f0fdfe", border:"1px solid #a5f3fc", borderRadius:10, padding:13 }}><div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#0891b2", marginBottom:5 }}>12-Month MRR</div><div style={{ fontSize:22, fontWeight:800, color:"#111" }}>$8,400</div><div style={{ fontSize:10, color:"#6b7280", marginTop:3 }}>Middle scenario</div></div>
+          </div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8 }}>
+            <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:12 }}><div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#6b7280", marginBottom:5 }}>Pessimistic</div><div style={{ fontSize:18, fontWeight:800, color:"#6b7280" }}>$2,400</div><div style={{ fontSize:10, color:"#9ca3af" }}>30% probability</div></div>
+            <div style={{ border:"2px solid #0ea5e9", borderRadius:10, padding:12, position:"relative" as const }}><div style={{ position:"absolute" as const, top:-9, left:"50%", transform:"translateX(-50%)", background:"#0ea5e9", color:"white", padding:"1px 8px", borderRadius:999, fontSize:10, fontWeight:600, whiteSpace:"nowrap" as const }}>Base case</div><div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#0ea5e9", marginBottom:5 }}>Middle</div><div style={{ fontSize:18, fontWeight:800, color:"#111" }}>$8,400</div><div style={{ fontSize:10, color:"#9ca3af" }}>55% probability</div></div>
+            <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:12 }}><div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#10b981", marginBottom:5 }}>Optimistic</div><div style={{ fontSize:18, fontWeight:800, color:"#10b981" }}>$24K</div><div style={{ fontSize:10, color:"#9ca3af" }}>15% probability</div></div>
+          </div>
+          <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
+            <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#9ca3af", marginBottom:8, letterSpacing:".06em" }}>Unit Economics</div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1fr", gap:8 }}>
+              {[{l:"Avg Revenue/User",v:"$5/mo"},{l:"Target CAC",v:"<$8"},{l:"LTV (12mo)",v:"$60"},{l:"LTV:CAC Ratio",v:"7.5x ✓"}].map(u=>(
+                <div key={u.l} style={{ textAlign:"center" as const }}>
+                  <div style={{ fontSize:9, color:"#9ca3af", marginBottom:3 }}>{u.l}</div>
+                  <div style={{ fontSize:14, fontWeight:700, color:"#111" }}>{u.v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+      case 7: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          {[
+            {q:"Will Gen Z pay for accountability?",risk:"HIGH",rl:"4px solid #ef4444",rb:"#fef2f2",rc:"#dc2626",how:"Stripe waitlist at $3/mo. 100 signups in 2 weeks = green light. Fewer = wrong price or wrong audience."},
+            {q:"Do strangers actually hold each other accountable?",risk:"HIGH",rl:"4px solid #ef4444",rb:"#fef2f2",rc:"#dc2626",how:"WhatsApp group experiment: pair 10 Reddit strangers for 2 weeks. Measure completion rate vs solo control group."},
+            {q:"Is the proof-of-photo feature actually used?",risk:"MEDIUM",rl:"4px solid #f59e0b",rb:"#fff7ed",rc:"#d97706",how:"Manual MVP: have beta users text you a photo each morning. Track how many do it vs just saying 'done'."},
+            {q:"Does social pressure cause drop-off due to shame?",risk:"MEDIUM",rl:"4px solid #f59e0b",rb:"#fff7ed",rc:"#d97706",how:"Survey users after 2 weeks. Ask if social pressure felt motivating or anxiety-inducing. Adjust tone accordingly."},
+            {q:"Is the viral loop real?",risk:"LOW",rl:"4px solid #10b981",rb:"#f0fdf4",rc:"#16a34a",how:"Track organic invites in WhatsApp beta. If 3+ people invite friends unprompted, loop is real."},
+          ].map((v,i)=>(
+            <div key={i} style={{ borderLeft:v.rl, paddingLeft:14 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4, alignItems:"flex-start" }}>
+                <div style={{ fontSize:12, fontWeight:600, color:"#111", flex:1 }}>{v.q}</div>
+                <span style={{ fontSize:9, fontWeight:700, padding:"2px 7px", borderRadius:4, background:v.rb, color:v.rc, flexShrink:0, marginLeft:8 }}>{v.risk}</span>
+              </div>
+              <p style={{ fontSize:11, color:"#6b7280", lineHeight:1.5 }}>Test: {v.how}</p>
             </div>
           ))}
         </div>
-      </div>
-    ),
-    6: (
-      <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10 }}>
-          <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}><div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#ef4444", marginBottom:5 }}>Monthly Burn</div><div style={{ fontSize:22, fontWeight:800, color:"#111" }}>$45</div><div style={{ fontSize:10, color:"#6b7280", marginTop:3 }}>Infra $15 · Tools $20 · Ads $10</div></div>
-          <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}><div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#10b981", marginBottom:5 }}>Break-Even</div><div style={{ fontSize:22, fontWeight:800, color:"#111" }}>Month 4</div><div style={{ fontSize:10, color:"#6b7280", marginTop:3 }}>At 150 paying users ($5/mo)</div></div>
-          <div style={{ background:"#f0fdfe", border:"1px solid #a5f3fc", borderRadius:10, padding:13 }}><div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#0891b2", marginBottom:5 }}>12-Month MRR</div><div style={{ fontSize:22, fontWeight:800, color:"#111" }}>$8,400</div><div style={{ fontSize:10, color:"#6b7280", marginTop:3 }}>Middle estimate</div></div>
-        </div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8 }}>
-          <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:12 }}><div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#6b7280", marginBottom:5 }}>Cautious</div><div style={{ fontSize:18, fontWeight:800, color:"#6b7280" }}>$2,400</div><div style={{ fontSize:10, color:"#9ca3af" }}>30% likely</div></div>
-          <div style={{ border:"2px solid #0ea5e9", borderRadius:10, padding:12, position:"relative" as const }}><div style={{ position:"absolute" as const, top:-9, left:"50%", transform:"translateX(-50%)", background:"#0ea5e9", color:"white", padding:"1px 8px", borderRadius:999, fontSize:10, fontWeight:600, whiteSpace:"nowrap" as const }}>Most Likely</div><div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#0ea5e9", marginBottom:5 }}>Middle</div><div style={{ fontSize:18, fontWeight:800, color:"#111" }}>$8,400</div><div style={{ fontSize:10, color:"#9ca3af" }}>55% likely</div></div>
-          <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:12 }}><div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#10b981", marginBottom:5 }}>Optimistic</div><div style={{ fontSize:18, fontWeight:800, color:"#10b981" }}>$24K</div><div style={{ fontSize:10, color:"#9ca3af" }}>15% likely</div></div>
-        </div>
-      </div>
-    ),
-    7: (
-      <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
-        {[{q:"Will Gen Z pay for accountability?",risk:"HIGH RISK",rc:"#dc2626",rb:"#fef2f2",rl:"4px solid #ef4444",how:"Run a $3/mo waitlist on Stripe. 100 signups in 2 weeks = validated."},{q:"Do friends want to be accountability partners?",risk:"MEDIUM",rc:"#d97706",rb:"#fff7ed",rl:"4px solid #f59e0b",how:"WhatsApp group, 10 strangers. You play the AI for 2 weeks. Track dropout rate."},{q:"Is the viral loop real?",risk:"LOW RISK",rc:"#16a34a",rb:"#f0fdf4",rl:"4px solid #10b981",how:"Track referral rate in manual test. 3+ organic invites = loop works."}].map((v,i)=>(
-          <div key={i} style={{ borderLeft:v.rl, paddingLeft:14 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}><div style={{ fontSize:12, fontWeight:600, color:"#111" }}>{v.q}</div><span style={{ fontSize:9, fontWeight:700, padding:"2px 7px", borderRadius:4, background:v.rb, color:v.rc, flexShrink:0, marginLeft:8 }}>{v.risk}</span></div>
-            <p style={{ fontSize:11, color:"#6b7280" }}>Test: {v.how}</p>
+      );
+      case 8: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+            {[
+              {n:1,when:"This week",title:"Post the problem",body:'Drop in r/getdisciplined: "Who wants a stranger accountability partner for 2 weeks?" Goal: 50 genuine replies.'},
+              {n:2,when:"Week 1-2",title:"Run it manually",body:"Pair 10 volunteers via WhatsApp. You coordinate. Send daily check-ins. Track who completes their habit daily."},
+              {n:3,when:"Week 2",title:"Charge before building",body:"Add a $3/mo Stripe waitlist. Link from your Reddit comment. 100 paying signups = build. Less = adjust the angle."},
+            ].map(a=>(
+              <div key={a.n} style={{ border:"1px solid #e5e7eb", borderRadius:9, padding:12 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:7 }}>
+                  <div style={{ width:22, height:22, background:"#111", color:"#fff", borderRadius:5, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:800, flexShrink:0 }}>{a.n}</div>
+                  <div style={{ fontSize:9, color:"#9ca3af" }}>{a.when}</div>
+                </div>
+                <div style={{ fontSize:12, fontWeight:700, color:"#111", marginBottom:4 }}>{a.title}</div>
+                <div style={{ fontSize:11, color:"#6b7280", lineHeight:1.45 }}>{a.body}</div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    ),
-    8: (
-      <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
-        <div style={{ fontSize:14, fontWeight:700, color:"#111", marginBottom:4 }}>Prove it before you build it — 3 moves</div>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
-          {[{n:1,title:"Post the problem",body:'r/getdisciplined: "Anyone want a human accountability partner for 2 weeks?" Goal: 50 replies in 48 hours.'},{n:2,title:"Run it manually",body:"WhatsApp group. 10 strangers. You be the AI. Daily check-ins for 2 weeks."},{n:3,title:"Charge before building",body:"$3/mo waitlist on Stripe. 100 paying = build. Less = pivot angle, not idea."}].map(a=>(
-            <div key={a.n} style={{ border:"1px solid #e5e7eb", borderRadius:9, padding:11 }}>
-              <div style={{ width:22, height:22, background:"#111", color:"#fff", borderRadius:5, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:800, marginBottom:7 }}>{a.n}</div>
-              <div style={{ fontSize:12, fontWeight:700, color:"#111", marginBottom:3 }}>{a.title}</div>
-              <div style={{ fontSize:10, color:"#6b7280" }}>{a.body}</div>
+          <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
+            <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#9ca3af", marginBottom:10, letterSpacing:".06em" }}>Weeks 3-8: Build Phase</div>
+            {[
+              {wk:"Week 3-4",t:"MVP in Lovable",d:"Prompt: 'Habit accountability app where two users are paired. Daily photo check-in. Streak counter. Simple profile.' Deploy to Vercel."},
+              {wk:"Week 5",t:"Onboard 50 beta users",d:"Reddit post announcing beta. Free for first 100 users. Collect feedback aggressively. Fix the top 3 complaints."},
+              {wk:"Week 6",t:"Add payment",d:"Stripe integration. $5/mo after 14-day free trial. Email sequence: Day 1 welcome, Day 7 nudge, Day 13 'tomorrow is day 14'."},
+              {wk:"Week 7-8",t:"Launch on Product Hunt",d:"Schedule for Tuesday 8am PST. Warm up supporters in Discord 3 days before. Goal: Top 5 of the day."},
+            ].map(s=>(
+              <div key={s.wk} style={{ display:"flex", gap:12, padding:"7px 0", borderBottom:"1px solid #f3f4f6", alignItems:"flex-start" }}>
+                <div style={{ fontSize:10, fontWeight:700, color:"#6366f1", minWidth:56, flexShrink:0 }}>{s.wk}</div>
+                <div>
+                  <div style={{ fontSize:12, fontWeight:700, color:"#111", marginBottom:2 }}>{s.t}</div>
+                  <div style={{ fontSize:11, color:"#6b7280", lineHeight:1.4 }}>{s.d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+      case 9: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14 }}>
+            <div style={{ display:"flex", gap:14, marginBottom:12 }}>
+              <div style={{ width:64, height:64, borderRadius:"50%", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, fontWeight:800, flexShrink:0 }}>74</div>
+              <div>
+                <div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, color:"#7c3aed", marginBottom:4, letterSpacing:".06em" }}>Final Verdict</div>
+                <p style={{ fontSize:13, lineHeight:1.65, color:"#374151" }}>This is a genuine gap. BeReal-style habit accountability doesn't exist. Gen Z is explicitly asking for it right now on Reddit. The market is growing 18% annually. Competitors are weak on the social layer. Validation cost is near-zero. The main risk is monetization — but you can test that this week with a Stripe waitlist before writing a single line of code.</p>
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-    ),
-    9: (
-      <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
-        <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14 }}>
-          <div style={{ display:"flex", gap:14, marginBottom:12 }}>
-            <div style={{ width:60, height:60, borderRadius:"50%", background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"white", display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, fontWeight:800, flexShrink:0 }}>74</div>
-            <p style={{ fontSize:13, lineHeight:1.65, color:"#374151" }}>This is a genuine gap. BeReal-style accountability for habits doesn't exist. Gen Z is explicitly asking for it on Reddit right now. The market is growing, competition is weak on the social layer, and the validation cost is nearly zero.</p>
+          </div>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+            <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:12 }}>
+              <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#10b981", marginBottom:8, letterSpacing:".06em" }}>Working For You</div>
+              {["Gen Z actively complaining about this on Reddit today","$0 CAC through organic Reddit content","Viral loop built into the core product","Low build cost — Lovable MVP in under 2 weeks","No direct competitor owns this exact positioning"].map(x=><div key={x} style={{ fontSize:11, color:"#374151", marginBottom:5, display:"flex", gap:6 }}><span style={{ color:"#10b981", flexShrink:0 }}>✓</span>{x}</div>)}
+            </div>
+            <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:12 }}>
+              <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ef4444", marginBottom:8, letterSpacing:".06em" }}>Watch Out</div>
+              {["Gen Z social fatigue — watch churn carefully after 30 days","Need critical mass to create network effect (chicken-egg)","Monetizing free social behavior is historically hard","Habitica could copy the feature with 12M users behind them","Shame can cause dropout — tone must be encouraging not judgmental"].map(x=><div key={x} style={{ fontSize:11, color:"#374151", marginBottom:5, display:"flex", gap:6 }}><span style={{ color:"#ef4444", flexShrink:0 }}>⚠</span>{x}</div>)}
+            </div>
           </div>
         </div>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
-          <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:12 }}><div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#374151", marginBottom:8 }}>Working For You</div>{["Gen Z actively complaining about this gap","Low build cost with Lovable + Supabase","Viral loop is the product itself"].map(x=><div key={x} style={{ fontSize:12, color:"#374151", marginBottom:5 }}>● {x}</div>)}</div>
-          <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:12 }}><div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#374151", marginBottom:8 }}>Watch Out</div>{["Social fatigue is real — watch churn","Need critical mass for network effect","Monetizing free social behaviors is hard"].map(x=><div key={x} style={{ fontSize:12, color:"#374151", marginBottom:5 }}>● {x}</div>)}</div>
-        </div>
-      </div>
-    ),
+      );
+      default: return null;
+    }
   };
 
   return (
-    <div id="dig-sample-report" style={{ padding: "20px 0 40px" }}>
+    <div style={{ padding: "20px 0 40px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-4)" }}>What you'll get</span>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-4)" }}>Sample Dig Report</span>
         <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>« AI habit tracker with social accountability »</span>
-        <span id="dig-sample-report" style={{ marginLeft: "auto", fontSize: 10, color: "var(--clr-text-4)" }}>Click the tabs ↓</span>
       </div>
-      <div style={{ background: "var(--clr-surface)", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden", display: "flex", height: 420 }}>
-        {/* Sidebar */}
+      <div style={{ background: "var(--clr-surface)", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden", display: "flex", minHeight: 440 }}>
         <div style={{ width: 190, background: "#fafafa", borderRight: "1px solid #e5e7eb", padding: "12px 8px", display: "flex", flexDirection: "column" as const, gap: 2, flexShrink: 0 }}>
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase" as const, color: "#9ca3af", marginBottom: 6, paddingLeft: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span>Analysis</span>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "1px 6px", borderRadius: 999, background: "#dcfce7", border: "1px solid #86efac", fontSize: 8, fontWeight: 700, color: "#16a34a" }}>
-              <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#10b981", animation: "pulse 1.5s ease-in-out infinite" }} />
-              Live
+              <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#10b981", animation: "pulse 1.5s ease-in-out infinite" }} />Live
             </span>
           </div>
           {tabs.map((tab, i) => (
-            <button key={i} onClick={() => setActiveTab(i)} style={{ display: "flex", alignItems: "center", width: "100%", padding: "7px 10px", borderRadius: 7, fontSize: 12, cursor: "pointer", gap: 7, border: activeTab === i ? "1px solid #e5e7eb" : "1px solid transparent", background: activeTab === i ? "white" : "transparent", color: activeTab === i ? "#111" : "#374151", fontWeight: activeTab === i ? 600 : 400, fontFamily: "inherit", boxShadow: activeTab === i ? "0 1px 2px rgba(0,0,0,0.05)" : "none", textAlign: "left" as const }}>
+            <button key={i} onClick={() => setActiveTab(i)} style={{ display: "flex", alignItems: "center", width: "100%", padding: "7px 10px", borderRadius: 7, fontSize: 12, cursor: "pointer", gap: 7, border: activeTab === i ? "1px solid #e5e7eb" : "1px solid transparent", background: activeTab === i ? "white" : "transparent", color: activeTab === i ? "#111" : "#374151", fontWeight: activeTab === i ? 600 : 400, fontFamily: "inherit", boxShadow: activeTab === i ? "0 1px 2px rgba(0,0,0,0.05)" : "none", textAlign: "left" as const, transition: "all 0.1s" }}>
               <span style={{ fontSize: 10, color: activeTab === i ? "#6366f1" : "#9ca3af", flexShrink: 0 }}>{activeTab === i ? "●" : "✓"}</span>
               <span style={{ flex: 1 }}>{tab}</span>
               {i === 0 && <span style={{ background: "#6366f1", color: "white", padding: "1px 5px", borderRadius: 3, fontSize: 10, fontWeight: 700 }}>74</span>}
             </button>
           ))}
         </div>
-        {/* Content */}
         <div style={{ flex: 1, padding: "18px 20px", overflowY: "auto" as const }}>
-          {tabContent[activeTab]}
+          {renderContent()}
         </div>
       </div>
-      {/* Unlock bar */}
-      <div style={{ background: "#111", borderRadius: 12, padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginTop: 12 }}>
-        <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)" }}>Run this on <strong style={{ color: "#fff" }}>your idea</strong> — all 10 sections, live data from today, market score, launch roadmap</span>
-        <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 18px", background: "#fff", color: "#111", borderRadius: 8, fontSize: 12, fontWeight: 700, fontFamily: "inherit", cursor: "pointer", border: "none", whiteSpace: "nowrap" as const }}>
-          ★ Dig my idea · 1 credit
-        </button>
+    </div>
+  );
+}
+
+// ── STACK SAMPLE REPORT — "Freelancer marketplace with payments and reviews" ──
+function StackSampleReport() {
+  const [activeTab, setActiveTab] = useState(0);
+  const tabs = ["Overview","Phase 0: Validate","Phase 1: MVP","Phase 2: Growth","Build Order","Avoid These","Scale Up"];
+
+  const renderContent = () => {
+    switch(activeTab) {
+      case 0: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:12 }}>
+          <div style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:12, padding:14 }}>
+            <div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:"#0ea5e9", marginBottom:6 }}>Recommendation</div>
+            <p style={{ fontSize:14, fontWeight:700, color:"#111", lineHeight:1.5, marginBottom:10 }}>Use Lovable to build a full-stack marketplace MVP in 7-14 days. Validate with a Telegram bot first. Total cost: $0-20/mo to start.</p>
+            <div style={{ display:"flex", gap:8, flexWrap:"wrap" as const }}>
+              {[{l:"MVP Time",v:"1-2 weeks"},{l:"Monthly Cost",v:"~$20/mo"},{l:"Tech Level",v:"No-code"},{l:"Phases",v:"3 phases"}].map(b=>(
+                <span key={b.l} style={{ display:"inline-flex", alignItems:"center", gap:5, padding:"4px 10px", borderRadius:6, background:"rgba(14,165,233,0.08)", border:"1px solid rgba(14,165,233,0.2)", fontSize:11, fontWeight:600, color:"#0369a1" }}><span style={{ fontSize:9, color:"#94a3b8" }}>{b.l}:</span> {b.v}</span>
+              ))}
+            </div>
+          </div>
+          <div style={{ display:"flex", flexDirection:"column" as const, gap:8 }}>
+            {[
+              {n:"0",label:"START HERE",name:"Validate",sub:"Prove 20+ people want this before writing code",cost:"$0/mo",tools:2,c:"#6366f1",bg:"#f5f3ff",br:"#ddd6fe"},
+              {n:"1",label:"PHASE 1",name:"MVP",sub:"Full marketplace live in 7-14 days",cost:"$20/mo",tools:5,c:"#10b981",bg:"#f0fdf4",br:"#bbf7d0"},
+              {n:"2",label:"PHASE 2",name:"Growth",sub:"Scale to 100+ sellers, add reviews and search",cost:"$45/mo",tools:3,c:"#0ea5e9",bg:"#f0f9ff",br:"#bae6fd"},
+            ].map(p=>(
+              <button key={p.n} onClick={()=>setActiveTab(p.n==="0"?1:p.n==="1"?2:3)} style={{ background:p.bg, border:`1px solid ${p.br}`, borderRadius:10, padding:"12px 16px", cursor:"pointer", textAlign:"left" as const, fontFamily:"inherit", display:"flex", alignItems:"center", gap:14 }}>
+                <div style={{ width:36, height:36, borderRadius:"50%", background:`${p.c}18`, border:`2px solid ${p.c}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                  <span style={{ fontSize:12, fontWeight:800, color:p.c }}>{p.n}</span>
+                </div>
+                <div style={{ flex:1 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:2 }}>
+                    <span style={{ fontSize:9, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:".07em", color:p.c }}>{p.label}</span>
+                    <span style={{ fontSize:13, fontWeight:700, color:"#111" }}>{p.name}</span>
+                  </div>
+                  <div style={{ fontSize:11, color:"#6b7280" }}>{p.sub}</div>
+                </div>
+                <div style={{ textAlign:"right" as const, flexShrink:0 }}>
+                  <div style={{ fontSize:12, fontWeight:700, color:p.c }}>{p.cost}</div>
+                  <div style={{ fontSize:10, color:"#9ca3af" }}>{p.tools} tools →</div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      );
+      case 1: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:10, padding:"10px 14px" }}>
+            <div style={{ fontSize:10, fontWeight:700, color:"#7c3aed", marginBottom:3 }}>Why validate first?</div>
+            <p style={{ fontSize:12, color:"#374151", lineHeight:1.5 }}>Marketplaces are hard. Before building payments, profiles, and reviews — prove 20 sellers want to list and 20 buyers want to buy. This costs nothing and saves weeks of wasted development.</p>
+          </div>
+          {[
+            {name:"Telegram Bot",free:true,purpose:"Message 30 potential sellers: 'Would you list your services on a marketplace charging 5%?' Record YES/NO answers.",why:"Zero code. Validates seller demand in 48 hours. If you can't get 20 YES responses, the market isn't ready."},
+            {name:"Typeform",free:true,purpose:"Create a 5-question survey for buyers: pain points, willingness to pay, current alternatives.",why:"Understand buyer psychology before you design UX. Free tier handles everything you need at this stage."},
+          ].map(t=>(
+            <div key={t.name} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
+                <div style={{ fontSize:14, fontWeight:700, color:"#111" }}>{t.name}</div>
+                <span style={{ fontSize:10, fontWeight:700, padding:"2px 7px", borderRadius:4, background:"#dcfce7", color:"#16a34a" }}>Free</span>
+              </div>
+              <p style={{ fontSize:12, color:"#6b7280", marginBottom:6, lineHeight:1.5 }}><strong style={{ color:"#374151" }}>Use:</strong> {t.purpose}</p>
+              <p style={{ fontSize:11, color:"#9ca3af", lineHeight:1.4 }}>💡 {t.why}</p>
+            </div>
+          ))}
+        </div>
+      );
+      case 2: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
+            <div><div style={{ fontSize:16, fontWeight:800, color:"#111" }}>Phase 1: MVP</div><div style={{ fontSize:12, color:"#6b7280" }}>Full marketplace live in 7-14 days · $20/mo</div></div>
+          </div>
+          {[
+            {name:"Lovable",price:"$20/mo (Starter)",free:false,purpose:"AI full-stack builder — prompt it with your marketplace idea, it generates React + Node.js code, ready to deploy.",alts:[{n:"Bolt.new",r:"Free tier, less polished UI but 100% free for early validation"},{n:"Bubble",r:"Visual no-code, $32+/mo but more intuitive for complex logic"}]},
+            {name:"Supabase",price:"Free",free:true,purpose:"PostgreSQL database + auth + file storage for product images. Handles sellers, products, orders, reviews all in one.",alts:[{n:"Firebase",r:"If you prefer NoSQL (Firestore) instead of SQL and want Google ecosystem"},{n:"Neon",r:"If you want serverless Postgres without managing compute"}]},
+            {name:"Stripe",price:"Free (2.9% + 30¢)",free:true,purpose:"Payment processing for buyer → seller transactions. Stripe Connect handles multi-party payments and automatic seller payouts.",alts:[{n:"Lemon Squeezy",r:"If selling from EU/non-US, acts as merchant of record, handles tax automatically (5% fee)"},{n:"Paddle",r:"Global SaaS focused, 5% + $0.50/txn, handles compliance in 200+ countries"}]},
+            {name:"Vercel",price:"Free",free:true,purpose:"Deploy your Lovable-generated frontend instantly. Auto-scales, zero config, global CDN.",alts:[{n:"Netlify",r:"Nearly identical, slight edge in form handling"},{n:"Cloudflare Pages",r:"Unlimited bandwidth on free tier, best for static sites"}]},
+            {name:"Resend",price:"Free (3K/mo)",free:true,purpose:"Transactional emails — order confirmations, review reminders, seller notifications, password resets.",alts:[{n:"SendGrid",r:"If you need higher volume — 100 emails/day free forever"},{n:"Postmark",r:"Best deliverability, 100 emails/mo free, focused on transactional"}]},
+          ].map(t=>(
+            <div key={t.name} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:6 }}>
+                <div style={{ fontSize:13, fontWeight:700, color:"#111" }}>{t.name}</div>
+                <span style={{ fontSize:10, fontWeight:700, padding:"2px 7px", borderRadius:4, background:t.free?"#dcfce7":"#fff7ed", color:t.free?"#16a34a":"#ea580c" }}>{t.price}</span>
+              </div>
+              <p style={{ fontSize:12, color:"#6b7280", marginBottom:t.alts.length?8:0, lineHeight:1.5 }}>{t.purpose}</p>
+              {t.alts.length>0 && (
+                <div style={{ borderTop:"1px solid #f3f4f6", paddingTop:6, display:"flex", flexDirection:"column" as const, gap:4 }}>
+                  {t.alts.map(a=>(
+                    <div key={a.n} style={{ display:"flex", flexDirection:"column" as const, gap:1 }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:5 }}><span style={{ fontSize:9, fontWeight:700, padding:"1px 5px", borderRadius:3, background:"#f3f4f6", border:"1px solid #e5e7eb", color:"#9ca3af" }}>ALT</span><span style={{ fontSize:11, color:"#374151", fontWeight:600 }}>{a.n}</span></div>
+                      <p style={{ fontSize:11, color:"#9ca3af", lineHeight:1.4, marginLeft:2 }}>{a.r}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+      case 3: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          <div style={{ background:"#f0f9ff", border:"1px solid #bae6fd", borderRadius:10, padding:"10px 14px", marginBottom:2 }}>
+            <div style={{ fontSize:11, fontWeight:600, color:"#0369a1" }}>Unlock when: 50+ active sellers, $1K+ monthly GMV</div>
+          </div>
+          {[
+            {name:"Algolia",price:"Free (10K ops)",free:true,purpose:"Full-text search across all listings. Instant results as users type, with filters for category, price, rating.",alts:[{n:"Meilisearch",r:"Self-hosted alternative, better for EU GDPR compliance"},{n:"Typesense",r:"Open source, cheaper at scale"}]},
+            {name:"Stripe Reviews / custom",price:"Free",free:true,purpose:"Build a review system in your Supabase database. Star ratings + text reviews. Email seller when new review arrives.",alts:[]},
+            {name:"PostHog",price:"Free (1M events)",free:true,purpose:"Product analytics — see which listings get views, where buyers drop off, what search terms convert.",alts:[{n:"Mixpanel",r:"More powerful funnels, $28/mo after free tier"},{n:"Amplitude",r:"Best for B2C marketplaces, free up to 10M events"}]},
+          ].map(t=>(
+            <div key={t.name} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:13 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:6 }}>
+                <div style={{ fontSize:13, fontWeight:700, color:"#111" }}>{t.name}</div>
+                <span style={{ fontSize:10, fontWeight:700, padding:"2px 7px", borderRadius:4, background:t.free?"#dcfce7":"#fff7ed", color:t.free?"#16a34a":"#ea580c" }}>{t.price}</span>
+              </div>
+              <p style={{ fontSize:12, color:"#6b7280", marginBottom:t.alts.length?8:0, lineHeight:1.5 }}>{t.purpose}</p>
+              {t.alts.length>0 && (
+                <div style={{ borderTop:"1px solid #f3f4f6", paddingTop:6, display:"flex", flexDirection:"column" as const, gap:4 }}>
+                  {t.alts.map(a=>(
+                    <div key={a.n}>
+                      <div style={{ display:"flex", alignItems:"center", gap:5, marginBottom:1 }}><span style={{ fontSize:9, fontWeight:700, padding:"1px 5px", borderRadius:3, background:"#f3f4f6", border:"1px solid #e5e7eb", color:"#9ca3af" }}>ALT</span><span style={{ fontSize:11, color:"#374151", fontWeight:600 }}>{a.n}</span></div>
+                      <p style={{ fontSize:11, color:"#9ca3af", lineHeight:1.4, marginLeft:2 }}>{a.r}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+      case 4: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:8 }}>
+          {[
+            {n:1,when:"Day 1",t:"Telegram validation bot",d:"Message 30 potential sellers on LinkedIn/Reddit. Record answers in a spreadsheet. Need 20+ YES to proceed."},
+            {n:2,when:"Day 2-3",t:"Schema design in Supabase",d:"Tables: users, sellers, products, orders, reviews, categories. Set up Row Level Security. Add sample data."},
+            {n:3,when:"Day 4-10",t:"Build MVP in Lovable",d:"Prompt: 'Freelancer marketplace: seller profiles, product listings with images, buyer checkout with Stripe, order management, email notifications via Resend.' Iterate daily."},
+            {n:4,when:"Day 11-12",t:"Deploy and test end-to-end",d:"Vercel deploy. Test 5 flows: seller signup → list product → buyer search → checkout → order email → seller payout."},
+            {n:5,when:"Day 13-14",t:"Onboard first 10 sellers manually",d:"DM sellers you validated with. Offer 0% commission for 30 days. Help them set up their profile via video call."},
+          ].map(s=>(
+            <div key={s.n} style={{ display:"flex", gap:12, padding:"8px 0", borderBottom:"1px solid #f3f4f6", alignItems:"flex-start" }}>
+              <div style={{ display:"flex", alignItems:"center", flexDirection:"column" as const, flexShrink:0 }}>
+                <div style={{ width:28, height:28, background:"#111", color:"#fff", borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800 }}>{s.n}</div>
+                <div style={{ fontSize:9, color:"#9ca3af", marginTop:3, whiteSpace:"nowrap" as const }}>{s.when}</div>
+              </div>
+              <div>
+                <div style={{ fontSize:12, fontWeight:700, color:"#111", marginBottom:3 }}>{s.t}</div>
+                <div style={{ fontSize:11, color:"#6b7280", lineHeight:1.45 }}>{s.d}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+      case 5: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          <div style={{ background:"#fef2f2", border:"1px solid #fecaca", borderRadius:10, padding:"10px 14px", marginBottom:4 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:"#dc2626", marginBottom:2 }}>These mistakes kill marketplaces before they start</div>
+            <div style={{ fontSize:11, color:"#374151" }}>Skip these tools at early stage — they add complexity before you have product-market fit.</div>
+          </div>
+          {[
+            {t:"Building custom auth",why:"Use Supabase Auth or Clerk instead. Rolling your own JWT auth takes a week and introduces security bugs. Not worth it until 100K users."},
+            {t:"Next.js + complex backend from scratch",why:"Lovable generates this automatically. Starting from scratch adds 3-4 weeks with no user validation. Build fast, then refactor."},
+            {t:"Kubernetes / Docker Compose",why:"Vercel handles everything at this scale. You need $100K+ MRR before infrastructure complexity makes sense."},
+            {t:"Custom payment logic",why:"Stripe Connect handles splits, payouts, escrow, disputes. Building this yourself is 3+ months of backend work minimum."},
+            {t:"Mobile app (iOS/Android) at launch",why:"Start web-first. Gen Z uses mobile browsers just fine. Native apps add 6-8 weeks and $0 additional revenue at early stage."},
+          ].map((m,i)=>(
+            <div key={i} style={{ border:"1px solid #fecaca", borderRadius:9, padding:12, background:"#fff" }}>
+              <div style={{ display:"flex", gap:8, alignItems:"flex-start" }}>
+                <span style={{ fontSize:14, flexShrink:0 }}>✗</span>
+                <div>
+                  <div style={{ fontSize:12, fontWeight:700, color:"#dc2626", marginBottom:4 }}>{m.t}</div>
+                  <div style={{ fontSize:11, color:"#6b7280", lineHeight:1.45 }}>{m.why}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+      case 6: return (
+        <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+          <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:"10px 14px" }}>
+            <div style={{ fontSize:11, fontWeight:600, color:"#15803d" }}>Unlock these when: $10K MRR, 500+ active sellers, stable infrastructure</div>
+          </div>
+          {[
+            {t:"Vercel Pro → AWS",reason:"At $50K MRR, Vercel becomes expensive. Migrate to AWS ECS with Auto Scaling. Lovable can export clean Next.js code.",cost:"~$200/mo vs $500+"},
+            {t:"Add mobile app",reason:"Once web is profitable, React Native (Expo) lets you reuse 70% of your codebase. Users are asking for it → build it.",cost:"1-2 months dev time"},
+            {t:"Fraud detection (Stripe Radar)",reason:"At 500+ transactions/mo, chargebacks become a real cost. Enable Stripe Radar rules and custom blocklists.",cost:"Included in Stripe"},
+            {t:"International expansion",reason:"Add multi-currency with Stripe, translate with i18next, add CDN edge caching with Cloudflare. Target UK/CA/AU first.",cost:"$20-50/mo additional"},
+          ].map((u,i)=>(
+            <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:9, padding:12 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:5 }}>
+                <div style={{ fontSize:12, fontWeight:700, color:"#111" }}>{u.t}</div>
+                <span style={{ fontSize:9, fontWeight:700, padding:"2px 6px", borderRadius:4, background:"#f0fdf4", color:"#16a34a" }}>{u.cost}</span>
+              </div>
+              <div style={{ fontSize:11, color:"#6b7280", lineHeight:1.45 }}>{u.reason}</div>
+            </div>
+          ))}
+        </div>
+      );
+      default: return null;
+    }
+  };
+
+  return (
+    <div style={{ padding: "20px 0 40px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-4)" }}>Sample Stack Report</span>
+        <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>« Freelancer marketplace with payments & reviews »</span>
+      </div>
+      <div style={{ background: "var(--clr-surface)", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden", display: "flex", minHeight: 440 }}>
+        <div style={{ width: 190, background: "#fafafa", borderRight: "1px solid #e5e7eb", padding: "12px 8px", display: "flex", flexDirection: "column" as const, gap: 2, flexShrink: 0 }}>
+          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase" as const, color: "#9ca3af", marginBottom: 6, paddingLeft: 8 }}>Stack</div>
+          {tabs.map((tab, i) => (
+            <button key={i} onClick={() => setActiveTab(i)} style={{ display: "flex", alignItems: "center", width: "100%", padding: "7px 10px", borderRadius: 7, fontSize: 12, cursor: "pointer", gap: 7, border: activeTab === i ? "1px solid #e5e7eb" : "1px solid transparent", background: activeTab === i ? "white" : "transparent", color: activeTab === i ? "#111" : "#374151", fontWeight: activeTab === i ? 600 : 400, fontFamily: "inherit", textAlign: "left" as const, transition: "all 0.1s" }}>
+              <span style={{ fontSize: 10, color: activeTab === i ? "#0ea5e9" : "#9ca3af", flexShrink: 0 }}>{activeTab === i ? "●" : "✓"}</span>
+              <span style={{ flex: 1 }}>{tab}</span>
+            </button>
+          ))}
+        </div>
+        <div style={{ flex: 1, padding: "18px 20px", overflowY: "auto" as const }}>
+          {renderContent()}
+        </div>
       </div>
     </div>
   );
@@ -3970,7 +4292,7 @@ function HomeInner() {
                   {/* Inline sample report toggle */}
                   {(selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && showSampleReport && (
                     <div style={{ animation: "fadeSlideIn 0.25s ease", marginTop: 8 }}>
-                      <DigSampleReport />
+                      {selectedTool === "gap-analysis" ? <DigSampleReport /> : <StackSampleReport />}
                     </div>
                   )}
 
