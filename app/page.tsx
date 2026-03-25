@@ -2454,11 +2454,11 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
               {phase.subtitle && <div style={{ fontSize: 13, color: "#6b7280", marginTop: 2 }}>{phase.subtitle}</div>}
             </div>
             {phase.costs?.total && (
-                  <div style={{ textAlign: "right" as const, flexShrink: 0, maxWidth: 160 }}>
+                  <div style={{ textAlign: "right" as const, flexShrink: 0, maxWidth: 140 }}>
                 <div style={{ fontSize: 9, color: "#9ca3af", textTransform: "uppercase" as const, letterSpacing: "0.06em", marginBottom: 2 }}>Phase total</div>
-                <div style={{ fontSize: 16, fontWeight: 800, color: "#111827", lineHeight: 1.3 }}>{phase.costs.total.split('(')[0].trim()}</div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: "#111827", lineHeight: 1.3 }}>{phase.costs.total.split('(')[0].split('/mo')[0].trim() + (phase.costs.total.includes('/mo') ? '/mo' : '')}</div>
                 {phase.costs.total.includes('(') && (
-                  <div style={{ fontSize: 10, color: "#9ca3af", lineHeight: 1.3, marginTop: 2 }}>({phase.costs.total.split('(')[1].replace(')','').trim()})</div>
+                  <div style={{ fontSize: 9, color: "#9ca3af", lineHeight: 1.4, marginTop: 2, wordBreak: "break-word" as const }}>{phase.costs.total.split('(')[1].replace(')','').trim()}</div>
                 )}
               </div>
             )}
