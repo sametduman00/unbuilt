@@ -3631,12 +3631,20 @@ function HomeInner() {
                     </div>
                     <div style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "normal" }}>
                       {idea}
-                      {selectedTool === "stack-advisor" && (
-                        <span style={{ color: "var(--clr-text-6)", fontWeight: 400 }}>
-                          {" Â· "}{budget}{" Â· "}{techLevel}
-                        </span>
-                      )}
                     </div>
+                    {selectedTool === "stack-advisor" && (
+                      <div style={{ display: "flex", gap: 5, marginTop: 5, flexWrap: "wrap" as const }}>
+                        {[
+                          { label: budget === "bootstrap" ? "Bootstrapped" : budget === "growing" ? "Growing" : budget === "funded" ? "Funded" : "Scale", icon: "$" },
+                          { label: techLevel === "nocode" ? "No-code" : techLevel === "lowcode" ? "Low-code" : "Developer", icon: "⚙" },
+                          { label: platform === "web" ? "Web" : platform === "mobile" ? "Mobile" : "Web + Mobile", icon: "🖥" },
+                        ].map((badge, i) => (
+                          <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: "0.65rem", fontWeight: 600, padding: "2px 7px", borderRadius: 4, background: "var(--clr-surface-2)", border: "1px solid var(--clr-border)", color: "var(--clr-text-4)" }}>
+                            {badge.label}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Actions */}
