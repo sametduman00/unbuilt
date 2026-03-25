@@ -71,7 +71,15 @@ Respond with ONLY a JSON code block matching this exact schema:
       "costs": {
         "tools": [{ "name": "Telegram Bot", "purpose": "Collect interest", "freeTier": true, "monthlyCost": "$0" }],
         "total": "$0/mo"
-      }
+      },
+      "vibeGuide": [
+        {
+          "tool": "ChatGPT",
+          "url": "https://chat.openai.com",
+          "prompt": "I want to validate a [describe idea] app. Write me a Telegram bot message I can send to 20 potential users asking if they have this problem and would pay for it.",
+          "tip": "Send this to at least 20 people before writing a single line of code."
+        }
+      ]
     },
     {
       "name": "Phase 1: MVP",
@@ -82,7 +90,15 @@ Respond with ONLY a JSON code block matching this exact schema:
       "costs": {
         "tools": [{ "name": "Tool Name", "purpose": "What it handles", "freeTier": true, "monthlyCost": "$0" }],
         "total": "$0-5/mo"
-      }
+      },
+      "vibeGuide": [
+        {
+          "tool": "Lovable",
+          "url": "https://lovable.dev",
+          "prompt": "Build me a [describe the specific feature] with [specific tool] integration. Make it look like [style reference].",
+          "tip": "Be specific — the more detail you give, the less back-and-forth you need."
+        }
+      ]
     }
   ],
   "buildOrder": [
@@ -107,6 +123,7 @@ Respond with ONLY a JSON code block matching this exact schema:
 
 Rules:
 - "phases": MUST start with Phase 0 (Validate) Ã¢ÂÂ the fastest $0 way to test demand before building. Use a Telegram bot, WhatsApp group, Google Form, landing page with waitlist, or similar zero-cost tool. Phase 0 should ALWAYS cost $0. Then 2-3 more phases (MVP, Growth, Scale). Each phase has 2-5 tools. "price": show real monthly cost or "Free". "free": boolean. Each phase must include a "costs" object (see below).
+- Each phase object MUST also include: "vibeGuide" — an array of 1-3 actionable steps for someone who has never coded. Each step: { "tool": "the specific tool name to open (e.g. Lovable, ChatGPT, Cursor, Replit)", "url": "direct URL to open", "prompt": "the EXACT prompt or instruction to type/do — be very specific, include what to say word-for-word or step-by-step", "tip": "one practical gotcha or shortcut (optional)" }. vibeGuide should tell the user exactly HOW to use the phase's tools — not what they are. Think: a first-time vibe-coder who knows nothing about code but can follow instructions.
 - Each phase object must also include: "costs": { "tools": [{ "name": "Tool", "purpose": "What", "freeTier": true, "monthlyCost": "$0" }], "total": "$0/mo" } Ã¢ÂÂ listing ONLY the tools in that phase with their costs and the phase total.
 - "buildOrder": 2-4 time blocks. Use realistic labels based on project complexity: simple projects use "Day 1-2", "Day 3-5", "Week 2"; medium projects use "Week 1", "Week 2", "Week 3-4"; complex projects use "Week 1", "Week 2-3", "Week 4-6", "Month 2+". Do NOT default to "Month 2" for simple projects Ã¢ÂÂ most no-code MVPs ship in 1-2 weeks. Be aggressive: if a skilled developer follows your plan, how long does it ACTUALLY take?
 - "timeToMvp": Single realistic estimate for Phase 1 MVP completion. Examples: "3-5 days" (simple no-code), "1-2 weeks" (standard MVP), "3-4 weeks" (complex with integrations). Be honest Ã¢ÂÂ do NOT overestimate. Most MVPs take days to weeks, not months.

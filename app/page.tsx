@@ -2301,6 +2301,7 @@ interface StackPhase {
   subtitle: string;
   tools: { name: string; purpose: string; price: string; free: boolean; alternatives?: { name: string; reason: string }[] }[];
   costs?: StackPhaseCosts;
+  vibeGuide?: { tool: string; url: string; prompt: string; tip?: string }[];
 }
 interface StackMistake { title: string; description: string; }
 interface StackScalability { trigger: string; whatBreaks: string; upgradeTo: string; severity: "low" | "medium" | "high"; }
@@ -2583,6 +2584,36 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                 </div>
               )}
             </div>
+
+              {/* VIBE GUIDE */}
+              {(phase as any).vibeGuide && (phase as any).vibeGuide.length > 0 && (
+                <div style={{ marginTop: 12, background: "linear-gradient(135deg, #faf5ff 0%, #f0f9ff 100%)", border: "1px solid #e9d5ff", borderRadius: 10, padding: "14px 16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
+                    <span style={{ fontSize: 14 }}>🚀</span>
+                    <span style={{ fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#7c3aed" }}>How to actually do this</span>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column" as const, gap: 10 }}>
+                    {(phase as any).vibeGuide.map((step: any, si: number) => (
+                      <div key={si} style={{ background: "white", borderRadius: 8, padding: "12px 14px", border: "1px solid #ede9fe" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                          <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#7c3aed", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.65rem", fontWeight: 700, flexShrink: 0 }}>{si + 1}</div>
+                          <a href={step.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.825rem", fontWeight: 700, color: "#7c3aed", textDecoration: "none" }}>Open {step.tool} →</a>
+                        </div>
+                        <div style={{ background: "#f5f3ff", borderRadius: 6, padding: "8px 10px", marginBottom: step.tip ? 8 : 0 }}>
+                          <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#7c3aed", textTransform: "uppercase" as const, letterSpacing: "0.05em", marginBottom: 4 }}>Type this:</div>
+                          <p style={{ fontSize: "0.8rem", color: "#4c1d95", margin: 0, lineHeight: 1.6 }}>{step.prompt}</p>
+                        </div>
+                        {step.tip && (
+                          <div style={{ display: "flex", alignItems: "flex-start", gap: 6, marginTop: 8 }}>
+                            <span style={{ fontSize: 12 }}>💡</span>
+                            <p style={{ fontSize: "0.75rem", color: "#6b7280", margin: 0, lineHeight: 1.5 }}>{step.tip}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
           </div>
         );
       })}
