@@ -43,8 +43,8 @@ function buildHtml(report: Report): string {
     sec.push(h);
   }
 
-  const comps = arr<{name:string;tagline:string;rating:unknown;reviews:unknown}>(p.competitors);
-  if (comps.length) sec.push(`<h2>Competitors</h2><table><tr><th>Name</th><th>Tagline</th><th>Rating</th><th>Reviews</th></tr>${comps.map(c=>`<tr><td><strong>${e(c.name)}</strong></td><td>${e(c.tagline)}</td><td>${e(c.rating)}</td><td>${e(c.reviews)}</td></tr>`).join("")}</table>`);
+  const comps = arr<{name:string;tagline:string;rating:unknown;reviews:unknown;threatLevel:unknown;strengths:unknown[]}>(p.competitors);
+  if (comps.length) sec.push(`<h2>Competitors</h2><table><tr><th>Name</th><th>Tagline</th><th>Threat</th><th>Rating</th><th>Reviews</th></tr>${comps.map(c=>`<tr><td><strong>${e(c.name)}</strong></td><td>${e(c.tagline)}</td><td>${c.threatLevel != null ? e(c.threatLevel)+"/5" : ""}</td><td>${e(c.rating)}</td><td>${e(c.reviews)}</td></tr>`).join("")}</table>`);
 
   const gaps = arr<{title:string;description:string;status:string}>(p.marketGaps);
   if (gaps.length) sec.push(`<h2>Market Gaps</h2>${gaps.map(g=>`<div class="card"><div class="card-title">${e(g.title)}${g.status?` <span class="badge">${e(g.status)}</span>`:""}</div><p>${e(g.description)}</p></div>`).join("")}`);
@@ -76,8 +76,11 @@ function buildHtml(report: Report): string {
     if(tN||tE||tS) { let h=`<h2>Industry Trends</h2>`; if(tN) h+=`<h3>Now</h3><ul>${tN}</ul>`; if(tE) h+=`<h3>Emerging</h3><ul>${tE}</ul>`; if(tS) h+=`<h3>Structural</h3><ul>${tS}</ul>`; sec.push(h); }
   }
 
-  const segs = arr<{segment:string;size:string;willingnessToPay:string;description:string}>(p.marketSegments);
-  if (segs.length && segs.some(s=>s.segment||s.description)) sec.push(`<h2>Market Segments</h2><table><tr><th>Segment</th><th>Size</th><th>Willingness to Pay</th></tr>${segs.map(s=>`<tr><td><strong>${e(s.segment||s.description||"")}</strong></td><td>${e(s.size)}</td><td>${e(s.willingnessToPay)}</td></tr>`).join("")}</table>`);
+  const segs = arr<{segment:string;name:string;size:string;marketSize:string;willingnessToPay:string;buyerWillingness:string;description:string;summary:string}>(p.marketSegments);
+  if (segs.length) {
+    const hasData = segs.some(s=>s.segment||s.name||s.description||s.summary);
+    if (hasData) sec.push(`<h2>Market Segments</h2><table><tr><th>Segment</th><th>Size</th><th>Willingness to Pay</th></tr>${segs.map(s=>`<tr><td><strong>${e(s.segment||s.name||s.summary||s.description||"")}</strong></td><td>${e(s.size||s.marketSize)}</td><td>${e(s.willingnessToPay||s.buyerWillingness)}</td></tr>`).join("")}</table>`);
+  }
 
   const opp = o(p.opportunity);
   if (opp.headline||opp.urgency) {
@@ -90,10 +93,10 @@ function buildHtml(report: Report): string {
   const gtm = o(p.goToMarket);
   if (Object.keys(gtm).length) {
     let h=`<h2>Go-to-Market</h2>`; if(gtm.launchTarget) h+=`<p><strong>Launch target:</strong> ${e(gtm.launchTarget)}</p>`;
-    const ch=arr<{channel:string;why:string;cac:string;timeToFirstUser:string}>(gtm.channels);
-    if(ch.length) h+=`<table><tr><th>Channel</th><th>Why</th><th>CAC</th><th>Time to first user</th></tr>${ch.map(c=>`<tr><td><strong>${e(c.channel)}</strong></td><td>${e(c.why)}</td><td>${e(c.cac)}</td><td>${e(c.timeToFirstUser)}</td></tr>`).join("")}</table>`;
-    const ph=arr<{phase:string;duration:string}>(gtm.launchPhases);
-    if(ph.length) h+=`<h3>Launch Phases</h3><ol>${ph.map(x=>`<li><strong>${e(x.phase)}</strong>${x.duration?` (${e(x.duration)})`:""}</li>`).join("")}</ol>`;
+    const ch=arr<{channel:string;why:string;cac:string;timeToFirstUser:string;name:string;description:string;estimatedCAC:string;timeToResult:string}>(gtm.channels);
+    if(ch.length) h+=`<table><tr><th>Channel</th><th>Description</th><th>CAC</th><th>Time to result</th></tr>${ch.map(c=>`<tr><td><strong>${e(c.channel||c.name)}</strong></td><td>${e(c.why||c.description)}</td><td>${e(c.cac||c.estimatedCAC)}</td><td>${e(c.timeToFirstUser||c.timeToResult)}</td></tr>`).join("")}</table>`;
+    const ph=arr<{phase:string;duration:string;name:string;months:string;focus:string;actions:string[]}>(gtm.launchPhases);
+    if(ph.length) h+=`<h3>Launch Phases</h3><ol>${ph.map(x=>`<li><strong>${e(x.phase||x.name)}</strong>${x.duration||x.months?` (${e(x.duration||x.months)})`:""}: ${e(x.focus||"")}</li>`).join("")}</ol>`;
     sec.push(h);
   }
 
@@ -101,7 +104,7 @@ function buildHtml(report: Report): string {
   if (Object.keys(fin).length) {
     let h=`<h2>Financials</h2>`;
     const burn=fin.monthlyBurn;
-    if(burn){ const bo=o(burn); if(bo.total) h+=`<p><strong>Monthly burn:</strong> ${e(bo.total)}</p>`; else if(typeof burn==="string"||typeof burn==="number") h+=`<p><strong>Monthly burn:</strong> ${e(burn)}</p>`; }
+    if(burn){ const bo=o(burn); if(bo.total) { h+=`<p><strong>Monthly burn:</strong> ${e(bo.total)}</p>`; const burnRows=Object.entries(bo).filter(([k])=>k!=="total").map(([k,v])=>`<tr><td>${e(k)}</td><td>${e(typeof v==="string"?v.substring(0,80):v)}</td></tr>`).join(""); if(burnRows) h+=`<table><tr><th>Category</th><th>Cost</th></tr>${burnRows}</table>`; } else if(typeof burn==="string"||typeof burn==="number") h+=`<p><strong>Monthly burn:</strong> ${e(burn)}</p>`; }
     if(fin.breakEvenMonth) h+=`<p><strong>Break-even:</strong> month ${e(fin.breakEvenMonth)}</p>`;
     if(fin.twelveMonthMRR) h+=`<p><strong>12-month MRR target:</strong> ${e(fin.twelveMonthMRR)}</p>`;
     const sc=arr<{scenario:string;mrr:string;customers:string}>(fin.revenueScenarios);
@@ -136,10 +139,10 @@ function buildHtml(report: Report): string {
     if(rows) sec.push(`<h2>Fundability Radar</h2><table><tr><th>Dimension</th><th>Score</th><th>Note</th></tr>${rows}</table>`);
   }
 
-  const vc = arr<{item:string;status:string;how:string;timeframe:string}|string>(p.validationChecklist);
+  const vc = arr<{item:string;status:string;how:string;timeframe:string;assumption:string;risk:string;howToTest:string}|string>(p.validationChecklist);
   if (vc.length) {
-    const items=vc.map(v=>{ if(typeof v==="string") return `<li>&#9675; ${e(v)}</li>`; const ic=v.status==="done"?"&#10003;":v.status==="partial"?"&#9685;":"&#9675;"; return `<li>${ic} <strong>${e(v.item)}</strong>${v.how?`: ${e(v.how)}`:""}</li>`; }).join("");
-    sec.push(`<h2>Validation Checklist</h2><ul>${items}</ul>`);
+    const items=vc.map(v=>{ if(typeof v==="string") return `<li>&#9675; ${e(v)}</li>`; const ic=v.status==="done"?"&#10003;":v.status==="partial"?"&#9685;":"&#9675;"; const label=v.item||v.assumption||""; const detail=v.how||v.howToTest||""; const riskStr=v.risk?` <span class="badge">${e(v.risk)}</span>`:""; return `<li>${ic}${riskStr} <strong>${e(label)}</strong>${detail?`<br><span class="dim">${e(detail.substring(0,150))}${detail.length>150?"…":""}</span>`:""}</li>`; }).join("");
+    sec.push(`<h2>Validation Checklist</h2><ul style="list-style:none;padding:0">${items}</ul>`);
   }
 
   const syn=o(p.synthesis); const synT=str(syn.oneParagraph); const pros=arr<string>(syn.workingForYou); const cons=arr<string>(syn.watchOutFor);
