@@ -3472,8 +3472,8 @@ function HomeInner() {
                   </div>
 
                   {/* Feed header */}
-                  <div style={{ padding: "0.875rem 1.5rem 0", flexShrink: 0 }}>
-                    <div style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--clr-text-4)" }}>What Launched Today</div>
+                  <div style={{ padding: "1rem 1.5rem 0", flexShrink: 0 }}>
+                    <h2 style={{ fontSize: "1.05rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--clr-text)", margin: 0 }}>What Launched Today</h2>
                   </div>
                   {/* Tab bar */}
                   <div style={{ display: "flex", borderBottom: "1px solid var(--clr-border)", padding: "0 1.5rem", flexShrink: 0, background: "var(--clr-bg)" }}>
@@ -3519,9 +3519,18 @@ function HomeInner() {
                             {phFiltered.map((s,i)=>{
                               const mc=PULSE_MOVE_COLORS[s.movementType??""];
                               const gap=pulseParseGap(s.claudeGap);
-                              const ctaText = s.topics && s.topics.length > 0
-                                ? `Building something in ${s.topics.slice(0,2).join(" × ")}?`
-                                : "See a gap in this space?";
+                              const topic1 = s.topics?.[0] || "";
+                              const topic2 = s.topics?.[1] || "";
+                              const topicStr = topic2 ? `${topic1} × ${topic2}` : topic1;
+                              const titleWord = s.title?.split(" ")?.[0] || "this";
+                              const ctaVariants = [
+                                topicStr ? <>Building in <strong>{topicStr}</strong>? There's a gap here.</> : <>See a gap in this space?</>,
+                                topicStr ? <>Got a better angle on <strong>{topicStr}</strong>?</> : <>Your take could be different.</>,
+                                <><strong>{titleWord}</strong> just validated this market. Your turn.</>,
+                                topicStr ? <>The <strong>{topicStr}</strong> space just moved. Worth checking.</> : <>This space just moved.</>,
+                                <>Someone built it. Now find out if yours is <strong>different enough</strong>.</>,
+                              ];
+                              const ctaText = ctaVariants[i % ctaVariants.length];
                               return (
                                 <div key={s.title+i} style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderLeft:mc?"3px solid "+mc:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden" }}>
                                   <a href={s.externalUrl||s.url} target="_blank" rel="noopener noreferrer"
@@ -3550,7 +3559,7 @@ function HomeInner() {
                                   </a>
                                   {/* CTA strip */}
                                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 14px 10px", background:"var(--clr-bg)", borderTop:"1px solid var(--clr-border)", gap:12 }}>
-                                    <span style={{ fontSize:"0.75rem", color:"var(--clr-text-3)" }}>{ctaText}</span>
+                                    <span style={{ fontSize:"0.75rem", color:"var(--clr-text-3)", display:"flex", alignItems:"center", gap:4, flexWrap:"wrap" as const }}>{ctaText}</span>
                                     <button
                                       onClick={e => { e.preventDefault(); setSelectedTool("gap-analysis"); }}
                                       style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:"0.7rem", fontWeight:700, padding:"5px 12px", borderRadius:6, background:"var(--clr-text)", color:"var(--clr-bg)", cursor:"pointer", border:"none", fontFamily:"inherit", letterSpacing:"-0.01em", whiteSpace:"nowrap", flexShrink:0, transition:"opacity 0.12s" }}
