@@ -2476,9 +2476,13 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                   </div>
                   <p style={{ fontSize: 12, color: "#6b7280", margin: "0 0 8px 0", lineHeight: 1.5 }}>{tool.purpose}</p>
                   {tool.alternatives && tool.alternatives.length > 0 && (
-                    <div style={{ display: "flex", gap: 5, flexWrap: "wrap" as const }}>
+                    <div style={{ display: "flex", flexDirection: "column" as const, gap: 4, marginTop: 4 }}>
                       {tool.alternatives.map((alt, ai) => (
-                        <span key={ai} title={alt.reason} style={{ fontSize: 10, padding: "2px 7px", borderRadius: 4, background: "#f3f4f6", border: "1px solid #e5e7eb", color: "#6b7280" }}>alt: {alt.name}</span>
+                        <div key={ai} style={{ display: "flex", alignItems: "flex-start", gap: 6 }}>
+                          <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 3, background: "#f3f4f6", border: "1px solid #e5e7eb", color: "#9ca3af", flexShrink: 0, marginTop: 1 }}>ALT</span>
+                          <span style={{ fontSize: 11, color: "#374151", fontWeight: 600 }}>{alt.name}</span>
+                          {alt.reason && <span style={{ fontSize: 11, color: "#9ca3af" }}>— {alt.reason}</span>}
+                        </div>
                       ))}
                     </div>
                   )}

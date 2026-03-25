@@ -91,6 +91,38 @@ function generateStackPdf(report: ReportData, jsPDF: any) {
   if (phases.length) badges.push(phases.length + " phases");
   if (badges.length) { t(badges.join("   |   "), 9, false, [80,80,80]); y += 2; }
 
+  // OVERVIEW: Phase summary cards
+  sec("OVERVIEW");
+  phases.forEach((phase, pi) => {
+    const isP0 = /phase\s*0/i.test(phase.name) || /validate/i.test(phase.name);
+    const phaseColors: [number,number,number][] = [[99,102,241],[16,185,129],[14,165,233],[245,158,11],[139,92,246]];
+    const c = phaseColors[pi] ?? phaseColors[0];
+    chk(22);
+    // Phase row
+    doc.setFillColor(...c.map(x => Math.min(255, x + 185)) as [number,number,number]);
+    doc.roundedRect(M, y - 2, CW, 18, 2, 2, "F");
+    // Phase label
+    doc.setFontSize(8); doc.setFont("helvetica","bold"); doc.setTextColor(...c);
+    doc.text(isP0 ? "START HERE" : "PHASE " + pi, M + 4, y + 3);
+    // Phase name
+    doc.setFontSize(10.5); doc.setFont("helvetica","bold"); doc.setTextColor(17,24,39);
+    doc.text(e(phase.name.replace(/^Phase\s*\d+:\s*/i, "")), M + 4, y + 9);
+    // Subtitle
+    if (phase.subtitle) {
+      const subLines = doc.splitTextToSize(e(phase.subtitle), CW - 80);
+      doc.setFontSize(8.5); doc.setFont("helvetica","normal"); doc.setTextColor(107,114,128);
+      doc.text(subLines[0], M + 4, y + 14);
+    }
+    // Cost + tools count on right
+    if (phase.costs?.total) {
+      doc.setFontSize(10); doc.setFont("helvetica","bold"); doc.setTextColor(...c);
+      doc.text(str(phase.costs.total).split("(")[0].trim(), PW - M, y + 7, { align: "right" });
+    }
+    doc.setFontSize(8); doc.setFont("helvetica","normal"); doc.setTextColor(150,150,150);
+    doc.text(phase.tools.length + " tools →", PW - M, y + 13, { align: "right" });
+    y += 22;
+  });
+
   // PHASES — each phase in order
   phases.forEach((phase, pi) => {
     const phaseColors: [number,number,number][] = [[99,102,241],[16,185,129],[14,165,233],[245,158,11],[139,92,246]];
