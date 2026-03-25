@@ -317,8 +317,10 @@ export default function ReportsPage() {
     const styleEl = document.createElement("style");
     styleEl.textContent = Array.from(doc.querySelectorAll("style")).map(s => s.textContent).join("\n");
     container.appendChild(styleEl);
-    // Copy body content
-    container.appendChild(doc.body);
+    // Copy body content as innerHTML (not the live node)
+    const bodyDiv = document.createElement("div");
+    bodyDiv.innerHTML = doc.body.innerHTML;
+    container.appendChild(bodyDiv);
     document.body.appendChild(container);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
