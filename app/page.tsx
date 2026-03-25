@@ -110,7 +110,7 @@ const TOOLS: ToolConfig[] = [
   {
     id: "gap-analysis",
     userLabel: "I have an idea",
-    name: "Gap Analysis",
+    name: "Dig",
     tagline: "Find the gaps before you build",
     description: "Spot what competitors are missing. Get a brutally honest read on where you actually have a shot — before you spend months building the wrong thing.",
     accentColor: "var(--clr-accent)",
@@ -142,7 +142,7 @@ const TOOLS: ToolConfig[] = [
   {
     id: "stack-advisor",
     userLabel: "Help me choose my stack",
-    name: "Stack Advisor",
+    name: "Stack",
     tagline: "Build fast, cheap, and right",
     description: "Tell us what you're building, your budget, and how technical you are. Get the exact tools, real monthly costs, and a step-by-step build order.",
     accentColor: "var(--clr-accent)",
@@ -1864,7 +1864,7 @@ function InputSection({
             onBlur={(e) => { e.currentTarget.style.borderColor = "var(--clr-border)"; }}
           />
 
-          {/* Stack Advisor extras */}
+          {/* Stack extras */}
           {tool.hasExtras && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", marginTop: "1.125rem" }}>
               {/* Budget */}
@@ -2106,7 +2106,7 @@ interface ITunesApp {
   genres: string[];
 }
 
-// ââ Gap Analysis structured types âââââââââââââââââââââââââââââ
+// ââ Dig structured types âââââââââââââââââââââââââââââ
 interface GapCompetitor {
   name: string;
   tagline: string;
@@ -2291,7 +2291,7 @@ function parseGapAnalysisJSON(raw: string): GapAnalysisData | null {
   }
 }
 
-// ââ Stack Advisor structured types ââââââââââââââââââââââââââââ
+// ââ Stack structured types ââââââââââââââââââââââââââââ
 interface StackPhaseCosts {
   tools: { name: string; purpose: string; freeTier: boolean; monthlyCost: string }[];
   total: string;
@@ -2333,7 +2333,7 @@ function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
   }
 }
 
-// ââ Stack Advisor Visual Result ââââââââââââââââââââââââââââââ
+// ââ Stack Visual Result ââââââââââââââââââââââââââââââ
 const PHASE_COLORS = ["var(--clr-text)", "var(--clr-text-2)", "var(--clr-text-3)", "var(--clr-text-5)", "var(--clr-text-6)"];
 const PHASE_BGS = ["rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)"];
 
@@ -3433,10 +3433,47 @@ function HomeInner() {
               {/* ── Pulse Panel (default view) ── */}
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                  {/* Section title */}
-                  <div style={{ padding: "1.25rem 1.5rem 0.75rem", flexShrink: 0 }}>
-                    <h2 style={{ fontSize: "1.25rem", fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 0.25rem", color: "var(--clr-text)" }}>What Launched Today</h2>
-                    <p style={{ fontSize: "0.75rem", color: "var(--clr-text-3)", margin: 0 }}>AI-analyzed launches from Product Hunt & App Store</p>
+                  {/* ── HERO ── */}
+                  <div style={{ padding: "1.75rem 1.5rem 1.5rem", flexShrink: 0, borderBottom: "1px solid var(--clr-border)", background: "var(--clr-surface)" }}>
+                    <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-4)", marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
+                      <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
+                      For vibe coders
+                    </div>
+                    <h1 style={{ fontSize: "1.6rem", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.15, color: "var(--clr-text)", margin: "0 0 6px" }}>
+                      Hello, Vibecoder!
+                    </h1>
+                    <p style={{ fontSize: "1rem", fontWeight: 400, color: "var(--clr-text-3)", fontStyle: "italic", margin: "0 0 12px", letterSpacing: "-0.01em" }}>
+                      Another idea dropped?
+                    </p>
+                    <p style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", lineHeight: 1.6, margin: "0 0 18px", maxWidth: 520 }}>
+                      <strong style={{ color: "var(--clr-text)", fontWeight: 700 }}>Don't build what already exists.</strong>
+                      {" "}We'll show you what doesn't — and exactly how to build it.
+                    </p>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" as const }}>
+                      <button
+                        onClick={() => setSelectedTool("gap-analysis")}
+                        style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 16px", background: "var(--clr-text)", color: "var(--clr-bg)", borderRadius: 8, fontSize: "0.8rem", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", border: "none", letterSpacing: "-0.01em", transition: "opacity 0.12s" }}
+                        onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"}
+                        onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
+                      >
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 4.5H14L10 9l1.5 4.5L8 11 4.5 13.5 6 9 2 6.5h4.5L8 2z" fill="currentColor"/></svg>
+                        Dig my idea
+                      </button>
+                      <button
+                        onClick={() => setSelectedTool("stack-advisor")}
+                        style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 16px", background: "transparent", color: "var(--clr-text-2)", borderRadius: 8, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid var(--clr-border)", letterSpacing: "-0.01em", transition: "all 0.12s" }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--clr-surface-2)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+                      >
+                        Get my Stack →
+                      </button>
+                      <span style={{ fontSize: "0.7rem", color: "var(--clr-text-4)" }}>1 credit each · Free to browse</span>
+                    </div>
+                  </div>
+
+                  {/* Feed header */}
+                  <div style={{ padding: "0.875rem 1.5rem 0", flexShrink: 0 }}>
+                    <div style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--clr-text-4)" }}>What Launched Today</div>
                   </div>
                   {/* Tab bar */}
                   <div style={{ display: "flex", borderBottom: "1px solid var(--clr-border)", padding: "0 1.5rem", flexShrink: 0, background: "var(--clr-bg)" }}>
@@ -3482,31 +3519,48 @@ function HomeInner() {
                             {phFiltered.map((s,i)=>{
                               const mc=PULSE_MOVE_COLORS[s.movementType??""];
                               const gap=pulseParseGap(s.claudeGap);
+                              const ctaText = s.topics && s.topics.length > 0
+                                ? `Building something in ${s.topics.slice(0,2).join(" × ")}?`
+                                : "See a gap in this space?";
                               return (
-                                <a key={s.title+i} href={s.externalUrl||s.url} target="_blank" rel="noopener noreferrer"
-                                  style={{ display:"flex", alignItems:"flex-start", gap:"1rem", padding:"1.125rem", background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderLeft:mc?"3px solid "+mc:"1px solid var(--clr-border)", borderRadius:12, textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
-                                  onMouseEnter={e=>e.currentTarget.style.background="rgba(0,0,0,0.02)"}
-                                  onMouseLeave={e=>e.currentTarget.style.background="var(--clr-surface)"}
-                                >
-                                  {s.imageUrl
-                                    ? <img src={s.imageUrl} alt="" width={56} height={56} style={{ borderRadius:12, flexShrink:0, objectFit:"cover", border:"1px solid var(--clr-border)" }}/>
-                                    : <div style={{ width:56, height:56, borderRadius:12, background:"var(--clr-border)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.5rem" }}>{s.emoji}</div>
-                                  }
-                                  <div style={{ flex:1, minWidth:0 }}>
-                                    <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:3, flexWrap:"wrap" }}>
-                                      <span style={{ fontSize:"0.9375rem", fontWeight:600, color:"var(--clr-text)", letterSpacing:"-0.015em" }}>{s.title}</span>
-                                      {mc&&s.movementType&&<span style={{ fontSize:"0.5625rem", fontWeight:700, padding:"0.1rem 0.4rem", borderRadius:999, background:mc+"20", color:mc, letterSpacing:"0.04em", textTransform:"uppercase" }}>{s.movementType==="rank_jump"?"RANK ↑":s.movementType==="new_entry"?"NEW":s.movementType==="review_spike"?"REVIEWS↑":"TOP"}</span>}
-                                      <span style={{ fontSize:"0.6875rem", color:"var(--clr-text-4)", marginLeft:"auto" }}>{pulseRelTime(s.timestamp)}</span>
-                                    </div>
-                                    {s.tagline&&<p style={{ fontSize:"0.8125rem", color:"var(--clr-text-3)", margin:"0 0 6px", lineHeight:1.45 }}>{s.tagline}</p>}
-                                    {s.topics&&s.topics.length>0&&(
-                                      <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
-                                        {s.topics.map((t,ti)=><span key={t} style={{ fontSize:"0.5625rem", fontWeight:600, padding:"0.15rem 0.5rem", borderRadius:999, background:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length]+"18", color:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length] }}>{t}</span>)}
+                                <div key={s.title+i} style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderLeft:mc?"3px solid "+mc:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden" }}>
+                                  <a href={s.externalUrl||s.url} target="_blank" rel="noopener noreferrer"
+                                    style={{ display:"flex", alignItems:"flex-start", gap:"1rem", padding:"1.125rem", textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
+                                    onMouseEnter={e=>e.currentTarget.style.background="rgba(0,0,0,0.02)"}
+                                    onMouseLeave={e=>e.currentTarget.style.background="transparent"}
+                                  >
+                                    {s.imageUrl
+                                      ? <img src={s.imageUrl} alt="" width={56} height={56} style={{ borderRadius:12, flexShrink:0, objectFit:"cover", border:"1px solid var(--clr-border)" }}/>
+                                      : <div style={{ width:56, height:56, borderRadius:12, background:"var(--clr-border)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.5rem" }}>{s.emoji}</div>
+                                    }
+                                    <div style={{ flex:1, minWidth:0 }}>
+                                      <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:3, flexWrap:"wrap" }}>
+                                        <span style={{ fontSize:"0.9375rem", fontWeight:600, color:"var(--clr-text)", letterSpacing:"-0.015em" }}>{s.title}</span>
+                                        {mc&&s.movementType&&<span style={{ fontSize:"0.5625rem", fontWeight:700, padding:"0.1rem 0.4rem", borderRadius:999, background:mc+"20", color:mc, letterSpacing:"0.04em", textTransform:"uppercase" }}>{s.movementType==="rank_jump"?"RANK ↑":s.movementType==="new_entry"?"NEW":s.movementType==="review_spike"?"REVIEWS↑":"TOP"}</span>}
+                                        <span style={{ fontSize:"0.6875rem", color:"var(--clr-text-4)", marginLeft:"auto" }}>{pulseRelTime(s.timestamp)}</span>
                                       </div>
-                                    )}
-                                    {gap&&<AiBlock what={gap.what??null} diff={gap.different??null} gap={gap.missing??null}/>}
+                                      {s.tagline&&<p style={{ fontSize:"0.8125rem", color:"var(--clr-text-3)", margin:"0 0 6px", lineHeight:1.45 }}>{s.tagline}</p>}
+                                      {s.topics&&s.topics.length>0&&(
+                                        <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
+                                          {s.topics.map((t,ti)=><span key={t} style={{ fontSize:"0.5625rem", fontWeight:600, padding:"0.15rem 0.5rem", borderRadius:999, background:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length]+"18", color:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length] }}>{t}</span>)}
+                                        </div>
+                                      )}
+                                      {gap&&<AiBlock what={gap.what??null} diff={gap.different??null} gap={gap.missing??null}/>}
+                                    </div>
+                                  </a>
+                                  {/* CTA strip */}
+                                  <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 14px 10px", background:"var(--clr-bg)", borderTop:"1px solid var(--clr-border)", gap:12 }}>
+                                    <span style={{ fontSize:"0.75rem", color:"var(--clr-text-3)" }}>{ctaText}</span>
+                                    <button
+                                      onClick={e => { e.preventDefault(); setSelectedTool("gap-analysis"); }}
+                                      style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:"0.7rem", fontWeight:700, padding:"5px 12px", borderRadius:6, background:"var(--clr-text)", color:"var(--clr-bg)", cursor:"pointer", border:"none", fontFamily:"inherit", letterSpacing:"-0.01em", whiteSpace:"nowrap", flexShrink:0, transition:"opacity 0.12s" }}
+                                      onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
+                                      onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
+                                    >
+                                      Dig my angle →
+                                    </button>
                                   </div>
-                                </a>
+                                </div>
                               );
                             })}
                           </div>
@@ -3657,7 +3711,7 @@ function HomeInner() {
                   <div style={{ display: "flex", gap: 8, flexShrink: 0, alignItems: "center" }}>
                     <button
                       onClick={() => {
-                        const toolLabel = selectedTool === "gap-analysis" ? "Gap Analysis" : "Stack Advisor";
+                        const toolLabel = selectedTool === "gap-analysis" ? "Dig" : "Stack";
                         const dateStr = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
                         const esc = (s: unknown) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
                         let p: Record<string, unknown> = {};
@@ -3860,7 +3914,7 @@ ${sections.join("\n")}
                 <TrendFeedResult data={trendFeedData} />
               )}
 
-              {/* Gap Analysis: structured visual report */}
+              {/* Dig: structured visual report */}
               {selectedTool === "gap-analysis" && !loading && streamedContent ? (
                 (() => {
                   const gapData = parseGapAnalysisJSON(streamedContent);
@@ -3908,7 +3962,7 @@ ${sections.join("\n")}
                 ) : null
               ) : null}
 
-              {/* ââ App Stores (Gap Analysis only) — unified merged list ââ */}
+              {/* ââ App Stores (Dig only) — unified merged list ââ */}
 
 
 

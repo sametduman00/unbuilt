@@ -41,7 +41,7 @@ export default function ReportsPage() {
   };
 
   const toolColor = (t2: string) => t2 === "gap-analysis" ? "#7c6fff" : "#38bdf8";
-  const toolLabelText = (t2: string) => t2 === "gap-analysis" ? "Gap Analysis" : "Stack Advisor";
+  const toolLabelText = (t2: string) => t2 === "gap-analysis" ? "Dig" : "Stack";
 
   return (
     <div style={{ padding: "32px 40px", maxWidth: 960, margin: "0 auto" }}>
@@ -49,14 +49,14 @@ export default function ReportsPage() {
       <div style={{ marginBottom: 28 }}>
         <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "var(--clr-text-4)", marginBottom: 6 }}>My Reports</div>
         <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--clr-text)", margin: 0 }}>Your analyses</h1>
-        <p style={{ fontSize: 14, color: "var(--clr-text-3)", marginTop: 6, marginBottom: 0 }}>Every Gap Analysis and Stack Advisor report you have run.</p>
+        <p style={{ fontSize: 14, color: "var(--clr-text-3)", marginTop: 6, marginBottom: 0 }}>Every Dig and Stack report you have run.</p>
       </div>
       {loading && <div style={{ padding: "48px 0", textAlign: "center", color: "var(--clr-text-4)", fontSize: 14 }}>Loading...</div>}
       {!loading && reports.length === 0 && (
         <div style={{ padding: "64px 32px", textAlign: "center", border: "1px dashed var(--clr-border)", borderRadius: 12 }}>
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style={{ margin: "0 auto 12px", display: "block", opacity: 0.3 }}><path d="M8 6h16l8 8v22H8V6z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" /><path d="M24 6v8h8" stroke="currentColor" strokeWidth="2" /><path d="M13 20h14M13 27h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
           <div style={{ fontSize: 15, fontWeight: 600, color: "var(--clr-text-2)", marginBottom: 6 }}>No reports yet</div>
-          <div style={{ fontSize: 13, color: "var(--clr-text-4)" }}>Run a Gap Analysis or Stack Advisor to get started.</div>
+          <div style={{ fontSize: 13, color: "var(--clr-text-4)" }}>Run a Dig or Stack to get started.</div>
         </div>
       )}
       {!loading && reports.length > 0 && (

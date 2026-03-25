@@ -1,4 +1,4 @@
-// Shared PDF generation for Gap Analysis reports
+// Shared PDF generation for Dig reports
 // Used by both app/page.tsx (report header) and app/reports/page.tsx (My Reports)
 
 export interface ReportData {
@@ -260,7 +260,7 @@ function generateStackPdf(report: ReportData, jsPDF: any) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function generatePdf(report: ReportData, jsPDF: any) {
-  // Route to Stack Advisor renderer
+  // Route to Stack renderer
   if (report.tool === 'stack-advisor') {
     generateStackPdf(report, jsPDF);
     return;
@@ -337,7 +337,7 @@ export function generatePdf(report: ReportData, jsPDF: any) {
     p = JSON.parse(m ? m[1] : report.json_content);
   } catch { /* ignore */ }
 
-  const toolLabel = report.tool === "gap-analysis" ? "Gap Analysis" : "Stack Advisor";
+  const toolLabel = report.tool === "gap-analysis" ? "Dig" : "Stack";
   const dateStr = new Date(report.created_at).toLocaleDateString("en-GB");
 
   // ── HEADER BAR ──────────────────────────────────────────────
