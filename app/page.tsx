@@ -3439,10 +3439,10 @@ function HomeInner() {
                       <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
                       For vibe coders
                     </div>
-                    <h1 style={{ fontSize: "1.6rem", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.15, color: "var(--clr-text)", margin: "0 0 2px" }}>
+                    <h1 style={{ fontSize: "1.6rem", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1, color: "var(--clr-text)", margin: 0 }}>
                       Hello, Vibecoder!
                     </h1>
-                    <p style={{ fontSize: "1.62rem", fontWeight: 400, color: "var(--clr-text-3)", fontStyle: "italic", margin: "0 0 14px", letterSpacing: "-0.02em" }}>
+                    <p style={{ fontSize: "1.62rem", fontWeight: 400, color: "var(--clr-text-3)", fontStyle: "italic", margin: "0 0 14px", letterSpacing: "-0.02em", lineHeight: 1 }}>
                       Another idea dropped?
                     </p>
                     <p style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", lineHeight: 1.6, margin: "0 0 18px", whiteSpace: "nowrap" as const }}>
