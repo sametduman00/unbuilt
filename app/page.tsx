@@ -3283,7 +3283,7 @@ function HomeInner() {
 
 
         {/* Main content */}
-        <main style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto" }}>
+        <main style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto", padding: "0 16px" }}>
 
           {/* ââ Scanning overlay ââ */}
           {scanStep >= 0 ? (() => {
