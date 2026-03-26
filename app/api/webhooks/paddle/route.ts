@@ -12,7 +12,7 @@ async function sendTelegram(msg: string) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ chat_id: chatId, text: msg, parse_mode: "HTML" }),
-  }).catch(() => {});
+  }).then(()=>{}, ()=>{});
 }
 
 export async function POST(req: NextRequest) {
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
           package_slug: packageSlug,
           credits_added: credits,
           amount_usd: amountUsd,
-        }).catch(() => {});
+        }).then(()=>{}, ()=>{});
         const amountFormatted = amount ? `${(parseInt(amount) / 100).toFixed(2)} ${currency}` : "?";
         await sendTelegram(
           `💰 <b>New purchase!</b>\n📦 Package: <b>${packageSlug}</b> (${credits} credits)\n💵 Amount: <b>${amountFormatted}</b>\n📧 ${email}`
