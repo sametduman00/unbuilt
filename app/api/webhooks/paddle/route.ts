@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addCredits } from "@/app/lib/credits";
+import { sendTelegram } from "@/app/lib/telegram";
 
-const PACKAGES: Record<string, number> = {
-  starter: 5,
-  popular: 10,
-  pro: 25,
-};
+const PACKAGES: Record<string, number> = { starter: 5, popular: 10, pro: 25 };
 
 export async function POST(req: NextRequest) {
   const secret = process.env.PADDLE_WEBHOOK_SECRET;
@@ -15,20 +12,12 @@ export async function POST(req: NextRequest) {
   if (secret) {
     const ts = signature.match(/ts=(\d+)/)?.[1];
     const h1 = signature.match(/h1=([a-f0-9]+)/)?.[1];
-    if (!ts || !h1) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
-    }
+    if (!ts || !h1) return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     const encoder = new TextEncoder();
-    const key = await crypto.subtle.importKey(
-      "raw", encoder.encode(secret),
-      { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
-    );
+    const key = await crypto.subtle.importKey("raw", encoder.encode(secret), { name:"HMAC", hash:"SHA-256" }, false, ["sign"]);
     const signed = await crypto.subtle.sign("HMAC", key, encoder.encode(`${ts}:${body}`));
-    const expected = Array.from(new Uint8Array(signed))
-      .map(b => b.toString(16).padStart(2, "0")).join("");
-    if (expected !== h1) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
-    }
+    const expected = Array.from(new Uint8Array(signed)).map(b=>b.toString(16).padStart(2,"0")).join("");
+    if (expected !== h1) return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
   const event = JSON.parse(body);
@@ -42,11 +31,11 @@ export async function POST(req: NextRequest) {
         await addCredits(userId, credits);
         const amount = event.data?.items?.[0]?.price?.unit_price?.amount;
         const currency = event.data?.items?.[0]?.price?.unit_price?.currency_code ?? "USD";
-        const amountFormatted = amount ? `${(parseInt(amount) / 100).toFixed(2)} ${currency}` : "?";
-
+        const amountFmt = amount ? `${(parseInt(amount)/100).toFixed(2)} ${currency}` : "?";
+        await sendTelegram(`💰 <b>New purchase!</b>\n\nPackage: <b>${packageSlug}</b> (${credits} credits)\nAmount: <b>${amountFmt}</b>`);
       }
     }
   }
 
   return NextResponse.json({ ok: true });
-      }
+}
