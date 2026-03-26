@@ -3528,8 +3528,8 @@ function HomeInner() {
                         onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"}
                         onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
                       >
-                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 4.5H14L10 9l1.5 4.5L8 11 4.5 13.5 6 9 2 6.5h4.5L8 2z" fill="currentColor"/></svg>
-                        Dig my idea
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        Dig my idea →
                       </button>
                       <button
                         onClick={() => router.push("/?tool=stack-advisor")}
