@@ -3959,6 +3959,19 @@ ${sections.join("\n")}
                       <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v7M5 6l3 3 3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/><path d="M3 10v2.5A1.5 1.5 0 004.5 14h7a1.5 1.5 0 001.5-1.5V10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
                       Download PDF
                     </button>
+                    <a
+                      href="/reports"
+                      style={{
+                        display: "flex", alignItems: "center", gap: 6,
+                        padding: "0.375rem 0.875rem", borderRadius: 9,
+                        background: "transparent", border: "1px solid var(--clr-border)",
+                        color: "var(--clr-text-3)", fontSize: "0.775rem", fontWeight: 600,
+                        cursor: "pointer", fontFamily: "inherit", textDecoration: "none",
+                      }}
+                    >
+                      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 2h7l3 3v9H3V2z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/><path d="M6 7h4M6 10h4M6 4h3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+                      My Reports
+                    </a>
                     <button
                       onClick={backToTools}
                       style={{

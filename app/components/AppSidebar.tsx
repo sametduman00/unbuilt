@@ -98,6 +98,7 @@ function AppSidebarInner() {
     ["/how-it-works", "How it works"],
     ["/pricing", "Pricing"],
     ["/help", "Help"],
+    ["/careers", "Careers"],
   ];
 
   const Flyout = ({ label, icon, items, sectionLabel }: {
