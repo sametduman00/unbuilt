@@ -3088,6 +3088,8 @@ function HomeInner() {
 
 
     setSelectedTool(toolId);
+    if (toolId) window.history.replaceState({}, "", `/?tool=${toolId}`);
+    else window.history.replaceState({}, "", "/");
     setTimeout(() => {
       inputSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       setTimeout(() => textareaRef.current?.focus(), 200);
