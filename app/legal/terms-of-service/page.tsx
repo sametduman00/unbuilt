@@ -71,9 +71,11 @@ export default function TermsOfServicePage() {
       <S>
         <H2>5a. Data Storage</H2>
         <P>
-          When you run a Dig or Stack analysis, we store your submitted idea/prompt and the full AI-generated report in our database. This data is used to power the My Reports feature and to improve the service. By using the service, you acknowledge that your queries and the resulting analysis are stored by us. See our{" "}
+          When you run a Dig or Stack analysis, we store your submitted idea/prompt and the full AI-generated report in our database. This data powers the My Reports feature and is used to improve the service. Reports are retained for 12 months from creation and then deleted automatically. You may request early deletion by contacting{" "}
+          <a href="mailto:builder@unbuilt.me" style={{ color: "var(--clr-text-3)", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>.
+          {" "}By using the service, you acknowledge that your queries and the resulting analysis are stored by us. See our{" "}
           <a href="/legal/privacy-policy" style={{ color: "var(--clr-text-3)", textDecoration: "underline", textUnderlineOffset: 3 }}>Privacy Policy</a>{" "}
-          for full details on how this data is handled.
+          for full details.
         </P>
       </S>
 

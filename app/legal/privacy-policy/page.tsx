@@ -109,8 +109,12 @@ export default function PrivacyPolicyPage() {
       <S>
         <H2>6. Data Retention</H2>
         <P>
-          Your account information is retained for as long as your account is active. Analysis reports (your prompts and the full AI-generated output) are stored indefinitely so you can access them from My Reports. You may request deletion of your data at any time by contacting us at{" "}
-          <a href="mailto:builder@unbuilt.me" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>.
+          Your account information is retained for as long as your account is active. Analysis reports (your prompts and the full AI-generated output) are retained for <strong style={{ color: "#ddd" }}>12 months</strong> from the date they were created, after which they are deleted automatically.
+        </P>
+        <P>
+          You may request deletion of your data at any time — before the 12-month period expires — by emailing{" "}
+          <a href="mailto:builder@unbuilt.me" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>{" "}
+          with your request. We will process deletion requests within 30 days.
         </P>
       </S>
 

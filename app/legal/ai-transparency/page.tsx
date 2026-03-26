@@ -104,7 +104,7 @@ export default function AITransparencyPage() {
           We store your prompt and the full AI-generated report in our own database (Supabase). This allows you to access past reports from the My Reports section. As the operators of the service, we can see this stored data for purposes of service improvement and quality monitoring. We do not share it with third parties for commercial purposes.
         </P>
         <P>
-          If you are submitting sensitive or confidential business information, please be aware that it is stored in our database. You can request deletion at any time by contacting <a href="mailto:builder@unbuilt.me" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>. See <a href="/legal/privacy-policy" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>our Privacy Policy</a> for full details.
+          Reports are retained for 12 months then deleted automatically. If you are submitting sensitive or confidential business information, please be aware that it is stored in our database during this period. You can request early deletion at any time by emailing <a href="mailto:builder@unbuilt.me" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>. See <a href="/legal/privacy-policy" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>our Privacy Policy</a> for full details.
         </P>
       </S>
 
