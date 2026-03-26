@@ -202,7 +202,7 @@ export default function PricingPage() {
             ))}
             <div style={{ borderTop: "1px solid var(--clr-border)", marginTop: 8, paddingTop: 8, display: "flex", justifyContent: "space-between", fontSize: "0.8rem", fontFamily: "monospace" }}>
               <span style={{ color: "var(--clr-text-3)" }}>Our total cost</span>
-              <span style={{ color: "var(--clr-text)", fontWeight: 800 }}>~$0.45</span>
+              <span style={{ color: "var(--clr-text)", fontWeight: 800 }}>~$0.675</span>
             </div>
             <p style={{ fontSize: 10, color: "var(--clr-text-5)", margin: "6px 0 0", fontStyle: "italic" }}>
               The rest: hosting, search APIs, infrastructure.
