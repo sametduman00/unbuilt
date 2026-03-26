@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addCredits } from "@/app/lib/credits";
-import { sendTelegram } from "@/app/lib/telegram";
 
 const PACKAGES: Record<string, number> = { starter: 5, popular: 10, pro: 25 };
 
@@ -21,21 +20,13 @@ export async function POST(req: NextRequest) {
   }
 
   const event = JSON.parse(body);
-
   if (event.event_type === "transaction.completed") {
     const userId = event.data?.custom_data?.user_id;
     const packageSlug = event.data?.custom_data?.package_slug;
     if (userId && packageSlug) {
       const credits = PACKAGES[packageSlug] ?? 0;
-      if (credits > 0) {
-        await addCredits(userId, credits);
-        const amount = event.data?.items?.[0]?.price?.unit_price?.amount;
-        const currency = event.data?.items?.[0]?.price?.unit_price?.currency_code ?? "USD";
-        const amountFmt = amount ? `${(parseInt(amount)/100).toFixed(2)} ${currency}` : "?";
-        await sendTelegram(`💰 <b>New purchase!</b>\n\nPackage: <b>${packageSlug}</b> (${credits} credits)\nAmount: <b>${amountFmt}</b>`);
-      }
+      if (credits > 0) await addCredits(userId, credits);
     }
   }
-
   return NextResponse.json({ ok: true });
 }
