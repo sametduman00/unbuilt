@@ -5,5 +5,11 @@
     "app/api/pulse/analyze-batch/route.ts": { "maxDuration": 60 },
     "app/api/pulse/snapshot/route.ts": { "maxDuration": 60 },
     "app/api/pulse/analyze-ph/route.ts": { "maxDuration": 60 }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/pulse/cron",
+      "schedule": "0 */3 * * *"
+    }
+  ]
 }
