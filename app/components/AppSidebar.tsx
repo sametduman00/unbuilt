@@ -5,9 +5,10 @@ import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 
 function AppSidebarInner() {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, userId } = useAuth();
   const { signOut } = useClerk();
   const { user } = useUser();
+  const isOwner = userId === process.env.NEXT_PUBLIC_ADMIN_CLERK_USER_ID;
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -100,6 +101,9 @@ function AppSidebarInner() {
     ["/help", "Help"],
     ["/careers", "Careers"],
   ];
+  const ADMIN: readonly (readonly [string, string])[] = isOwner ? [
+    ["/admin", "Mission Control"],
+  ] : [];
 
   const Flyout = ({ label, icon, items, sectionLabel }: {
     label: string; icon: React.ReactNode;
@@ -189,6 +193,18 @@ function AppSidebarInner() {
             <path d="M5 5h6M5 8h4M5 11h5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
           </svg>
         } />
+
+        {isOwner && (
+          <Link
+            href="/admin"
+            style={{ display: "flex", alignItems: "center", gap: 9, padding: "7px 10px", borderRadius: 8, color: pathname === "/admin" ? "var(--clr-text)" : "var(--clr-text-2)", fontSize: 13, textDecoration: "none", transition: "background 0.1s", background: pathname === "/admin" ? "rgba(0,0,0,0.06)" : "transparent", fontWeight: pathname === "/admin" ? 600 : 400 }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "rgba(0,0,0,0.05)"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = pathname === "/admin" ? "rgba(0,0,0,0.06)" : ""}
+          >
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ opacity: 0.5, flexShrink: 0 }}><circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3"/><path d="M8 5v3l2 1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+            Mission Control
+          </Link>
+        )}
 
         {isSignedIn && (
         <Link
