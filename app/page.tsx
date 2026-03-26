@@ -2824,6 +2824,8 @@ function HomeInner() {
   // ── Pulse inline state ────────────────────────────────────────────────────
   const [pulseTab, setPulseTab] = useState<"ph"|"appstore">("ph");
   const [showSampleReport, setShowSampleReport] = useState(false);
+  // Reset sample report when tool changes
+  React.useEffect(() => { setShowSampleReport(false); }, [selectedTool]);
   const [pulseSignals, setPulseSignals] = useState<Array<{source:string;sourceLabel:string;emoji:string;title:string;subtitle:string;signal:string;url:string;timestamp:string;movementType?:string;imageUrl?:string;topics?:string[];tagline?:string;externalUrl?:string;claudeGap?:string;}>>([]);
   const [pulseLoading, setPulseLoading] = useState(false);
   const [pulseError, setPulseError] = useState<string|null>(null);
