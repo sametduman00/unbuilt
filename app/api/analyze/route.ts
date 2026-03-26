@@ -222,6 +222,7 @@ async function fetchTwitterContext(idea: string): Promise<string> {
         if (text) entries.push({ full_text: text, favorite_count: likes });
       }
     }
+    console.log("[Twitter] entries found:", entries.length);
     if (!entries.length) return "";
     const lines = entries.slice(0, 5).map((t) =>
       `- (${t.favorite_count ?? 0} likes): "${(t.full_text || "").slice(0, 150).replace(/\n/g, " ")}"`

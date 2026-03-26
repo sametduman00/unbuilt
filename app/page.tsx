@@ -3033,16 +3033,22 @@ function HomeInner() {
     }
   }, [hasResults]);
 
-  // Auto-trigger analysis from URL params (e.g., from /opportunities page)
+  // Auto-trigger analysis from URL params or sessionStorage
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tool = params.get("tool") as ToolId | null;
     const q = params.get("q");
-    if (tool && q && TOOLS.some(t => t.id === tool)) {
+    const ssIdea = sessionStorage.getItem("unbuilt_stack_idea");
+    if (tool === "stack-advisor" && ssIdea) {
+      sessionStorage.removeItem("unbuilt_stack_idea");
+      setSelectedTool("stack-advisor");
+      setIdea(ssIdea);
+      // Don't auto-submit — just fill the textarea
+      window.history.replaceState({}, "", "/");
+    } else if (tool && q && TOOLS.some(t => t.id === tool)) {
       setSelectedTool(tool);
       setIdea(q);
       pendingAutoSubmit.current = true;
-      // Clean URL without reload
       window.history.replaceState({}, "", "/");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -4162,7 +4168,7 @@ ${sections.join("\n")}
               {selectedTool === "gap-analysis" && !loading && streamedContent ? (
                 (() => {
                   const gapData = parseGapAnalysisJSON(streamedContent);
-                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { window.location.href = `/?tool=stack-advisor&q=${encodeURIComponent(i)}`; }} /></div>;
+                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { sessionStorage.setItem("unbuilt_stack_idea", i); window.location.href = "/?tool=stack-advisor"; }} /></div>;
                   return sections.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       {sections.map((s, i) => (
