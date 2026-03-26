@@ -35,27 +35,27 @@ export default function CookiePolicyPage() {
           These cookies are required for the service to function and cannot be disabled. They are set by our authentication provider, Clerk, and are used to:
         </P>
         <div style={{
-          background: "#111",
-          border: "1px solid #1a1a1a",
+          background: "var(--clr-surface)",
+          border: "1px solid var(--clr-border)",
           borderRadius: 8,
           padding: "1rem 1.25rem",
           marginBottom: "1rem",
         }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, color: "var(--clr-text)" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #222" }}>
+              <tr style={{ borderBottom: "1px solid var(--clr-border)" }}>
                 <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Purpose</th>
                 <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Provider</th>
                 <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Duration</th>
               </tr>
             </thead>
             <tbody style={{ color: "var(--clr-text)" }}>
-              <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
+              <tr style={{ borderBottom: "1px solid var(--clr-border)" }}>
                 <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Authentication & session management</td>
                 <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Clerk</td>
                 <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Session</td>
               </tr>
-              <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
+              <tr style={{ borderBottom: "1px solid var(--clr-border)" }}>
                 <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>CSRF protection</td>
                 <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Clerk</td>
                 <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Session</td>
@@ -74,22 +74,22 @@ export default function CookiePolicyPage() {
           We use analytics cookies to understand how visitors interact with Unbuilt. This helps us improve the service, identify popular features, and fix issues. Analytics data is aggregated and does not personally identify you.
         </P>
         <div style={{
-          background: "#111",
-          border: "1px solid #1a1a1a",
+          background: "var(--clr-surface)",
+          border: "1px solid var(--clr-border)",
           borderRadius: 8,
           padding: "1rem 1.25rem",
           marginBottom: "1rem",
         }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, color: "var(--clr-text)" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #222" }}>
+              <tr style={{ borderBottom: "1px solid var(--clr-border)" }}>
                 <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Purpose</th>
                 <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Provider</th>
                 <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Duration</th>
               </tr>
             </thead>
             <tbody style={{ color: "var(--clr-text)" }}>
-              <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
+              <tr style={{ borderBottom: "1px solid var(--clr-border)" }}>
                 <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Page views & feature usage</td>
                 <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Analytics</td>
                 <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>1 year</td>
