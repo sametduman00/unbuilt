@@ -1890,9 +1890,11 @@ function InputSection({
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   showSampleReport: boolean; setShowSampleReport: (v: (prev: boolean) => boolean) => void;
 }) {
+  const MAX_IDEA_CHARS = 2000;
   const canSubmit = idea.trim().length >= 40 && !loading;
   const charCount = idea.trim().length;
   const charsLeft = Math.max(0, 40 - charCount);
+  const isNearLimit = charCount > 1800;
 
   const BUDGETS: { id: Budget; label: string; sub: string }[] = [
     { id: "bootstrap", label: "Bootstrapped", sub: "< $50/mo" },
@@ -1959,7 +1961,7 @@ function InputSection({
           <textarea
             ref={textareaRef}
             value={idea}
-            onChange={(e) => setIdea(e.target.value)}
+            onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
             onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) onSubmit(); }}
             placeholder={tool.placeholder}
             rows={3}
@@ -2104,7 +2106,11 @@ function InputSection({
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               {/* Char counter on right */}
               {(tool.id === "gap-analysis" || tool.id === "stack-advisor") && (
-                charsLeft > 0 ? (
+                isNearLimit ? (
+                  <span style={{ fontSize: "0.7rem", color: charCount >= 2000 ? "#ef4444" : "#f59e0b", fontWeight: 600 }}>
+                    {2000 - charCount} / 2000
+                  </span>
+                ) : charsLeft > 0 ? (
                   <span id="char-counter" style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", transition: "all 0.2s" }}>
                     <span style={{ fontWeight: 700, color: charCount > 20 ? "var(--clr-text-2)" : "var(--clr-text-4)" }}>{charsLeft}</span> more chars to unlock
                   </span>
