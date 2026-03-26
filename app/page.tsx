@@ -2897,6 +2897,7 @@ function HomeInner() {
   const inputSectionRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const scanTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const abortControllerRef = useRef<AbortController | null>(null);
     const resultsRef = useRef<HTMLDivElement>(null);
   const pendingAutoSubmit = useRef(false);
 
@@ -2947,6 +2948,7 @@ function HomeInner() {
   const handleSelectTool = (toolId: ToolId | null) => {
     // Reset all result state when switching tools
     scanTimersRef.current.forEach(clearTimeout);
+    if (abortControllerRef.current) { abortControllerRef.current.abort(); abortControllerRef.current = null; }
     setScanStep(-1);
     setHasResults(false);
     setStreamedContent("");
@@ -3244,11 +3246,15 @@ function HomeInner() {
       body.platform = platform;
     }
 
+    const submittedTool = selectedTool;
+    const abortCtrl = new AbortController();
+    abortControllerRef.current = abortCtrl;
     try {
       const res = await fetch(tool.apiPath, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
+        signal: abortCtrl.signal,
       });
       if (!res.ok) {
         const d = await res.json();
@@ -3261,6 +3267,7 @@ function HomeInner() {
       let buffer = "";
       let fullContent = "";
       while (true) {
+        if (abortCtrl.signal.aborted) break;
         const { done, value } = await reader.read();
         if (done) break;
         buffer += decoder.decode(value, { stream: true });
@@ -3273,10 +3280,10 @@ function HomeInner() {
           try {
             const parsed = JSON.parse(data);
             if (parsed.meta !== undefined) {
-              setResultCached(parsed.meta.cached);
+              if (!abortCtrl.signal.aborted) setResultCached(parsed.meta.cached);
             } else if (parsed.text) {
               fullContent += parsed.text;
-              setStreamedContent((p) => p + parsed.text);
+              if (!abortCtrl.signal.aborted) setStreamedContent((p) => p + parsed.text);
             }
           } catch { /* skip */ }
         }
@@ -3297,9 +3304,10 @@ function HomeInner() {
         }
       }
     } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") return;
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
-      setLoading(false);
+      if (!abortCtrl.signal.aborted) setLoading(false);
     }
   };
 
