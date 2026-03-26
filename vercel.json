@@ -1,15 +1,25 @@
 {
   "functions": {
-    "app/api/pulse/route.ts": { "maxDuration": 30 },
-    "app/api/pulse/cron/route.ts": { "maxDuration": 60 },
-    "app/api/pulse/analyze-batch/route.ts": { "maxDuration": 60 },
-    "app/api/pulse/snapshot/route.ts": { "maxDuration": 60 },
-    "app/api/pulse/analyze-ph/route.ts": { "maxDuration": 60 }
+    "app/api/pulse/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/pulse/cron/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/pulse/analyze-batch/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/pulse/snapshot/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/pulse/analyze-ph/route.ts": {
+      "maxDuration": 60
+    }
   },
   "crons": [
     {
       "path": "/api/pulse/cron",
-      "schedule": "0 */3 * * *"
+      "schedule": "0 6 * * *"
     }
   ]
 }
