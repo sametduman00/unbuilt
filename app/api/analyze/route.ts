@@ -205,12 +205,15 @@ async function fetchTwitterContext(idea: string): Promise<string> {
     );
     if (!res.ok) return "";
     const data = await res.json();
-    const instructions = data?.result?.timeline?.instructions ?? [];
+    const instructions = data?.result?.timeline_response?.timeline?.instructions ?? [];
     const entries: { full_text: string; favorite_count?: number }[] = [];
     for (const inst of instructions) {
       for (const entry of (inst.entries ?? [])) {
-        const tweet = entry?.content?.itemContent?.tweet_results?.result?.legacy;
-        if (tweet?.full_text) entries.push(tweet);
+        const result = entry?.content?.content?.tweet_results?.result;
+        if (!result) continue;
+        const text = result?.details?.full_text ?? result?.legacy?.full_text;
+        const likes = result?.counts?.favorite_count ?? result?.legacy?.favorite_count ?? 0;
+        if (text) entries.push({ full_text: text, favorite_count: likes });
       }
     }
     if (!entries.length) return "";
