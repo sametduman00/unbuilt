@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useAuth, UserButton, SignInButton } from "@clerk/nextjs";
 
 type TabId = "pulse" | "dig" | "stack";
 
@@ -35,31 +34,12 @@ function StackIcon() {
 }
 
 export default function HowItWorksPage() {
-  const { isSignedIn } = useAuth();
   const [tab, setTab] = useState<TabId>("pulse");
   const a = ACCENT[tab];
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--clr-bg)", color: "var(--clr-text)", fontFamily: "inherit" }}>
 
-      {/* Nav */}
-      <header style={{ borderBottom: "1px solid var(--clr-border)", padding: "0 2rem", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", color: "var(--clr-text)" }}>
-          <svg width="22" height="16" viewBox="0 0 22 16" fill="none">
-            <rect x="0" y="0" width="6" height="6" rx="1.5" fill="var(--clr-text)"/>
-            <rect x="8" y="0" width="6" height="6" rx="1.5" fill="var(--clr-text)" opacity=".5"/>
-            <rect x="16" y="0" width="6" height="6" rx="1.5" fill="var(--clr-text)" opacity=".25"/>
-            <rect x="0" y="10" width="6" height="6" rx="1.5" fill="var(--clr-text)" opacity=".25"/>
-            <rect x="8" y="10" width="6" height="6" rx="1.5" fill="var(--clr-text)" opacity=".5"/>
-            <rect x="16" y="10" width="6" height="6" rx="1.5" fill="var(--clr-text)"/>
-          </svg>
-          <span style={{ fontWeight: 700, fontSize: "0.9375rem", letterSpacing: "-0.02em" }}>Unbuilt</span>
-        </Link>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Link href="/" style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", textDecoration: "none" }}>← Back to app</Link>
-          {isSignedIn ? <UserButton  /> : <SignInButton mode="modal"><button style={{ fontSize: "0.8125rem", padding: "6px 14px", borderRadius: 7, background: "var(--clr-text)", color: "var(--clr-bg)", border: "none", cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}>Sign in</button></SignInButton>}
-        </div>
-      </header>
 
       <main style={{ maxWidth: 760, margin: "0 auto", padding: "3rem 1.5rem 5rem" }}>
 
