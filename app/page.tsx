@@ -2822,11 +2822,19 @@ function HomeInner() {
   const searchParams = useSearchParams();
   useEffect(() => {
     const tool = searchParams.get("tool");
-    if (tool === "gap-analysis" || tool === "stack-advisor") {
-      setSelectedTool(tool as ToolId);
-    } else {
-      setSelectedTool(null);
-    }
+    const newTool = (tool === "gap-analysis" || tool === "stack-advisor") ? tool as ToolId : null;
+    // Full reset when URL tool changes (sidebar navigation)
+    if (abortControllerRef.current) { abortControllerRef.current.abort(); abortControllerRef.current = null; }
+    scanTimersRef.current.forEach(clearTimeout);
+    setScanStep(-1);
+    setHasResults(false);
+    setStreamedContent("");
+    setIdea("");
+    setLoading(false);
+    setError("");
+    setOutOfCredits(false);
+    setResultCached(null);
+    setSelectedTool(newTool);
   }, [searchParams]);
   const [idea, setIdea] = useState("");
   const [budget, setBudget] = useState<Budget>("bootstrap");
