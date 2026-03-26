@@ -4168,7 +4168,7 @@ ${sections.join("\n")}
               {selectedTool === "gap-analysis" && !loading && streamedContent ? (
                 (() => {
                   const gapData = parseGapAnalysisJSON(streamedContent);
-                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { sessionStorage.setItem("unbuilt_stack_idea", i); window.location.href = "/?tool=stack-advisor"; }} /></div>;
+                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { handleSelectTool("stack-advisor"); setIdea(i); }} /></div>;
                   return sections.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       {sections.map((s, i) => (
