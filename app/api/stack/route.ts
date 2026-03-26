@@ -1,3 +1,4 @@
+import { rateLimit } from "@/app/api/_ratelimit";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest } from "next/server";
 import { readFileSync } from "fs";
@@ -140,6 +141,9 @@ ${compactToolsDB}`;
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+
+  const rl = rateLimit(userId, 10, 600000);
+  if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests. Please slow down." }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" } });
   const hasCredits = await deductCredit(userId);
   if (!hasCredits) return new Response(JSON.stringify({ error: "No credits remaining" }), { status: 402, headers: { "Content-Type": "application/json" } });
   const { idea, budget, techLevel, platform } = await req.json();

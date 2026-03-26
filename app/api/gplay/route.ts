@@ -1,3 +1,4 @@
+import { rateLimit } from "@/app/api/_ratelimit";
 import { NextRequest } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import gplay from "google-play-scraper";
@@ -5,6 +6,9 @@ import gplay from "google-play-scraper";
 export async function GET(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+  const rl = rateLimit(userId, 30, 60000);
+  if (!rl.ok) return Response.json({ error: "Too many requests." }, { status: 429 });
   
   const q = req.nextUrl.searchParams.get("q");
   if (!q || q.trim().length < 2)
