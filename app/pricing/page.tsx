@@ -154,16 +154,23 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
-        <p style={{ textAlign: "center", fontSize: "0.7rem", color: "var(--clr-text-5)", marginTop: 10 }}>
-          Credits work across both Dig and Stack. No expiry. Secure checkout via Paddle.
-        </p>
+        {/* Trust badge */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 14, flexWrap: "wrap" as const }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text-4)" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Secure checkout via</span>
+          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#e67e22" }}>🍋 Lemon Squeezy</span>
+          <span style={{ color: "var(--clr-text-5)", fontSize: "0.75rem" }}>·</span>
+          <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Credits never expire</span>
+          <span style={{ color: "var(--clr-text-5)", fontSize: "0.75rem" }}>·</span>
+          <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Instant delivery</span>
+        </div>
       </div>
 
       {/* ── Why the price ── */}
       <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "16px 20px", marginBottom: 32 }}>
         <p style={s.label}>Why does a credit cost $0.80–$1.00?</p>
         <div style={{ display: "flex", gap: 28, flexWrap: "wrap" as const, alignItems: "flex-start" }}>
-          <div style={{ flex: 1, minWidth: 220 }}>
+          <div style={{ flex: 1, minWidth: 220, textAlign: "center" as const }}>
             <p style={{ ...s.muted, marginBottom: 10 }}>
               Every query runs on <strong style={{ color: "var(--clr-text)" }}>Claude Opus 4.6 with Extended Thinking</strong> — Anthropic's most capable model. No cheaper shortcuts.
             </p>
