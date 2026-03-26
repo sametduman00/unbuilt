@@ -1279,6 +1279,54 @@ function StackSampleReport() {
 }
 
 
+function NoCreditsModal({ idea, onClose }: { idea: string; onClose: () => void }) {
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 16, padding: "28px 28px 24px", maxWidth: 400, width: "100%", boxShadow: "0 24px 64px rgba(0,0,0,0.18)" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(239,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div>
+              <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--clr-text)" }}>You&apos;re out of credits</div>
+              <div style={{ fontSize: "0.775rem", color: "var(--clr-text-4)", marginTop: 2 }}>Dig and Stack cost 1 credit each</div>
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--clr-text-4)", padding: 4, lineHeight: 1 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        {idea.trim().length > 0 && (
+          <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 8, padding: "10px 12px", marginBottom: 16, fontSize: "0.775rem", color: "var(--clr-text-3)", lineHeight: 1.5 }}>
+            <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--clr-text-5)", textTransform: "uppercase" as const, letterSpacing: ".06em", display: "block", marginBottom: 4 }}>Your prompt is saved</span>
+            &ldquo;{idea.trim().slice(0, 100)}{idea.trim().length > 100 ? "..." : ""}&rdquo;
+          </div>
+        )}
+        <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, margin: "0 0 20px" }}>
+          Buy a credit pack and your prompt will be right here waiting — no need to retype anything.
+        </p>
+        <div style={{ display: "flex", gap: 10 }}>
+          <a
+            href="/pricing"
+            style={{ flex: 1, display: "block", textAlign: "center" as const, padding: "11px 0", borderRadius: 9, background: "#7c6fff", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}
+          >
+            Buy credits →
+          </a>
+          <button
+            onClick={onClose}
+            style={{ padding: "11px 18px", borderRadius: 9, background: "transparent", border: "1px solid var(--clr-border)", color: "var(--clr-text-3)", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+          >
+            Maybe later
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function FunnyMessage({ msgs }: { msgs: string[] }) {
   const [state, setState] = useState({ idx: 0, vis: true });
   useEffect(() => {
@@ -2845,6 +2893,7 @@ function HomeInner() {
   const [streamedContent, setStreamedContent] = useState("");
   const [error, setError] = useState("");
   const [outOfCredits, setOutOfCredits] = useState(false);
+  const [showNoCreditsModal, setShowNoCreditsModal] = useState(false);
   const [hasResults, setHasResults] = useState(false);
 
   // ── Pulse inline state ────────────────────────────────────────────────────
@@ -3174,6 +3223,7 @@ function HomeInner() {
 
   const handleSubmit = async () => {
     if (!isSignedIn) { openSignIn(); return; }
+    if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); return; }
     if (!selectedTool || idea.trim().length < 3) return;
     const tool = TOOLS.find((t) => t.id === selectedTool)!;
 
@@ -4124,6 +4174,7 @@ ${sections.join("\n")}
       </div>
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" strategy="lazyOnload" />
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" strategy="lazyOnload" />
+      {showNoCreditsModal && <NoCreditsModal idea={idea} onClose={() => setShowNoCreditsModal(false)} />}
     </>
   );
 }

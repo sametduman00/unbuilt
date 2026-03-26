@@ -190,6 +190,7 @@ function AppSidebarInner() {
           </svg>
         } />
 
+        {isSignedIn && (
         <Link
           href="/reports"
           style={{ display: "flex", alignItems: "center", gap: 9, padding: "7px 10px", borderRadius: 8, color: "var(--clr-text-2)", fontSize: 13, textDecoration: "none", transition: "background 0.1s" }}
@@ -202,6 +203,7 @@ function AppSidebarInner() {
           </svg>
           My Reports
         </Link>
+        )}
 
         <div style={{ height: "0.5px", background: "var(--clr-border)", margin: "4px 0" }} />
 
@@ -267,6 +269,7 @@ function AppSidebarInner() {
         )}
 
         <div style={{ paddingTop: 4 }}>
+          {isSignedIn ? (
           <Link
             href="/pricing"
             style={{ background: "#7c6fff", borderRadius: 8, padding: "9px", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, textDecoration: "none", transition: "opacity 0.1s" }}
@@ -278,6 +281,19 @@ function AppSidebarInner() {
             </svg>
             <span style={{ fontSize: 13, fontWeight: 600, color: "white" }}>Buy Credits</span>
           </Link>
+          ) : (
+          <SignInButton mode="modal">
+            <button style={{ width: "100%", background: "#7c6fff", borderRadius: 8, padding: "9px", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, border: "none", cursor: "pointer", fontFamily: "inherit", transition: "opacity 0.1s" }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = "0.9"}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = "1"}
+            >
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                <path d="M6 1v10M1 6h10" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+              </svg>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "white" }}>Buy Credits</span>
+            </button>
+          </SignInButton>
+          )}
         </div>
 
       </div>
