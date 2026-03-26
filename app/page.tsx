@@ -3524,7 +3524,7 @@ function HomeInner() {
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" as const }}>
                       <button
                         onClick={() => router.push("/?tool=gap-analysis")}
-                        style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 16px", background: "var(--clr-text)", color: "var(--clr-bg)", borderRadius: 8, fontSize: "0.8rem", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", border: "none", letterSpacing: "-0.01em", transition: "opacity 0.12s" }}
+                        style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 16px", background: "#7c6fff", color: "#fff", borderRadius: 8, fontSize: "0.8rem", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", border: "none", letterSpacing: "-0.01em", transition: "opacity 0.12s" }}
                         onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"}
                         onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
                       >
@@ -3533,9 +3533,9 @@ function HomeInner() {
                       </button>
                       <button
                         onClick={() => router.push("/?tool=stack-advisor")}
-                        style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 16px", background: "transparent", color: "var(--clr-text-2)", borderRadius: 8, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid var(--clr-border)", letterSpacing: "-0.01em", transition: "all 0.12s" }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--clr-surface-2)"; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+                        style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 16px", background: "#38bdf8", color: "#fff", borderRadius: 8, fontSize: "0.8rem", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", border: "none", letterSpacing: "-0.01em", transition: "opacity 0.12s" }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
                       >
                         Get my Stack →
                       </button>
@@ -3634,7 +3634,7 @@ function HomeInner() {
                                     <span style={{ fontSize:"0.75rem", color:"var(--clr-text-3)", display:"flex", alignItems:"center", gap:4, flexWrap:"wrap" as const }}>{ctaText}</span>
                                     <button
                                       onClick={e => { e.preventDefault(); router.push("/?tool=gap-analysis"); }}
-                                      style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:"0.7rem", fontWeight:700, padding:"5px 12px", borderRadius:6, background:"var(--clr-text)", color:"var(--clr-bg)", cursor:"pointer", border:"none", fontFamily:"inherit", letterSpacing:"-0.01em", whiteSpace:"nowrap", flexShrink:0, transition:"opacity 0.12s" }}
+                                      style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:"0.7rem", fontWeight:700, padding:"5px 12px", borderRadius:6, background:"#7c6fff", color:"#fff", cursor:"pointer", border:"none", fontFamily:"inherit", letterSpacing:"-0.01em", whiteSpace:"nowrap", flexShrink:0, transition:"opacity 0.12s" }}
                                       onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
                                       onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
                                     >
@@ -3718,7 +3718,7 @@ function HomeInner() {
                             </span>
                             <button
                               onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}}
-                              style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:"0.7rem",fontWeight:700,padding:"5px 12px",borderRadius:6,background:"var(--clr-text)",color:"var(--clr-bg)",cursor:"pointer",border:"none",fontFamily:"inherit",letterSpacing:"-0.01em",whiteSpace:"nowrap",flexShrink:0,transition:"opacity 0.12s"}}
+                              style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:"0.7rem",fontWeight:700,padding:"5px 12px",borderRadius:6,background:"#7c6fff",color:"#fff",cursor:"pointer",border:"none",fontFamily:"inherit",letterSpacing:"-0.01em",whiteSpace:"nowrap",flexShrink:0,transition:"opacity 0.12s"}}
                               onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
                               onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
                             >Dig my angle →</button>
