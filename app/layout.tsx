@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import ClerkThemeProvider from "./components/ClerkThemeProvider";
 import AppSidebar from "./components/AppSidebar";
 import CookieConsent from "./components/CookieConsent";
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </ConsentGate>
         </ClerkThemeProvider>
       </body>
+      <GoogleAnalytics gaId="G-QPCR0DP98G" />
     </html>
   );
 }
