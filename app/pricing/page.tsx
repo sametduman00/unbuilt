@@ -167,20 +167,26 @@ export default function PricingPage() {
       </div>
 
       {/* ── Why the price ── */}
-      <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "16px 20px", marginBottom: 32 }}>
+      <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginBottom: 32 }}>
         <p style={s.label}>Why does a credit cost $0.80–$1.00?</p>
-        <div style={{ display: "flex", gap: 28, flexWrap: "wrap" as const, alignItems: "flex-start" }}>
-          <div style={{ flex: 1, minWidth: 220, textAlign: "center" as const }}>
-            <p style={{ ...s.muted, marginBottom: 10 }}>
-              Every query runs on <strong style={{ color: "var(--clr-text)" }}>Claude Opus 4.6 with Extended Thinking</strong> — Anthropic's most capable model. No cheaper shortcuts.
+        <div style={{ display: "flex", gap: 24, flexWrap: "wrap" as const, alignItems: "stretch" }}>
+          {/* Left */}
+          <div style={{ flex: 1, minWidth: 220, display: "flex", flexDirection: "column" as const, gap: 12 }}>
+            <p style={{ ...s.muted, margin: 0 }}>
+              Every query runs on <strong style={{ color: "var(--clr-text)" }}>Claude Opus 4.6 with Extended Thinking</strong> — Anthropic's most capable model. No cheaper shortcuts, no batching, no caching tricks.
             </p>
             <p style={{ ...s.muted, margin: 0 }}>
-              Don't take our word for it — verify with{" "}
+              Don't take our word for it — verify the numbers yourself with{" "}
               <a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener noreferrer" style={{ color: "var(--clr-text)", fontWeight: 600 }}>
                 Anthropic's official pricing ↗
               </a>
             </p>
+            <div style={{ marginTop: "auto", paddingTop: 8, borderTop: "1px solid var(--clr-border)", display: "flex", alignItems: "center", gap: 8 }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text-4)" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>We show our math. You check it. That's the deal.</span>
+            </div>
           </div>
+          {/* Right */}
           <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "14px 18px", minWidth: 250, flexShrink: 0 }}>
             <p style={{ ...s.label, marginBottom: 10 }}>Cost per query</p>
             {[
