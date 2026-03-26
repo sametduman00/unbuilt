@@ -8,88 +8,62 @@ const PACKAGES = [
     name: "Starter",
     price: "$4.99",
     credits: 5,
-    perQuery: "$1.00",
-    highlight: false,
+    perCredit: "$1.00",
     paddlePriceId: "pri_01km8znr6vfjy12bhkrgxcqky8",
+    highlight: false,
+    badge: null as string | null,
+    hook: "Try it out",
+    hookSub: "Run 5 full analyses. Find one gap, save months.",
+    perks: ["5 Dig or Stack reports","Credits never expire","Instant delivery","Full 10-section Dig reports","Full 4-phase Stack plans"],
   },
   {
     slug: "popular",
     name: "Popular",
     price: "$8.99",
     credits: 10,
-    perQuery: "$0.90",
-    highlight: true,
+    perCredit: "$0.90",
     paddlePriceId: "pri_01km8zvgagyf8qaxhe8ds1cmh3",
+    highlight: true,
+    badge: "BEST VALUE" as string | null,
+    hook: "Most founders pick this",
+    hookSub: "10 reports. Enough to validate an idea end-to-end.",
+    perks: ["10 Dig or Stack reports","Credits never expire","Instant delivery","Full 10-section Dig reports","Full 4-phase Stack plans"],
   },
   {
     slug: "pro",
     name: "Pro",
     price: "$19.99",
     credits: 25,
-    perQuery: "$0.80",
-    highlight: false,
+    perCredit: "$0.80",
     paddlePriceId: "pri_01km8ztv9kx85hwtzepp4b1enf",
+    highlight: false,
+    badge: null as string | null,
+    hook: "Building seriously?",
+    hookSub: "25 reports. Research multiple ideas, compare markets.",
+    perks: ["25 Dig or Stack reports","Credits never expire","Instant delivery","Full 10-section Dig reports","Full 4-phase Stack plans"],
   },
 ];
 
-const TOOLS = [
-  {
-    id: "pulse",
-    label: "ALWAYS FREE",
-    name: "Pulse",
-    description: "Browse trending products — no credits needed, ever.",
-    features: [
-      "Product Hunt & App Store — daily",
-      "AI breakdown: WHAT it does · DIFF · MISS",
-      "Topic & category filters",
-      "No account required",
-      "Unlimited browsing",
-      "Updated every 24 hours",
-    ],
-  },
-  {
-    id: "gap",
-    label: "1 FREE CREDIT",
-    name: "Gap Analysis",
-    description: "Find market gaps before you build. First query on us.",
-    features: [
-      "Live Google & YouTube search",
-      "Real competitor breakdown",
-      "Market gap identification",
-      "Structured, export-ready output",
-      "Works on any niche or idea",
-    ],
-  },
-  {
-    id: "stack",
-    label: "1 FREE CREDIT",
-    name: "Stack Advisor",
-    description: "Get your full tech roadmap. First query on us.",
-    features: [
-      "123+ tools with live pricing",
-      "Budget-matched recommendations",
-      "Phase-by-phase build plan",
-      "Time-to-MVP estimate",
-      "Common mistake warnings",
-      "Tool alternatives included",
-    ],
-  },
+const WALLETS = [
+  { symbol: "BTC",  name: "Bitcoin",  addr: "bc1q9fjlxn39vs9sfurekgjd7p4qx9yzj4kulqe580",         color: "#F7931A", qr: "/qr/btc.jpeg"  },
+  { symbol: "ETH",  name: "Ethereum", addr: "0x60d601C0CcF6A27f5BB00066FCAE8c7208a8Fac8",          color: "#627EEA", qr: "/qr/eth.jpeg"  },
+  { symbol: "SOL",  name: "Solana",   addr: "3oXApv9hQC2UUtoVKb29gLtW61SRdsT9mpfzKvM4jjgM",       color: "#9945FF", qr: "/qr/sol.jpeg"  },
+  { symbol: "USDT", name: "Tether",   addr: "0x60d601C0CcF6A27f5BB00066FCAE8c7208a8Fac8",          color: "#26A17B", qr: "/qr/usdt.jpeg" },
+  { symbol: "XRP",  name: "XRP",      addr: "rPMvhnSuaw82TqEMPNffBVhj5yJTxZyv9Y",                  color: "#346AA9", qr: "/qr/xrp.jpeg"  },
 ];
 
 export default function PricingPage() {
   const { isSignedIn, user } = useUser();
   const [paddleReady, setPaddleReady] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    // Paddle v2 (Billing) initialization
     const script = document.createElement("script");
     script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
     script.onload = () => {
       if (!(window as any).Paddle) return;
-      (window as any).Paddle.Initialize({
-        token: 'live_52661022360279de7c131bad447',
-      });
+      (window as any).Paddle.Initialize({ token: "live_52661022360279de7c131bad447" });
       setPaddleReady(true);
     };
     document.head.appendChild(script);
@@ -99,100 +73,118 @@ export default function PricingPage() {
     if (!isSignedIn || !paddleReady || !(window as any).Paddle) return;
     (window as any).Paddle.Checkout.open({
       items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
-      customData: {
-        user_id: user?.id ?? "",
-        package_slug: pkg.slug,
-      },
+      customData: { user_id: user?.id ?? "", package_slug: pkg.slug },
     });
   };
 
+  const copyAddr = (addr: string) => {
+    navigator.clipboard.writeText(addr);
+    setCopied(addr);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const s = {
+    label: { fontSize: 11, fontWeight: 800, letterSpacing: "0.08em" as const, textTransform: "uppercase" as const, color: "var(--clr-text-5)", marginBottom: 10 } as React.CSSProperties,
+    muted: { fontSize: "0.775rem", color: "var(--clr-text-3)", lineHeight: 1.6 } as React.CSSProperties,
+  };
+
   return (
-    <main style={{ minHeight: "100vh", background: "var(--clr-bg)", padding: "80px 24px 80px", maxWidth: 900, margin: "0 auto" }}>
+    <main style={{ minHeight: "100vh", background: "var(--clr-bg)", padding: "72px 24px 100px", maxWidth: 860, margin: "0 auto" }}>
 
-      {/* Header */}
-      <div style={{ textAlign: "center", marginBottom: 56 }}>
-        <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", color: "var(--clr-accent)", textTransform: "uppercase", marginBottom: 12 }}>
-          Pricing
-        </p>
-        <h1 style={{ fontSize: 36, fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.2, marginBottom: 16 }}>
-          Start free. Pay only when you need more.
+      {/* ── Header ── */}
+      <div style={{ textAlign: "center", marginBottom: 52 }}>
+        <p style={{ ...s.label, color: "var(--clr-text-4)", marginBottom: 14 }}>Pricing</p>
+        <h1 style={{ fontSize: "1.875rem", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.15, margin: "0 0 14px" }}>
+          Pulse is free.<br />
+          <span style={{ color: "var(--clr-text-3)", fontWeight: 400, fontStyle: "italic" }}>Dig and Stack cost 1 credit each.</span>
         </h1>
-        <p style={{ fontSize: 16, color: "var(--clr-muted)", maxWidth: 520, margin: "0 auto" }}>
-          Pulse is always free. Dig and Stack cost 1 credit each. Buy credits when you need them.
+        <p style={{ ...s.muted, maxWidth: 420, margin: "0 auto" }}>
+          No subscription. No monthly fee. Credits never expire. Buy when you need, use when you want.
         </p>
       </div>
 
-      {/* Why box */}
-      <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "20px 24px", marginBottom: 48, display: "flex", gap: 24, flexWrap: "wrap", alignItems: "center" }}>
-        <div style={{ flex: 1, minWidth: 220 }}>
-          <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-accent)", textTransform: "uppercase", marginBottom: 6 }}>
-            Why does a credit cost ~$0.80–1.00?
-          </p>
-          <p style={{ fontSize: 14, color: "var(--clr-muted)", lineHeight: 1.6, margin: 0 }}>
-            We use <strong style={{ color: "var(--clr-text)" }}>Claude Opus 4.6 with Extended Thinking</strong> — Anthropic's most capable model with deep reasoning. Every query runs a full analysis, not a shortcut. The real cost to us is ~$0.45. Your price reflects hosting, search APIs, and keeping the lights on.
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-          {[
-            { label: "Model", value: "Opus 4.6" },
-            { label: "Mode", value: "Extended Thinking" },
-            { label: "Our cost", value: "~$0.45" },
-            { label: "From", value: "$0.80/credit" },
-          ].map((item) => (
-            <div key={item.label} style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 8, padding: "10px 16px", textAlign: "center", minWidth: 80 }}>
-              <div style={{ fontSize: 11, color: "var(--clr-muted)", marginBottom: 4 }}>{item.label}</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "var(--clr-text)" }}>{item.value}</div>
+      {/* ── Why the price ── */}
+      <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginBottom: 52 }}>
+        <p style={s.label}>Why does a credit cost $0.80–$1.00?</p>
+        <div style={{ display: "flex", gap: 28, flexWrap: "wrap" as const, alignItems: "flex-start" }}>
+          <div style={{ flex: 1, minWidth: 220 }}>
+            <p style={{ ...s.muted, marginBottom: 10 }}>
+              Every query runs on <strong style={{ color: "var(--clr-text)" }}>Claude Opus 4.6 with Extended Thinking</strong> — Anthropic's most capable model. No cheaper shortcuts.
+            </p>
+            <p style={{ ...s.muted, margin: 0 }}>
+              Don't take our word for it — verify with{" "}
+              <a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener noreferrer" style={{ color: "var(--clr-text)", fontWeight: 600 }}>
+                Anthropic's official pricing ↗
+              </a>
+            </p>
+          </div>
+          <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "14px 18px", minWidth: 250, flexShrink: 0 }}>
+            <p style={{ ...s.label, marginBottom: 10 }}>Cost per query</p>
+            {[
+              ["~20,000 input tokens", "× $15/1M", "= $0.30"],
+              ["~5,000 output tokens", "× $75/1M", "= $0.375"],
+            ].map(([a, b, c]) => (
+              <div key={a} style={{ display: "flex", gap: 6, fontSize: "0.75rem", fontFamily: "monospace", marginBottom: 4 }}>
+                <span style={{ color: "var(--clr-text-3)", flex: 1 }}>{a}</span>
+                <span style={{ color: "var(--clr-text-4)" }}>{b}</span>
+                <span style={{ color: "var(--clr-text)", fontWeight: 700, minWidth: 52, textAlign: "right" as const }}>{c}</span>
+              </div>
+            ))}
+            <div style={{ borderTop: "1px solid var(--clr-border)", marginTop: 8, paddingTop: 8, display: "flex", justifyContent: "space-between", fontSize: "0.8rem", fontFamily: "monospace" }}>
+              <span style={{ color: "var(--clr-text-3)" }}>Our total cost</span>
+              <span style={{ color: "var(--clr-text)", fontWeight: 800 }}>~$0.45</span>
             </div>
-          ))}
+            <p style={{ fontSize: 10, color: "var(--clr-text-5)", margin: "6px 0 0", fontStyle: "italic" }}>
+              The rest: hosting, search APIs, infrastructure.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Credit packs */}
-      <div style={{ marginBottom: 64 }}>
-        <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--clr-text)", marginBottom: 24, textAlign: "center" }}>
-          Credit packs
-        </h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+      {/* ── Credit packs ── */}
+      <div style={{ marginBottom: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
           {PACKAGES.map((pkg) => (
-            <div key={pkg.slug} style={{ background: "var(--clr-surface)", border: pkg.highlight ? "2px solid var(--clr-accent)" : "1px solid var(--clr-border)", borderRadius: 12, padding: "24px 20px", position: "relative", display: "flex", flexDirection: "column", gap: 16 }}>
-              {pkg.highlight && (
-                <div style={{ position: "absolute", top: -1, left: "50%", transform: "translateX(-50%)", background: "var(--clr-accent)", color: "#fff", fontSize: 11, fontWeight: 700, padding: "3px 12px", borderRadius: "0 0 8px 8px", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  Most popular
+            <div key={pkg.slug} style={{
+              background: "var(--clr-surface)",
+              border: pkg.highlight ? "2px solid #7c6fff" : "1px solid var(--clr-border)",
+              borderRadius: 14,
+              padding: "24px 20px 20px",
+              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+            }}>
+              {pkg.badge && (
+                <div style={{ position: "absolute", top: -1, left: "50%", transform: "translateX(-50%)", background: "#7c6fff", color: "#fff", fontSize: 10, fontWeight: 800, padding: "3px 12px", borderRadius: "0 0 8px 8px", letterSpacing: "0.08em" }}>
+                  {pkg.badge}
                 </div>
               )}
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--clr-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
-                  {pkg.name}
-                </div>
-                <div style={{ fontSize: 32, fontWeight: 700, color: "var(--clr-text)", lineHeight: 1 }}>
-                  {pkg.price}
-                </div>
-                <div style={{ fontSize: 13, color: "var(--clr-muted)", marginTop: 6 }}>
-                  {pkg.credits} credits · {pkg.perQuery}/credit
-                </div>
+              {/* Hook */}
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: pkg.highlight ? "#7c6fff" : "var(--clr-text-4)", marginBottom: 2 }}>{pkg.hook}</div>
+                <div style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", lineHeight: 1.45 }}>{pkg.hookSub}</div>
               </div>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-                {[
-                  `${pkg.credits} credits (Gap or Stack)`,
-                  "Works across all tools",
-                  "No expiry",
-                  "Instant delivery",
-                ].map((f) => (
-                  <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 13, color: "var(--clr-muted)" }}>
-                    <span style={{ color: "var(--clr-accent)", fontWeight: 700, marginTop: 1 }}>✓</span> {f}
+              {/* Price */}
+              <div style={{ marginBottom: 18 }}>
+                <div style={{ fontSize: "2rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.03em", lineHeight: 1 }}>{pkg.price}</div>
+                <div style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", marginTop: 4 }}>{pkg.credits} credits · {pkg.perCredit} each</div>
+              </div>
+              {/* Perks */}
+              <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
+                {pkg.perks.map((p) => (
+                  <li key={p} style={{ display: "flex", alignItems: "flex-start", gap: 7, fontSize: "0.75rem", color: "var(--clr-text-3)" }}>
+                    <span style={{ color: pkg.highlight ? "#7c6fff" : "var(--clr-text-5)", fontWeight: 800, flexShrink: 0, marginTop: 1 }}>✓</span>{p}
                   </li>
                 ))}
               </ul>
+              {/* CTA */}
               {isSignedIn ? (
-                <button
-                  onClick={() => handleBuy(pkg)}
-                  style={{ display: "block", textAlign: "center", padding: "11px 0", borderRadius: 8, background: pkg.highlight ? "var(--clr-accent)" : "transparent", border: pkg.highlight ? "none" : "1px solid var(--clr-border)", color: pkg.highlight ? "#fff" : "var(--clr-text)", fontWeight: 600, fontSize: 14, cursor: "pointer", marginTop: "auto", fontFamily: "inherit" }}
-                >
-                  Buy {pkg.name}
+                <button onClick={() => handleBuy(pkg)} style={{ display: "block", width: "100%", padding: "11px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.875rem", fontWeight: 700, cursor: "pointer", background: pkg.highlight ? "#7c6fff" : "transparent", border: pkg.highlight ? "none" : "1px solid var(--clr-border)", color: pkg.highlight ? "#fff" : "var(--clr-text)" }}>
+                  Buy {pkg.credits} credits
                 </button>
               ) : (
                 <SignInButton mode="modal">
-                  <button style={{ display: "block", width: "100%", textAlign: "center", padding: "11px 0", borderRadius: 8, background: pkg.highlight ? "var(--clr-accent)" : "transparent", border: pkg.highlight ? "none" : "1px solid var(--clr-border)", color: pkg.highlight ? "#fff" : "var(--clr-text)", fontWeight: 600, fontSize: 14, cursor: "pointer", marginTop: "auto", fontFamily: "inherit" }}>
+                  <button style={{ display: "block", width: "100%", padding: "11px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.875rem", fontWeight: 700, cursor: "pointer", background: pkg.highlight ? "#7c6fff" : "transparent", border: pkg.highlight ? "none" : "1px solid var(--clr-border)", color: pkg.highlight ? "#fff" : "var(--clr-text)" }}>
                     Sign in to buy
                   </button>
                 </SignInButton>
@@ -200,73 +192,79 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
+        <p style={{ textAlign: "center", fontSize: "0.7rem", color: "var(--clr-text-5)", marginTop: 10 }}>
+          Credits work across both Dig and Stack. No expiry. Secure checkout via Paddle.
+        </p>
       </div>
 
-      {/* What's included */}
-      <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--clr-text)", marginBottom: 24, textAlign: "center" }}>
-        What's included
-      </h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, marginBottom: 64 }}>
-        {TOOLS.map((tool) => (
-          <div key={tool.id} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "20px" }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "var(--clr-accent)", textTransform: "uppercase", marginBottom: 6 }}>
-              {tool.label}
-            </div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: "var(--clr-text)", marginBottom: 6 }}>
-              {tool.name}
-            </div>
-            <div style={{ fontSize: 13, color: "var(--clr-muted)", marginBottom: 16, lineHeight: 1.5 }}>
-              {tool.description}
-            </div>
-            <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 12 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "var(--clr-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>
-                Included
+      {/* ── What 1 credit gets you ── */}
+      <div style={{ marginTop: 52, marginBottom: 64 }}>
+        <p style={{ ...s.label, textAlign: "center", marginBottom: 20 }}>What 1 credit gets you</p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
+          {[
+            { name: "Pulse", badge: "FREE", badgeColor: "#ef4444", iconColor: "#ef4444", iconPath: "pulse",
+              desc: "Live feed of today's launches with AI analysis of what each product is missing.",
+              items: ["WHAT · DIFF · MISS per product","Product Hunt + App Store","Topic filters","'Dig my angle' shortcut","Updated daily"] },
+            { name: "Dig", badge: "1 CREDIT", badgeColor: "#7c6fff", iconColor: "#7c6fff", iconPath: "dig",
+              desc: "Full market intelligence report on your idea — 70+ live sources, 10 sections.",
+              items: ["Market score 0–100","Real competitor apps (both stores)","Pain points from Reddit / X / YouTube","TAM / SAM / SOM sizing","Validation checklist + financial model","PDF export"] },
+            { name: "Stack", badge: "1 CREDIT", badgeColor: "#38bdf8", iconColor: "#38bdf8", iconPath: "stack",
+              desc: "Phased build plan with exact tools, pricing, and step-by-step setup instructions.",
+              items: ["4 phases: Validate → MVP → Growth → Scale","Tool cards with real pricing","Vibe Guide: copy-paste prompts","Mistake warnings","Upgrade triggers","PDF export"] },
+          ].map((t) => (
+            <div key={t.name} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                <div style={{ width: 26, height: 26, borderRadius: 6, background: `${t.iconColor}18`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  {t.iconPath === "pulse" && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={t.iconColor} strokeWidth="2" strokeLinecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>}
+                  {t.iconPath === "dig"   && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={t.iconColor} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>}
+                  {t.iconPath === "stack" && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={t.iconColor} strokeWidth="2" strokeLinecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>}
+                </div>
+                <div>
+                  <div style={{ fontSize: "0.8125rem", fontWeight: 700 }}>{t.name}</div>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: t.badgeColor, letterSpacing: ".06em" }}>{t.badge}</div>
+                </div>
               </div>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 6 }}>
-                {tool.features.map((f) => (
-                  <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: "var(--clr-muted)" }}>
-                    <span style={{ color: "var(--clr-accent)", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span> {f}
+              <p style={{ fontSize: "0.75rem", color: "var(--clr-text-3)", lineHeight: 1.5, margin: "0 0 10px" }}>{t.desc}</p>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 5 }}>
+                {t.items.map((f) => (
+                  <li key={f} style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", display: "flex", gap: 5 }}>
+                    <span style={{ color: t.iconColor, flexShrink: 0 }}>→</span>{f}
                   </li>
                 ))}
               </ul>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Donate section */}
-      <div style={{ textAlign: "center", borderTop: "1px solid var(--clr-border)", paddingTop: 40 }}>
-        <p style={{ fontSize: 16, fontWeight: 600, color: "var(--clr-text)", marginBottom: 8 }}>
-          Unbuilt is free. Your barista isn't. Donate if we saved you time.
-        </p>
-        <p style={{ fontSize: 14, color: "var(--clr-muted)", marginBottom: 24 }}>
-          No subscription, no ads, no paywalls on core features. We keep it open.
-        </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 12 }}>
-          {[
-            { symbol: "BTC", name: "Bitcoin", addr: "bc1q9fjlxn39vs9sfurekgjd7p4qx9yzj4kulqe580", color: "#F7931A", qr: "/qr/btc.jpeg" },
-            { symbol: "ETH", name: "Ethereum", addr: "0x60d601C0CcF6A27f5BB00066FCAE8c7208a8Fac8", color: "#627EEA", qr: "/qr/eth.jpeg" },
-            { symbol: "SOL", name: "Solana", addr: "3oXApv9hQC2UUtoVKb29gLtW61SRdsT9mpfzKvM4jjgM", color: "#9945FF", qr: "/qr/sol.jpeg" },
-            { symbol: "USDT", name: "Tether", addr: "0x60d601C0CcF6A27f5BB00066FCAE8c7208a8Fac8", color: "#26A17B", qr: "/qr/usdt.jpeg" },
-            { symbol: "XRP", name: "XRP", addr: "rPMvhnSuaw82TqEMPNffBVhj5yJTxZyv9Y", color: "#346AA9", qr: "/qr/xrp.jpeg" },
-          ].map((wallet) => (
-            <div key={wallet.symbol} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "16px 12px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ width: 8, height: 8, borderRadius: "50%", background: wallet.color, display: "inline-block" }} />
-                <span style={{ fontSize: 13, fontWeight: 700, color: "var(--clr-text)" }}>{wallet.symbol}</span>
-                <span style={{ fontSize: 11, color: "var(--clr-muted)" }}>{wallet.name}</span>
+      {/* ── Donate ── */}
+      <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 48 }}>
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <p style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--clr-text)", margin: "0 0 6px" }}>Support the project</p>
+          <p style={{ ...s.muted, maxWidth: 380, margin: "0 auto" }}>
+            If Unbuilt saved you time or money, a crypto tip goes directly to keeping it running. No pressure, genuinely appreciated.
+          </p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10 }}>
+          {WALLETS.map((w) => (
+            <div key={w.symbol} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "14px 10px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                <span style={{ width: 7, height: 7, borderRadius: "50%", background: w.color, display: "inline-block", flexShrink: 0 }} />
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--clr-text)" }}>{w.symbol}</span>
+                <span style={{ fontSize: 10, color: "var(--clr-text-4)" }}>{w.name}</span>
               </div>
-              <img src={wallet.qr} alt={`${wallet.symbol} QR`} style={{ width: 90, height: 90, borderRadius: 6 }} />
-              <div style={{ fontSize: 9, fontFamily: "monospace", color: "var(--clr-muted)", wordBreak: "break-all", textAlign: "center", lineHeight: 1.4 }}>
-                {wallet.addr}
+              <img src={w.qr} alt={`${w.symbol} QR`} style={{ width: 88, height: 88, borderRadius: 6 }} />
+              <div style={{ fontSize: 8, fontFamily: "monospace", color: "var(--clr-text-5)", wordBreak: "break-all" as const, textAlign: "center" as const, lineHeight: 1.4 }}>
+                {w.addr}
               </div>
-              <button onClick={() => navigator.clipboard.writeText(wallet.addr)} style={{ fontSize: 11, padding: "5px 12px", borderRadius: 6, border: "1px solid var(--clr-border)", background: "transparent", color: "var(--clr-muted)", cursor: "pointer" }}>
-                Copy
+              <button onClick={() => copyAddr(w.addr)} style={{ fontSize: 11, padding: "4px 12px", borderRadius: 5, border: "1px solid var(--clr-border)", background: "transparent", color: copied === w.addr ? "var(--clr-text)" : "var(--clr-text-4)", cursor: "pointer", fontFamily: "inherit", fontWeight: copied === w.addr ? 700 : 400 }}>
+                {copied === w.addr ? "Copied ✓" : "Copy"}
               </button>
             </div>
           ))}
         </div>
       </div>
+
     </main>
   );
 }
