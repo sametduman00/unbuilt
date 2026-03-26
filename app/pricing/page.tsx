@@ -152,7 +152,10 @@ export default function PricingPage() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 14, flexWrap: "wrap" as const }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text-4)" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Secure checkout via</span>
-          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#e67e22" }}>🍋 Lemon Squeezy</span>
+          <a href="https://www.paddle.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.75rem", fontWeight: 700, color: "#0C1F3D", textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
+            <svg width="13" height="13" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#0C1F3D"/><path d="M9 8h7.5c3.5 0 6 2.2 6 5.5s-2.5 5.5-6 5.5H12v5H9V8zm3 8.5h4.5c1.8 0 3-1 3-3s-1.2-3-3-3H12v6z" fill="#fff"/></svg>
+            Paddle
+          </a>
           <span style={{ color: "var(--clr-text-5)", fontSize: "0.75rem" }}>·</span>
           <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Credits never expire</span>
           <span style={{ color: "var(--clr-text-5)", fontSize: "0.75rem" }}>·</span>
@@ -282,11 +285,11 @@ export default function PricingPage() {
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "var(--clr-text-5)", marginBottom: 14 }}>Secure payment</p>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap" as const }}>
-            {/* Lemon Squeezy */}
-            <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid var(--clr-border)", background: "#fff", display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ fontSize: 15 }}>🍋</span>
-              <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#92400e", fontFamily: "inherit" }}>Lemon Squeezy</span>
-            </div>
+            {/* Paddle */}
+            <a href="https://www.paddle.com" target="_blank" rel="noopener noreferrer" style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid var(--clr-border)", background: "#fff", display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
+              <svg width="18" height="18" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#0C1F3D"/><path d="M9 8h7.5c3.5 0 6 2.2 6 5.5s-2.5 5.5-6 5.5H12v5H9V8zm3 8.5h4.5c1.8 0 3-1 3-3s-1.2-3-3-3H12v6z" fill="#fff"/></svg>
+              <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#0C1F3D", fontFamily: "inherit" }}>Paddle</span>
+            </a>
             {/* Visa */}
             <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid var(--clr-border)", background: "#fff", display: "flex", alignItems: "center" }}>
               <span style={{ fontSize: "1.1rem", fontWeight: 900, color: "#1A1F71", fontStyle: "italic", letterSpacing: "0.04em", fontFamily: "Georgia, serif" }}>VISA</span>
