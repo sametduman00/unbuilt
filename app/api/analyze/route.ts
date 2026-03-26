@@ -136,7 +136,10 @@ async function fetchFundabilityContext(idea: string): Promise<string> {
 // ââ App Store (iTunes, free) âââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function fetchAppStoreContext(query: string): Promise<string> {
   try {
-    const params = new URLSearchParams({ term: query, entity: "software", limit: "8", country: "us" });
+    // Distill idea to core keywords for better App Store search
+    const stopWords = new Set(["app","for","the","a","an","and","or","of","in","on","with","to","is","that","are","be","at","by","as","from","tool","platform","software","service"]);
+    const coreQuery = query.toLowerCase().split(/\s+/).filter(w => w.length > 2 && !stopWords.has(w)).slice(0, 3).join(" ") || query;
+    const params = new URLSearchParams({ term: coreQuery, entity: "software", limit: "8", country: "us" });
     const res = await fetch(`https://itunes.apple.com/search?${params}`, { signal: AbortSignal.timeout(6000) });
     if (!res.ok) return "";
     const data = await res.json();
@@ -191,7 +194,8 @@ async function fetchTwitterContext(idea: string): Promise<string> {
   const apiKey = process.env.RAPIDAPI_KEY;
   if (!apiKey) return "";
   try {
-    const query = encodeURIComponent(idea + ' (problem OR need OR want OR alternative OR recommend) lang:en');
+    const shortIdea = idea.split(" ").slice(0, 4).join(" ");
+    const query = encodeURIComponent(`"${shortIdea}" (problem OR frustrated OR "looking for" OR recommend OR alternative) -filter:retweets lang:en`);
     const res = await fetch(
       `https://twitter241.p.rapidapi.com/search-v3?type=Top&count=10&query=${query}`,
       {
