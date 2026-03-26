@@ -1,7 +1,11 @@
 import { NextRequest } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 import gplay from "google-play-scraper";
 
 export async function GET(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  
   const q = req.nextUrl.searchParams.get("q");
   if (!q || q.trim().length < 2)
     return Response.json({ error: "Missing query" }, { status: 400 });
@@ -19,9 +23,8 @@ export async function GET(req: NextRequest) {
       icon: r.icon || "",
       url: r.url || "",
     }));
-    return Response.json({ results: apps, total: results.length });
-  } catch (err) {
-    console.error("[GPlay] search error:", err);
-    return Response.json({ results: [], total: 0 });
+    return Response.json({ apps });
+  } catch (e) {
+    return Response.json({ apps: [], error: "Scrape failed" }, { status: 200 });
   }
 }

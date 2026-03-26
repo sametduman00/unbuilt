@@ -20,7 +20,12 @@ export async function POST(req: NextRequest) {
   const signature = req.headers.get("paddle-signature") ?? "";
   const body = await req.text();
 
-  if (secret) {
+  if (!secret) {
+    console.error("[Paddle] PADDLE_WEBHOOK_SECRET not set - rejecting request");
+    return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
+  }
+
+  if (true) {
     const ts = signature.match(/ts=(\d+)/)?.[1];
     const h1 = signature.match(/h1=([a-f0-9]+)/)?.[1];
     if (!ts || !h1) return NextResponse.json({ error: "Invalid signature" }, { status: 401 });

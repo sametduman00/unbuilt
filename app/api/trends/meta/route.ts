@@ -1,9 +1,12 @@
+import { auth } from "@clerk/nextjs/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest } from "next/server";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export async function POST(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const { idea } = await req.json();
   if (!idea || typeof idea !== "string")
     return Response.json({ error: "idea required" }, { status: 400 });

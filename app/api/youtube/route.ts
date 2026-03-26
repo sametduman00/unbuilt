@@ -1,6 +1,9 @@
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const q = req.nextUrl.searchParams.get("q");
   console.log("[YouTube API] route hit with q:", q);
   if (!q || q.trim().length < 2)
