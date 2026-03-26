@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
       live: true,
       remaining: d.balance ?? null,
       used: null,
-      limit: null, // no hard limit, just balance
+      limit: 2500, // free plan starts with 2500 credits
       note: `Rate limit: ${d.rateLimit ?? "?"} req/s`,
     };
   } catch {}
