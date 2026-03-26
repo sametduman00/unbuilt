@@ -4170,7 +4170,7 @@ ${sections.join("\n")}
               {selectedTool === "gap-analysis" && !loading && streamedContent ? (
                 (() => {
                   const gapData = parseGapAnalysisJSON(streamedContent);
-                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { handleSelectTool("stack-advisor"); setIdea(i); }} /></div>;
+                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { handleSelectTool("stack-advisor"); setTimeout(() => setIdea(i), 50); }} /></div>;
                   return sections.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       {sections.map((s, i) => (
