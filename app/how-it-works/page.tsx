@@ -1,593 +1,344 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { useAuth, UserButton, SignInButton } from "@clerk/nextjs";
 
-type TabId = "trend-feed" | "gap-analysis" | "stack-advisor";
+type TabId = "pulse" | "dig" | "stack";
 
-interface TabConfig {
-  id: TabId;
-  name: string;
-  tagline: string;
-  accentColor: string;
-  accentRgb: string;
-  icon: React.ReactNode;
-  who: string;
-  what: string;
-  steps: { title: string; desc: string }[];
-  inputs: string[];
-  outputs: { emoji: string; label: string; preview: string }[];
-}
+const ACCENT = {
+  pulse: { color: "#ef4444", bg: "rgba(239,68,68,0.1)", border: "rgba(239,68,68,0.2)" },
+  dig:   { color: "#7c6fff", bg: "rgba(124,111,255,0.1)", border: "rgba(124,111,255,0.2)" },
+  stack: { color: "#38bdf8", bg: "rgba(56,189,248,0.1)", border: "rgba(56,189,248,0.2)" },
+};
 
-function IconTrend({ color }: { color: string }) {
+function PulseIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-      <path d="M2 16.5l5-7 4 3.5 5.5-9L19 7" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M16 4h5v5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
     </svg>
   );
 }
-function IconGap({ color }: { color: string }) {
+function DigIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-      <circle cx="11" cy="11" r="7.5" stroke={color} strokeWidth="1.5" strokeDasharray="3.5 2.5" />
-      <circle cx="11" cy="11" r="2.5" fill={color} opacity="0.4" />
-      <path d="M11 1.5V4M11 18v2.5M1.5 11H4M18 11h2.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
     </svg>
   );
 }
-function IconStack({ color }: { color: string }) {
+function StackIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-      <path d="M3 7.5l8-4.5 8 4.5-8 4.5L3 7.5z" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
-      <path d="M3 12l8 4.5L19 12M3 16.5l8 4.5 8-4.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
     </svg>
   );
 }
 
-const TABS: TabConfig[] = [
-  {
-    id: "trend-feed",
-    name: "Pulse",
-    tagline: "Live market signals",
-    accentColor: "var(--clr-accent)",
-    accentRgb: "var(--clr-accent-rgb)",
-    icon: <IconTrend color="var(--clr-accent)" />,
-    who: "Founders scanning for their next idea, indie hackers tracking what's being built, or anyone who wants to spot real gaps in products as they launch — before Twitter even notices.",
-    what: "Pulse pulls live data from Product Hunt and the App Store every day, then runs each product through Claude AI to generate structured analysis. Every app gets three labels: WHAT it does, DIFF what makes it different, and MISS what it's missing. That missing piece is your opportunity.",
-    steps: [
-      {
-        title: "Open Pulse",
-        desc: "Navigate to Pulse from the main page. No query needed — the feed is already live and populated with today's launches from Product Hunt and the App Store.",
-      },
-      {
-        title: "Choose your feed",
-        desc: "Switch between Product Hunt (today's launches across all categories) and App Store (new iOS apps submitted today). Both update automatically every day.",
-      },
-      {
-        title: "Filter and sort",
-        desc: "Narrow by topic (AI, Productivity, SaaS, Games, etc.) or sort by newest first. Search across all titles and descriptions to find what's relevant to your space.",
-      },
-      {
-        title: "Read the AI analysis",
-        desc: "Each product card shows Claude's 3-label breakdown: WHAT (core function), DIFF (differentiator), and MISS (what it lacks). The MISS label is the gap — the feature or audience nobody's serving yet.",
-      },
-    ],
-    inputs: [
-      "No input needed — Pulse is a passive feed, not a query tool",
-      "Optional: filter by topic to focus on your market vertical",
-      "Optional: search by keyword to find apps in a specific niche",
-    ],
-    outputs: [
-      {
-        emoji: "🔴",
-        label: "WHAT — What the app does",
-        preview: "**Next Edu** — Education platform connecting schools, parents, and students for learning support. Analyzes student performance and provides an intelligent assistant for adaptive learning.",
-      },
-      {
-        emoji: "🟢",
-        label: "DIFF — What makes it different",
-        preview: "**Next Edu** — Analyzes student abilities beyond grades with an intelligent learning assistant that adapts to individual progress rather than delivering static content.",
-      },
-      {
-        emoji: "🔴",
-        label: "MISS — The gap (your opportunity)",
-        preview: "**Next Edu** — No offline functionality or mobile app availability clearly mentioned. Parents and students in low-connectivity areas are completely unserved.",
-      },
-      {
-        emoji: "📋",
-        label: "Full product card",
-        preview: "**Claude Dispatch** · Android · Productivity · Task Management\n\n**WHAT**: Android app to text Claude and get AI responses via SMS.\n**DIFF**: Direct SMS interface without needing to open an app or browser.\n**MISS**: No image attachment support — multimodal use cases are blocked entirely.",
-      },
-    ],
-  },
-
-  {
-    id: "gap-analysis",
-    name: "Gap Analysis",
-    tagline: "Find the gaps before you build",
-    accentColor: "var(--clr-accent)",
-    accentRgb: "var(--clr-accent-rgb)",
-    icon: <IconGap color="var(--clr-accent)" />,
-    who: "Founders with an app idea who want to know if there\u2019s a real opening before spending months building. See exactly who you\u2019re up against \u2014 with real apps from both the App Store and Google Play \u2014 plus where existing solutions fall short.",
-    what: "Gap Analysis combines Claude AI with live App Store (iTunes) and Google Play searches to map your competitive landscape. You get a Market Opportunity score 0-100, competitor cards with threat levels, pain points with severity badges, market gaps with opportunity scores, a full SWOT analysis, and an ideal target customer persona \u2014 all from one query.",
-    steps: [
-      { title: "Describe your idea", desc: "Explain your niche or app concept in plain language. \u2018Project management for freelancers\u2019, \u2018AI writing tool for marketers\u2019, \u2018booking software for tattoo studios\u2019. No deck needed." },
-      { title: "App stores are searched", desc: "iTunes Search API and Google Play are queried simultaneously for existing apps in your space. Results are merged and deduplicated into one competitor list with ratings, downloads, and pricing." },
-      { title: "Claude analyzes the full picture", desc: "Claude Sonnet identifies direct competitors, indirect alternatives, and DIY substitutes \u2014 then maps pain points, market gaps, and strategic opportunities with structured scoring." },
-      { title: "You get a complete market report", desc: "Six visual sections: competitor cards with threat dots, pain points with severity badges, market gaps ranked by opportunity score, SWOT 2x2 grid, your opportunity hero card, and ideal target customer persona." },
-    ],
-    inputs: [
-      "Your niche, category, or product concept",
-      "The more specific, the sharper the analysis \u2014 \u2018AI writing tool\u2019 vs. \u2018AI email reply tool for customer support teams\u2019",
-      "No need to list competitors yourself \u2014 Claude finds them, plus real apps from both stores",
-    ],
-    outputs: [
-      { emoji: "\ud83c\udfc6", label: "Competitors + Threat Level", preview: "**Notion** \u2014 Threat: \u25cf\u25cf\u25cf\u25cb High. All-in-one workspace, weak on freelancer billing. 4.8\u2605 App Store, 10M+ downloads. **Trello** \u2014 Threat: \u25cf\u25cf\u25cb\u25cb Medium. Simple boards but no invoicing or client portal. 4.5\u2605, 50M+ downloads." },
-      { emoji: "\ud83d\ude24", label: "Pain Points + Severity", preview: "\ud83d\udd34 **Critical**: No unified client communication thread \u2014 freelancers juggle email, Slack, and DMs. \ud83d\udfe0 **High**: Manual invoice chasing wastes 4-6 hrs/week. \ud83d\udfe1 **Medium**: Time tracking disconnected from billing in every major tool." },
-      { emoji: "\ud83d\udd73\ufe0f", label: "Market Gaps + Opportunity Score", preview: "**Gap: Unified freelancer workflow** \u2014 Opportunity: 87/100. No tool combines time tracking + automatic invoice generation + client messaging under $50/mo. **Gap: Solo-friendly pricing** \u2014 Opportunity: 72/100. Every competitor charges per-seat, punishing single operators." },
-      { emoji: "\ud83c\udfaf", label: "Target Customer Persona", preview: "**Solo Sarah** \u2014 Freelance designer, 28-35, earns $60-120k/yr. Uses 4+ tools daily (Figma, Notion, QuickBooks, Gmail). Will pay $29/mo for something that saves 5+ hrs/week. Discovers tools via Twitter and designer communities." },
-    ],
-  },
-  {
-    id: "stack-advisor",
-    name: "Stack Advisor",
-    tagline: "Build fast, cheap, and right",
-    accentColor: "var(--clr-accent)",
-    accentRgb: "var(--clr-accent-rgb)",
-    icon: <IconStack color="var(--clr-accent)" />,
-    who: "Anyone starting a new project who doesn\u2019t want to over-engineer or waste money on the wrong tools. Especially useful for non-technical founders who need a technical co-founder\u2019s opinion, or developers spinning up a new product.",
-    what: "Stack Advisor recommends specific tools across three build phases \u2014 Phase 0 (Validate), Phase 1 (MVP), and Phase 2 (Growth) \u2014 using a curated database of 150+ developer tools with real March 2026 pricing. Every recommendation includes free tier details, monthly costs, build order, common mistakes to avoid, scalability ceilings, and when to upgrade.",
-    steps: [
-      { title: "Describe what you\u2019re building", desc: "Give Claude the concept \u2014 \u2018a marketplace for local freelancers with payments and messaging\u2019, \u2018a SaaS dashboard for restaurant managers\u2019. The more specific, the more targeted the stack." },
-      { title: "Set your budget tier", desc: "Choose from Bootstrapped (< $50/mo), Growing ($50-200/mo), Funded ($200-1k/mo), or Scale ($1k+/mo). This filters out tools that are overkill or out of reach." },
-      { title: "Set your technical level", desc: "No-code (you use Notion, Webflow, Zapier), Low-code (you can edit HTML/CSS and follow tutorials), or Developer (you can code, use CLIs, and deploy). Claude adjusts its recommendations accordingly." },
-      { title: "Get a phased build plan", desc: "Three phases of tool recommendations with real pricing from our 150+ tool database. Each phase includes tool cards with free tier info, cost breakdowns, build order timeline, mistakes to avoid, and when to upgrade to the next phase." },
-    ],
-    inputs: [
-      "What you\u2019re building (be specific about features \u2014 auth, payments, real-time, etc.)",
-      "Your monthly infrastructure budget",
-      "Your technical skill level \u2014 be honest, it affects the whole recommendation",
-    ],
-    outputs: [
-      { emoji: "\ud83d\udee0\ufe0f", label: "Phase 0 \u2014 Validate", preview: "**Goal**: Prove demand before writing code. **Carrd** ($0/mo free tier) for landing page. **Tally** ($0) for waitlist form. **Plausible** ($0 self-hosted) for traffic analytics. Total: **$0/mo**. Move to Phase 1 when you hit 200+ signups." },
-      { emoji: "\ud83d\ude80", label: "Phase 1 \u2014 MVP", preview: "**Frontend**: Next.js on Vercel \u2014 free tier covers you to ~100k visits/mo. **Auth**: Clerk (free to 10k MAU). **Database**: Supabase (free 500MB). **Payments**: Stripe (2.9% + 30\u00a2). Total: **$0/mo** until you scale. Each tool card shows free tier limits." },
-      { emoji: "\ud83d\udcc8", label: "Phase 2 \u2014 Growth", preview: "**Upgrade triggers**: Supabase hits 500MB, Vercel cold starts affect UX, need team seats. **Database**: Supabase Pro ($25/mo). **Monitoring**: Sentry ($26/mo). **Email**: Resend ($20/mo). **Analytics**: PostHog (free to 1M events). Total: **~$71/mo**." },
-      { emoji: "\u26a0\ufe0f", label: "Mistakes to Avoid", preview: "**Don\u2019t** pay for auth before 10k users \u2014 Clerk/Supabase Auth free tiers are generous. **Don\u2019t** self-host databases to save $25/mo \u2014 your time is worth more. **Don\u2019t** add monitoring before launch \u2014 you need users before you need observability." },
-    ],
-  },
-];
-
-function MockOutput({ outputs }: {
-  outputs: TabConfig["outputs"];
-  accentColor: string;
-  accentRgb: string;
-}) {
-  const [expanded, setExpanded] = useState<number | null>(0);
+export default function HowItWorksPage() {
+  const { isSignedIn } = useAuth();
+  const [tab, setTab] = useState<TabId>("pulse");
+  const a = ACCENT[tab];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-      {outputs.map((out, i) => (
-        <div
-          key={i}
-          style={{
-            borderRadius: 14,
-            border: expanded === i ? "1px solid var(--clr-text-6)" : "1px solid var(--clr-border)",
-            background: expanded === i ? "rgba(var(--clr-text-rgb),0.02)" : "var(--clr-surface)",
-            overflow: "hidden",
-            transition: "all 0.2s ease",
-          }}
-        >
-          <button
-            onClick={() => setExpanded(expanded === i ? null : i)}
-            style={{
-              width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "0.875rem 1rem", background: "none", border: "none", cursor: "pointer",
-              fontFamily: "inherit",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-              <span style={{ fontSize: "1rem" }}>{out.emoji}</span>
-              <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: expanded === i ? "var(--clr-text)" : "var(--clr-text-3)", letterSpacing: "-0.01em" }}>
-                {out.label}
-              </span>
-            </div>
-            <svg
-              width="14" height="14" viewBox="0 0 14 14" fill="none"
-              style={{ transform: expanded === i ? "rotate(180deg)" : "none", transition: "transform 0.2s", color: "var(--clr-text-6)", flexShrink: 0 }}
-            >
-              <path d="M2 4.5l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
+    <div style={{ minHeight: "100vh", background: "var(--clr-bg)", color: "var(--clr-text)", fontFamily: "inherit" }}>
 
-          {expanded === i && (
-            <div style={{
-              padding: "0 1rem 1rem",
-              borderTop: "1px solid var(--clr-border-2)",
-              paddingTop: "0.875rem",
-            }}>
-              <div style={{
-                display: "flex", alignItems: "center", gap: 6,
-                marginBottom: "0.75rem",
-                paddingBottom: "0.625rem",
-                borderBottom: "1px solid var(--clr-border-deep)",
-              }}>
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--clr-text-5)", animation: "pulse 2s infinite" }} />
-                <span style={{ fontSize: "0.65rem", color: "var(--clr-text-8)", letterSpacing: "0.06em" }}>
-                  SAMPLE OUTPUT PREVIEW
-                </span>
-              </div>
-              <div className="card-prose">
-                <ReactMarkdown remarkPlugins={[remarkGfm]} components={{
-                  table: ({ children }: any) => (
-                    <div className="table-wrap"><table>{children}</table></div>
-                  ),
-                  code: ({ className, children }: any) => (
-                    className
-                      ? <pre><code className={className}>{children}</code></pre>
-                      : <code style={{ background: "rgba(var(--clr-text-rgb),0.06)", color: "var(--clr-code-text)", padding: "0.1em 0.35em", borderRadius: 4, fontSize: "0.85em" }}>{children}</code>
-                  ),
-                }}>
-                  {out.preview}
-                </ReactMarkdown>
-              </div>
-            </div>
-          )}
+      {/* Nav */}
+      <header style={{ borderBottom: "1px solid var(--clr-border)", padding: "0 2rem", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", color: "var(--clr-text)" }}>
+          <svg width="22" height="16" viewBox="0 0 22 16" fill="none">
+            <rect x="0" y="0" width="6" height="6" rx="1.5" fill="var(--clr-text)"/>
+            <rect x="8" y="0" width="6" height="6" rx="1.5" fill="var(--clr-text)" opacity=".5"/>
+            <rect x="16" y="0" width="6" height="6" rx="1.5" fill="var(--clr-text)" opacity=".25"/>
+            <rect x="0" y="10" width="6" height="6" rx="1.5" fill="var(--clr-text)" opacity=".25"/>
+            <rect x="8" y="10" width="6" height="6" rx="1.5" fill="var(--clr-text)" opacity=".5"/>
+            <rect x="16" y="10" width="6" height="6" rx="1.5" fill="var(--clr-text)"/>
+          </svg>
+          <span style={{ fontWeight: 700, fontSize: "0.9375rem", letterSpacing: "-0.02em" }}>Unbuilt</span>
+        </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <Link href="/" style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", textDecoration: "none" }}>← Back to app</Link>
+          {isSignedIn ? <UserButton  /> : <SignInButton mode="modal"><button style={{ fontSize: "0.8125rem", padding: "6px 14px", borderRadius: 7, background: "var(--clr-text)", color: "var(--clr-bg)", border: "none", cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}>Sign in</button></SignInButton>}
         </div>
-      ))}
+      </header>
+
+      <main style={{ maxWidth: 760, margin: "0 auto", padding: "3rem 1.5rem 5rem" }}>
+
+        {/* Hero */}
+        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+          <div style={{ display: "inline-block", fontSize: "0.7rem", fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--clr-text-4)", marginBottom: 12 }}>How it works</div>
+          <h1 style={{ fontSize: "2.25rem", fontWeight: 800, letterSpacing: "-0.035em", margin: "0 0 14px", lineHeight: 1.1 }}>Three tools.<br/><span style={{ color: "var(--clr-text-3)", fontWeight: 400, fontStyle: "italic" }}>One honest output.</span></h1>
+          <p style={{ fontSize: "1rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 480, margin: "0 auto" }}>
+            Each tool uses Claude AI with live data — not static databases, not hallucinated guesses.
+          </p>
+        </div>
+
+        {/* Tab switcher */}
+        <div style={{ display: "flex", gap: 6, marginBottom: "2.5rem", background: "var(--clr-surface)", padding: 5, borderRadius: 12, border: "1px solid var(--clr-border)" }}>
+          {(["pulse", "dig", "stack"] as TabId[]).map(t => {
+            const ac = ACCENT[t];
+            const active = tab === t;
+            return (
+              <button key={t} onClick={() => setTab(t)} style={{
+                flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
+                padding: "9px 0", borderRadius: 8, border: "none", cursor: "pointer",
+                fontFamily: "inherit", fontSize: "0.8125rem", fontWeight: 700, letterSpacing: "-0.01em",
+                transition: "all 0.15s",
+                background: active ? ac.bg : "transparent",
+                color: active ? ac.color : "var(--clr-text-4)",
+                boxShadow: active ? `inset 0 0 0 1px ${ac.border}` : "none",
+              }}>
+                <span style={{ color: active ? ac.color : "var(--clr-text-5)" }}>
+                  {t === "pulse" ? <PulseIcon /> : t === "dig" ? <DigIcon /> : <StackIcon />}
+                </span>
+                {t === "pulse" ? "Pulse" : t === "dig" ? "Dig" : "Stack"}
+                {t === "pulse" && <span style={{ fontSize: 9, fontWeight: 800, padding: "1px 5px", borderRadius: 4, background: active ? ac.color : "var(--clr-text-5)", color: "#fff" }}>FREE</span>}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Content */}
+        {tab === "pulse" && <PulseTab />}
+        {tab === "dig"   && <DigTab />}
+        {tab === "stack" && <StackTab />}
+
+        {/* CTA */}
+        <div style={{ marginTop: "3rem", padding: "2rem", borderRadius: 16, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", textAlign: "center" }}>
+          <p style={{ fontSize: "0.9375rem", fontWeight: 700, margin: "0 0 6px" }}>Ready to start?</p>
+          <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Pulse is free. Dig and Stack cost 1 credit each.</p>
+          <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "var(--clr-text)", color: "var(--clr-bg)", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
+            Open Unbuilt →
+          </Link>
+        </div>
+
+      </main>
     </div>
   );
 }
 
-export default function HowItWorks() {
-  const { isSignedIn } = useAuth();
-  const [activeTab, setActiveTab] = useState<TabId>("trend-feed");
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const tab = TABS.find((t) => t.id === activeTab)!;
+/* ── Shared components ── */
 
-  useEffect(() => {
-    const saved = localStorage.getItem("theme") as "dark" | "light" | null;
-    const t = saved || "dark";
-    setTheme(t);
-    document.documentElement.classList.toggle("light", t === "light");
-  }, []);
-
-  const toggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    localStorage.setItem("theme", next);
-    document.documentElement.classList.toggle("light", next === "light");
-  };
-
+function SectionLabel({ children }: { children: string }) {
   return (
-    <>
-      <style>{`
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
-        * { box-sizing: border-box; }
-        ::placeholder { color: var(--clr-placeholder) !important; }
-      `}</style>
+    <div style={{ fontSize: "0.6875rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--clr-text-5)", marginBottom: 10 }}>
+      {children}
+    </div>
+  );
+}
 
-      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+function Card({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  return (
+    <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "1.25rem", ...style }}>
+      {children}
+    </div>
+  );
+}
 
-        {/* ── Header ── */}
-        <header style={{
-          borderBottom: "1px solid var(--clr-border-deep)",
-          background: "var(--clr-bg)",
-          position: "sticky", top: 0, zIndex: 50,
-        }}>
-          <div style={{
-            maxWidth: 1200, margin: "0 auto", padding: "0 2rem",
-            height: 56, display: "flex", alignItems: "center",
-          }}>
-            {/* Left: Logo + Nav */}
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
-                <svg width="20" height="20" viewBox="0 0 19 19" fill="none">
-                  <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-                <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.02em" }}>Unbuilt</span>
-              </Link>
-
-              <span style={{
-                fontSize: "0.875rem", fontWeight: 400, color: "var(--clr-text-3)",
-                marginLeft: "1.5rem",
-              }}>
-                How it works
-              </span>
-            </div>
-
-            <div style={{ flex: 1 }} />
-
-            {/* Right: Actions */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <Link href="/" style={{
-                display: "flex", alignItems: "center", gap: 6,
-                padding: "0.375rem 0.875rem", borderRadius: 999,
-                background: "transparent", border: "1px solid var(--clr-border-3)",
-                color: "var(--clr-text)", fontSize: "0.8125rem", fontWeight: 600,
-                textDecoration: "none", letterSpacing: "-0.01em",
-              }}>
-                &larr; Back to tools
-              </Link>
-
-              {/* Theme toggle */}
-              <button
-                onClick={toggleTheme}
-                aria-label="Toggle theme"
-                style={{
-                  background: "none", border: "1px solid var(--clr-border-2)",
-                  borderRadius: "50%", width: 32, height: 32,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  cursor: "pointer", color: "var(--clr-text-3)",
-                  transition: "border-color 0.15s, color 0.15s",
-                }}
-              >
-                {theme === "dark" ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                  </svg>
-                )}
-              </button>
-
-              {/* Auth */}
-              {!isSignedIn ? (
-                <SignInButton mode="modal">
-                  <button style={{
-                    padding: "0.375rem 1rem", borderRadius: 999,
-                    background: "transparent",
-                    border: "1px solid var(--clr-border-3)",
-                    color: "var(--clr-text)", fontSize: "0.8125rem", fontWeight: 600,
-                    cursor: "pointer", fontFamily: "inherit", letterSpacing: "-0.01em",
-                    transition: "border-color 0.15s ease",
-                  }}>
-                    Sign in
-                  </button>
-                </SignInButton>
-              ) : (
-                <UserButton
-                  appearance={{
-                    elements: {
-                      avatarBox: { width: 32, height: 32 },
-                    },
-                  }}
-                />
-              )}
-            </div>
-          </div>
-        </header>
-
-        {/* ── Main ── */}
-        <main style={{ maxWidth: 1200, margin: "0 auto", width: "100%", padding: "0 2.5rem", flex: 1 }}>
-
-          {/* Page header */}
-          <div style={{ textAlign: "center", padding: "4rem 0 3rem", maxWidth: 600, margin: "0 auto" }}>
-            <h1 style={{
-              fontSize: "2.5rem", fontWeight: 800,
-              letterSpacing: "-0.035em", lineHeight: 1.1, color: "var(--clr-text)",
-              whiteSpace: "nowrap", marginBottom: "1rem",
-            }}>
-              Three tools. One honest output.
-            </h1>
-            <p style={{ color: "var(--clr-text-5)", fontSize: "1rem", lineHeight: 1.7, textAlign: "center", maxWidth: 560, margin: "0 auto" }}>
-              Each tool uses Claude Sonnet with a purpose-built prompt and live data sources to give you structured, specific analysis — not generic AI rambling.
-            </p>
-          </div>
-
-          {/* ── Tab bar ── */}
-          <div style={{
-            display: "flex", gap: "0.5rem",
-            padding: "0.375rem",
-            background: "var(--clr-surface)",
-            border: "1px solid var(--clr-border)",
-            borderRadius: 16,
-            marginBottom: "2.5rem",
-          }}>
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setActiveTab(t.id)}
-                style={{
-                  flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
-                  padding: "0.625rem 1rem", borderRadius: 11,
-                  background: activeTab === t.id ? "rgba(var(--clr-text-rgb),0.06)" : "transparent",
-                  border: activeTab === t.id ? "1px solid var(--clr-border-3)" : "1px solid transparent",
-                  color: activeTab === t.id ? "var(--clr-text)" : "var(--clr-text-5)",
-                  fontSize: "0.8125rem", fontWeight: 600,
-                  cursor: "pointer", fontFamily: "inherit",
-                  transition: "all 0.18s ease",
-                  letterSpacing: "-0.01em",
-                }}
-              >
-                {t.icon}
-                <span>{t.name}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* ── Tab content ── */}
-          <div key={activeTab} style={{ animation: "fadeIn 0.22s ease", paddingBottom: "5rem" }}>
-
-            {/* Tool hero */}
-            <div style={{
-              display: "flex", alignItems: "flex-start", gap: "1.25rem",
-              padding: "1.75rem", borderRadius: 12,
-              background: "rgba(var(--clr-text-rgb),0.02)",
-              border: "1px solid var(--clr-border-2)",
-              marginBottom: "2.5rem",
-            }}>
-              <div style={{
-                width: 52, height: 52, borderRadius: 14, flexShrink: 0,
-                background: "rgba(var(--clr-text-rgb),0.04)",
-                border: "1px solid var(--clr-border-3)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                {tab.icon}
-              </div>
-              <div>
-                <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "0.375rem" }}>
-                  <h2 style={{ fontSize: "1.25rem", fontWeight: 750, color: "var(--clr-text)", letterSpacing: "-0.025em", margin: 0 }}>
-                    {tab.name}
-                  </h2>
-                  <span style={{ fontSize: "0.75rem", color: "var(--clr-text-3)", fontWeight: 600 }}>
-                    {tab.tagline}
-                  </span>
-                </div>
-                <p style={{ color: "var(--clr-text-3)", fontSize: "0.9375rem", lineHeight: 1.7, margin: 0, maxWidth: 680 }}>
-                  {tab.what}
-                </p>
-              </div>
-            </div>
-
-            {/* Two-column layout */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", alignItems: "start" }}>
-
-              {/* Left: Steps + Who + Inputs */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-
-                {/* Steps */}
-                <div style={{
-                  background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-                  borderRadius: 12, padding: "1.5rem",
-                }}>
-                  <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-6)", marginBottom: "1.25rem" }}>
-                    Step by step
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    {tab.steps.map((step, i) => (
-                      <div key={i} style={{ display: "flex", gap: "0.875rem", paddingBottom: i < tab.steps.length - 1 ? "1.25rem" : 0 }}>
-                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
-                          <div style={{
-                            width: 28, height: 28, borderRadius: 8,
-                            background: "rgba(var(--clr-text-rgb),0.04)",
-                            border: "1px solid var(--clr-border-3)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            fontSize: "0.625rem", fontWeight: 800, color: "var(--clr-text-2)",
-                            letterSpacing: "0.04em",
-                          }}>
-                            {String(i + 1).padStart(2, "0")}
-                          </div>
-                          {i < tab.steps.length - 1 && (
-                            <div style={{
-                              width: 1, flex: 1, minHeight: 12,
-                              background: "linear-gradient(to bottom, var(--clr-border-3), transparent)",
-                              marginTop: 4,
-                            }} />
-                          )}
-                        </div>
-                        <div style={{ paddingTop: 4 }}>
-                          <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text-2)", marginBottom: "0.3rem", letterSpacing: "-0.01em" }}>
-                            {step.title}
-                          </div>
-                          <div style={{ fontSize: "0.8rem", color: "var(--clr-text-5)", lineHeight: 1.65 }}>
-                            {step.desc}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Who it's for */}
-                <div style={{
-                  background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-                  borderRadius: 12, padding: "1.5rem",
-                }}>
-                  <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-6)", marginBottom: "0.875rem" }}>
-                    Who it&apos;s for
-                  </div>
-                  <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.7, margin: 0 }}>
-                    {tab.who}
-                  </p>
-                </div>
-
-                {/* What you need to provide */}
-                <div style={{
-                  background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-                  borderRadius: 12, padding: "1.5rem",
-                }}>
-                  <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-6)", marginBottom: "0.875rem" }}>
-                    What you provide
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                    {tab.inputs.map((inp, i) => (
-                      <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "0.625rem" }}>
-                        <div style={{
-                          width: 16, height: 16, borderRadius: 4, flexShrink: 0, marginTop: 2,
-                          background: "rgba(var(--clr-text-rgb),0.04)",
-                          border: "1px solid var(--clr-border-3)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                        }}>
-                          <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-                            <path d="M1 4l2 2 4-4" stroke="var(--clr-accent)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </div>
-                        <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6 }}>{inp}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Right: Sample outputs */}
-              <div style={{
-                background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-                borderRadius: 12, padding: "1.5rem",
-              }}>
-                <div style={{
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                  marginBottom: "1.25rem",
-                }}>
-                  <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-6)" }}>
-                    Sample output sections
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: "0.65rem", color: "var(--clr-text-8)", fontWeight: 600, letterSpacing: "0.04em" }}>
-                    <span>Click to expand</span>
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                      <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                </div>
-                <MockOutput outputs={tab.outputs} accentColor={tab.accentColor} accentRgb={tab.accentRgb} />
-
-                {/* CTA */}
-                <div style={{
-                  marginTop: "1.5rem", paddingTop: "1.25rem",
-                  borderTop: "1px solid var(--clr-border)",
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                }}>
-                  <span style={{ fontSize: "0.75rem", color: "var(--clr-text-8)" }}>
-                    Output streams live — takes 15–30 seconds
-                  </span>
-                  <Link
-                    href="/"
-                    style={{
-                      display: "inline-flex", alignItems: "center", gap: 6,
-                      padding: "0.5rem 1.125rem", borderRadius: 999,
-                      background: "var(--clr-btn-bg)",
-                      color: "var(--clr-btn-text)", fontSize: "0.8125rem", fontWeight: 600,
-                      textDecoration: "none", letterSpacing: "-0.01em",
-                      boxShadow: "none",
-                    }}
-                  >
-                    Try {tab.name}
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
+function Step({ n, title, desc, color }: { n: number; title: string; desc: string; color: string }) {
+  return (
+    <div style={{ display: "flex", gap: 14 }}>
+      <div style={{ width: 26, height: 26, borderRadius: "50%", background: color + "18", border: `1px solid ${color}30`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
+        <span style={{ fontSize: "0.6875rem", fontWeight: 800, color }}>{n}</span>
       </div>
-    </>
+      <div>
+        <div style={{ fontSize: "0.875rem", fontWeight: 700, marginBottom: 3 }}>{title}</div>
+        <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.55 }}>{desc}</div>
+      </div>
+    </div>
+  );
+}
+
+function OutputRow({ emoji, label, desc }: { emoji: string; label: string; desc: string }) {
+  return (
+    <div style={{ display: "flex", gap: 12, padding: "10px 0", borderBottom: "1px solid var(--clr-border)" }}>
+      <span style={{ fontSize: "1rem", flexShrink: 0 }}>{emoji}</span>
+      <div>
+        <div style={{ fontSize: "0.8125rem", fontWeight: 700, marginBottom: 2 }}>{label}</div>
+        <div style={{ fontSize: "0.775rem", color: "var(--clr-text-3)", lineHeight: 1.5 }}>{desc}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ── PULSE ── */
+function PulseTab() {
+  const c = "#ef4444";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+
+      <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+        <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: 10, flexShrink: 0 }}>
+          <PulseIcon />
+        </div>
+        <div>
+          <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.025em" }}>Pulse <span style={{ fontSize: "0.7rem", fontWeight: 800, padding: "2px 7px", borderRadius: 5, background: "rgba(239,68,68,0.12)", color: "#ef4444", verticalAlign: "middle" }}>FREE</span></h2>
+          <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", margin: 0, lineHeight: 1.6 }}>
+            A live feed of what's launching today — with AI analysis of what each product is missing. Your daily dose of market intelligence, zero cost.
+          </p>
+        </div>
+      </div>
+
+      <Card>
+        <SectionLabel>How it works</SectionLabel>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <Step n={1} color={c} title="Open Pulse" desc="No query needed. The feed is already live and populated with today's launches from Product Hunt and the App Store." />
+          <Step n={2} color={c} title="Choose your feed" desc="Switch between Product Hunt (today's launches across all categories) and App Store (new iOS apps submitted today). Both update automatically." />
+          <Step n={3} color={c} title="Filter and search" desc="Narrow by topic — AI, Productivity, SaaS, Games, and more. Search by keyword to find what's relevant to your market." />
+          <Step n={4} color={c} title="Spot the gap" desc="Every card has a MISS label — what the product is missing. That's your opening. 'Dig my angle' sends that gap straight into Dig for a full analysis." />
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>What each card shows</SectionLabel>
+        <div>
+          <OutputRow emoji="🔵" label="WHAT — Core function" desc="What the product actually does, in one sentence." />
+          <OutputRow emoji="🟢" label="DIFF — Differentiator" desc="What makes it different from everything else in the category." />
+          <OutputRow emoji="🔴" label="MISS — The gap" desc="What's missing. The unserved use case, the excluded audience, the feature nobody built. This is your opportunity." />
+          <div style={{ paddingTop: 10 }}>
+            <OutputRow emoji="📋" label="Full card" desc="Product name, platform, category, all three AI labels. Click 'Dig my angle' to run a full Dig report on that gap." />
+          </div>
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>Who it's for</SectionLabel>
+        <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, margin: 0 }}>
+          Founders scanning for their next idea, indie hackers tracking what's being built, or anyone who wants to spot real market gaps in products as they launch — before the rest of the internet catches up.
+        </p>
+      </Card>
+
+    </div>
+  );
+}
+
+/* ── DIG ── */
+function DigTab() {
+  const c = "#7c6fff";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+
+      <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+        <div style={{ background: "rgba(124,111,255,0.1)", border: "1px solid rgba(124,111,255,0.2)", borderRadius: 10, padding: 10, flexShrink: 0 }}>
+          <DigIcon />
+        </div>
+        <div>
+          <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.025em" }}>Dig <span style={{ fontSize: "0.7rem", fontWeight: 800, padding: "2px 7px", borderRadius: 5, background: "rgba(124,111,255,0.12)", color: "#7c6fff", verticalAlign: "middle" }}>1 credit</span></h2>
+          <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", margin: 0, lineHeight: 1.6 }}>
+            Describe your idea. We scan 70+ live sources — Reddit, X, YouTube, App Store, Google Play, Product Hunt, LinkedIn — and tell you exactly where the gap is.
+          </p>
+        </div>
+      </div>
+
+      <Card>
+        <SectionLabel>How it works</SectionLabel>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <Step n={1} color={c} title="Describe your idea" desc="Type your niche or concept in plain language. 'AI habit tracker for Gen Z', 'marketplace for handmade jewelry', 'SaaS for tattoo studios'. The more specific, the sharper the output." />
+          <Step n={2} color={c} title="70+ sources are scanned live" desc="Reddit posts, X threads, YouTube videos, App Store and Google Play search results, Product Hunt launches, LinkedIn posts — all pulled in real time, not from a cached database." />
+          <Step n={3} color={c} title="Claude analyzes the full picture" desc="Claude Sonnet processes all the live data to identify competitors, pain points, market gaps, trends, and the target customer — with structured scoring throughout." />
+          <Step n={4} color={c} title="You get a full market report" desc="10 sections covering every angle of your market. Download as PDF, or click into Stack to find the right tools to build it." />
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>What you get — 10 sections</SectionLabel>
+        <div>
+          <OutputRow emoji="📊" label="Market Score (0–100)" desc="A single score reflecting how crowded the market is and how real the opportunity is. With a plain-English summary of what the number means." />
+          <OutputRow emoji="⚔️" label="Competitors + Threat Level" desc="Real apps from App Store and Google Play with ratings, review counts, and threat level 1–5. Strengths and weaknesses for each." />
+          <OutputRow emoji="😤" label="Pain Points + Severity" desc="Real quotes from Reddit, X, and YouTube showing what users hate about existing solutions. Severity badges: Critical, High, Medium." />
+          <OutputRow emoji="🎯" label="Market Gaps + Opportunity Score" desc="Specific unserved niches ranked by opportunity score 0–10. Status: untapped, emerging, or validated." />
+          <OutputRow emoji="📐" label="SWOT Analysis" desc="Strengths, weaknesses, opportunities, and threats — all grounded in the live data, not generic AI filler." />
+          <OutputRow emoji="📏" label="Market Sizing (TAM / SAM / SOM)" desc="Estimated total addressable market, serviceable market, and your realistic slice — with sources." />
+          <OutputRow emoji="🗺️" label="Go-to-Market Strategy" desc="Primary and secondary channels with estimated CAC, launch phases, and acquisition tactics based on how similar products found their first users." />
+          <OutputRow emoji="💰" label="Financial Deep Dive" desc="Monthly burn estimates, break-even projection, 12-month MRR scenarios (cautious / middle / optimistic), and pricing benchmarks from live comps." />
+          <OutputRow emoji="✅" label="Validation Checklist" desc="The 5 riskiest assumptions in your idea, each with a specific test you can run before writing a line of code." />
+          <OutputRow emoji="💬" label="Community Signals" desc="Real Reddit posts, X threads, and YouTube content that validate (or refute) demand — with upvote counts and sentiment labels." />
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>What you provide</SectionLabel>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {["Your niche, category, or product concept — in plain language", "The more specific, the better: 'AI writing tool for customer support teams' beats 'AI writing tool'", "No competitor research needed — Claude finds the apps, the Reddit threads, and the gaps"].map((t, i) => (
+            <div key={i} style={{ display: "flex", gap: 10, fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>
+              <span style={{ color: c, fontWeight: 800, flexShrink: 0 }}>→</span>
+              {t}
+            </div>
+          ))}
+        </div>
+      </Card>
+
+    </div>
+  );
+}
+
+/* ── STACK ── */
+function StackTab() {
+  const c = "#38bdf8";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+
+      <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+        <div style={{ background: "rgba(56,189,248,0.1)", border: "1px solid rgba(56,189,248,0.2)", borderRadius: 10, padding: 10, flexShrink: 0 }}>
+          <StackIcon />
+        </div>
+        <div>
+          <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.025em" }}>Stack <span style={{ fontSize: "0.7rem", fontWeight: 800, padding: "2px 7px", borderRadius: 5, background: "rgba(56,189,248,0.12)", color: "#38bdf8", verticalAlign: "middle" }}>1 credit</span></h2>
+          <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", margin: 0, lineHeight: 1.6 }}>
+            Describe what you're building. Get a phased tool plan with exact pricing, build order, and step-by-step instructions for every tool — built for vibe coders who move fast.
+          </p>
+        </div>
+      </div>
+
+      <Card>
+        <SectionLabel>How it works</SectionLabel>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <Step n={1} color={c} title="Describe what you're building" desc="Give Claude the concept — 'a marketplace for local freelancers with payments and messaging', 'a SaaS dashboard for restaurant managers'. The more specific, the more targeted the stack." />
+          <Step n={2} color={c} title="Set your budget tier" desc="Bootstrapped (< $50/mo), Growing ($50–200/mo), Funded ($200–1k/mo), or Scale ($1k+/mo). This filters out tools that are overkill or out of reach for you right now." />
+          <Step n={3} color={c} title="Set your technical level" desc="No-code, Low-code, or Developer. Claude adjusts every recommendation — a no-code founder gets Lovable and Bubble, a developer gets Next.js and Supabase." />
+          <Step n={4} color={c} title="Get a phased build plan" desc="Four phases from Validate to Scale, each with tool cards, pricing, alternatives, and a Vibe Guide — copy-paste prompts and step-by-step instructions to set up every tool." />
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>What you get — 4 phases</SectionLabel>
+        <div>
+          <OutputRow emoji="🔬" label="Phase 0 — Validate" desc="Prove demand before writing code. Tools to test the idea with real people — landing pages, waitlists, manual experiments. Total cost: usually $0." />
+          <OutputRow emoji="🚀" label="Phase 1 — MVP" desc="Build a working product fast. Frontend, backend, auth, database, payments — each with free tier details, exact monthly cost, and why it was chosen over alternatives." />
+          <OutputRow emoji="📈" label="Phase 2 — Growth" desc="Tools to add when you have users: analytics, better email, search, background jobs. Triggered by specific usage thresholds, not arbitrary timelines." />
+          <OutputRow emoji="⚡" label="Phase 3 — Scale" desc="Infrastructure upgrades for serious traction. Includes what breaks first, when to upgrade, and what to move to." />
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>The Vibe Guide — what makes Stack different</SectionLabel>
+        <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, margin: "0 0 12px" }}>
+          Every tool recommendation includes a <strong style={{ color: "var(--clr-text)" }}>Vibe Guide</strong> — not just "use Supabase" but exactly what to click, what to type, and what to paste. Built for builders who want to ship, not read documentation.
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {[
+            "Exact setup steps: 'Go to Settings → API keys → copy your anon key'",
+            "Ready-to-paste prompts for AI builders (Lovable, Bolt, Cursor)",
+            "Tips on what to test first and what mistake to avoid",
+            "Alternatives for each tool with a plain-language reason to switch",
+          ].map((t, i) => (
+            <div key={i} style={{ display: "flex", gap: 10, fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>
+              <span style={{ color: c, fontWeight: 800, flexShrink: 0 }}>→</span>
+              {t}
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>Also included</SectionLabel>
+        <div>
+          <OutputRow emoji="📅" label="Build order timeline" desc="Day-by-day sequence: what to do on Day 1, Day 3, Day 5, Week 2. No paralysis, just a clear path." />
+          <OutputRow emoji="💸" label="Cost breakdown per phase" desc="Total monthly cost at each phase with free tier limits clearly marked. Know exactly when you'll start paying." />
+          <OutputRow emoji="⚠️" label="Mistakes to avoid" desc="The 3 most common mistakes founders make at this stage — based on what the tools are actually for." />
+          <OutputRow emoji="🔼" label="Upgrade triggers" desc="Specific conditions that signal it's time to move up: 'when your database hits 400MB' or 'when you have 10+ active sellers'." />
+        </div>
+      </Card>
+
+    </div>
   );
 }
