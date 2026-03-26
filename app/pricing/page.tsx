@@ -288,18 +288,38 @@ export default function PricingPage() {
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "var(--clr-text-5)", marginBottom: 14 }}>Secure payment</p>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap" as const }}>
-            {[
-              { label: "🍋 Lemon Squeezy", bg: "var(--clr-surface)", color: "#b45309", border: "1px solid var(--clr-border)", weight: 700 },
-              { label: "VISA", bg: "#1A1F71", color: "#fff", border: "none", weight: 800 },
-              { label: "Mastercard", bg: "var(--clr-surface)", color: "var(--clr-text-3)", border: "1px solid var(--clr-border)", weight: 600 },
-              { label: "PayPal", bg: "#003087", color: "#fff", border: "none", weight: 700 },
-              { label: "Amex", bg: "#016FD0", color: "#fff", border: "none", weight: 700 },
-              { label: "🔒 SSL Secured", bg: "var(--clr-surface)", color: "#16a34a", border: "1px solid var(--clr-border)", weight: 600 },
-            ].map((p) => (
-              <div key={p.label} style={{ padding: "7px 16px", borderRadius: 7, background: p.bg, border: p.border, fontSize: "0.8125rem", fontWeight: p.weight, color: p.color, letterSpacing: p.label === "VISA" ? ".12em" : "0" }}>
-                {p.label}
+            {/* Lemon Squeezy */}
+            <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid var(--clr-border)", background: "#fff", display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ fontSize: 15 }}>🍋</span>
+              <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#92400e", fontFamily: "inherit" }}>Lemon Squeezy</span>
+            </div>
+            {/* Visa */}
+            <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid var(--clr-border)", background: "#fff", display: "flex", alignItems: "center" }}>
+              <span style={{ fontSize: "1.1rem", fontWeight: 900, color: "#1A1F71", fontStyle: "italic", letterSpacing: "0.04em", fontFamily: "Georgia, serif" }}>VISA</span>
+            </div>
+            {/* Mastercard */}
+            <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid var(--clr-border)", background: "#fff", display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ position: "relative", width: 34, height: 22, display: "flex", alignItems: "center" }}>
+                <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#EB001B", position: "absolute", left: 0 }} />
+                <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#F79E1B", position: "absolute", left: 12, opacity: 0.9 }} />
               </div>
-            ))}
+              <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "#333", fontFamily: "inherit" }}>Mastercard</span>
+            </div>
+            {/* PayPal */}
+            <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid var(--clr-border)", background: "#fff", display: "flex", alignItems: "center" }}>
+              <span style={{ fontSize: "0.875rem", fontWeight: 800, fontFamily: "inherit" }}>
+                <span style={{ color: "#003087" }}>Pay</span><span style={{ color: "#009CDE" }}>Pal</span>
+              </span>
+            </div>
+            {/* Amex */}
+            <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "none", background: "#016FD0", display: "flex", alignItems: "center" }}>
+              <span style={{ fontSize: "0.8rem", fontWeight: 800, color: "#fff", letterSpacing: "0.06em", fontFamily: "inherit" }}>AMEX</span>
+            </div>
+            {/* SSL */}
+            <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid #bbf7d0", background: "#f0fdf4", display: "flex", alignItems: "center", gap: 5 }}>
+              <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M6 0.5L1 2.5v4C1 9.5 3.2 12.3 6 13.2 8.8 12.3 11 9.5 11 6.5v-4L6 0.5z" fill="#16a34a" opacity=".25" stroke="#16a34a" strokeWidth="1"/><path d="M4 7l1.5 1.5L8 5.5" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#16a34a", fontFamily: "inherit" }}>SSL Secured</span>
+            </div>
           </div>
         </div>
 
