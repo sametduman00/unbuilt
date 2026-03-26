@@ -25,7 +25,7 @@ const FAQS = [
   },
   {
     q: "Can I export my reports?",
-    a: "Yes. Every Dig and Stack report has a PDF export button at the top right of the results.",
+    a: "Yes. Every Dig and Stack report has a Download PDF button at the top of the results. You can also go to My Reports from the sidebar — all your past reports are saved there and can be downloaded as PDF.",
   },
   {
     q: "My report looks broken or incomplete — what happened?",
