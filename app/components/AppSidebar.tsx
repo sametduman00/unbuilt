@@ -97,7 +97,7 @@ function AppSidebarInner() {
   const PRODUCT: readonly (readonly [string, string])[] = [
     ["/how-it-works", "How it works"],
     ["/pricing", "Pricing"],
-    ["/careers", "Careers"],
+    ["/help", "Help"],
   ];
 
   const Flyout = ({ label, icon, items, sectionLabel }: {
