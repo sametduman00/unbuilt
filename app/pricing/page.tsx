@@ -98,8 +98,8 @@ export default function PricingPage() {
           Pulse is free.<br />
           <span style={{ color: "var(--clr-text-3)", fontWeight: 400, fontStyle: "italic" }}>Dig and Stack cost 1 credit each.</span>
         </h1>
-        <p style={{ ...s.muted, maxWidth: 420, margin: "0 auto" }}>
-          No subscription. No monthly fee. Credits never expire. Buy when you need, use when you want.
+        <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text-2)", margin: "0 auto", whiteSpace: "nowrap" as const }}>
+          No subscription · No monthly fee · Credits never expire · Buy when you need, use when you want.
         </p>
       </div>
 
