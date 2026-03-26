@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addCredits } from "@/app/lib/credits";
+import { getSupabase } from "@/app/lib/supabase";
 
 const PACKAGES: Record<string, number> = { starter: 5, popular: 10, pro: 25 };
 
@@ -42,6 +43,16 @@ export async function POST(req: NextRequest) {
       const credits = PACKAGES[packageSlug] ?? 0;
       if (credits > 0) {
         await addCredits(userId, credits);
+        // Save to orders table for cockpit revenue tracking
+        const amountUsd = event.data?.details?.totals?.total
+          ? parseInt(event.data.details.totals.total) / 100
+          : null;
+        await getSupabase().from("orders").insert({
+          user_id: userId,
+          package_slug: packageSlug,
+          credits_added: credits,
+          amount_usd: amountUsd,
+        }).catch(() => {});
         const amountFormatted = amount ? `${(parseInt(amount) / 100).toFixed(2)} ${currency}` : "?";
         await sendTelegram(
           `💰 <b>New purchase!</b>\n📦 Package: <b>${packageSlug}</b> (${credits} credits)\n💵 Amount: <b>${amountFormatted}</b>\n📧 ${email}`
