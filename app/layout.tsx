@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ConsentGate>
             <AppSidebar />
             <div style={{ marginLeft: 220 }}>
-              {children}
+              <div style={{position:"fixed",top:0,left:0,right:0,zIndex:9999,background:"#000",color:"#fff",textAlign:"center",padding:"8px",fontSize:"14px",fontFamily:"monospace",fontWeight:"bold",letterSpacing:"0.05em"}}>unbuilt-security-verification: 27-march-2026-chatgpt</div><div style={{paddingTop:"40px"}}>{children}</div>
             </div>
             <CookieConsent />
           </ConsentGate>
