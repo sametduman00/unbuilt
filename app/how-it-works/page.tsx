@@ -103,13 +103,33 @@ export default function HowItWorksPage() {
         {tab === "stack" && <StackTab />}
 
         {/* CTA */}
-        <div style={{ marginTop: "3rem", padding: "2rem", borderRadius: 16, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", textAlign: "center" }}>
-          <p style={{ fontSize: "0.9375rem", fontWeight: 700, margin: "0 0 6px" }}>Ready to start?</p>
-          <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Pulse is free. Dig and Stack cost 1 credit each.</p>
-          <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "var(--clr-text)", color: "var(--clr-bg)", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
-            Open Unbuilt →
-          </Link>
-        </div>
+        {tab === "pulse" && (
+          <div style={{ marginTop: "3rem", padding: "2rem", borderRadius: 16, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.05)", textAlign: "center" }}>
+            <p style={{ fontSize: "0.9375rem", fontWeight: 700, margin: "0 0 6px" }}>Ready to explore the market?</p>
+            <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Pulse is completely free — no credits needed.</p>
+            <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "#ef4444", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
+              Open Pulse →
+            </Link>
+          </div>
+        )}
+        {tab === "dig" && (
+          <div style={{ marginTop: "3rem", padding: "2rem", borderRadius: 16, border: "1px solid rgba(124,111,255,0.2)", background: "rgba(124,111,255,0.05)", textAlign: "center" }}>
+            <p style={{ fontSize: "0.9375rem", fontWeight: 700, margin: "0 0 6px" }}>Don't build what already exists.</p>
+            <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Dig costs 1 credit. Find the gap before you spend months building.</p>
+            <Link href="/?tool=gap-analysis" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "#7c6fff", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
+              Dig my idea →
+            </Link>
+          </div>
+        )}
+        {tab === "stack" && (
+          <div style={{ marginTop: "3rem", padding: "2rem", borderRadius: 16, border: "1px solid rgba(56,189,248,0.2)", background: "rgba(56,189,248,0.05)", textAlign: "center" }}>
+            <p style={{ fontSize: "0.9375rem", fontWeight: 700, margin: "0 0 6px" }}>Stop Googling "best tools for vibecoding".</p>
+            <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Stack costs 1 credit. Get a phased build plan in 90 seconds.</p>
+            <Link href="/?tool=stack-advisor" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "#38bdf8", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
+              Get my Stack →
+            </Link>
+          </div>
+        )}
 
       </main>
     </div>
@@ -234,7 +254,7 @@ function DigTab() {
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <Step n={1} color={c} title="Describe your idea" desc="Type your niche or concept in plain language. 'AI habit tracker for Gen Z', 'marketplace for handmade jewelry', 'SaaS for tattoo studios'. The more specific, the sharper the output." />
           <Step n={2} color={c} title="70+ sources are scanned live" desc="Reddit posts, X threads, YouTube videos, App Store and Google Play search results, Product Hunt launches, LinkedIn posts — all pulled in real time, not from a cached database." />
-          <Step n={3} color={c} title="Claude analyzes the full picture" desc="Claude Sonnet processes all the live data to identify competitors, pain points, market gaps, trends, and the target customer — with structured scoring throughout." />
+          <Step n={3} color={c} title="Claude analyzes the full picture" desc="Claude Opus with extended thinking processes all the live data to identify competitors, pain points, market gaps, trends, and the target customer — with structured scoring throughout." />
           <Step n={4} color={c} title="You get a full market report" desc="10 sections covering every angle of your market. Download as PDF, or click into Stack to find the right tools to build it." />
         </div>
       </Card>
