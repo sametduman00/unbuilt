@@ -64,7 +64,16 @@ export default function TermsOfServicePage() {
       <S>
         <H2>5. Third-Party Data</H2>
         <P>
-          Our service aggregates data from third-party sources including Apple App Store, Google Play, Product Hunt, GitHub, YouTube, and others. This data is subject to the respective terms and policies of those platforms. We are not responsible for the accuracy or availability of third-party data.
+          Our service aggregates data from third-party sources including Apple App Store, Google Play, Product Hunt, GitHub, YouTube, Reddit, X (Twitter), LinkedIn, and others. This data is subject to the respective terms and policies of those platforms. We are not responsible for the accuracy or availability of third-party data.
+        </P>
+      </S>
+
+      <S>
+        <H2>5a. Data Storage</H2>
+        <P>
+          When you run a Dig or Stack analysis, we store your submitted idea/prompt and the full AI-generated report in our database. This data is used to power the My Reports feature and to improve the service. By using the service, you acknowledge that your queries and the resulting analysis are stored by us. See our{" "}
+          <a href="/legal/privacy-policy" style={{ color: "var(--clr-text-3)", textDecoration: "underline", textUnderlineOffset: 3 }}>Privacy Policy</a>{" "}
+          for full details on how this data is handled.
         </P>
       </S>
 

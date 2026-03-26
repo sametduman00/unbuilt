@@ -61,7 +61,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
         </h1>
 
         <p style={{ color: "var(--clr-text-3)", fontSize: 14, marginBottom: "2.5rem" }}>
-          Last updated: March 14, 2026
+          Last updated: March 26, 2026
         </p>
 
         <div style={{ lineHeight: 1.7, fontSize: 15, color: "var(--clr-text)" }}>

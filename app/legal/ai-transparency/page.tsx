@@ -57,7 +57,7 @@ export default function AITransparencyPage() {
           <LI>AI does not access private or proprietary databases</LI>
           <LI>AI does not make predictions about specific company financials or stock performance</LI>
           <LI>AI does not have access to real-time data beyond what our APIs provide</LI>
-          <LI>AI does not store or learn from your individual queries across sessions</LI>
+          <LI>AI (Anthropic) does not store or learn from your individual queries — though we store the full report in our own database so you can access it later</LI>
         </UL>
       </S>
 
@@ -98,9 +98,13 @@ export default function AITransparencyPage() {
       <S>
         <H2>7. Your Data and AI</H2>
         <P>
-          Your queries are sent to the Anthropic API to generate analysis. Anthropic&apos;s API does not use customer inputs to train models. Your queries are not stored by Anthropic beyond the duration needed to process the request. See{" "}
-          <a href="/legal/privacy-policy" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>our Privacy Policy</a>{" "}
-          for more details.
+          When you run a Dig or Stack analysis, your prompt (the idea or niche you submitted) is sent to the Anthropic API to generate the report. <strong style={{ color: "#ddd" }}>Anthropic does not use your inputs to train its models.</strong> Your query is not retained by Anthropic beyond processing time.
+        </P>
+        <P>
+          We store your prompt and the full AI-generated report in our own database (Supabase). This allows you to access past reports from the My Reports section. As the operators of the service, we can see this stored data for purposes of service improvement and quality monitoring. We do not share it with third parties for commercial purposes.
+        </P>
+        <P>
+          If you are submitting sensitive or confidential business information, please be aware that it is stored in our database. You can request deletion at any time by contacting <a href="mailto:builder@unbuilt.me" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>. See <a href="/legal/privacy-policy" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>our Privacy Policy</a> for full details.
         </P>
       </S>
 
