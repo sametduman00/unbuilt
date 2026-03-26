@@ -2017,7 +2017,7 @@ function InputSection({
             {/* Sample Report on left */}
             {(tool.id === "gap-analysis" || tool.id === "stack-advisor") ? (
               <button
-                onClick={() => setShowSampleReport(v => !v)}
+                onClick={() => { setShowSampleReport(v => { const next = !v; if (next) { setTimeout(() => { const el = document.getElementById("sample-report-panel"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }, 50); } return next; }); }}
                 style={{
                   display: "flex", alignItems: "center", gap: 6,
                   padding: "0.5rem 1rem", borderRadius: 8,
@@ -3803,7 +3803,7 @@ function HomeInner() {
                   />
                   {/* Inline sample report toggle */}
                   {(selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && showSampleReport && (
-                    <div style={{ animation: "fadeSlideIn 0.25s ease", marginTop: 8 }}>
+                    <div id="sample-report-panel" style={{ animation: "fadeSlideIn 0.25s ease", marginTop: 8 }}>
                       {selectedTool === "gap-analysis" ? <DigSampleReport /> : <StackSampleReport />}
                     </div>
                   )}
