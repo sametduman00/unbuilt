@@ -1977,6 +1977,21 @@ function InputSection({
             onFocus={(e) => { e.currentTarget.style.borderColor = `rgba(${tool.accentRgb},0.45)`; }}
             onBlur={(e) => { e.currentTarget.style.borderColor = "var(--clr-border)"; }}
           />
+          {/* Model badge */}
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0.4rem" }}>
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 5,
+              fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.04em",
+              color: "var(--clr-text-4)", userSelect: "none" as const,
+            }}>
+              <span style={{
+                width: 6, height: 6, borderRadius: "50%", background: "#7c6fff",
+                display: "inline-block", flexShrink: 0,
+                animation: "pulse-dot 1.8s ease-in-out infinite",
+              }}/>
+              Claude Opus 4.6 · Extended Thinking
+            </span>
+          </div>
 
           {/* Stack extras */}
           {tool.hasExtras && (
@@ -3469,6 +3484,7 @@ function HomeInner() {
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes spin { to { transform: rotate(360deg); } } @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} } #char-counter.shake { animation: shake 0.35s ease; }
         @keyframes fadeSlideIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:none; } }
+        @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.6)} }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
         @keyframes scanCardIn { from { opacity:0; transform:translateY(20px) scale(0.98); } to { opacity:1; transform:none; } }
         @keyframes stepIn { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:none; } }
