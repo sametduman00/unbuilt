@@ -168,7 +168,7 @@ export default function PricingPage() {
 
       {/* ── Why the price ── */}
       <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginBottom: 32 }}>
-        <p style={s.label}>Why does a credit cost $0.80–$1.00?</p>
+        <p style={{ fontSize: "0.9375rem", fontWeight: 800, letterSpacing: "-0.01em", color: "var(--clr-text)", textAlign: "center", marginBottom: 16 }}>Why does a credit cost $0.80–$1.00?</p>
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" as const, alignItems: "stretch" }}>
           {/* Left */}
           <div style={{ flex: 1, minWidth: 220, display: "flex", flexDirection: "column" as const, gap: 12 }}>
