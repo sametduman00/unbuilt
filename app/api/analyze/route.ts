@@ -177,7 +177,7 @@ async function fetchRedditContext(idea: string): Promise<string> {
   if (!apiKey) return "";
   try {
     const query = encodeURIComponent(idea + ' (problem OR frustrating OR complaint OR "need a" OR "looking for" OR "anyone know" OR "best tool" OR "I wish")');
-    const res = await fetch(`https://api.scrapecreators.com/v1/reddit/search?query=${query}&sort=relevance&time=month&limit=8`, { headers: { "x-api-key": apiKey }, signal: AbortSignal.timeout(3000) });
+    const res = await fetch(`https://api.scrapecreators.com/v1/reddit/search?query=${query}&sort=relevance&time=month&limit=8`, { headers: { "x-api-key": apiKey }, signal: AbortSignal.timeout(6000) });
     if (!res.ok) return "";
     const data = await res.json();
     const posts = data.posts ?? data.data ?? [];
