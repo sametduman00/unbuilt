@@ -2863,6 +2863,21 @@ function HomeInner() {
   const [credits, setCredits] = useState<number | null>(null);
   useEffect(() => {
     if (!isSignedIn) return;
+    // Restore pending idea/tool saved before sign-in redirect
+    const pendingIdea = sessionStorage.getItem("unbuilt_pending_idea");
+    const pendingTool = sessionStorage.getItem("unbuilt_pending_tool");
+    if (pendingIdea) {
+      sessionStorage.removeItem("unbuilt_pending_idea");
+      sessionStorage.removeItem("unbuilt_pending_tool");
+      if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") {
+        setSelectedTool(pendingTool as ToolId);
+        setIdea(pendingIdea);
+        // Update URL too
+        window.history.replaceState({}, "", `/?tool=${pendingTool}`);
+      } else if (pendingIdea && selectedTool) {
+        setIdea(pendingIdea);
+      }
+    }
     fetch("/api/credits").then(r => r.json()).then(d => setCredits(d.credits ?? 0)).catch(() => {});
   }, [isSignedIn]);
   const { openSignIn } = useClerk();
@@ -3222,7 +3237,7 @@ function HomeInner() {
   };
 
   const handleSubmit = async () => {
-    if (!isSignedIn) { openSignIn(); return; }
+    if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", selectedTool ?? ""); openSignIn(); return; }
     if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); return; }
     if (!selectedTool || idea.trim().length < 3) return;
     const tool = TOOLS.find((t) => t.id === selectedTool)!;
