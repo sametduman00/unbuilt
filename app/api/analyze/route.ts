@@ -188,17 +188,34 @@ async function fetchRedditContext(idea: string): Promise<string> {
 
 // ââ Twitter/X via ScrapeCreators ââââââââââââââââââââââââââââââââââââââââââââââ
 async function fetchTwitterContext(idea: string): Promise<string> {
-  const apiKey = process.env.SCRAPECREATORS_API_KEY;
+  const apiKey = process.env.RAPIDAPI_KEY;
   if (!apiKey) return "";
   try {
-    const query = encodeURIComponent(idea + ' (problem OR need OR want OR alternative OR recommend OR "looking for") -is:retweet lang:en');
-    const res = await fetch(`https://api.scrapecreators.com/v1/twitter/search?query=${query}&limit=8`, { headers: { "x-api-key": apiKey }, signal: AbortSignal.timeout(3000) });
+    const query = encodeURIComponent(idea + ' (problem OR need OR want OR alternative OR recommend) lang:en');
+    const res = await fetch(
+      `https://twitter241.p.rapidapi.com/search-v3?type=Top&count=10&query=${query}`,
+      {
+        headers: {
+          "x-rapidapi-key": apiKey,
+          "x-rapidapi-host": "twitter241.p.rapidapi.com",
+          "Content-Type": "application/json",
+        },
+        signal: AbortSignal.timeout(5000),
+      }
+    );
     if (!res.ok) return "";
     const data = await res.json();
-    const tweets = data.tweets ?? data.data ?? [];
-    if (!tweets.length) return "";
-    const lines = tweets.slice(0, 5).map((t: { text: string; user?: { screen_name?: string }; favorite_count?: number }) =>
-      `- @${t.user?.screen_name ?? "user"} (${t.favorite_count ?? 0} likes): "${(t.text || "").slice(0, 150).replace(/\n/g, " ")}"`
+    const instructions = data?.result?.timeline?.instructions ?? [];
+    const entries: { full_text: string; favorite_count?: number }[] = [];
+    for (const inst of instructions) {
+      for (const entry of (inst.entries ?? [])) {
+        const tweet = entry?.content?.itemContent?.tweet_results?.result?.legacy;
+        if (tweet?.full_text) entries.push(tweet);
+      }
+    }
+    if (!entries.length) return "";
+    const lines = entries.slice(0, 5).map((t) =>
+      `- (${t.favorite_count ?? 0} likes): "${(t.full_text || "").slice(0, 150).replace(/\n/g, " ")}"`
     );
     return `\n=== LIVE Twitter/X (fetched NOW): Founder conversations & market signals ===\n${lines.join("\n")}\n`;
   } catch { return ""; }
