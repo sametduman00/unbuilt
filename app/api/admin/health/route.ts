@@ -10,8 +10,8 @@ const CHECKS = [
   { name: "Pulse API", url: `${BASE}/api/pulse`, expect: 200 },
   { name: "Pricing page", url: `${BASE}/pricing`, expect: 200 },
   { name: "How it works", url: `${BASE}/how-it-works`, expect: 200 },
-  { name: "Analyze API", url: `${BASE}/api/analyze`, expect: 401 },
-  { name: "Stack API", url: `${BASE}/api/stack`, expect: 401 },
+  { name: "Analyze API", url: `${BASE}/api/analyze`, expect: 405 },
+  { name: "Stack API", url: `${BASE}/api/stack`, expect: 405 },
   { name: "Credits API", url: `${BASE}/api/credits`, expect: 401 },
   { name: "Reports API", url: `${BASE}/api/reports`, expect: 401 },
 ];

@@ -102,7 +102,7 @@ function AppSidebarInner() {
     ["/careers", "Careers"],
   ];
   const ADMIN: readonly (readonly [string, string])[] = isOwner ? [
-    ["/cockpit", "Mission Control"],
+    ["/cockpit", "Cockpit"],
   ] : [];
 
   const Flyout = ({ label, icon, items, sectionLabel }: {
@@ -202,7 +202,7 @@ function AppSidebarInner() {
             onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = pathname === "/cockpit" ? "rgba(0,0,0,0.06)" : ""}
           >
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ opacity: 0.5, flexShrink: 0 }}><circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3"/><path d="M8 5v3l2 1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
-            Mission Control
+            Cockpit
           </Link>
         )}
 
