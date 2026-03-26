@@ -1024,7 +1024,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                   <div style={{ fontSize:22, fontWeight:800, color:"#111827" }}>{data.financialDeep.monthlyBurn.total}</div>
                   <div style={{ fontSize:11, color:"#6b7280" }}>Infra {data.financialDeep.monthlyBurn.infrastructure} · Tools {data.financialDeep.monthlyBurn.tools} · Mkt {data.financialDeep.monthlyBurn.marketing}</div>
                   <div style={{ marginTop:4, padding:"8px 10px", background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8 }}>
-                    <div style={{ fontSize:11, color:"#166534", marginBottom:6, lineHeight:1.4 }}>No-code tools can build this for <b>&lt;$50/mo.</b></div>
+                    <div style={{ fontSize:11, color:"#166534", marginBottom:6 }}>No-code tools can build this for <b>&lt;$50/mo</b></div>
                     <button onClick={() => onSwitchToStack?.(idea ?? data.appStoreQuery ?? "")}
                       style={{ width:"100%", padding:"6px 0", borderRadius:6, background:"#16a34a", border:"none", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
                       Build it with Stack →
@@ -4162,7 +4162,7 @@ ${sections.join("\n")}
               {selectedTool === "gap-analysis" && !loading && streamedContent ? (
                 (() => {
                   const gapData = parseGapAnalysisJSON(streamedContent);
-                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { setSelectedTool("stack-advisor"); setIdea(i); setStreamedContent(""); }} /></div>;
+                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { setStreamedContent(""); setScanStep(-1); setLoading(false); setIdea(i); setSelectedTool("stack-advisor"); window.scrollTo({top:0}); }} /></div>;
                   return sections.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       {sections.map((s, i) => (

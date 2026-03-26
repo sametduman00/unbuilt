@@ -194,8 +194,10 @@ async function fetchTwitterContext(idea: string): Promise<string> {
   const apiKey = process.env.RAPIDAPI_KEY;
   if (!apiKey) return "";
   try {
-    const shortIdea = idea.split(" ").slice(0, 4).join(" ");
-    const query = encodeURIComponent(`"${shortIdea}" (problem OR frustrated OR "looking for" OR recommend OR alternative) -filter:retweets lang:en`);
+    // Use top 3 keywords without quotes — more results, still relevant
+    const stopWords = new Set(["app","for","the","a","an","and","or","of","in","on","with","to","is","tool","platform"]);
+    const keywords = idea.split(" ").filter(w => !stopWords.has(w.toLowerCase())).slice(0, 3).join(" ");
+    const query = encodeURIComponent(`${keywords} (problem OR frustrated OR recommend OR alternative OR "looking for") lang:en`);
     const res = await fetch(
       `https://twitter241.p.rapidapi.com/search-v3?type=Top&count=10&query=${query}`,
       {
