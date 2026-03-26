@@ -30,10 +30,29 @@ function AppSidebarInner() {
     else router.push(`/?tool=${tool}`);
   };
 
+  const TOOL_ICONS: Record<string, React.ReactNode> = {
+    pulse: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+    ),
+    "gap-analysis": (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+    ),
+    "stack-advisor": (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+    ),
+  };
+
   const ToolItem = ({ tool, label, dot, badge, locked }: {
     tool: string; label: string; dot: string; badge?: string; locked?: boolean;
   }) => {
     const active = isToolActive(tool);
+    const icon = TOOL_ICONS[tool];
     return (
       <div
         onClick={() => { if (locked && !isSignedIn) return; handleToolClick(tool); }}
@@ -49,7 +68,9 @@ function AppSidebarInner() {
         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = active ? "rgba(0,0,0,0.07)" : "transparent"; }}
       >
         {active && <span style={{ position: "absolute", left: -10, top: "50%", transform: "translateY(-50%)", width: 3, height: 18, background: dot, borderRadius: "0 3px 3px 0" }} />}
-        <span style={{ width: 7, height: 7, borderRadius: "50%", background: dot, flexShrink: 0, display: "inline-block" }} />
+        <span style={{ width: 22, height: 22, borderRadius: 6, background: `${dot}18`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: dot }}>
+          {icon}
+        </span>
         <span style={{ flex: 1 }}>{label}</span>
         {badge && <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: `${dot}20`, color: dot, fontWeight: 700 }}>{badge}</span>}
         {locked && !isSignedIn && (
