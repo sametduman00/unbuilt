@@ -2443,9 +2443,11 @@ interface GapAnalysisData {
 }
 
 function parseGapAnalysisJSON(raw: string): GapAnalysisData | null {
-  const fenceMatch = raw.match(/```json\s*([\s\S]*?)```/);
+  // Strip anything before ```json (emojis, whitespace, etc.)
+  const stripped = raw.replace(/^[\s\S]*?```json\s*/m, '').replace(/```[\s\S]*$/, '').trim();
+  // Also try direct JSON if no fences
   const rawTrimmed = raw.trim();
-  const jsonStr = fenceMatch ? fenceMatch[1] : (rawTrimmed.startsWith('{') ? rawTrimmed : null);
+  const jsonStr = stripped.startsWith('{') ? stripped : (rawTrimmed.startsWith('{') ? rawTrimmed : null);
   if (!jsonStr) return null;
   try {
     const data = JSON.parse(jsonStr);
@@ -2488,9 +2490,9 @@ interface StackAdvisorData {
 }
 
 function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
-  const match = raw.match(/```json\s*([\s\S]*?)```/);
+  const stripped = raw.replace(/^[\s\S]*?```json\s*/m, '').replace(/```[\s\S]*$/, '').trim();
   const rawTrimmed = raw.trim();
-  const jsonStr = match ? match[1] : (rawTrimmed.startsWith('{') ? rawTrimmed : null);
+  const jsonStr = stripped.startsWith('{') ? stripped : (rawTrimmed.startsWith('{') ? rawTrimmed : null);
   if (!jsonStr) return null;
   try {
     const data = JSON.parse(jsonStr);
