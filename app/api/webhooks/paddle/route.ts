@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addCredits } from "@/app/lib/credits";
-import { sendTelegram } from "@/app/lib/telegram";
 
 const PACKAGES: Record<string, number> = {
   starter: 5,
@@ -44,9 +43,7 @@ export async function POST(req: NextRequest) {
         const amount = event.data?.items?.[0]?.price?.unit_price?.amount;
         const currency = event.data?.items?.[0]?.price?.unit_price?.currency_code ?? "USD";
         const amountFormatted = amount ? `${(parseInt(amount) / 100).toFixed(2)} ${currency}` : "?";
-        await sendTelegram(
-          `💰 <b>New purchase!</b>\n\nPackage: <b>${packageSlug}</b> (${credits} credits)\nAmount: <b>${amountFormatted}</b>\nUser: <code>${userId}</code>`
-        );
+
       }
     }
   }
