@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest } from "next/server";
 import { getCached, setCached, TTL_MS } from "../_cache";
@@ -49,6 +50,9 @@ Be specific: who, what, why now.
 Be sharp. Be specific. Name names.`;
 
 export async function POST(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+
   const { idea } = await req.json();
 
   if (!idea || typeof idea !== "string" || idea.trim().length < 3)
