@@ -2403,9 +2403,11 @@ interface StackAdvisorData {
 
 function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
   const match = raw.match(/```json\s*([\s\S]*?)```/);
-  if (!match) return null;
+  const rawTrimmed = raw.trim();
+  const jsonStr = match ? match[1] : (rawTrimmed.startsWith('{') ? rawTrimmed : null);
+  if (!jsonStr) return null;
   try {
-    const data = JSON.parse(match[1]);
+    const data = JSON.parse(jsonStr);
     if (!data.phases || !data.buildOrder) return null;
     data.headline = data.headline ?? "";
     data.mistakes = data.mistakes ?? [];
