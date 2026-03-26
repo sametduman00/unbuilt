@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from "rea
 import Script from "next/script";
 import { generatePdf } from "@/app/lib/generatePdf";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth, useUser, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
@@ -2819,6 +2819,7 @@ function HomeInner() {
   }, [isSignedIn]);
   const { openSignIn } = useClerk();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
+  const router = useRouter();
   const searchParams = useSearchParams();
   useEffect(() => {
     const tool = searchParams.get("tool");
@@ -3522,7 +3523,7 @@ function HomeInner() {
                     </p>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" as const }}>
                       <button
-                        onClick={() => setSelectedTool("gap-analysis")}
+                        onClick={() => router.push("/?tool=gap-analysis")}
                         style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 16px", background: "var(--clr-text)", color: "var(--clr-bg)", borderRadius: 8, fontSize: "0.8rem", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", border: "none", letterSpacing: "-0.01em", transition: "opacity 0.12s" }}
                         onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"}
                         onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
@@ -3531,7 +3532,7 @@ function HomeInner() {
                         Dig my idea
                       </button>
                       <button
-                        onClick={() => setSelectedTool("stack-advisor")}
+                        onClick={() => router.push("/?tool=stack-advisor")}
                         style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 16px", background: "transparent", color: "var(--clr-text-2)", borderRadius: 8, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid var(--clr-border)", letterSpacing: "-0.01em", transition: "all 0.12s" }}
                         onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--clr-surface-2)"; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
@@ -3632,7 +3633,7 @@ function HomeInner() {
                                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 14px 10px", background:"var(--clr-bg)", borderTop:"1px solid var(--clr-border)", gap:12 }}>
                                     <span style={{ fontSize:"0.75rem", color:"var(--clr-text-3)", display:"flex", alignItems:"center", gap:4, flexWrap:"wrap" as const }}>{ctaText}</span>
                                     <button
-                                      onClick={e => { e.preventDefault(); setSelectedTool("gap-analysis"); }}
+                                      onClick={e => { e.preventDefault(); router.push("/?tool=gap-analysis"); }}
                                       style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:"0.7rem", fontWeight:700, padding:"5px 12px", borderRadius:6, background:"var(--clr-text)", color:"var(--clr-bg)", cursor:"pointer", border:"none", fontFamily:"inherit", letterSpacing:"-0.01em", whiteSpace:"nowrap", flexShrink:0, transition:"opacity 0.12s" }}
                                       onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
                                       onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
@@ -3716,7 +3717,7 @@ function HomeInner() {
                               {app.category ? <><strong>{app.category}</strong> space just got a new player.</> : <>A new app just launched in this space.</>}
                             </span>
                             <button
-                              onClick={e=>{e.preventDefault();setSelectedTool("gap-analysis");}}
+                              onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}}
                               style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:"0.7rem",fontWeight:700,padding:"5px 12px",borderRadius:6,background:"var(--clr-text)",color:"var(--clr-bg)",cursor:"pointer",border:"none",fontFamily:"inherit",letterSpacing:"-0.01em",whiteSpace:"nowrap",flexShrink:0,transition:"opacity 0.12s"}}
                               onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
                               onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
