@@ -167,8 +167,8 @@ function AppSidebarInner() {
 
       <div style={{ padding: "0 10px 4px" }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.07em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, padding: "8px 8px 3px" }}>Analyze</div>
-        <ToolItem tool="gap-analysis" label="Dig" dot="#7c6fff" badge={isSignedIn ? "1 credit" : undefined} locked={!isSignedIn} />
-        <ToolItem tool="stack-advisor" label="Stack" dot="#38bdf8" badge={isSignedIn ? "1 credit" : undefined} locked={!isSignedIn} />
+        <ToolItem tool="gap-analysis" label="Dig" dot="#7c6fff" badge={isSignedIn ? "1 credit" : undefined} />
+        <ToolItem tool="stack-advisor" label="Stack" dot="#38bdf8" badge={isSignedIn ? "1 credit" : undefined} />
       </div>
 
       <div style={{ flex: 1 }} />
