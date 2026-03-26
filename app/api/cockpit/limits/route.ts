@@ -73,11 +73,42 @@ export async function GET(req: NextRequest) {
     } catch {}
   }
 
+  // RapidAPI - Twttr API usage
+  let rapidApiData: any = { name: "Twttr API (RapidAPI)", subtitle: "X / Twitter search", icon: "𝕏", dashboardUrl: "https://rapidapi.com/davethebeast/api/twitter241", resetInfo: "Monthly reset", live: true, remaining: null, used: null, limit: null, error: true };
+  try {
+    const r = await fetch("https://rapidapi.com/api/v1/limits", {
+      headers: { "X-RapidAPI-Key": process.env.RAPIDAPI_KEY ?? "", "X-RapidAPI-Host": "twitter241.p.rapidapi.com" },
+      signal: AbortSignal.timeout(5000),
+    });
+    if (r.ok) {
+      const d = await r.json();
+      rapidApiData = { ...rapidApiData, remaining: d.remaining ?? d.limit_remaining ?? null, used: d.used ?? null, limit: d.limit ?? d.monthly_limit ?? null, error: false };
+    }
+  } catch {}
+
+  // Also try the usage endpoint directly on the API
+  if (rapidApiData.remaining === null) {
+    try {
+      const r = await fetch("https://twitter241.p.rapidapi.com/search-v3?type=Top&count=1&query=test", {
+        method: "GET",
+        headers: { "x-rapidapi-key": process.env.RAPIDAPI_KEY ?? "", "x-rapidapi-host": "twitter241.p.rapidapi.com" },
+        signal: AbortSignal.timeout(5000),
+      });
+      // RapidAPI returns usage in response headers
+      const remaining = r.headers.get("x-ratelimit-requests-remaining") ?? r.headers.get("x-rapidapi-ratelimit-requests-remaining");
+      const limit = r.headers.get("x-ratelimit-requests-limit") ?? r.headers.get("x-rapidapi-ratelimit-requests-limit");
+      const reset = r.headers.get("x-ratelimit-requests-reset");
+      if (remaining !== null) {
+        rapidApiData = { ...rapidApiData, remaining: parseInt(remaining), limit: limit ? parseInt(limit) : null, resetInfo: reset ? `Resets ${new Date(parseInt(reset)*1000).toLocaleDateString()}` : "Monthly reset", error: false };
+      }
+    } catch {}
+  }
+
   const manualApis = [
     { name: "YouTube Data API", subtitle: "Video search & metadata", icon: "▶️", limit: 10000, resetInfo: "Daily at midnight PT", dashboardUrl: "https://console.cloud.google.com/apis/api/youtube.googleapis.com/quotas", note: "Units/day", live: false },
     { name: "Anthropic", subtitle: "Claude AI models", icon: "🤖", limit: null, resetInfo: "Pay-per-use", dashboardUrl: "https://console.anthropic.com/settings/billing", note: "Open billing ↗", live: false },
     { name: "ProductHunt", subtitle: "Launch & product data", icon: "🐱", limit: null, resetInfo: "Token-based", dashboardUrl: "https://www.producthunt.com/v2/oauth/applications", note: "No hard limit", live: false },
   ];
 
-  return NextResponse.json({ liveApis: [serperData, scData], manualApis }, { headers: CORS });
+  return NextResponse.json({ liveApis: [serperData, scData, rapidApiData], manualApis }, { headers: CORS });
 }
