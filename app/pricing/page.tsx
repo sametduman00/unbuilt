@@ -187,7 +187,8 @@ export default function PricingPage() {
             </div>
           </div>
           {/* Right */}
-          <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "14px 18px", minWidth: 250, flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "14px 18px", minWidth: 250 }}>
             <p style={{ ...s.label, marginBottom: 10 }}>Cost per query</p>
             {[
               ["~20,000 input tokens", "× $15/1M", "= $0.30"],
@@ -206,6 +207,7 @@ export default function PricingPage() {
             <p style={{ fontSize: 10, color: "var(--clr-text-5)", margin: "6px 0 0", fontStyle: "italic" }}>
               The rest: hosting, search APIs, infrastructure.
             </p>
+          </div>
           </div>
         </div>
       </div>
