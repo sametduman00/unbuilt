@@ -1023,10 +1023,10 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ef4444" }}>Monthly Burn</div>
                   <div style={{ fontSize:22, fontWeight:800, color:"#111827" }}>{data.financialDeep.monthlyBurn.total}</div>
                   <div style={{ fontSize:11, color:"#6b7280" }}>Infra {data.financialDeep.monthlyBurn.infrastructure} · Tools {data.financialDeep.monthlyBurn.tools} · Mkt {data.financialDeep.monthlyBurn.marketing}</div>
-                  <div style={{ marginTop:4, padding:"8px 10px", background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8 }}>
-                    <div style={{ fontSize:11, color:"#166534", marginBottom:6 }}>No-code tools can build this for <b>&lt;$50/mo</b></div>
+                  <div style={{ marginTop:4, padding:"7px 10px", background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8, display:"flex", alignItems:"center", justifyContent:"space-between", gap:8 }}>
+                    <div style={{ fontSize:11, color:"#166534", whiteSpace:"nowrap" as const }}>No-code tools can build this for <b>&lt;$50/mo</b></div>
                     <button onClick={() => onSwitchToStack?.(idea ?? data.appStoreQuery ?? "")}
-                      style={{ width:"100%", padding:"6px 0", borderRadius:6, background:"#16a34a", border:"none", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
+                      style={{ flexShrink:0, padding:"5px 10px", borderRadius:6, background:"#16a34a", border:"none", color:"#fff", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" as const }}>
                       Build it with Stack →
                     </button>
                   </div>
