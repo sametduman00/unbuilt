@@ -2902,7 +2902,7 @@ function HomeInner() {
 
   
   // Number of scan steps for the current tool (used for timer logic)
-  const scanStepCounts: Record<string, number> = { "trend-feed": 5, "gap-analysis": 4, "stack-advisor": 4, "competitor-radar": 1 };
+  const scanStepCounts: Record<string, number> = { "trend-feed": 5, "gap-analysis": 8, "stack-advisor": 8, "competitor-radar": 1 };
   const maxScanStep = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3) - 1;
 
   // Advance scan to "done" once last step is active AND Claude has finished
@@ -2950,8 +2950,9 @@ function HomeInner() {
     setScanStep(-1);
     setHasResults(false);
     setStreamedContent("");
-    setError("")
-    setOutOfCredits(false);;
+    setIdea("");
+    setError("");
+    setOutOfCredits(false);
     setLoading(false);
     setResultCached(null);
     setGithubRepos([]);
@@ -3224,7 +3225,7 @@ function HomeInner() {
      else {
       const steps = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3);
       scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
-        setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 800)
+        setTimeout(() => setScanStep((s) => (s < i + 1 ? i + 1 : s)), (i + 1) * 400)
       );
     }
 
