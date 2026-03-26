@@ -1254,7 +1254,7 @@ function DigSampleReport() {
         <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>« AI habit tracker with social accountability for Gen Z »</span>
       </div>
       <div style={{ padding: "0 16px 16px 12px" }}>
-        <GapAnalysisResult data={data} />
+        <GapAnalysisResult data={data} itunesApps={(data as any).itunesApps ?? []} gplayApps={(data as any).gplayApps ?? []} />
       </div>
     </div>
   );
