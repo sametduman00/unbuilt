@@ -1,5 +1,5 @@
 "use client";
-import { useUser, SignInButton } from "@clerk/nextjs";
+import { useUser, SignInButton, useClerk } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 
 const PACKAGES = [
@@ -54,6 +54,7 @@ const WALLETS = [
 
 export default function PricingPage() {
   const { isSignedIn, user } = useUser();
+  const { openSignIn } = useClerk();
   const [paddleReady, setPaddleReady] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
 
@@ -70,7 +71,8 @@ export default function PricingPage() {
   }, []);
 
   const handleBuy = (pkg: typeof PACKAGES[0]) => {
-    if (!isSignedIn || !paddleReady || !(window as any).Paddle) return;
+    if (!isSignedIn) { openSignIn(); return; }
+    if (!paddleReady || !(window as any).Paddle) return;
     (window as any).Paddle.Checkout.open({
       items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
       customData: { user_id: user?.id ?? "", package_slug: pkg.slug },
@@ -140,17 +142,9 @@ export default function PricingPage() {
                 ))}
               </ul>
               {/* CTA */}
-              {isSignedIn ? (
-                <button onClick={() => handleBuy(pkg)} style={{ display: "block", width: "100%", padding: "11px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.875rem", fontWeight: 700, cursor: "pointer", background: pkg.highlight ? "#7c6fff" : "transparent", border: pkg.highlight ? "none" : "1px solid var(--clr-border)", color: pkg.highlight ? "#fff" : "var(--clr-text)" }}>
-                  Buy {pkg.credits} credits
-                </button>
-              ) : (
-                <SignInButton mode="modal">
-                  <button style={{ display: "block", width: "100%", padding: "11px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.875rem", fontWeight: 700, cursor: "pointer", background: pkg.highlight ? "#7c6fff" : "transparent", border: pkg.highlight ? "none" : "1px solid var(--clr-border)", color: pkg.highlight ? "#fff" : "var(--clr-text)" }}>
-                    Sign in to buy
-                  </button>
-                </SignInButton>
-              )}
+              <button onClick={() => handleBuy(pkg)} style={{ display: "block", width: "100%", padding: "11px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.875rem", fontWeight: 700, cursor: "pointer", background: pkg.highlight ? "#7c6fff" : "transparent", border: pkg.highlight ? "none" : "1px solid var(--clr-border)", color: pkg.highlight ? "#fff" : "var(--clr-text)" }}>
+                {isSignedIn ? `Buy ${pkg.credits} credits` : "Sign in to buy"}
+              </button>
             </div>
           ))}
         </div>
