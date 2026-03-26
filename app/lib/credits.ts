@@ -29,6 +29,6 @@ export async function initUserCredits(userId: string): Promise<void> {
     .eq("user_id", userId)
     .single();
   if (!data) {
-    await supabase.from("user_credits").insert({ user_id: userId, credits: 2 });
+    await supabase.from("user_credits").insert({ user_id: userId, credits: 0 });
   }
 }

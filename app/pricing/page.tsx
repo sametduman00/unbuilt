@@ -118,7 +118,7 @@ export default function PricingPage() {
           Start free. Pay only when you need more.
         </h1>
         <p style={{ fontSize: 16, color: "var(--clr-muted)", maxWidth: 520, margin: "0 auto" }}>
-          Every account gets 2 free credits — 1 Gap Analysis + 1 Stack Advisor. Pulse is always free. When you need more, buy a credit pack.
+          Pulse is always free. Dig and Stack cost 1 credit each. Buy credits when you need them.
         </p>
       </div>
 
