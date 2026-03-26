@@ -16,76 +16,62 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: CORS });
   }
 
-  // Fetch Serper account info - debug raw response
-  let serperRaw: any = null;
-  let serperErr: string | null = null;
+  // Serper: returns { balance, rateLimit }
+  let serperData: any = { name: "Serper", subtitle: "Google Search API", icon: "🔍", dashboardUrl: "https://serper.dev/dashboard", resetInfo: "Pay-as-you-go", live: true, remaining: null, used: null, limit: null, error: true };
   try {
     const r = await fetch("https://google.serper.dev/account", {
       headers: { "X-API-KEY": process.env.SERPER_API_KEY ?? "" },
       signal: AbortSignal.timeout(5000),
     });
-    serperRaw = await r.json();
-  } catch (e) {
-    serperErr = e instanceof Error ? e.message : "error";
-  }
+    const d = await r.json();
+    serperData = {
+      name: "Serper",
+      subtitle: "Google Search API",
+      icon: "🔍",
+      dashboardUrl: "https://serper.dev/dashboard",
+      resetInfo: "Pay-as-you-go credits",
+      live: true,
+      remaining: d.balance ?? null,
+      used: null,
+      limit: null, // no hard limit, just balance
+      note: `Rate limit: ${d.rateLimit ?? "?"} req/s`,
+    };
+  } catch {}
 
-  // Fetch ScrapeCreators - try multiple endpoints
-  let scRaw: any = null;
-  let scErr: string | null = null;
-  try {
-    const r = await fetch("https://api.scrapecreators.com/v1/user/info", {
-      headers: { "x-api-key": process.env.SCRAPECREATORS_API_KEY ?? "" },
-      signal: AbortSignal.timeout(5000),
-    });
-    scRaw = await r.json();
-  } catch (e) {
-    // Try alternative endpoint
+  // ScrapeCreators — try multiple endpoints
+  let scData: any = { name: "ScrapeCreators", subtitle: "Reddit + X/Twitter", icon: "🕷️", dashboardUrl: "https://scrapecreators.com/dashboard", resetInfo: "Monthly reset", live: true, remaining: null, used: null, limit: null, error: true };
+  const scEndpoints = [
+    "https://api.scrapecreators.com/v1/user",
+    "https://api.scrapecreators.com/v1/me",
+    "https://api.scrapecreators.com/v1/credits",
+    "https://api.scrapecreators.com/v1/usage",
+  ];
+  for (const url of scEndpoints) {
     try {
-      const r2 = await fetch("https://api.scrapecreators.com/v1/account", {
+      const r = await fetch(url, {
         headers: { "x-api-key": process.env.SCRAPECREATORS_API_KEY ?? "" },
-        signal: AbortSignal.timeout(5000),
+        signal: AbortSignal.timeout(4000),
       });
-      scRaw = await r2.json();
-    } catch (e2) {
-      scErr = e2 instanceof Error ? e2.message : "error";
-    }
+      if (r.ok) {
+        const d = await r.json();
+        const remaining = d.credits ?? d.balance ?? d.remaining ?? d.credits_remaining ?? d.queriesLeft ?? null;
+        if (remaining !== null) {
+          scData = {
+            name: "ScrapeCreators",
+            subtitle: "Reddit + X/Twitter",
+            icon: "🕷️",
+            dashboardUrl: "https://scrapecreators.com/dashboard",
+            resetInfo: "Monthly reset",
+            live: true,
+            remaining,
+            used: d.used ?? d.credits_used ?? null,
+            limit: d.limit ?? d.credits_limit ?? d.total ?? null,
+          };
+          break;
+        }
+      }
+    } catch {}
   }
-
-  // Parse Serper - check all possible field structures
-  const serperData = serperRaw ? {
-    name: "Serper",
-    subtitle: "Google Search API",
-    icon: "🔍",
-    dashboardUrl: "https://serper.dev/dashboard",
-    resetInfo: "Monthly reset",
-    live: true,
-    // Try all known field names
-    remaining: serperRaw.credits ?? serperRaw.creditsLeft ?? serperRaw.credits_left ?? 
-               serperRaw.billingInfo?.creditsLeft ?? serperRaw.remaining ?? 
-               serperRaw.balance ?? serperRaw.queries_left ?? null,
-    used: serperRaw.creditsUsed ?? serperRaw.credits_used ?? 
-          serperRaw.billingInfo?.creditsUsed ?? serperRaw.used ?? null,
-    limit: serperRaw.creditsTotal ?? serperRaw.credits_total ?? 
-           serperRaw.billingInfo?.creditsIncluded ?? serperRaw.limit ?? 
-           serperRaw.plan_queries_limit ?? null,
-    _raw: serperRaw, // debug
-  } : { name: "Serper", subtitle: "Google Search API", icon: "🔍", dashboardUrl: "https://serper.dev/dashboard", resetInfo: "Monthly reset", live: true, remaining: null, used: null, limit: null, error: serperErr ?? "No response" };
-
-  // Parse ScrapeCreators
-  const scData = scRaw ? {
-    name: "ScrapeCreators",
-    subtitle: "Reddit + X/Twitter",
-    icon: "🕷️",
-    dashboardUrl: "https://scrapecreators.com/dashboard",
-    resetInfo: "Monthly reset",
-    live: true,
-    remaining: scRaw.credits ?? scRaw.creditsLeft ?? scRaw.credits_left ?? 
-               scRaw.remaining ?? scRaw.balance ?? scRaw.queries_left ?? 
-               scRaw.data?.credits ?? null,
-    used: scRaw.creditsUsed ?? scRaw.credits_used ?? scRaw.used ?? scRaw.data?.used ?? null,
-    limit: scRaw.creditsTotal ?? scRaw.credits_total ?? scRaw.limit ?? scRaw.data?.limit ?? null,
-    _raw: scRaw, // debug
-  } : { name: "ScrapeCreators", subtitle: "Reddit + X/Twitter", icon: "🕷️", dashboardUrl: "https://scrapecreators.com/dashboard", resetInfo: "Monthly reset", live: true, remaining: null, used: null, limit: null, error: scErr ?? "No response" };
 
   const manualApis = [
     { name: "YouTube Data API", subtitle: "Video search & metadata", icon: "▶️", limit: 10000, resetInfo: "Daily at midnight PT", dashboardUrl: "https://console.cloud.google.com/apis/api/youtube.googleapis.com/quotas", note: "Units/day", live: false },
