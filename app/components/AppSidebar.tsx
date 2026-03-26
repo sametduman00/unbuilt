@@ -68,11 +68,11 @@ function AppSidebarInner() {
         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = active ? "rgba(0,0,0,0.07)" : "transparent"; }}
       >
         {active && <span style={{ position: "absolute", left: -10, top: "50%", transform: "translateY(-50%)", width: 3, height: 18, background: dot, borderRadius: "0 3px 3px 0" }} />}
-        <span style={{ width: 22, height: 22, borderRadius: 6, background: `${dot}18`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: dot }}>
+        <span style={{ width: 22, height: 22, borderRadius: 6, background: "var(--clr-surface-2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: "var(--clr-text-4)" }}>
           {icon}
         </span>
         <span style={{ flex: 1 }}>{label}</span>
-        {badge && <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: `${dot}20`, color: dot, fontWeight: 700 }}>{badge}</span>}
+        {badge && <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "var(--clr-surface-2)", color: "var(--clr-text-4)", fontWeight: 700 }}>{badge}</span>}
         {locked && !isSignedIn && (
           <svg width="11" height="11" fill="none" viewBox="0 0 24 24" style={{ opacity: 0.35 }}>
             <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/>
