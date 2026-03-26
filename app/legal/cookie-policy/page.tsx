@@ -41,29 +41,29 @@ export default function CookiePolicyPage() {
           padding: "1rem 1.25rem",
           marginBottom: "1rem",
         }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, color: "var(--clr-text)" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid #222" }}>
-                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "#999", fontWeight: 500 }}>Purpose</th>
-                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "#999", fontWeight: 500 }}>Provider</th>
-                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "#999", fontWeight: 500 }}>Duration</th>
+                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Purpose</th>
+                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Provider</th>
+                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Duration</th>
               </tr>
             </thead>
             <tbody style={{ color: "var(--clr-text)" }}>
               <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
-                <td style={{ padding: "0.5rem 0" }}>Authentication & session management</td>
-                <td style={{ padding: "0.5rem 0" }}>Clerk</td>
-                <td style={{ padding: "0.5rem 0" }}>Session</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Authentication & session management</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Clerk</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Session</td>
               </tr>
               <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
-                <td style={{ padding: "0.5rem 0" }}>CSRF protection</td>
-                <td style={{ padding: "0.5rem 0" }}>Clerk</td>
-                <td style={{ padding: "0.5rem 0" }}>Session</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>CSRF protection</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Clerk</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Session</td>
               </tr>
               <tr>
-                <td style={{ padding: "0.5rem 0" }}>User preferences</td>
-                <td style={{ padding: "0.5rem 0" }}>Unbuilt</td>
-                <td style={{ padding: "0.5rem 0" }}>1 year</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>User preferences</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Unbuilt</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>1 year</td>
               </tr>
             </tbody>
           </table>
@@ -80,24 +80,24 @@ export default function CookiePolicyPage() {
           padding: "1rem 1.25rem",
           marginBottom: "1rem",
         }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, color: "var(--clr-text)" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid #222" }}>
-                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "#999", fontWeight: 500 }}>Purpose</th>
-                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "#999", fontWeight: 500 }}>Provider</th>
-                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "#999", fontWeight: 500 }}>Duration</th>
+                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Purpose</th>
+                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Provider</th>
+                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Duration</th>
               </tr>
             </thead>
             <tbody style={{ color: "var(--clr-text)" }}>
               <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
-                <td style={{ padding: "0.5rem 0" }}>Page views & feature usage</td>
-                <td style={{ padding: "0.5rem 0" }}>Analytics</td>
-                <td style={{ padding: "0.5rem 0" }}>1 year</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Page views & feature usage</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Analytics</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>1 year</td>
               </tr>
               <tr>
-                <td style={{ padding: "0.5rem 0" }}>Performance monitoring</td>
-                <td style={{ padding: "0.5rem 0" }}>Analytics</td>
-                <td style={{ padding: "0.5rem 0" }}>1 year</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Performance monitoring</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Analytics</td>
+                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>1 year</td>
               </tr>
             </tbody>
           </table>
