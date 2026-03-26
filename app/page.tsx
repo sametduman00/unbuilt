@@ -576,7 +576,7 @@ function ThreatDots({ level }: { level: number }) {
   );
 }
 
-function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisData; itunesApps?: ITunesApp[]; gplayApps?: GooglePlayApp[] }) {
+function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack }: { data: GapAnalysisData; itunesApps?: ITunesApp[]; gplayApps?: GooglePlayApp[]; idea?: string; onSwitchToStack?: (idea: string) => void }) {
   data = {
     ...data,
     competitors: data.competitors?.filter((c: GapCompetitor) => c?.name) ?? [],
@@ -1019,15 +1019,22 @@ function GapAnalysisResult({ data, itunesApps, gplayApps }: { data: GapAnalysisD
           {data.financialDeep && (
             <Card title="Financial Snapshot" sub="Key metrics for your first year">
               <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10, marginBottom:20 }}>
-                <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14 }}>
-                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ef4444", marginBottom:6 }}>Monthly Burn</div>
-                  <div style={{ fontSize:22, fontWeight:800, color:"#111827", marginBottom:6 }}>{data.financialDeep.monthlyBurn.total}</div>
+                <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14, display:"flex", flexDirection:"column" as const, gap:6 }}>
+                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ef4444" }}>Monthly Burn</div>
+                  <div style={{ fontSize:22, fontWeight:800, color:"#111827" }}>{data.financialDeep.monthlyBurn.total}</div>
                   <div style={{ fontSize:11, color:"#6b7280" }}>Infra {data.financialDeep.monthlyBurn.infrastructure} · Tools {data.financialDeep.monthlyBurn.tools} · Mkt {data.financialDeep.monthlyBurn.marketing}</div>
+                  <div style={{ marginTop:4, padding:"8px 10px", background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8 }}>
+                    <div style={{ fontSize:11, color:"#166534", marginBottom:6, lineHeight:1.4 }}>No-code tools can build this for <b>&lt;$50/mo.</b></div>
+                    <button onClick={() => onSwitchToStack?.(idea ?? data.appStoreQuery ?? "")}
+                      style={{ width:"100%", padding:"6px 0", borderRadius:6, background:"#16a34a", border:"none", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
+                      Build it with Stack →
+                    </button>
+                  </div>
                 </div>
                 <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14 }}>
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#10b981", marginBottom:6 }}>Break-Even</div>
-                  <div style={{ fontSize:22, fontWeight:800, color:"#111827", marginBottom:6 }}>Month {data.financialDeep.breakEvenMonth}</div>
-                  <div style={{ fontSize:12, color:"#6b7280" }}>When revenue covers costs</div>
+                  <div style={{ fontSize:22, fontWeight:800, color:"#111827", marginBottom:6 }}>Month 1</div>
+                  <div style={{ fontSize:12, color:"#6b7280" }}>First customers cover your costs</div>
                 </div>
                 <div style={{ background:"#f0fdfe", border:"1px solid #a5f3fc", borderRadius:10, padding:14 }}>
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#0891b2", marginBottom:6 }}>12-Month Potential</div>
@@ -4155,7 +4162,7 @@ ${sections.join("\n")}
               {selectedTool === "gap-analysis" && !loading && streamedContent ? (
                 (() => {
                   const gapData = parseGapAnalysisJSON(streamedContent);
-                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} /></div>;
+                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { setSelectedTool("stack-advisor"); setIdea(i); setStreamedContent(""); }} /></div>;
                   return sections.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       {sections.map((s, i) => (
