@@ -287,43 +287,19 @@ export default function PricingPage() {
         {/* Payment logos */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "var(--clr-text-5)", marginBottom: 14 }}>Secure payment</p>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, flexWrap: "wrap" as const }}>
-            {/* Lemon Squeezy */}
-            <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)" }}>
-              <span style={{ fontSize: 16 }}>🍋</span>
-              <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#e67e22" }}>Lemon Squeezy</span>
-            </div>
-            {/* Visa */}
-            <div style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", display: "flex", alignItems: "center" }}>
-              <svg height="20" viewBox="0 0 72 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32.2 0L27.9 24H22.8L27.1 0H32.2Z" fill="#1A1F71"/>
-                <path d="M52.6 0.4C51.5 0 49.8-0.1 47.8 0C42.4 0 38.5 2.8 38.5 6.8C38.4 9.8 41.2 11.4 43.3 12.4C45.4 13.4 46.1 14 46.1 14.9C46.1 16.2 44.4 16.8 42.8 16.8C40.6 16.8 39.4 16.5 37.6 15.7L36.9 15.4L36.1 20.1C37.4 20.7 39.7 21.2 42.1 21.2C47.9 21.2 51.7 18.4 51.7 14.1C51.7 11.7 50.2 9.9 47 8.4C45.1 7.5 43.9 6.8 43.9 5.9C43.9 5.1 44.8 4.2 46.9 4.2C48.6 4.2 49.9 4.5 50.9 4.9L51.4 5.1L52.6 0.4Z" fill="#1A1F71"/>
-                <path d="M62 0H57.9C56.7 0 55.8 0.3 55.3 1.6L47 24H52.8L54 20.5H61L61.7 24H66.9L62 0ZM55.5 16.5C55.8 15.6 57.8 10.1 57.8 10.1C57.8 10.1 58.3 8.7 58.6 7.8L59 10C59 10 60 15.2 60.2 16.5H55.5Z" fill="#1A1F71"/>
-                <path d="M22.1 0L16.7 16.4L16.1 13.5C15 10.2 11.9 6.6 8.5 4.8L13.5 24H19.3L28.1 0H22.1Z" fill="#1A1F71"/>
-                <path d="M11.6 0H2.6L2.5 0.4C9.6 2.2 14.3 6.4 16.1 13.5L14.2 1.7C13.9 0.3 13 0 11.6 0Z" fill="#F9A533"/>
-              </svg>
-            </div>
-            {/* Mastercard */}
-            <div style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", display: "flex", alignItems: "center", gap: 4 }}>
-              <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#EB001B" }} />
-              <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#F79E1B", marginLeft: -8 }} />
-            </div>
-            {/* PayPal */}
-            <div style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", display: "flex", alignItems: "center" }}>
-              <svg height="18" viewBox="0 0 101 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12.237 2.6H5.737C5.237 2.6 4.837 2.9 4.737 3.4L2.137 19.5C2.037 19.9 2.337 20.2 2.737 20.2H5.937C6.437 20.2 6.837 19.9 6.937 19.4L7.637 15C7.737 14.5 8.137 14.2 8.637 14.2H10.737C15.037 14.2 17.537 12.1 18.237 7.9C18.537 6.1 18.237 4.7 17.337 3.7C16.337 2.7 14.537 2.6 12.237 2.6Z" fill="#253D80"/>
-                <path d="M18.237 7.9C17.537 12.1 15.037 14.2 10.737 14.2H8.637C8.137 14.2 7.737 14.5 7.637 15L6.637 21.2L6.337 23C6.237 23.4 6.537 23.7 6.937 23.7H9.737C10.237 23.7 10.537 23.4 10.637 23L11.237 19.3C11.337 18.8 11.737 18.5 12.237 18.5H13.937C17.737 18.5 19.937 16.7 20.537 13C20.837 11.5 20.637 10.2 19.937 9.3C19.437 8.7 18.937 8.2 18.237 7.9Z" fill="#179BD7"/>
-              </svg>
-            </div>
-            {/* Amex */}
-            <div style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "#016FD0", display: "flex", alignItems: "center" }}>
-              <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "#fff", letterSpacing: ".04em" }}>AMEX</span>
-            </div>
-            {/* SSL badge */}
-            <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 14px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)" }}>
-              <svg width="12" height="14" viewBox="0 0 24 28" fill="none"><path d="M12 1L2 5.5v7C2 18.5 6.5 23.7 12 25.5 17.5 23.7 22 18.5 22 12.5v-7L12 1z" fill="#22c55e" opacity=".2" stroke="#22c55e" strokeWidth="1.5"/><path d="M8 14l3 3 5-6" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "#22c55e" }}>SSL Secured</span>
-            </div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap" as const }}>
+            {[
+              { label: "🍋 Lemon Squeezy", bg: "var(--clr-surface)", color: "#b45309", border: "1px solid var(--clr-border)", weight: 700 },
+              { label: "VISA", bg: "#1A1F71", color: "#fff", border: "none", weight: 800 },
+              { label: "Mastercard", bg: "var(--clr-surface)", color: "var(--clr-text-3)", border: "1px solid var(--clr-border)", weight: 600 },
+              { label: "PayPal", bg: "#003087", color: "#fff", border: "none", weight: 700 },
+              { label: "Amex", bg: "#016FD0", color: "#fff", border: "none", weight: 700 },
+              { label: "🔒 SSL Secured", bg: "var(--clr-surface)", color: "#16a34a", border: "1px solid var(--clr-border)", weight: 600 },
+            ].map((p) => (
+              <div key={p.label} style={{ padding: "7px 16px", borderRadius: 7, background: p.bg, border: p.border, fontSize: "0.8125rem", fontWeight: p.weight, color: p.color, letterSpacing: p.label === "VISA" ? ".12em" : "0" }}>
+                {p.label}
+              </div>
+            ))}
           </div>
         </div>
 
