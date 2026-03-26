@@ -173,9 +173,9 @@ export async function POST(req: NextRequest) {
       try {
         let full = "";
         const s = client.messages.stream({
-          model: "claude-haiku-4-5-20251001",
+          model: "claude-opus-4-5",
           max_tokens: 16000,
-          thinking: { type: "enabled", budget_tokens: 10000 },
+          thinking: { type: "enabled", budget_tokens: 16000 },
           system: SYSTEM,
           messages: [{ role: "user", content: PROMPT(idea, budget, techLevel, platform ?? "web") }],
         });
