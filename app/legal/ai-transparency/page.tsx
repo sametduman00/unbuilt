@@ -2,16 +2,16 @@ const S = ({ children }: { children: React.ReactNode }) => (
   <section style={{ marginBottom: "2.5rem" }}>{children}</section>
 );
 const H2 = ({ children }: { children: React.ReactNode }) => (
-  <h2 style={{ fontSize: 20, fontWeight: 600, color: "#fff", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
+  <h2 style={{ fontSize: 20, fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
 );
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 style={{ fontSize: 16, fontWeight: 600, color: "#ddd", marginBottom: "0.5rem" }}>{children}</h3>
+  <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.5rem" }}>{children}</h3>
 );
 const P = ({ children }: { children: React.ReactNode }) => (
-  <p style={{ color: "#bbb", marginBottom: "0.75rem" }}>{children}</p>
+  <p style={{ color: "var(--clr-text)", marginBottom: "0.75rem" }}>{children}</p>
 );
 const UL = ({ children }: { children: React.ReactNode }) => (
-  <ul style={{ color: "#bbb", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
+  <ul style={{ color: "var(--clr-text)", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
 );
 const LI = ({ children }: { children: React.ReactNode }) => (
   <li style={{ marginBottom: "0.35rem" }}>{children}</li>
@@ -30,10 +30,10 @@ export default function AITransparencyPage() {
         <H2>1. How We Use AI</H2>
         <P>Unbuilt uses AI models provided by Anthropic (Claude) for the following purposes:</P>
         <UL>
-          <LI><strong style={{ color: "#ddd" }}>Market Analysis</strong> — Synthesizing data from multiple sources into structured insights about market opportunities, competitors, and gaps</LI>
-          <LI><strong style={{ color: "#ddd" }}>Sub-category Generation</strong> — Identifying relevant sub-niches within a broader market space</LI>
-          <LI><strong style={{ color: "#ddd" }}>Opportunity Assessment</strong> — Evaluating potential business opportunities based on available data signals</LI>
-          <LI><strong style={{ color: "#ddd" }}>Content Summarization</strong> — Condensing large amounts of market data into actionable summaries</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Market Analysis</strong> — Synthesizing data from multiple sources into structured insights about market opportunities, competitors, and gaps</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Sub-category Generation</strong> — Identifying relevant sub-niches within a broader market space</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Opportunity Assessment</strong> — Evaluating potential business opportunities based on available data signals</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Content Summarization</strong> — Condensing large amounts of market data into actionable summaries</LI>
         </UL>
       </S>
 
@@ -64,7 +64,7 @@ export default function AITransparencyPage() {
       <S>
         <H2>4. Scoring Methodology</H2>
         <P>
-          Market scores displayed in Trend Feed are <strong style={{ color: "#ddd" }}>calculated deterministically by our backend</strong>, not by AI. The score is based on measurable signals:
+          Market scores displayed in Trend Feed are <strong style={{ color: "var(--clr-text)" }}>calculated deterministically by our backend</strong>, not by AI. The score is based on measurable signals:
         </P>
         <UL>
           <LI>App store review counts (market size indicator)</LI>
@@ -81,10 +81,10 @@ export default function AITransparencyPage() {
         <H2>5. Limitations and Accuracy</H2>
         <P>AI-generated content has inherent limitations:</P>
         <UL>
-          <LI><strong style={{ color: "#ddd" }}>Not real-time</strong> — AI model knowledge has a training cutoff date. Live data comes from our API integrations, not the AI itself.</LI>
-          <LI><strong style={{ color: "#ddd" }}>Potential inaccuracies</strong> — AI may occasionally produce incorrect statements, especially about niche markets with limited public data.</LI>
-          <LI><strong style={{ color: "#ddd" }}>Not exhaustive</strong> — Analysis covers publicly available data and may miss private companies, stealth startups, or emerging players.</LI>
-          <LI><strong style={{ color: "#ddd" }}>Bias</strong> — AI models may reflect biases present in their training data, including geographic or language biases toward English-language markets.</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Not real-time</strong> — AI model knowledge has a training cutoff date. Live data comes from our API integrations, not the AI itself.</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Potential inaccuracies</strong> — AI may occasionally produce incorrect statements, especially about niche markets with limited public data.</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Not exhaustive</strong> — Analysis covers publicly available data and may miss private companies, stealth startups, or emerging players.</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Bias</strong> — AI models may reflect biases present in their training data, including geographic or language biases toward English-language markets.</LI>
         </UL>
       </S>
 
@@ -98,7 +98,7 @@ export default function AITransparencyPage() {
       <S>
         <H2>7. Your Data and AI</H2>
         <P>
-          When you run a Dig or Stack analysis, your prompt (the idea or niche you submitted) is sent to the Anthropic API to generate the report. <strong style={{ color: "#ddd" }}>Anthropic does not use your inputs to train its models.</strong> Your query is not retained by Anthropic beyond processing time.
+          When you run a Dig or Stack analysis, your prompt (the idea or niche you submitted) is sent to the Anthropic API to generate the report. <strong style={{ color: "var(--clr-text)" }}>Anthropic does not use your inputs to train its models.</strong> Your query is not retained by Anthropic beyond processing time.
         </P>
         <P>
           We store your prompt and the full AI-generated report in our own database (Supabase). This allows you to access past reports from the My Reports section. As the operators of the service, we can see this stored data for purposes of service improvement and quality monitoring. We do not share it with third parties for commercial purposes.

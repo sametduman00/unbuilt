@@ -2,13 +2,13 @@ const S = ({ children }: { children: React.ReactNode }) => (
   <section style={{ marginBottom: "2.5rem" }}>{children}</section>
 );
 const H2 = ({ children }: { children: React.ReactNode }) => (
-  <h2 style={{ fontSize: 20, fontWeight: 600, color: "#fff", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
+  <h2 style={{ fontSize: 20, fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
 );
 const P = ({ children }: { children: React.ReactNode }) => (
-  <p style={{ color: "#bbb", marginBottom: "0.75rem" }}>{children}</p>
+  <p style={{ color: "var(--clr-text)", marginBottom: "0.75rem" }}>{children}</p>
 );
 const UL = ({ children }: { children: React.ReactNode }) => (
-  <ul style={{ color: "#bbb", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
+  <ul style={{ color: "var(--clr-text)", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
 );
 const LI = ({ children }: { children: React.ReactNode }) => (
   <li style={{ marginBottom: "0.35rem" }}>{children}</li>
@@ -49,10 +49,10 @@ export default function DisclaimerPage() {
         <H2>3. Accuracy of Information</H2>
         <P>While we strive for accuracy, we cannot guarantee that all information is correct, complete, or up-to-date:</P>
         <UL>
-          <LI><strong style={{ color: "#ddd" }}>App Store data</strong> may not reflect the most recent updates, removals, or rating changes</LI>
-          <LI><strong style={{ color: "#ddd" }}>Market scores</strong> are computed from limited public signals and may not capture the full picture</LI>
-          <LI><strong style={{ color: "#ddd" }}>AI analysis</strong> may contain inaccuracies, hallucinations, or outdated information</LI>
-          <LI><strong style={{ color: "#ddd" }}>Competitor data</strong> may be incomplete, especially for private companies or stealth startups</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>App Store data</strong> may not reflect the most recent updates, removals, or rating changes</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Market scores</strong> are computed from limited public signals and may not capture the full picture</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>AI analysis</strong> may contain inaccuracies, hallucinations, or outdated information</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Competitor data</strong> may be incomplete, especially for private companies or stealth startups</LI>
         </UL>
       </S>
 

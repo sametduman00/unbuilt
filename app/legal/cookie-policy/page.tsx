@@ -2,13 +2,13 @@ const S = ({ children, style, ...props }: React.HTMLAttributes<HTMLElement> & { 
   <section style={{ marginBottom: "2.5rem", ...style }} {...props}>{children}</section>
 );
 const H2 = ({ children }: { children: React.ReactNode }) => (
-  <h2 style={{ fontSize: 20, fontWeight: 600, color: "#fff", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
+  <h2 style={{ fontSize: 20, fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
 );
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 style={{ fontSize: 16, fontWeight: 600, color: "#ddd", marginBottom: "0.5rem" }}>{children}</h3>
+  <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.5rem" }}>{children}</h3>
 );
 const P = ({ children }: { children: React.ReactNode }) => (
-  <p style={{ color: "#bbb", marginBottom: "0.75rem" }}>{children}</p>
+  <p style={{ color: "var(--clr-text)", marginBottom: "0.75rem" }}>{children}</p>
 );
 
 export default function CookiePolicyPage() {
@@ -49,7 +49,7 @@ export default function CookiePolicyPage() {
                 <th style={{ textAlign: "left", padding: "0.5rem 0", color: "#999", fontWeight: 500 }}>Duration</th>
               </tr>
             </thead>
-            <tbody style={{ color: "#bbb" }}>
+            <tbody style={{ color: "var(--clr-text)" }}>
               <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
                 <td style={{ padding: "0.5rem 0" }}>Authentication & session management</td>
                 <td style={{ padding: "0.5rem 0" }}>Clerk</td>
@@ -88,7 +88,7 @@ export default function CookiePolicyPage() {
                 <th style={{ textAlign: "left", padding: "0.5rem 0", color: "#999", fontWeight: 500 }}>Duration</th>
               </tr>
             </thead>
-            <tbody style={{ color: "#bbb" }}>
+            <tbody style={{ color: "var(--clr-text)" }}>
               <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
                 <td style={{ padding: "0.5rem 0" }}>Page views & feature usage</td>
                 <td style={{ padding: "0.5rem 0" }}>Analytics</td>

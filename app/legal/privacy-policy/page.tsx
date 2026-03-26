@@ -2,16 +2,16 @@ const S = ({ children, style, ...props }: React.HTMLAttributes<HTMLElement> & { 
   <section style={{ marginBottom: "2.5rem", ...style }} {...props}>{children}</section>
 );
 const H2 = ({ children }: { children: React.ReactNode }) => (
-  <h2 style={{ fontSize: 20, fontWeight: 600, color: "#fff", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
+  <h2 style={{ fontSize: 20, fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
 );
 const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 style={{ fontSize: 16, fontWeight: 600, color: "#ddd", marginBottom: "0.5rem" }}>{children}</h3>
+  <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.5rem" }}>{children}</h3>
 );
 const P = ({ children }: { children: React.ReactNode }) => (
-  <p style={{ color: "#bbb", marginBottom: "0.75rem" }}>{children}</p>
+  <p style={{ color: "var(--clr-text)", marginBottom: "0.75rem" }}>{children}</p>
 );
 const UL = ({ children }: { children: React.ReactNode }) => (
-  <ul style={{ color: "#bbb", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
+  <ul style={{ color: "var(--clr-text)", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
 );
 const LI = ({ children }: { children: React.ReactNode }) => (
   <li style={{ marginBottom: "0.35rem" }}>{children}</li>
@@ -71,15 +71,15 @@ export default function PrivacyPolicyPage() {
         <H2>3. Third-Party Services and APIs</H2>
         <P>To provide market analysis, we integrate with the following third-party services:</P>
         <UL>
-          <LI><strong style={{ color: "#ddd" }}>Anthropic API (Claude Opus)</strong> — AI-powered market analysis using extended thinking</LI>
-          <LI><strong style={{ color: "#ddd" }}>Apple iTunes Search API</strong> — App Store data for competitor analysis</LI>
-          <LI><strong style={{ color: "#ddd" }}>Google Play</strong> — Android app market data</LI>
-          <LI><strong style={{ color: "#ddd" }}>YouTube Data API</strong> — Video content and trend analysis</LI>
-          <LI><strong style={{ color: "#ddd" }}>Reddit, X (Twitter), LinkedIn</strong> — Public community signals and discussions</LI>
-          <LI><strong style={{ color: "#ddd" }}>Product Hunt API</strong> — Product launch and community data</LI>
-          <LI><strong style={{ color: "#ddd" }}>Clerk</strong> — User authentication and account management</LI>
-          <LI><strong style={{ color: "#ddd" }}>Supabase</strong> — Database storage for reports and credits</LI>
-          <LI><strong style={{ color: "#ddd" }}>Paddle</strong> — Payment processing for credit purchases</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Anthropic API (Claude Opus)</strong> — AI-powered market analysis using extended thinking</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Apple iTunes Search API</strong> — App Store data for competitor analysis</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Google Play</strong> — Android app market data</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>YouTube Data API</strong> — Video content and trend analysis</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Reddit, X (Twitter), LinkedIn</strong> — Public community signals and discussions</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Product Hunt API</strong> — Product launch and community data</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Clerk</strong> — User authentication and account management</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Supabase</strong> — Database storage for reports and credits</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Paddle</strong> — Payment processing for credit purchases</LI>
         </UL>
         <P>
           Your search queries are sent to these services to generate analysis results. Anthropic&apos;s API does not use your inputs to train its models. Each third-party service has its own privacy policy governing how they handle data.
@@ -102,14 +102,14 @@ export default function PrivacyPolicyPage() {
       <S>
         <H2>5. Data Sharing</H2>
         <P>
-          <strong style={{ color: "#fff" }}>We do not sell your personal data.</strong> We do not share your prompts, ideas, or report contents with third parties for advertising or marketing purposes. Your data is only shared with the third-party infrastructure services listed above to the extent technically necessary to run the platform.
+          <strong style={{ color: "var(--clr-text)" }}>We do not sell your personal data.</strong> We do not share your prompts, ideas, or report contents with third parties for advertising or marketing purposes. Your data is only shared with the third-party infrastructure services listed above to the extent technically necessary to run the platform.
         </P>
       </S>
 
       <S>
         <H2>6. Data Retention</H2>
         <P>
-          Your account information is retained for as long as your account is active. Analysis reports (your prompts and the full AI-generated output) are retained for <strong style={{ color: "#ddd" }}>12 months</strong> from the date they were created, after which they are deleted automatically.
+          Your account information is retained for as long as your account is active. Analysis reports (your prompts and the full AI-generated output) are retained for <strong style={{ color: "var(--clr-text)" }}>12 months</strong> from the date they were created, after which they are deleted automatically.
         </P>
         <P>
           You may request deletion of your data at any time — before the 12-month period expires — by emailing{" "}

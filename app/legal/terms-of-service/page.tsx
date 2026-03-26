@@ -5,10 +5,10 @@ const H2 = ({ children }: { children: React.ReactNode }) => (
   <h2 style={{ fontSize: 20, fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
 );
 const P = ({ children }: { children: React.ReactNode }) => (
-  <p style={{ color: "var(--clr-text-2)", marginBottom: "0.75rem" }}>{children}</p>
+  <p style={{ color: "var(--clr-text)", marginBottom: "0.75rem" }}>{children}</p>
 );
 const UL = ({ children }: { children: React.ReactNode }) => (
-  <ul style={{ color: "var(--clr-text-2)", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
+  <ul style={{ color: "var(--clr-text)", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
 );
 const LI = ({ children }: { children: React.ReactNode }) => (
   <li style={{ marginBottom: "0.35rem" }}>{children}</li>

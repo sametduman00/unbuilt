@@ -2,13 +2,13 @@ const S = ({ children }: { children: React.ReactNode }) => (
   <section style={{ marginBottom: "2.5rem" }}>{children}</section>
 );
 const H2 = ({ children }: { children: React.ReactNode }) => (
-  <h2 style={{ fontSize: 20, fontWeight: 600, color: "#fff", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
+  <h2 style={{ fontSize: 20, fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
 );
 const P = ({ children }: { children: React.ReactNode }) => (
-  <p style={{ color: "#bbb", marginBottom: "0.75rem" }}>{children}</p>
+  <p style={{ color: "var(--clr-text)", marginBottom: "0.75rem" }}>{children}</p>
 );
 const UL = ({ children }: { children: React.ReactNode }) => (
-  <ul style={{ color: "#bbb", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
+  <ul style={{ color: "var(--clr-text)", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
 );
 const LI = ({ children }: { children: React.ReactNode }) => (
   <li style={{ marginBottom: "0.35rem" }}>{children}</li>
@@ -26,7 +26,7 @@ export default function DoNotSellPage() {
       <S>
         <H2>1. We Do Not Sell Your Personal Information</H2>
         <P>
-          <strong style={{ color: "#fff" }}>Unbuilt does not sell your personal information.</strong> We have never sold personal information, and we have no plans to do so. This applies to all users, regardless of location.
+          <strong style={{ color: "var(--clr-text)" }}>Unbuilt does not sell your personal information.</strong> We have never sold personal information, and we have no plans to do so. This applies to all users, regardless of location.
         </P>
       </S>
 
@@ -41,9 +41,9 @@ export default function DoNotSellPage() {
         <H2>3. What Information We Collect</H2>
         <P>We collect limited information necessary to operate the service:</P>
         <UL>
-          <LI><strong style={{ color: "#ddd" }}>Account information</strong> — Email address and basic profile data via Clerk (authentication provider)</LI>
-          <LI><strong style={{ color: "#ddd" }}>Usage data</strong> — Search queries, feature usage, and interaction patterns to improve the service</LI>
-          <LI><strong style={{ color: "#ddd" }}>Device information</strong> — Browser type and basic device information for compatibility</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Account information</strong> — Email address and basic profile data via Clerk (authentication provider)</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Usage data</strong> — Search queries, feature usage, and interaction patterns to improve the service</LI>
+          <LI><strong style={{ color: "var(--clr-text)" }}>Device information</strong> — Browser type and basic device information for compatibility</LI>
         </UL>
         <P>This information is used solely for providing and improving the Unbuilt service.</P>
       </S>
