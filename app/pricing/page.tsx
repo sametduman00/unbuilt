@@ -89,12 +89,12 @@ export default function PricingPage() {
   };
 
   return (
-    <main style={{ minHeight: "100vh", background: "var(--clr-bg)", padding: "72px 24px 100px", maxWidth: 860, margin: "0 auto" }}>
+    <main style={{ minHeight: "100vh", background: "var(--clr-bg)", padding: "32px 24px 80px", maxWidth: 860, margin: "0 auto" }}>
 
       {/* ── Header ── */}
-      <div style={{ textAlign: "center", marginBottom: 52 }}>
+      <div style={{ textAlign: "center", marginBottom: 28 }}>
         <p style={{ ...s.label, color: "var(--clr-text-4)", marginBottom: 14 }}>Pricing</p>
-        <h1 style={{ fontSize: "1.875rem", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.15, margin: "0 0 14px" }}>
+        <h1 style={{ fontSize: "1.625rem", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.15, margin: "0 0 14px" }}>
           Pulse is free.<br />
           <span style={{ color: "var(--clr-text-3)", fontWeight: 400, fontStyle: "italic" }}>Dig and Stack cost 1 credit each.</span>
         </h1>
@@ -103,46 +103,8 @@ export default function PricingPage() {
         </p>
       </div>
 
-      {/* ── Why the price ── */}
-      <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginBottom: 52 }}>
-        <p style={s.label}>Why does a credit cost $0.80–$1.00?</p>
-        <div style={{ display: "flex", gap: 28, flexWrap: "wrap" as const, alignItems: "flex-start" }}>
-          <div style={{ flex: 1, minWidth: 220 }}>
-            <p style={{ ...s.muted, marginBottom: 10 }}>
-              Every query runs on <strong style={{ color: "var(--clr-text)" }}>Claude Opus 4.6 with Extended Thinking</strong> — Anthropic's most capable model. No cheaper shortcuts.
-            </p>
-            <p style={{ ...s.muted, margin: 0 }}>
-              Don't take our word for it — verify with{" "}
-              <a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener noreferrer" style={{ color: "var(--clr-text)", fontWeight: 600 }}>
-                Anthropic's official pricing ↗
-              </a>
-            </p>
-          </div>
-          <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "14px 18px", minWidth: 250, flexShrink: 0 }}>
-            <p style={{ ...s.label, marginBottom: 10 }}>Cost per query</p>
-            {[
-              ["~20,000 input tokens", "× $15/1M", "= $0.30"],
-              ["~5,000 output tokens", "× $75/1M", "= $0.375"],
-            ].map(([a, b, c]) => (
-              <div key={a} style={{ display: "flex", gap: 6, fontSize: "0.75rem", fontFamily: "monospace", marginBottom: 4 }}>
-                <span style={{ color: "var(--clr-text-3)", flex: 1 }}>{a}</span>
-                <span style={{ color: "var(--clr-text-4)" }}>{b}</span>
-                <span style={{ color: "var(--clr-text)", fontWeight: 700, minWidth: 52, textAlign: "right" as const }}>{c}</span>
-              </div>
-            ))}
-            <div style={{ borderTop: "1px solid var(--clr-border)", marginTop: 8, paddingTop: 8, display: "flex", justifyContent: "space-between", fontSize: "0.8rem", fontFamily: "monospace" }}>
-              <span style={{ color: "var(--clr-text-3)" }}>Our total cost</span>
-              <span style={{ color: "var(--clr-text)", fontWeight: 800 }}>~$0.45</span>
-            </div>
-            <p style={{ fontSize: 10, color: "var(--clr-text-5)", margin: "6px 0 0", fontStyle: "italic" }}>
-              The rest: hosting, search APIs, infrastructure.
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* ── Credit packs ── */}
-      <div style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 10 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
           {PACKAGES.map((pkg) => (
             <div key={pkg.slug} style={{
@@ -197,8 +159,46 @@ export default function PricingPage() {
         </p>
       </div>
 
+      {/* ── Why the price ── */}
+      <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "16px 20px", marginBottom: 32 }}>
+        <p style={s.label}>Why does a credit cost $0.80–$1.00?</p>
+        <div style={{ display: "flex", gap: 28, flexWrap: "wrap" as const, alignItems: "flex-start" }}>
+          <div style={{ flex: 1, minWidth: 220 }}>
+            <p style={{ ...s.muted, marginBottom: 10 }}>
+              Every query runs on <strong style={{ color: "var(--clr-text)" }}>Claude Opus 4.6 with Extended Thinking</strong> — Anthropic's most capable model. No cheaper shortcuts.
+            </p>
+            <p style={{ ...s.muted, margin: 0 }}>
+              Don't take our word for it — verify with{" "}
+              <a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener noreferrer" style={{ color: "var(--clr-text)", fontWeight: 600 }}>
+                Anthropic's official pricing ↗
+              </a>
+            </p>
+          </div>
+          <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "14px 18px", minWidth: 250, flexShrink: 0 }}>
+            <p style={{ ...s.label, marginBottom: 10 }}>Cost per query</p>
+            {[
+              ["~20,000 input tokens", "× $15/1M", "= $0.30"],
+              ["~5,000 output tokens", "× $75/1M", "= $0.375"],
+            ].map(([a, b, c]) => (
+              <div key={a} style={{ display: "flex", gap: 6, fontSize: "0.75rem", fontFamily: "monospace", marginBottom: 4 }}>
+                <span style={{ color: "var(--clr-text-3)", flex: 1 }}>{a}</span>
+                <span style={{ color: "var(--clr-text-4)" }}>{b}</span>
+                <span style={{ color: "var(--clr-text)", fontWeight: 700, minWidth: 52, textAlign: "right" as const }}>{c}</span>
+              </div>
+            ))}
+            <div style={{ borderTop: "1px solid var(--clr-border)", marginTop: 8, paddingTop: 8, display: "flex", justifyContent: "space-between", fontSize: "0.8rem", fontFamily: "monospace" }}>
+              <span style={{ color: "var(--clr-text-3)" }}>Our total cost</span>
+              <span style={{ color: "var(--clr-text)", fontWeight: 800 }}>~$0.45</span>
+            </div>
+            <p style={{ fontSize: 10, color: "var(--clr-text-5)", margin: "6px 0 0", fontStyle: "italic" }}>
+              The rest: hosting, search APIs, infrastructure.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* ── What 1 credit gets you ── */}
-      <div style={{ marginTop: 52, marginBottom: 64 }}>
+      <div style={{ marginTop: 36, marginBottom: 48 }}>
         <p style={{ ...s.label, textAlign: "center", marginBottom: 20 }}>What 1 credit gets you</p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
           {[
