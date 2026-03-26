@@ -517,7 +517,7 @@ export async function POST(req: NextRequest) {
 
         let full = "";
         const anthropicStream = client.messages.stream({
-          model: "claude-opus-4-5",
+          model: "claude-opus-4-6",
           max_tokens: 16000,
           thinking: { type: "enabled", budget_tokens: 16000 },
           system: SYSTEM_PROMPT,
