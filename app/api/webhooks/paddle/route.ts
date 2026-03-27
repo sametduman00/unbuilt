@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addCredits } from "@/app/lib/credits";
-import { incrementAlert } from "@/app/api/cockpit/alerts/route";
+import { incrementAlert } from "@/app/lib/alerts";
 import { getSupabase } from "@/app/lib/supabase";
 
 const PACKAGES: Record<string, number> = { starter: 5, popular: 10, pro: 25 };
