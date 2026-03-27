@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { rateLimit } from "@/app/api/_ratelimit";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest } from "next/server";
 import { getCached, setCached, TTL_MS } from "../_cache";
