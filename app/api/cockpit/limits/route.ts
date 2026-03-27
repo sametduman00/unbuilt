@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+  const upstashData = await getUpstashUsage();
+  import { NextRequest, NextResponse } from "next/server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -8,6 +9,32 @@ const CORS = {
 
 export async function OPTIONS() {
   return new NextResponse(null, { headers: CORS });
+}
+
+// -- Upstash Redis daily usage --------------------------------------------------
+async function getUpstashUsage(): Promise<{ dailyCommands: number; dailyLimit: number; pct: number; ok: boolean }> {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return { dailyCommands: 0, dailyLimit: 10000, pct: 0, ok: false };
+  try {
+    // Upstash REST API: /info returns server stats including daily_commands_count
+    const res = await fetch(url + "/info", {
+      headers: { Authorization: "Bearer " + token },
+      signal: AbortSignal.timeout(4000),
+    });
+    if (!res.ok) return { dailyCommands: 0, dailyLimit: 10000, pct: 0, ok: false };
+    const data = await res.json();
+    // Parse "# Stats\r\ninstantaneous_ops_per_sec:0\r\n..."
+    const raw: string = typeof data.result === "string" ? data.result : JSON.stringify(data.result ?? "");
+    const cmdMatch = raw.match(/total_commands_processed:([0-9]+)/);
+    const dailyCommands = cmdMatch ? parseInt(cmdMatch[1], 10) : 0;
+    // Upstash free plan: 10,000 commands/day
+    const dailyLimit = 10000;
+    const pct = Math.round((dailyCommands / dailyLimit) * 100);
+    return { dailyCommands, dailyLimit, pct, ok: true };
+  } catch {
+    return { dailyCommands: 0, dailyLimit: 10000, pct: 0, ok: false };
+  }
 }
 
 export async function GET(req: NextRequest) {
@@ -110,5 +137,5 @@ export async function GET(req: NextRequest) {
     { name: "ProductHunt", subtitle: "Launch & product data", icon: "🐱", limit: null, resetInfo: "Token-based", dashboardUrl: "https://www.producthunt.com/v2/oauth/applications", note: "No hard limit", live: false },
   ];
 
-  return NextResponse.json({ liveApis: [serperData, scData, rapidApiData], manualApis }, { headers: CORS });
+  return NextResponse.json({ liveApis: [serperData, scData, rapidApiData], manualApis, upstash: upstashData }, { headers: CORS });
 }
