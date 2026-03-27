@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { rateLimit } from "@/app/api/_ratelimit";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest } from "next/server";
 import { getCached, setCached, TTL_MS } from "../_cache";
@@ -54,6 +55,11 @@ export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), {
     status: 401, headers: { "Content-Type": "application/json" },
+  });
+
+  const rl = rateLimit(userId, 20, 600000); // 20 req / 10 min
+  if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests. Please slow down." }), {
+    status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" },
   });
 
   // Parse BEFORE credit deduction
