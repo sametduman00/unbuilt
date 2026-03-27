@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /pricing
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+Disallow: /wp-admin
+Disallow: /wp-login.php
+Disallow: /.env
+Disallow: /.git/
+
+Sitemap: https://www.unbuilt.me/sitemap.xml
