@@ -218,7 +218,6 @@ async function fetchTwitterContext(idea: string): Promise<string> {
     const stopWords = new Set(["app","for","the","a","an","and","or","of","in","on","with","to","is","tool","platform"]);
     const keywords = idea.split(" ").filter(w => !stopWords.has(w.toLowerCase())).slice(0, 3).join(" ");
     const query = encodeURIComponent(`${keywords} (problem OR frustrated OR recommend OR alternative) lang:en`);
-    console.log("[Twitter] query:", keywords);
     const res = await fetch(
       `https://twitter241.p.rapidapi.com/search-v3?type=Top&count=10&query=${query}`,
       {
@@ -243,7 +242,6 @@ async function fetchTwitterContext(idea: string): Promise<string> {
         if (text) entries.push({ full_text: text, favorite_count: likes });
       }
     }
-    console.log("[Twitter] entries found:", entries.length);
     if (!entries.length) return "";
     const lines = entries.slice(0, 5).map((t) =>
       `- (${t.favorite_count ?? 0} likes): "${(t.full_text || "").slice(0, 150).replace(/\n/g, " ")}"`
@@ -577,7 +575,7 @@ export async function POST(req: NextRequest) {
       c.enqueue(enc.encode(`data: ${JSON.stringify({ meta: { cached: true, key: normalizedKey } })}\n\n`));
       c.enqueue(enc.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
       if (userId && (toolType === "gap-analysis" || toolType === "stack-advisor"))
-        saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, cached).catch(console.error);
+        saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, cached).catch(() => {});
       c.enqueue(enc.encode("data: [DONE]\n\n")); c.close();
     }}), { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
   }
@@ -590,7 +588,7 @@ export async function POST(req: NextRequest) {
       c.enqueue(enc.encode(`data: ${JSON.stringify({ meta: { cached: true, replayed: true, key: normalizedKey } })}\n\n`));
       c.enqueue(enc.encode(`data: ${JSON.stringify({ text: storedResult })}\n\n`));
       if (userId && (toolType === "gap-analysis" || toolType === "stack-advisor"))
-        saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, storedResult).catch(console.error);
+        saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, storedResult).catch(() => {});
       c.enqueue(enc.encode("data: [DONE]\n\n")); c.close();
     }}), { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
   }
@@ -660,7 +658,7 @@ export async function POST(req: NextRequest) {
         }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
       } catch (err) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" })}\n\n`));
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis failed. Please try again." })}\n\n`));
       } finally {
         await releaseIdempotencyLock(lockKey);
         controller.close();
