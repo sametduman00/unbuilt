@@ -9,6 +9,7 @@ import { auth } from "@clerk/nextjs/server";
 import { deductCredit } from "@/app/lib/credits";
 import { saveReport } from "@/app/lib/reports";
 import { validateStackBody, checkPayloadSize, errorResponse } from "@/app/lib/validate";
+import { checkDailyCreditQuota, incrementDailyCredits } from "@/app/lib/abuse";
 
 function sanitizeIdea(raw: string): string {
   return raw
@@ -243,6 +244,15 @@ export async function POST(req: NextRequest) {
 
   // Deduct credit only after all checks
   const hasCredits = await deductCredit(userId);
+  // Daily per-user quota — max 20/day across analyze + stack
+  const quotaCheck = await checkDailyCreditQuota(userId);
+  if (!quotaCheck.allowed) {
+    await releaseIdempotencyLock(lockKey);
+    return new Response(JSON.stringify({ error: "Daily analysis limit reached. Upgrade for more." }), {
+      status: 429, headers: { "Content-Type": "application/json" },
+    });
+  }
+
   if (!hasCredits) {
     await releaseIdempotencyLock(lockKey);
     return new Response(JSON.stringify({ error: "No credits remaining" }), { status: 402, headers: { "Content-Type": "application/json" } });
