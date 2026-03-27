@@ -16,3 +16,4 @@
     { "path": "/api/cockpit/alerts",  "schedule": "*/5 * * * *"  }
   ]
 }
+
