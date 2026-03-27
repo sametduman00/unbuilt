@@ -7,6 +7,7 @@ import { normalizeQuery } from "../_normalize";
 import { auth } from "@clerk/nextjs/server";
 import { deductCredit } from "@/app/lib/credits";
 import { saveReport } from "@/app/lib/reports";
+import { validateAnalyzeBody, checkPayloadSize, errorResponse, MAX_PAYLOAD_BYTES } from "@/app/lib/validate";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -538,14 +539,13 @@ export async function POST(req: NextRequest) {
   const rl = rateLimit(userId, 10, 600000);
   if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests. Please slow down." }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" } });
 
-  // 3. Parse + validate BEFORE any credit logic
-  let body: { idea?: unknown; tool?: unknown };
-  try { body = await req.json(); } catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
-  const { idea, tool: toolType } = body;
-  if (!idea || typeof idea !== "string" || idea.trim().length < 3)
-    return Response.json({ error: "Please provide a valid idea (min 3 characters)." }, { status: 400 });
-  if (idea.length > 500)
-    return Response.json({ error: "Idea is too long (max 500 characters)." }, { status: 400 });
+  // 3. Payload size cap + parse + strict schema validation
+  if (!checkPayloadSize(req)) return new Response(JSON.stringify({ error: "Request payload too large." }), { status: 413, headers: { "Content-Type": "application/json" } });
+  let rawBody: unknown;
+  try { rawBody = await req.json(); } catch { return new Response(JSON.stringify({ error: "Invalid JSON body." }), { status: 400, headers: { "Content-Type": "application/json" } }); }
+  const parsed = validateAnalyzeBody(rawBody);
+  if (!parsed.ok) return errorResponse(parsed);
+  const { idea, tool: toolType } = parsed.data;
 
   const normalizedKey = await normalizeQuery(idea);
   const resultKey = `result:analyze:${userId}:${normalizedKey}`;
