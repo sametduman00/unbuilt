@@ -479,7 +479,8 @@ RULES â follow exactly:
 - CRITICAL: If live data is sparse for a field, write what you found and flag uncertainty. Never fabricate specifics.`;
 
 // ââ Main POST handler ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// ── Redis idempotency lock ─────────────────────────────────────────────────
+// ── Redis idempotency helpers ───────────────────────────────────────────────
+// SET NX EX: atomic — only succeeds if key doesn't exist (no TOCTOU race)
 async function acquireIdempotencyLock(key: string, ttlSec: number): Promise<boolean> {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
@@ -489,8 +490,7 @@ async function acquireIdempotencyLock(key: string, ttlSec: number): Promise<bool
       `${url}/set/${encodeURIComponent(key)}/1/NX/EX/${ttlSec}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    const data = await res.json();
-    return data.result === "OK";
+    return (await res.json()).result === "OK";
   } catch { return true; }
 }
 
@@ -502,6 +502,29 @@ async function releaseIdempotencyLock(key: string): Promise<void> {
     await fetch(`${url}/del/${encodeURIComponent(key)}`,
       { headers: { Authorization: `Bearer ${token}` } });
   } catch {}
+}
+
+// Store final result so retries within TTL get free cached response
+async function storeResult(key: string, value: string, ttlSec: number): Promise<void> {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return;
+  try {
+    await fetch(`${url}/set/${encodeURIComponent(key)}/${encodeURIComponent(value)}/EX/${ttlSec}`,
+      { headers: { Authorization: `Bearer ${token}` } });
+  } catch {}
+}
+
+async function getStoredResult(key: string): Promise<string | null> {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  try {
+    const res = await fetch(`${url}/get/${encodeURIComponent(key)}`,
+      { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    return data.result ?? null;
+  } catch { return null; }
 }
 
 // ── Main POST handler ────────────────────────────────────────────────────────
@@ -518,7 +541,7 @@ export async function POST(req: NextRequest) {
     status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" },
   });
 
-  // 3. Parse + validate body BEFORE touching credits
+  // 3. Parse + validate BEFORE touching credits
   let body: { idea?: unknown; tool?: unknown };
   try { body = await req.json(); }
   catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
@@ -528,7 +551,7 @@ export async function POST(req: NextRequest) {
   if (idea.length > 500)
     return Response.json({ error: "Idea is too long (max 500 characters)." }, { status: 400 });
 
-  // 4. Normalize + check cache — NO credit deduction for cached responses
+  // 4a. In-memory cache hit — free
   const normalizedKey = await normalizeQuery(idea);
   const cached = getCached(normalizedKey, TTL_MS.analyze);
   if (cached) {
@@ -537,29 +560,44 @@ export async function POST(req: NextRequest) {
       start(controller) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: true, key: normalizedKey } })}\n\n`));
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
-        if (userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
+        if (userId && (toolType === "gap-analysis" || toolType === "stack-advisor"))
           saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, cached).catch(console.error);
-        }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();
       },
     });
-    return new Response(stream, {
-      headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" },
-    });
+    return new Response(stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
   }
 
-  // 5. Idempotency lock — prevents double-click / concurrent duplicate / replay
+  // 4b. Redis result store hit — retry protection (same user + same idea within 1hr)
+  const resultKey = `result:analyze:${userId}:${normalizedKey}`;
+  const storedResult = await getStoredResult(resultKey);
+  if (storedResult) {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: true, replayed: true, key: normalizedKey } })}\n\n`));
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: storedResult })}\n\n`));
+        if (userId && (toolType === "gap-analysis" || toolType === "stack-advisor"))
+          saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, storedResult).catch(console.error);
+        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+        controller.close();
+      },
+    });
+    return new Response(stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
+  }
+
+  // 5. Idempotency lock — prevents double-click / concurrent duplicate
   const lockKey = `idem:analyze:${userId}:${normalizedKey}`;
   const locked = await acquireIdempotencyLock(lockKey, 600);
   if (!locked) {
     return new Response(
-      JSON.stringify({ error: "This analysis is already in progress. Please wait for it to complete." }),
+      JSON.stringify({ error: "This analysis is already in progress. Please wait." }),
       { status: 409, headers: { "Content-Type": "application/json" } }
     );
   }
 
-  // 6. Deduct credit — only after all validation + cache check + lock
+  // 6. Deduct credit — only after all validation + cache checks + lock
   const hasCredits = await deductCredit(userId);
   if (!hasCredits) {
     await releaseIdempotencyLock(lockKey);
@@ -609,7 +647,12 @@ export async function POST(req: NextRequest) {
           }
         }
 
-        if (full) setCached(normalizedKey, full);
+        if (full) {
+          setCached(normalizedKey, full);
+          // Store result for 1hr so retries get free response (no second credit deduction)
+          await storeResult(resultKey, full, 3600);
+        }
+
         if (full && userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
           try {
             let jsonToSave = full;
