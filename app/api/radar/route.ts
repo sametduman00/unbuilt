@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
         if (full) setCached(normalizedKey, full);
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
       } catch (err) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" })}\n\n`));
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Request failed. Please try again." })}\n\n`));
       } finally {
         controller.close();
       }
