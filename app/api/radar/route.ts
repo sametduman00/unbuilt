@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest } from "next/server";
 import { getCached, setCached, TTL_MS } from "../_cache";
 import { normalizeQuery } from "../_normalize";
+import { validateRadarBody, checkPayloadSize, errorResponse } from "@/app/lib/validate";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
