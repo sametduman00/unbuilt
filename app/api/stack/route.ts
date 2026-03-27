@@ -8,6 +8,7 @@ import { normalizeQuery } from "../_normalize";
 import { auth } from "@clerk/nextjs/server";
 import { deductCredit } from "@/app/lib/credits";
 import { saveReport } from "@/app/lib/reports";
+import { validateStackBody, checkPayloadSize, errorResponse } from "@/app/lib/validate";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -185,17 +186,17 @@ export async function POST(req: NextRequest) {
   const rl = rateLimit(userId, 10, 600000);
   if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests." }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" } });
 
-  let body: { idea?: unknown; budget?: unknown; techLevel?: unknown; platform?: unknown };
-  try { body = await req.json(); } catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
-  const { idea, budget, techLevel, platform } = body;
-  if (!idea || typeof idea !== "string" || idea.trim().length < 3)
-    return Response.json({ error: "Please describe what you want to build (min 3 chars)." }, { status: 400 });
-  if (idea.length > 600)
-    return Response.json({ error: "Too long — keep it under 600 characters." }, { status: 400 });
-  if (!budget || !techLevel)
-    return Response.json({ error: "Please select a budget and technical level." }, { status: 400 });
+  // Payload size cap (64KB)
+  if (!checkPayloadSize(req)) return new Response(JSON.stringify({ error: "Request payload too large." }), { status: 413, headers: { "Content-Type": "application/json" } });
 
-  const normalizedIdea = await normalizeQuery(idea);
+  // Strict schema validation
+  let rawBody: unknown;
+  try { rawBody = await req.json(); } catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
+  const validation = validateStackBody(rawBody);
+  if (!validation.ok) return errorResponse(validation);
+  const { idea, budget, techLevel, platform } = validation.data;
+
+    const normalizedIdea = await normalizeQuery(idea);
   const normalizedKey = `${normalizedIdea}::${budget}::${techLevel}::${platform ?? "web"}`;
   const resultKey = `result:stack:${userId}:${normalizedKey}`;
 
