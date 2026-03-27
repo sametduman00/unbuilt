@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/app/lib/supabase";
+import { validatePulsePatchBody, checkPayloadSize, errorResponse } from "@/app/lib/validate";
 
 // GET — public, no auth needed (Pulse feed is global/public data)
 export async function GET() {
@@ -51,22 +52,12 @@ export async function PATCH(req: NextRequest) {
   }
 
   try {
-    const { updates } = await req.json() as { updates: { name: string; claudeGap: string }[] };
-
-    if (!updates || updates.length === 0) {
-      return NextResponse.json({ ok: false, reason: "no updates" });
-    }
-
-    // Validate: each update must have name (string) and claudeGap (string)
-    for (const u of updates) {
-      if (typeof u.name !== "string" || typeof u.claudeGap !== "string") {
-        return NextResponse.json({ error: "Invalid update shape" }, { status: 400 });
-      }
-      // Limit claudeGap length to prevent cache bloat
-      if (u.claudeGap.length > 10000) {
-        return NextResponse.json({ error: "claudeGap too large" }, { status: 400 });
-      }
-    }
+    if (!checkPayloadSize(req)) return new Response(JSON.stringify({ error: "Request payload too large." }), { status: 413, headers: { "Content-Type": "application/json" } });
+    let rawBody: unknown;
+    try { rawBody = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 }); }
+    const validation = validatePulsePatchBody(rawBody);
+    if (!validation.ok) return errorResponse(validation);
+    const { updates } = validation.data;
 
     const sb = getSupabase();
 
