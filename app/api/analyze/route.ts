@@ -479,70 +479,113 @@ RULES â follow exactly:
 - CRITICAL: If live data is sparse for a field, write what you found and flag uncertainty. Never fabricate specifics.`;
 
 // ââ Main POST handler ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+// ── Redis idempotency lock ─────────────────────────────────────────────────
+async function acquireIdempotencyLock(key: string, ttlSec: number): Promise<boolean> {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return true; // no Redis = allow (degrade gracefully)
+  try {
+    const res = await fetch(
+      `${url}/set/${encodeURIComponent(key)}/1/NX/EX/${ttlSec}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const data = await res.json();
+    return data.result === "OK";
+  } catch { return true; }
+}
 
+async function releaseIdempotencyLock(key: string): Promise<void> {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return;
+  try {
+    await fetch(`${url}/del/${encodeURIComponent(key)}`,
+      { headers: { Authorization: `Bearer ${token}` } });
+  } catch {}
+}
+
+// ── Main POST handler ────────────────────────────────────────────────────────
+export async function POST(req: NextRequest) {
+  // 1. Auth
+  const { userId } = await auth();
+  if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    status: 401, headers: { "Content-Type": "application/json" },
+  });
+
+  // 2. Rate limit
   const rl = rateLimit(userId, 10, 600000);
-  if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests. Please slow down." }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" } });
-  const hasCredits = await deductCredit(userId);
-  if (!hasCredits) return new Response(JSON.stringify({ error: "No credits remaining" }), { status: 402, headers: { "Content-Type": "application/json" } });
-  const { idea, tool: toolType } = await req.json();
+  if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests. Please slow down." }), {
+    status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" },
+  });
+
+  // 3. Parse + validate body BEFORE touching credits
+  let body: { idea?: unknown; tool?: unknown };
+  try { body = await req.json(); }
+  catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
+  const { idea, tool: toolType } = body;
   if (!idea || typeof idea !== "string" || idea.trim().length < 3)
     return Response.json({ error: "Please provide a valid idea (min 3 characters)." }, { status: 400 });
   if (idea.length > 500)
     return Response.json({ error: "Idea is too long (max 500 characters)." }, { status: 400 });
 
+  // 4. Normalize + check cache — NO credit deduction for cached responses
   const normalizedKey = await normalizeQuery(idea);
   const cached = getCached(normalizedKey, TTL_MS.analyze);
-  const encoder = new TextEncoder();
-
-  const stream = new ReadableStream({
-    async start(controller) {
-      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: !!cached, key: normalizedKey } })}\n\n`));
-
-      if (cached) {
+  if (cached) {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: true, key: normalizedKey } })}\n\n`));
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
         if (userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
-          try { await saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, cached); } catch(e) { console.error("saveReport cached:", e); }
+          saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, cached).catch(console.error);
         }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();
-        return;
-      }
+      },
+    });
+    return new Response(stream, {
+      headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" },
+    });
+  }
 
+  // 5. Idempotency lock — prevents double-click / concurrent duplicate / replay
+  const lockKey = `idem:analyze:${userId}:${normalizedKey}`;
+  const locked = await acquireIdempotencyLock(lockKey, 600);
+  if (!locked) {
+    return new Response(
+      JSON.stringify({ error: "This analysis is already in progress. Please wait for it to complete." }),
+      { status: 409, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
+  // 6. Deduct credit — only after all validation + cache check + lock
+  const hasCredits = await deductCredit(userId);
+  if (!hasCredits) {
+    await releaseIdempotencyLock(lockKey);
+    return new Response(JSON.stringify({ error: "No credits remaining" }), {
+      status: 402, headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // 7. Run AI (streaming)
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: false, key: normalizedKey } })}\n\n`));
       try {
-        // Fetch ALL live data in parallel â 12 sources
         const [
-          youtubeContext,
-          appStoreContext,
-          gplayContext,
-          serperContext,
-          trendsContext,
-          segmentsContext,
-          customerContext,
-          gtmContext,
-          reviewsContext,
-          financialContext,
-          fundabilityContext,
-          redditContext,
-          twitterContext,
+          youtubeContext, appStoreContext, gplayContext, serperContext,
+          trendsContext, segmentsContext, customerContext, gtmContext,
+          reviewsContext, financialContext, fundabilityContext,
+          redditContext, twitterContext,
         ] = await Promise.all([
-          fetchYouTubeContext(idea),
-          fetchAppStoreContext(idea),
-          fetchGPlayContext(idea),
-          fetchSerperContext(idea),
-          fetchTrendsContext(idea),
-          fetchSegmentsContext(idea),
-          fetchCustomerBehaviorContext(idea),
-          fetchGTMContext(idea),
-          fetchReviewsContext(idea),
-          fetchFinancialContext(idea),
-          fetchFundabilityContext(idea),
-          fetchRedditContext(idea),
-          fetchTwitterContext(idea),
+          fetchYouTubeContext(idea), fetchAppStoreContext(idea), fetchGPlayContext(idea),
+          fetchSerperContext(idea), fetchTrendsContext(idea), fetchSegmentsContext(idea),
+          fetchCustomerBehaviorContext(idea), fetchGTMContext(idea), fetchReviewsContext(idea),
+          fetchFinancialContext(idea), fetchFundabilityContext(idea),
+          fetchRedditContext(idea), fetchTwitterContext(idea),
         ]);
-
         const combinedAppContext = [appStoreContext, gplayContext].filter(Boolean).join("");
         const socialContext = [redditContext, twitterContext].filter(Boolean).join("");
 
@@ -552,23 +595,11 @@ export async function POST(req: NextRequest) {
           max_tokens: 24000,
           thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM_PROMPT,
-          messages: [{
-            role: "user",
-            content: USER_PROMPT(
-              idea,
-              youtubeContext,
-              combinedAppContext,
-              serperContext,
-              trendsContext,
-              segmentsContext,
-              customerContext,
-              gtmContext,
-              reviewsContext,
-              financialContext,
-              fundabilityContext,
-              socialContext
-            )
-          }],
+          messages: [{ role: "user", content: USER_PROMPT(
+            idea, youtubeContext, combinedAppContext, serperContext, trendsContext,
+            segmentsContext, customerContext, gtmContext, reviewsContext,
+            financialContext, fundabilityContext, socialContext
+          )}],
         });
 
         for await (const event of anthropicStream) {
@@ -581,31 +612,33 @@ export async function POST(req: NextRequest) {
         if (full) setCached(normalizedKey, full);
         if (full && userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
           try {
-            // Inject raw app store data into JSON before saving
             let jsonToSave = full;
             try {
               const fenceMatch = full.match(/```json\s*([\s\S]*?)```/);
               if (fenceMatch) {
                 const parsed = JSON.parse(fenceMatch[1]);
-                // Fetch raw app data for the report
-                const [itunesRaw, gplayRaw] = await Promise.allSettled([
+                const [itunesRaw] = await Promise.allSettled([
                   fetch(`https://itunes.apple.com/search?${new URLSearchParams({term:idea,entity:"software",limit:"8",country:"us"})}`, {signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(d=>d.results??[]).catch(()=>[]),
-                  Promise.resolve([]), // gplay already done above, skip re-fetch
                 ]);
                 if (itunesRaw.status === "fulfilled" && itunesRaw.value.length > 0) {
-                  parsed.itunesApps = itunesRaw.value.slice(0,8).map((a: Record<string,unknown>) => ({ trackName: a.trackName, artworkUrl60: a.artworkUrl60, averageUserRating: a.averageUserRating, userRatingCount: a.userRatingCount, description: String(a.description||"").slice(0,200), formattedPrice: a.formattedPrice, sellerName: a.sellerName }));
+                  parsed.itunesApps = itunesRaw.value.slice(0,8).map((a: Record<string,unknown>) => ({
+                    trackName: a.trackName, artworkUrl60: a.artworkUrl60,
+                    averageUserRating: a.averageUserRating, userRatingCount: a.userRatingCount,
+                    description: String(a.description||"").slice(0,200),
+                    formattedPrice: a.formattedPrice, sellerName: a.sellerName,
+                  }));
                 }
                 jsonToSave = full.replace(fenceMatch[1], JSON.stringify(parsed));
               }
-            } catch { /* keep original if parse fails */ }
+            } catch { /* keep original */ }
             await saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, jsonToSave);
           } catch(e) { console.error("saveReport live:", e); }
         }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-        controller.close();
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Unknown error";
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: message })}\n\n`));
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" })}\n\n`));
+      } finally {
+        await releaseIdempotencyLock(lockKey);
         controller.close();
       }
     },
