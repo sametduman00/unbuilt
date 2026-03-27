@@ -219,7 +219,7 @@ export async function POST(req: NextRequest) {
     return new Response(new ReadableStream({ start(c) {
       c.enqueue(enc.encode(`data: ${JSON.stringify({ meta: { cached: true, key: normalizedKey } })}\n\n`));
       c.enqueue(enc.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
-      if (userId) saveReport(userId, "stack-advisor", idea, cached).catch(console.error);
+      if (userId) saveReport(userId, "stack-advisor", idea, cached).catch(() => {});
       c.enqueue(enc.encode("data: [DONE]\n\n")); c.close();
     }}), { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
   }
@@ -231,7 +231,7 @@ export async function POST(req: NextRequest) {
     return new Response(new ReadableStream({ start(c) {
       c.enqueue(enc.encode(`data: ${JSON.stringify({ meta: { cached: true, replayed: true, key: normalizedKey } })}\n\n`));
       c.enqueue(enc.encode(`data: ${JSON.stringify({ text: storedResult })}\n\n`));
-      if (userId) saveReport(userId, "stack-advisor", idea, storedResult).catch(console.error);
+      if (userId) saveReport(userId, "stack-advisor", idea, storedResult).catch(() => {});
       c.enqueue(enc.encode("data: [DONE]\n\n")); c.close();
     }}), { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
   }
@@ -273,7 +273,7 @@ export async function POST(req: NextRequest) {
         if (full && userId) saveReport(userId, "stack-advisor", idea, full).catch(e => console.error("saveReport:", e));
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
       } catch (err) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" })}\n\n`));
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis failed. Please try again." })}\n\n`));
       } finally {
         await releaseIdempotencyLock(lockKey);
         controller.close();
