@@ -1,3 +1,4 @@
+  delete (body as Record<string, unknown>).tool;
 import { rateLimit } from "@/app/api/_ratelimit";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest } from "next/server";
