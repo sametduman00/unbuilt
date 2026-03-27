@@ -1,6 +1,25 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+// ── Security event counter (fire-and-forget, never blocks request) ───────────
+function incrSecurityEvent(event: string): void {
+  const url  = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return;
+  const key  = `sec:${event}:${new Date().toISOString().slice(0,13)}`; // hourly bucket
+  fetch(`${url}/incr/${encodeURIComponent(key)}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+  }).then(() => {
+    // Set expiry 48h so keys auto-clean
+    fetch(`${url}/expire/${encodeURIComponent(key)}/172800`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  }).catch(() => {});
+}
+
+
 // ── Path normalizer ──────────────────────────────────────────────────────────
 function normalizePath(pathname: string): string {
   let p = pathname.replace(/\/+/g, "/");
@@ -64,6 +83,7 @@ async function rateLimit(
 }
 
 function deny(status: number): NextResponse {
+  incrSecurityEvent('429');
   return new NextResponse(
     JSON.stringify({
       error:
@@ -109,6 +129,7 @@ function csrfCheck(req: NextRequest): NextResponse | null {
   // Allow requests with no origin (server-to-server, curl, Postman in dev)
   // but block requests with a cross-origin origin header
   if (origin && !ALLOWED_ORIGINS.includes(origin)) {
+    incrSecurityEvent('csrf_403');
     return new NextResponse(JSON.stringify({ error: "Forbidden" }), {
       status: 403,
       headers: { "Content-Type": "application/json" },
