@@ -40,10 +40,15 @@ Be direct. Name names. Skip generic advice.`;
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
-  if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+  if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    status: 401, headers: { "Content-Type": "application/json" },
+  });
 
-  const { idea } = await req.json();
-
+  // Parse BEFORE credit deduction
+  let body: { idea?: unknown };
+  try { body = await req.json(); }
+  catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
+  const { idea } = body;
   if (!idea || typeof idea !== "string" || idea.trim().length < 3)
     return Response.json({ error: "Please describe what you're building (min 3 chars)." }, { status: 400 });
   if (idea.length > 600)
@@ -52,20 +57,24 @@ export async function POST(req: NextRequest) {
   const normalizedKey = await normalizeQuery(idea);
   const cached = getCached(normalizedKey, TTL_MS.radar);
 
-  const encoder = new TextEncoder();
-  const stream = new ReadableStream({
-    async start(controller) {
-      controller.enqueue(
-        encoder.encode(`data: ${JSON.stringify({ meta: { cached: !!cached, key: normalizedKey } })}\n\n`)
-      );
-
-      if (cached) {
+  // Cache hit — free, no credit deduction
+  if (cached) {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: true, key: normalizedKey } })}\n\n`));
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();
-        return;
-      }
+      },
+    });
+    return new Response(stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
+  }
 
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: false, key: normalizedKey } })}\n\n`));
       try {
         let full = "";
         const s = client.messages.stream({
@@ -83,15 +92,12 @@ export async function POST(req: NextRequest) {
         }
         if (full) setCached(normalizedKey, full);
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-        controller.close();
       } catch (err) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" })}\n\n`));
+      } finally {
         controller.close();
       }
     },
   });
-
-  return new Response(stream, {
-    headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" },
-  });
+  return new Response(stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
 }
