@@ -1,3 +1,15 @@
+import { rateLimit } from "@/app/api/_ratelimit";
+import Anthropic from "@anthropic-ai/sdk";
+import { NextRequest } from "next/server";
+import gplay from "google-play-scraper";
+import { getCached, setCached, TTL_MS } from "../_cache";
+import { normalizeQuery } from "../_normalize";
+import { auth } from "@clerk/nextjs/server";
+import { deductCredit } from "@/app/lib/credits";
+import { saveReport } from "@/app/lib/reports";
+
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
 // ── Redis idempotency helpers ───────────────────────────────────────────────
 async function acquireIdempotencyLock(key: string, ttlSec: number): Promise<boolean> {
   const url = process.env.UPSTASH_REDIS_REST_URL;
