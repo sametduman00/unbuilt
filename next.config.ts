@@ -10,7 +10,7 @@ const MEDIA = ["https://ph-files.imgix.net","https://*.mzstatic.com","https://im
 function buildCSP() {
   const d = {
     "default-src": ["'none'"],
-    "script-src": ["'self'",...CLERK,...PADDLE,...ANALYTICS,...PROFITWELL,...CDN],
+    "script-src": ["'self'", "'unsafe-inline'",...CLERK,...PADDLE,...ANALYTICS,...PROFITWELL,...CDN],
     "style-src": ["'self'","'unsafe-inline'","https://cdn.paddle.com","https://clerk.unbuilt.me"],
     "img-src": ["'self'","data:","blob:",...MEDIA,"https://www.googletagmanager.com","https://clerk.unbuilt.me","https://*.clerk.accounts.dev","https://img.clerk.com"],
     "font-src": ["'self'","data:","https://fonts.gstatic.com"],
@@ -36,7 +36,7 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "accelerometer=(),camera=(),geolocation=(),gyroscope=(),magnetometer=(),microphone=(),payment=(self),usb=(),interest-cohort=(),fullscreen=(self),display-capture=()" },
   { key: "X-DNS-Prefetch-Control", value: "on" },
   { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
-  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
   { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
 ];
 
