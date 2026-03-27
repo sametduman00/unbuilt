@@ -8,7 +8,7 @@ import { auth } from "@clerk/nextjs/server";
 import { deductCredit } from "@/app/lib/credits";
 import { saveReport } from "@/app/lib/reports";
 import { validateAnalyzeBody, checkPayloadSize, errorResponse, MAX_PAYLOAD_BYTES } from "@/app/lib/validate";
-          incrementDailyCredits(userId).catch(() => {});
+import { checkDailyCreditQuota, incrementDailyCredits } from "@/app/lib/abuse";
 import { incrementAlert } from "@/app/lib/alerts";
 
 // Strip prompt-injection patterns from user-supplied idea before it reaches the model
