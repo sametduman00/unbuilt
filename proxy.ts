@@ -89,7 +89,51 @@ const WEBHOOK_ROUTES = new Set(["/api/webhooks/paddle"]);
 const BLOCKED_ROUTES = new Set(["/api/admin", "/api/debug", "/api/internal"]);
 
 // ── Main ─────────────────────────────────────────────────────────────────────
+// ── CSRF: validate Origin/Referer on all state-changing API routes ──────────
+const ALLOWED_ORIGINS = [
+  "https://www.unbuilt.me",
+  "https://unbuilt.me",
+];
+
+function csrfCheck(req: NextRequest): NextResponse | null {
+  // Only check state-changing methods on API routes (webhooks excluded — they use HMAC)
+  if (!["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) return null;
+  const path = req.nextUrl.pathname;
+  if (!path.startsWith("/api/")) return null;
+  // Paddle webhook uses its own HMAC signature verification — skip
+  if (path.startsWith("/api/webhooks/")) return null;
+
+  const origin = req.headers.get("origin");
+  const referer = req.headers.get("referer");
+
+  // Allow requests with no origin (server-to-server, curl, Postman in dev)
+  // but block requests with a cross-origin origin header
+  if (origin && !ALLOWED_ORIGINS.includes(origin)) {
+    return new NextResponse(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // If no origin header, check Referer as fallback
+  if (!origin && referer) {
+    const refererOrigin = new URL(referer).origin;
+    if (!ALLOWED_ORIGINS.includes(refererOrigin)) {
+      return new NextResponse(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  }
+
+  return null;
+}
+
 export default clerkMiddleware(async (auth, req: NextRequest) => {
+  // 1. CSRF check first — reject cross-origin state-changing requests
+  const csrfResult = csrfCheck(req);
+  if (csrfResult) return csrfResult;
+
   const path = normalizePath(req.nextUrl.pathname);
   const ip   = getIP(req);
 
