@@ -109,6 +109,20 @@ const WEBHOOK_ROUTES = new Set(["/api/webhooks/paddle"]);
 const BLOCKED_ROUTES = new Set(["/api/admin", "/api/debug", "/api/internal"]);
 
 // ── Main ─────────────────────────────────────────────────────────────────────
+
+// ── Alert counter (fire-and-forget) ─────────────────────────────────────────
+async function incAlertCounter(key: string, windowSec: number): Promise<void> {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return;
+  const bucket = Math.floor(Date.now() / 1000 / windowSec);
+  const rk = encodeURIComponent(`alert:${key}:${bucket}`);
+  try {
+    await fetch(`${url}/incr/${rk}`, { headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(2000) });
+    await fetch(`${url}/expire/${rk}/${windowSec * 2}`, { headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(2000) });
+  } catch {}
+}
+
 // ── CSRF: validate Origin/Referer on all state-changing API routes ──────────
 const ALLOWED_ORIGINS = [
   "https://www.unbuilt.me",
@@ -130,6 +144,7 @@ function csrfCheck(req: NextRequest): NextResponse | null {
   // but block requests with a cross-origin origin header
   if (origin && !ALLOWED_ORIGINS.includes(origin)) {
     incrSecurityEvent('csrf_403');
+    incAlertCounter("auth_fail", 300).catch(() => {});
     return new NextResponse(JSON.stringify({ error: "Forbidden" }), {
       status: 403,
       headers: { "Content-Type": "application/json" },
@@ -140,6 +155,7 @@ function csrfCheck(req: NextRequest): NextResponse | null {
   if (!origin && referer) {
     const refererOrigin = new URL(referer).origin;
     if (!ALLOWED_ORIGINS.includes(refererOrigin)) {
+      incAlertCounter("auth_fail", 300).catch(() => {});
       return new NextResponse(JSON.stringify({ error: "Forbidden" }), {
         status: 403,
         headers: { "Content-Type": "application/json" },
