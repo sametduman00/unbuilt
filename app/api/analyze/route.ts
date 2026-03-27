@@ -42,9 +42,9 @@ async function serperQuery(q: string, apiKey: string, num = 6): Promise<string> 
     });
     if (!res.ok) return "";
     const data = await res.json();
-    const lines = (data.organic ?? []).slice(0, num).map((r: { title: string; link: string; snippet?: string }) => `- "${r.title}" (${r.link}): ${(r.snippet || "").slice(0, 150).replace(/\n/g, " ")}`
+    const lines = (data.organic ?? []).slice(0, num).map((r) => `- "${r.title}" (${r.link}): ${(r.snippet || "").slice(0, 150).replace(/\n/g, " ")}`
     );
-    const related = (data.relatedSearches ?? []).slice(0, 3).map((r: { query: string }) => r.query).join(", ");
+    const related = (data.relatedSearches ?? []).slice(0, 3).map((r) => r.query).join(", ");
     return lines.join("\n") + (related ? `\nRelated: ${related}` : "");
   } catch {
     return "";
