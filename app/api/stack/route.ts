@@ -138,42 +138,100 @@ Rules:
 --- TOOL DATABASE (March 2026 verified pricing) ---
 ${compactToolsDB}`;
 
+// ── Redis idempotency helpers ───────────────────────────────────────────────
+async function acquireIdempotencyLock(key: string, ttlSec: number): Promise<boolean> {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return true;
+  try {
+    const res = await fetch(
+      `${url}/set/${encodeURIComponent(key)}/1/NX/EX/${ttlSec}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const data = await res.json();
+    return data.result === "OK";
+  } catch { return true; }
+}
+
+async function releaseIdempotencyLock(key: string): Promise<void> {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return;
+  try {
+    await fetch(`${url}/del/${encodeURIComponent(key)}`,
+      { headers: { Authorization: `Bearer ${token}` } });
+  } catch {}
+}
+
 export async function POST(req: NextRequest) {
+  // 1. Auth
   const { userId } = await auth();
-  if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+  if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    status: 401, headers: { "Content-Type": "application/json" },
+  });
 
+  // 2. Rate limit
   const rl = rateLimit(userId, 10, 600000);
-  if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests. Please slow down." }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" } });
-  const hasCredits = await deductCredit(userId);
-  if (!hasCredits) return new Response(JSON.stringify({ error: "No credits remaining" }), { status: 402, headers: { "Content-Type": "application/json" } });
-  const { idea, budget, techLevel, platform } = await req.json();
+  if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests. Please slow down." }), {
+    status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" },
+  });
 
+  // 3. Parse + validate body BEFORE touching credits
+  let body: { idea?: unknown; budget?: unknown; techLevel?: unknown; platform?: unknown };
+  try { body = await req.json(); }
+  catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
+  const { idea, budget, techLevel, platform } = body;
   if (!idea || typeof idea !== "string" || idea.trim().length < 3)
     return Response.json({ error: "Please describe what you want to build (min 3 chars)." }, { status: 400 });
   if (idea.length > 600)
-    return Response.json({ error: "Too long Ã¢ÂÂ keep it under 600 characters." }, { status: 400 });
+    return Response.json({ error: "Too long — keep it under 600 characters." }, { status: 400 });
   if (!budget || !techLevel)
     return Response.json({ error: "Please select a budget and technical level." }, { status: 400 });
 
-  // Cache key includes budget + tech level so different configs get different results
+  // 4. Normalize + check cache — NO credit deduction for cached responses
   const normalizedIdea = await normalizeQuery(idea);
   const normalizedKey = `${normalizedIdea}::${budget}::${techLevel}::${platform ?? "web"}`;
   const cached = getCached(normalizedKey, TTL_MS.stack);
+  if (cached) {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: true, key: normalizedKey } })}\n\n`));
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
+        if (userId) saveReport(userId, "stack-advisor", idea, cached).catch(console.error);
+        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+        controller.close();
+      },
+    });
+    return new Response(stream, {
+      headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" },
+    });
+  }
 
+  // 5. Idempotency lock — prevents double-click / concurrent duplicate
+  const lockKey = `idem:stack:${userId}:${normalizedKey}`;
+  const locked = await acquireIdempotencyLock(lockKey, 600);
+  if (!locked) {
+    return new Response(
+      JSON.stringify({ error: "This stack analysis is already in progress. Please wait." }),
+      { status: 409, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
+  // 6. Deduct credit — only after all validation + cache check + lock
+  const hasCredits = await deductCredit(userId);
+  if (!hasCredits) {
+    await releaseIdempotencyLock(lockKey);
+    return new Response(JSON.stringify({ error: "No credits remaining" }), {
+      status: 402, headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // 7. Run AI (streaming)
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
-      controller.enqueue(
-        encoder.encode(`data: ${JSON.stringify({ meta: { cached: !!cached, key: normalizedKey } })}\n\n`)
-      );
-
-      if (cached) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
-        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-        controller.close();
-        return;
-      }
-
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: false, key: normalizedKey } })}\n\n`));
       try {
         let full = "";
         const s = client.messages.stream({
@@ -181,7 +239,7 @@ export async function POST(req: NextRequest) {
           max_tokens: 24000,
           thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM,
-          messages: [{ role: "user", content: PROMPT(idea, budget, techLevel, platform ?? "web") }],
+          messages: [{ role: "user", content: PROMPT(idea, budget as string, techLevel as string, (platform ?? "web") as string) }],
         });
         for await (const event of s) {
           if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
@@ -191,12 +249,13 @@ export async function POST(req: NextRequest) {
         }
         if (full) setCached(normalizedKey, full);
         if (full && userId) {
-          try { await saveReport(userId, "stack-advisor", idea, full); } catch(e) { console.error("saveReport stack:", e); }
+          saveReport(userId, "stack-advisor", idea, full).catch(e => console.error("saveReport stack:", e));
         }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-        controller.close();
       } catch (err) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" })}\n\n`));
+      } finally {
+        await releaseIdempotencyLock(lockKey);
         controller.close();
       }
     },
