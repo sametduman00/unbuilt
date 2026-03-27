@@ -9,6 +9,7 @@ import { deductCredit } from "@/app/lib/credits";
 import { saveReport } from "@/app/lib/reports";
 import { validateAnalyzeBody, checkPayloadSize, errorResponse, MAX_PAYLOAD_BYTES } from "@/app/lib/validate";
 import { checkDailyCreditQuota, incrementDailyCredits } from "@/app/lib/abuse";
+import { incrementAlert } from "@/app/lib/alerts";
 
 // Strip prompt-injection patterns from user-supplied idea before it reaches the model
 function sanitizeIdea(raw: string): string {
@@ -615,11 +616,14 @@ export async function POST(req: NextRequest) {
     return new Response(JSON.stringify({ error: "No credits remaining" }), { status: 402, headers: { "Content-Type": "application/json" } });
   }
 
-  // 7. Stream AI response
+  incrementAlert("credits_burned", 3600).catch(() => {});
+
+    // 7. Stream AI response
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: false, key: normalizedKey } })}\n\n`));
+      incrementAlert("ai_request", 300).catch(() => {});
       try {
         const [youtubeContext, appStoreContext, gplayContext, serperContext, trendsContext, segmentsContext, customerContext, gtmContext, reviewsContext, financialContext, fundabilityContext, redditContext, twitterContext] = await Promise.all([
           fetchYouTubeContext(idea), fetchAppStoreContext(idea), fetchGPlayContext(idea),
@@ -645,7 +649,8 @@ export async function POST(req: NextRequest) {
         }
         if (full) {
           setCached(normalizedKey, full);
-          await storeResult(resultKey, full, 3600); // store 1hr — retries/replays free
+          await storeResult(resultKey, full, 3600); // store 1hr
+          incrementDailyCredits(userId).catch(() => {}); — retries/replays free
           incrementDailyCredits(userId).catch(() => {});
           incrementDailyCredits(userId).catch(() => {});
           incrementDailyCredits(userId).catch(() => {});
@@ -671,6 +676,7 @@ export async function POST(req: NextRequest) {
         }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
       } catch (err) {
+        incrementAlert("ai_error", 300).catch(() => {});
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis failed. Please try again." })}\n\n`));
       } finally {
         await releaseIdempotencyLock(lockKey);
