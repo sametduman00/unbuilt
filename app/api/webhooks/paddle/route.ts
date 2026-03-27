@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 
     const credits = PACKAGES[packageSlug] ?? 0;
     if (credits <= 0) {
-      console.error("[Paddle] Unknown package_slug:", packageSlug);
+      console.error("[Paddle] Unknown package_slug received.");
       return NextResponse.json({ ok: true });
     }
 
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
         .maybeSingle();
 
       if (existing) {
-        console.log("[Paddle] Duplicate transaction, skipping:", paddleOrderId);
+        console.log("[Paddle] Duplicate transaction, skipping.");
         return NextResponse.json({ ok: true });
       }
     }
@@ -96,11 +96,11 @@ export async function POST(req: NextRequest) {
     if (insertError) {
       // Unique constraint violation = race condition duplicate → skip
       if (insertError.code === "23505") {
-        console.log("[Paddle] Race-condition duplicate, skipping:", paddleOrderId);
+        console.log("[Paddle] Race-condition duplicate, skipping.");
         return NextResponse.json({ ok: true });
       }
       // Other DB error — return 500 so Paddle retries (credits NOT added yet = safe)
-      console.error("[Paddle] DB insert error:", insertError);
+      console.error("[Paddle] DB insert error code:", insertError.code ?? "unknown");
       return NextResponse.json({ error: "DB error" }, { status: 500 });
     }
 
