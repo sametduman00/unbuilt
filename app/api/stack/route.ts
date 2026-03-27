@@ -163,23 +163,30 @@ async function releaseIdempotencyLock(key: string): Promise<void> {
   } catch {}
 }
 
+async function storeResult(key, value, ttlSec) {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return;
+  try { await fetch(`${url}/set/${encodeURIComponent(key)}/${encodeURIComponent(value)}/EX/${ttlSec}`, { headers: { Authorization: `Bearer ${token}` } }); } catch {}
+}
+async function getStoredResult(key) {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  try {
+    const res = await fetch(`${url}/get/${encodeURIComponent(key)}`, { headers: { Authorization: `Bearer ${token}` } });
+    return (await res.json()).result ?? null;
+  } catch { return null; }
+}
 export async function POST(req: NextRequest) {
-  // 1. Auth
   const { userId } = await auth();
-  if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), {
-    status: 401, headers: { "Content-Type": "application/json" },
-  });
+  if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
 
-  // 2. Rate limit
   const rl = rateLimit(userId, 10, 600000);
-  if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests. Please slow down." }), {
-    status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" },
-  });
+  if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests." }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" } });
 
-  // 3. Parse + validate body BEFORE touching credits
   let body: { idea?: unknown; budget?: unknown; techLevel?: unknown; platform?: unknown };
-  try { body = await req.json(); }
-  catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
+  try { body = await req.json(); } catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
   const { idea, budget, techLevel, platform } = body;
   if (!idea || typeof idea !== "string" || idea.trim().length < 3)
     return Response.json({ error: "Please describe what you want to build (min 3 chars)." }, { status: 400 });
@@ -188,46 +195,46 @@ export async function POST(req: NextRequest) {
   if (!budget || !techLevel)
     return Response.json({ error: "Please select a budget and technical level." }, { status: 400 });
 
-  // 4. Normalize + check cache — NO credit deduction for cached responses
   const normalizedIdea = await normalizeQuery(idea);
   const normalizedKey = `${normalizedIdea}::${budget}::${techLevel}::${platform ?? "web"}`;
+  const resultKey = `result:stack:${userId}:${normalizedKey}`;
+
+  // In-memory cache → free
   const cached = getCached(normalizedKey, TTL_MS.stack);
   if (cached) {
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      start(controller) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: true, key: normalizedKey } })}\n\n`));
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
-        if (userId) saveReport(userId, "stack-advisor", idea, cached).catch(console.error);
-        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-        controller.close();
-      },
-    });
-    return new Response(stream, {
-      headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" },
-    });
+    const enc = new TextEncoder();
+    return new Response(new ReadableStream({ start(c) {
+      c.enqueue(enc.encode(`data: ${JSON.stringify({ meta: { cached: true, key: normalizedKey } })}\n\n`));
+      c.enqueue(enc.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
+      if (userId) saveReport(userId, "stack-advisor", idea, cached).catch(console.error);
+      c.enqueue(enc.encode("data: [DONE]\n\n")); c.close();
+    }}), { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
   }
 
-  // 5. Idempotency lock — prevents double-click / concurrent duplicate
+  // Redis stored result → retry free (1hr)
+  const storedResult = await getStoredResult(resultKey);
+  if (storedResult) {
+    const enc = new TextEncoder();
+    return new Response(new ReadableStream({ start(c) {
+      c.enqueue(enc.encode(`data: ${JSON.stringify({ meta: { cached: true, replayed: true, key: normalizedKey } })}\n\n`));
+      c.enqueue(enc.encode(`data: ${JSON.stringify({ text: storedResult })}\n\n`));
+      if (userId) saveReport(userId, "stack-advisor", idea, storedResult).catch(console.error);
+      c.enqueue(enc.encode("data: [DONE]\n\n")); c.close();
+    }}), { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
+  }
+
+  // Atomic lock — blocks double-click / concurrent duplicate
   const lockKey = `idem:stack:${userId}:${normalizedKey}`;
   const locked = await acquireIdempotencyLock(lockKey, 600);
-  if (!locked) {
-    return new Response(
-      JSON.stringify({ error: "This stack analysis is already in progress. Please wait." }),
-      { status: 409, headers: { "Content-Type": "application/json" } }
-    );
-  }
+  if (!locked) return new Response(JSON.stringify({ error: "This stack analysis is already in progress. Please wait." }), { status: 409, headers: { "Content-Type": "application/json" } });
 
-  // 6. Deduct credit — only after all validation + cache check + lock
+  // Deduct credit only after all checks
   const hasCredits = await deductCredit(userId);
   if (!hasCredits) {
     await releaseIdempotencyLock(lockKey);
-    return new Response(JSON.stringify({ error: "No credits remaining" }), {
-      status: 402, headers: { "Content-Type": "application/json" },
-    });
+    return new Response(JSON.stringify({ error: "No credits remaining" }), { status: 402, headers: { "Content-Type": "application/json" } });
   }
 
-  // 7. Run AI (streaming)
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
@@ -235,8 +242,7 @@ export async function POST(req: NextRequest) {
       try {
         let full = "";
         const s = client.messages.stream({
-          model: "claude-opus-4-6",
-          max_tokens: 24000,
+          model: "claude-opus-4-6", max_tokens: 24000,
           thinking: { type: "enabled", budget_tokens: 10000 },
           system: SYSTEM,
           messages: [{ role: "user", content: PROMPT(idea, budget as string, techLevel as string, (platform ?? "web") as string) }],
@@ -247,10 +253,11 @@ export async function POST(req: NextRequest) {
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`));
           }
         }
-        if (full) setCached(normalizedKey, full);
-        if (full && userId) {
-          saveReport(userId, "stack-advisor", idea, full).catch(e => console.error("saveReport stack:", e));
+        if (full) {
+          setCached(normalizedKey, full);
+          await storeResult(resultKey, full, 3600);
         }
+        if (full && userId) saveReport(userId, "stack-advisor", idea, full).catch(e => console.error("saveReport:", e));
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
       } catch (err) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" })}\n\n`));
@@ -260,8 +267,5 @@ export async function POST(req: NextRequest) {
       }
     },
   });
-
-  return new Response(stream, {
-    headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" },
-  });
+  return new Response(stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
 }
