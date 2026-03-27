@@ -479,32 +479,7 @@ RULES â follow exactly:
 - CRITICAL: If live data is sparse for a field, write what you found and flag uncertainty. Never fabricate specifics.`;
 
 // ââ Main POST handler ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// ── Redis idempotency helpers ───────────────────────────────────────────────
-// SET NX EX: atomic — only succeeds if key doesn't exist (no TOCTOU race)
-async function acquireIdempotencyLock(key: string, ttlSec: number): Promise<boolean> {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return true; // no Redis = allow (degrade gracefully)
-  try {
-    const res = await fetch(
-      `${url}/set/${encodeURIComponent(key)}/1/NX/EX/${ttlSec}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    return (await res.json()).result === "OK";
-  } catch { return true; }
-}
-
-async function releaseIdempotencyLock(key: string): Promise<void> {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return;
-  try {
-    await fetch(`${url}/del/${encodeURIComponent(key)}`,
-      { headers: { Authorization: `Bearer ${token}` } });
-  } catch {}
-}
-
-// Store final result so retries within TTL get free cached response
+// ── Idempotency helpers (Redis SET NX EX = atomic, no TOCTOU) ──────────────
 async function storeResult(key: string, value: string, ttlSec: number): Promise<void> {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
@@ -514,7 +489,6 @@ async function storeResult(key: string, value: string, ttlSec: number): Promise<
       { headers: { Authorization: `Bearer ${token}` } });
   } catch {}
 }
-
 async function getStoredResult(key: string): Promise<string | null> {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
@@ -522,12 +496,9 @@ async function getStoredResult(key: string): Promise<string | null> {
   try {
     const res = await fetch(`${url}/get/${encodeURIComponent(key)}`,
       { headers: { Authorization: `Bearer ${token}` } });
-    const data = await res.json();
-    return data.result ?? null;
+    return (await res.json()).result ?? null;
   } catch { return null; }
 }
-
-// ── Redis idempotency helpers ───────────────────────────────────────────────
 async function acquireIdempotencyLock(key: string, ttlSec: number): Promise<boolean> {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
@@ -543,31 +514,31 @@ async function releaseIdempotencyLock(key: string): Promise<void> {
   if (!url || !token) return;
   try { await fetch(`${url}/del/${encodeURIComponent(key)}`, { headers: { Authorization: `Bearer ${token}` } }); } catch {}
 }
-async function storeResult(key: string, value: string, ttlSec: number): Promise<void> {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return;
-  try { await fetch(`${url}/set/${encodeURIComponent(key)}/${encodeURIComponent(value)}/EX/${ttlSec}`, { headers: { Authorization: `Bearer ${token}` } }); } catch {}
-}
-async function getStoredResult(key: string): Promise<string | null> {
+async function getOrStoreResult(key: string, value?: string, ttlSec?: number): Promise<string | null> {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return null;
   try {
+    if (value !== undefined) {
+      await fetch(`${url}/set/${encodeURIComponent(key)}/${encodeURIComponent(value)}/EX/${ttlSec ?? 3600}`, { headers: { Authorization: `Bearer ${token}` } });
+      return value;
+    }
     const res = await fetch(`${url}/get/${encodeURIComponent(key)}`, { headers: { Authorization: `Bearer ${token}` } });
     return (await res.json()).result ?? null;
   } catch { return null; }
 }
 
-// ── Main POST handler ────────────────────────────────────────────────────────
+// ── Main POST handler ─────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
+  // 1. Auth
   const { userId } = await auth();
   if (!userId) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
 
+  // 2. Rate limit
   const rl = rateLimit(userId, 10, 600000);
-  if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests. Please slow down." }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" } });
+  if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests." }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" } });
 
-  // Parse + validate BEFORE credits
+  // 3. Parse + validate BEFORE any credit deduction
   let body: { idea?: unknown; tool?: unknown };
   try { body = await req.json(); } catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
   const { idea, tool: toolType } = body;
@@ -577,86 +548,118 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "Idea is too long (max 500 characters)." }, { status: 400 });
 
   const normalizedKey = await normalizeQuery(idea);
-  const encoder = new TextEncoder();
 
-  // In-memory cache → free, no credit deduction
+  // 4a. In-memory cache → free, no credit
   const cached = getCached(normalizedKey, TTL_MS.analyze);
   if (cached) {
+    const enc = new TextEncoder();
     return new Response(new ReadableStream({ start(c) {
-      c.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: true, key: normalizedKey } })}\n\n`));
-      c.enqueue(encoder.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
+      c.enqueue(enc.encode(`data: ${JSON.stringify({ meta: { cached: true, key: normalizedKey } })}\n\n`));
+      c.enqueue(enc.encode(`data: ${JSON.stringify({ text: cached })}\n\n`));
       if (userId && (toolType === "gap-analysis" || toolType === "stack-advisor"))
         saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, cached).catch(console.error);
-      c.enqueue(encoder.encode("data: [DONE]\n\n")); c.close();
+      c.enqueue(enc.encode("data: [DONE]\n\n")); c.close();
     }}), { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
   }
 
-  // Redis stored result → retry protection (1hr), no credit deduction
+  // 4b. Redis result store → retry gets same result for free (1hr window)
   const resultKey = `result:analyze:${userId}:${normalizedKey}`;
-  const storedResult = await getStoredResult(resultKey);
+  const storedResult = await getOrStoreResult(resultKey);
   if (storedResult) {
+    const enc = new TextEncoder();
     return new Response(new ReadableStream({ start(c) {
-      c.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: true, replayed: true, key: normalizedKey } })}\n\n`));
-      c.enqueue(encoder.encode(`data: ${JSON.stringify({ text: storedResult })}\n\n`));
+      c.enqueue(enc.encode(`data: ${JSON.stringify({ meta: { cached: true, replayed: true, key: normalizedKey } })}\n\n`));
+      c.enqueue(enc.encode(`data: ${JSON.stringify({ text: storedResult })}\n\n`));
       if (userId && (toolType === "gap-analysis" || toolType === "stack-advisor"))
         saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, storedResult).catch(console.error);
-      c.enqueue(encoder.encode("data: [DONE]\n\n")); c.close();
+      c.enqueue(enc.encode("data: [DONE]\n\n")); c.close();
     }}), { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
   }
 
-  // Idempotency lock — concurrent duplicate → 409
+  // 5. Atomic lock → concurrent duplicate → 409
   const lockKey = `idem:analyze:${userId}:${normalizedKey}`;
   const locked = await acquireIdempotencyLock(lockKey, 600);
-  if (!locked) return new Response(JSON.stringify({ error: "This analysis is already in progress. Please wait." }), { status: 409, headers: { "Content-Type": "application/json" } });
+  if (!locked) return new Response(JSON.stringify({ error: "Analysis already in progress. Please wait." }), { status: 409, headers: { "Content-Type": "application/json" } });
 
-  // Deduct credit ONLY after all checks pass
+  // 6. Deduct credit — only after all checks pass
   const hasCredits = await deductCredit(userId);
   if (!hasCredits) {
     await releaseIdempotencyLock(lockKey);
     return new Response(JSON.stringify({ error: "No credits remaining" }), { status: 402, headers: { "Content-Type": "application/json" } });
   }
 
+  // 7. Stream AI response
+  const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: false, key: normalizedKey } })}\n\n`));
       try {
-        const [youtubeContext,appStoreContext,gplayContext,serperContext,trendsContext,segmentsContext,customerContext,gtmContext,reviewsContext,financialContext,fundabilityContext,redditContext,twitterContext] = await Promise.all([
-          fetchYouTubeContext(idea),fetchAppStoreContext(idea),fetchGPlayContext(idea),fetchSerperContext(idea),fetchTrendsContext(idea),fetchSegmentsContext(idea),fetchCustomerBehaviorContext(idea),fetchGTMContext(idea),fetchReviewsContext(idea),fetchFinancialContext(idea),fetchFundabilityContext(idea),fetchRedditContext(idea),fetchTwitterContext(idea),
+        const [
+          youtubeContext, appStoreContext, gplayContext, serperContext,
+          trendsContext, segmentsContext, customerContext, gtmContext,
+          reviewsContext, financialContext, fundabilityContext, redditContext, twitterContext,
+        ] = await Promise.all([
+          fetchYouTubeContext(idea), fetchAppStoreContext(idea), fetchGPlayContext(idea),
+          fetchSerperContext(idea), fetchTrendsContext(idea), fetchSegmentsContext(idea),
+          fetchCustomerBehaviorContext(idea), fetchGTMContext(idea), fetchReviewsContext(idea),
+          fetchFinancialContext(idea), fetchFundabilityContext(idea),
+          fetchRedditContext(idea), fetchTwitterContext(idea),
         ]);
-        const combinedAppContext = [appStoreContext,gplayContext].filter(Boolean).join("");
-        const socialContext = [redditContext,twitterContext].filter(Boolean).join("");
+        const combinedAppContext = [appStoreContext, gplayContext].filter(Boolean).join("");
+        const socialContext = [redditContext, twitterContext].filter(Boolean).join("");
+
         let full = "";
-        const anthropicStream = client.messages.stream({ model:"claude-opus-4-6",max_tokens:24000,thinking:{type:"enabled",budget_tokens:10000},system:SYSTEM_PROMPT,messages:[{role:"user",content:USER_PROMPT(idea,youtubeContext,combinedAppContext,serperContext,trendsContext,segmentsContext,customerContext,gtmContext,reviewsContext,financialContext,fundabilityContext,socialContext)}] });
+        const anthropicStream = client.messages.stream({
+          model: "claude-opus-4-6", max_tokens: 24000,
+          thinking: { type: "enabled", budget_tokens: 10000 },
+          system: SYSTEM_PROMPT,
+          messages: [{ role: "user", content: USER_PROMPT(idea, youtubeContext, combinedAppContext, serperContext, trendsContext, segmentsContext, customerContext, gtmContext, reviewsContext, financialContext, fundabilityContext, socialContext) }],
+        });
         for await (const event of anthropicStream) {
-          if (event.type==="content_block_delta"&&event.delta.type==="text_delta") { full+=event.delta.text; controller.enqueue(encoder.encode(`data: ${JSON.stringify({text:event.delta.text})}\n\n`)); }
+          if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+            full += event.delta.text;
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`));
+          }
         }
+
         if (full) {
           setCached(normalizedKey, full);
-          await storeResult(resultKey, full, 3600);
+          await getOrStoreResult(resultKey, full, 3600); // store for 1hr — retries free
         }
-        if (full && userId && (toolType==="gap-analysis"||toolType==="stack-advisor")) {
+
+        if (full && userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
           try {
             let jsonToSave = full;
             try {
               const fenceMatch = full.match(/```json\s*([\s\S]*?)```/);
               if (fenceMatch) {
                 const parsed = JSON.parse(fenceMatch[1]);
-                const [itunesRaw] = await Promise.allSettled([fetch(`https://itunes.apple.com/search?${new URLSearchParams({term:idea,entity:"software",limit:"8",country:"us"})}`,{signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(d=>d.results??[]).catch(()=>[])]);
-                if (itunesRaw.status==="fulfilled"&&itunesRaw.value.length>0) parsed.itunesApps=itunesRaw.value.slice(0,8).map((a:Record<string,unknown>)=>({trackName:a.trackName,artworkUrl60:a.artworkUrl60,averageUserRating:a.averageUserRating,userRatingCount:a.userRatingCount,description:String(a.description||"").slice(0,200),formattedPrice:a.formattedPrice,sellerName:a.sellerName}));
-                jsonToSave=full.replace(fenceMatch[1],JSON.stringify(parsed));
+                const [itunesRaw] = await Promise.allSettled([
+                  fetch(`https://itunes.apple.com/search?${new URLSearchParams({ term: idea, entity: "software", limit: "8", country: "us" })}`, { signal: AbortSignal.timeout(5000) })
+                    .then(r => r.json()).then(d => d.results ?? []).catch(() => []),
+                ]);
+                if (itunesRaw.status === "fulfilled" && itunesRaw.value.length > 0) {
+                  parsed.itunesApps = itunesRaw.value.slice(0, 8).map((a: Record<string, unknown>) => ({
+                    trackName: a.trackName, artworkUrl60: a.artworkUrl60,
+                    averageUserRating: a.averageUserRating, userRatingCount: a.userRatingCount,
+                    description: String(a.description || "").slice(0, 200),
+                    formattedPrice: a.formattedPrice, sellerName: a.sellerName,
+                  }));
+                }
+                jsonToSave = full.replace(fenceMatch[1], JSON.stringify(parsed));
               }
             } catch { /* keep original */ }
-            await saveReport(userId,toolType as "gap-analysis"|"stack-advisor",idea,jsonToSave);
-          } catch(e) { console.error("saveReport:",e); }
+            await saveReport(userId, toolType as "gap-analysis" | "stack-advisor", idea, jsonToSave);
+          } catch (e) { console.error("saveReport:", e); }
         }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-      } catch(err) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({error:err instanceof Error?err.message:"Unknown error"})}\n\n`));
+      } catch (err) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" })}\n\n`));
       } finally {
         await releaseIdempotencyLock(lockKey);
         controller.close();
       }
-    }
+    },
   });
   return new Response(stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
 }
