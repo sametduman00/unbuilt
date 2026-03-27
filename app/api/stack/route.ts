@@ -205,7 +205,7 @@ export async function POST(req: NextRequest) {
   // Strict schema validation
   let rawBody: unknown;
   try { rawBody = await req.json(); } catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
-  delete (body as Record<string, unknown>).tool;
+  if (rawBody && typeof rawBody === "object") delete (rawBody as Record<string, unknown>).tool;
   const validation = validateStackBody(rawBody);
   if (!validation.ok) return errorResponse(validation);
   const { idea, budget, techLevel, platform } = validation.data;
