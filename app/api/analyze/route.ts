@@ -8,6 +8,7 @@ import { auth } from "@clerk/nextjs/server";
 import { deductCredit } from "@/app/lib/credits";
 import { saveReport } from "@/app/lib/reports";
 import { validateAnalyzeBody, checkPayloadSize, errorResponse, MAX_PAYLOAD_BYTES } from "@/app/lib/validate";
+import { checkDailyCreditQuota, incrementDailyCredits } from "@/app/lib/abuse";
 
 // Strip prompt-injection patterns from user-supplied idea before it reaches the model
 function sanitizeIdea(raw: string): string {
