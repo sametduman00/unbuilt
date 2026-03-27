@@ -44,13 +44,11 @@ async function serperQuery(q: string, apiKey: string, num = 6): Promise<string> 
     if (!res.ok) return "";
     const data = await res.json();
     const lines = (data.organic ?? []).slice(0, num).map(function(r: {title:string;link:string;snippet?:string}) {
-      return '- "' + r.title + '" (' + r.link + '): ' + (r.snippet || '').slice(0, 150).replace(/
-/g, ' ');
+      const snippet = (r.snippet || "").slice(0, 150).split("\n").join(" ");
+      return '- "' + r.title + '" (' + r.link + '): ' + snippet;
     });
     const related = (data.relatedSearches ?? []).slice(0, 3).map(function(r: {query:string}) { return r.query; }).join(", ");
-    return lines.join("
-") + (related ? "
-Related: " + related : "");
+    return lines.join("\n") + (related ? "\nRelated: " + related : "");
   } catch {
     return "";
   }
