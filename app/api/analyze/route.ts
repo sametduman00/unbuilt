@@ -1,4 +1,13 @@
-import { rateLimit } from "@/app/api/_ratelimit";
+  // Daily per-user quota — max 20 credits/day, prevents multi-account farming
+  const quotaCheck = await checkDailyCreditQuota(userId);
+  if (!quotaCheck.allowed) {
+    await releaseIdempotencyLock(lockKey);
+    return new Response(JSON.stringify({ error: "Daily analysis limit reached. Upgrade for more." }), {
+      status: 429, headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  import { rateLimit } from "@/app/api/_ratelimit";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest } from "next/server";
 import gplay from "google-play-scraper";
@@ -636,6 +645,8 @@ export async function POST(req: NextRequest) {
         if (full) {
           setCached(normalizedKey, full);
           await storeResult(resultKey, full, 3600); // store 1hr — retries/replays free
+          incrementDailyCredits(userId).catch(() => {});
+          incrementDailyCredits(userId).catch(() => {});
         }
         if (full && userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
           try {
