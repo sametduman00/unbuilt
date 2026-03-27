@@ -1,13 +1,4 @@
-  // Daily per-user quota — max 20 credits/day, prevents multi-account farming
-  const quotaCheck = await checkDailyCreditQuota(userId);
-  if (!quotaCheck.allowed) {
-    await releaseIdempotencyLock(lockKey);
-    return new Response(JSON.stringify({ error: "Daily analysis limit reached. Upgrade for more." }), {
-      status: 429, headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  import { rateLimit } from "@/app/api/_ratelimit";
+import { rateLimit } from "@/app/api/_ratelimit";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest } from "next/server";
 import gplay from "google-play-scraper";
@@ -607,7 +598,16 @@ export async function POST(req: NextRequest) {
   const locked = await acquireIdempotencyLock(lockKey, 600);
   if (!locked) return new Response(JSON.stringify({ error: "This analysis is already in progress. Please wait." }), { status: 409, headers: { "Content-Type": "application/json" } });
 
-  // 6. Deduct credit — only after all checks pass
+  // 6a. Daily per-user quota — max 20/day, prevents multi-account farming
+  const quotaCheck = await checkDailyCreditQuota(userId);
+  if (!quotaCheck.allowed) {
+    await releaseIdempotencyLock(lockKey);
+    return new Response(JSON.stringify({ error: "Daily analysis limit reached. Upgrade for more." }), {
+      status: 429, headers: { "Content-Type": "application/json" },
+    });
+  }
+
+    // 6. Deduct credit — only after all checks pass
   const hasCredits = await deductCredit(userId);
   if (!hasCredits) {
     await releaseIdempotencyLock(lockKey);
@@ -645,6 +645,7 @@ export async function POST(req: NextRequest) {
         if (full) {
           setCached(normalizedKey, full);
           await storeResult(resultKey, full, 3600); // store 1hr — retries/replays free
+          incrementDailyCredits(userId).catch(() => {});
           incrementDailyCredits(userId).catch(() => {});
           incrementDailyCredits(userId).catch(() => {});
         }
