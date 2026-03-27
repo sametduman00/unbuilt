@@ -2,9 +2,13 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/app/lib/supabase";
 import { validatePulsePatchBody, checkPayloadSize, errorResponse } from "@/app/lib/validate";
+import { checkPublicIPRateLimit, getClientIP } from "@/app/lib/abuse";
 
 // GET — public, no auth needed (Pulse feed is global/public data)
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const ip = getClientIP(req);
+  const ipOk = await checkPublicIPRateLimit(ip, 10, 60);
+  if (!ipOk.allowed) return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   try {
     const sb = getSupabase();
     const { data, error } = await sb
