@@ -12,8 +12,7 @@
     "app/api/cockpit/alerts/route.ts":           { "maxDuration": 30  }
   },
   "crons": [
-    { "path": "/api/pulse/cron",      "schedule": "0 6 * * *"    },
-    { "path": "/api/cockpit/alerts",  "schedule": "*/5 * * * *"  }
+    { "path": "/api/pulse/cron",     "schedule": "0 6 * * *" },
+    { "path": "/api/cockpit/alerts", "schedule": "0 7 * * *" }
   ]
 }
-
