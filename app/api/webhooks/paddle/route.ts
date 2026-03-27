@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addCredits } from "@/app/lib/credits";
+import { incrementAlert } from "@/app/api/cockpit/alerts/route";
 import { getSupabase } from "@/app/lib/supabase";
 
 const PACKAGES: Record<string, number> = { starter: 5, popular: 10, pro: 25 };
@@ -101,6 +102,8 @@ export async function POST(req: NextRequest) {
       }
       // Other DB error — return 500 so Paddle retries (credits NOT added yet = safe)
       console.error("[Paddle] DB insert error code:", insertError.code ?? "unknown");
+      incrementAlert("webhook_fail", 3600).catch(() => {});
+      incrementAlert("webhook_fail", 3600).catch(() => {});
       return NextResponse.json({ error: "DB error" }, { status: 500 });
     }
 
