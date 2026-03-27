@@ -21,11 +21,11 @@ export async function POST(req: NextRequest) {
   const body = await req.text();
 
   if (!secret) {
-    console.error("[Paddle] PADDLE_WEBHOOK_SECRET not set - rejecting request");
+    console.error("[Paddle] PADDLE_WEBHOOK_SECRET not set");
     return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
   }
 
-  // ── Signature verification ──────────────────────────────────────────────────
+  // ── Signature verification ───────────────────────────────────────────────────
   const ts = signature.match(/ts=(\d+)/)?.[1];
   const h1 = signature.match(/h1=([a-f0-9]+)/)?.[1];
   if (!ts || !h1) return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
@@ -40,20 +40,20 @@ export async function POST(req: NextRequest) {
     .map(b => b.toString(16).padStart(2, "0")).join("");
   if (expected !== h1) return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
 
-  // ── Event processing ────────────────────────────────────────────────────────
+  // ── Event processing ─────────────────────────────────────────────────────────
   const event = JSON.parse(body);
 
   if (event.event_type === "transaction.completed") {
-    const userId      = event.data?.custom_data?.user_id;
-    const packageSlug = event.data?.custom_data?.package_slug;
-    const paddleOrderId = event.data?.id as string | undefined; // Paddle transaction ID
-    const amount      = event.data?.details?.totals?.total;
-    const currency    = event.data?.currency_code ?? "USD";
-    const email       = event.data?.customer?.email ?? "unknown";
+    const userId        = event.data?.custom_data?.user_id as string | undefined;
+    const packageSlug   = event.data?.custom_data?.package_slug as string | undefined;
+    const paddleOrderId = event.data?.id as string | undefined;
+    const amount        = event.data?.details?.totals?.total as string | undefined;
+    const currency      = event.data?.currency_code ?? "USD";
+    const email         = event.data?.customer?.email ?? "unknown";
 
     if (!userId || !packageSlug) {
-      console.error("[Paddle] Missing user_id or package_slug in custom_data");
-      return NextResponse.json({ ok: true }); // ack so Paddle doesn't retry
+      console.error("[Paddle] Missing user_id or package_slug");
+      return NextResponse.json({ ok: true }); // ack so Paddle doesn't retry forever
     }
 
     const credits = PACKAGES[packageSlug] ?? 0;
@@ -62,36 +62,49 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // ── IDEMPOTENCY: Insert order with paddle_order_id UNIQUE constraint ───────
-    // ON CONFLICT DO NOTHING = if this transaction was already processed, skip.
-    // This is the atomic guard against replay attacks and duplicate webhooks.
     const supabase = getSupabase();
-    const amountUsd = amount ? parseInt(amount) / 100 : null;
 
-    const { error: insertError, count } = await supabase
-      .from("orders")
-      .insert({
-        user_id:       userId,
-        paddle_order_id: paddleOrderId ?? null,
-        package_slug:  packageSlug,
-        credits_added: credits,
-        amount_usd:    amountUsd,
-        status:        "completed",
-      })
-      .select("id", { count: "exact", head: true });
+    // ── IDEMPOTENCY: check if this paddle_order_id was already processed ────────
+    // paddle_order_id has a UNIQUE constraint in the orders table.
+    // Checking first then inserting is safe here because:
+    // - Paddle sends each event_id once (and retries are rare)
+    // - The UNIQUE constraint is the true atomic guard against duplicates
+    if (paddleOrderId) {
+      const { data: existing } = await supabase
+        .from("orders")
+        .select("id")
+        .eq("paddle_order_id", paddleOrderId)
+        .maybeSingle();
 
-    if (insertError) {
-      // Unique constraint violation = duplicate event → skip credit grant
-      if (insertError.code === "23505") {
+      if (existing) {
         console.log("[Paddle] Duplicate transaction, skipping:", paddleOrderId);
         return NextResponse.json({ ok: true });
       }
-      // Other DB error — return 500 so Paddle retries (safe: we haven't added credits yet)
+    }
+
+    // ── Insert order record ──────────────────────────────────────────────────────
+    const amountUsd = amount ? parseInt(amount) / 100 : null;
+    const { error: insertError } = await supabase.from("orders").insert({
+      user_id:         userId,
+      paddle_order_id: paddleOrderId ?? null,
+      package_slug:    packageSlug,
+      credits_added:   credits,
+      amount_usd:      amountUsd,
+      status:          "completed",
+    });
+
+    if (insertError) {
+      // Unique constraint violation = race condition duplicate → skip
+      if (insertError.code === "23505") {
+        console.log("[Paddle] Race-condition duplicate, skipping:", paddleOrderId);
+        return NextResponse.json({ ok: true });
+      }
+      // Other DB error — return 500 so Paddle retries (credits NOT added yet = safe)
       console.error("[Paddle] DB insert error:", insertError);
       return NextResponse.json({ error: "DB error" }, { status: 500 });
     }
 
-    // ── Only add credits AFTER successful order insert ─────────────────────────
+    // ── Add credits AFTER successful order insert ─────────────────────────────
     await addCredits(userId, credits);
 
     const amountFormatted = amount
