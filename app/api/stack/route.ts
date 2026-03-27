@@ -163,13 +163,13 @@ async function releaseIdempotencyLock(key: string): Promise<void> {
   } catch {}
 }
 
-async function storeResult(key, value, ttlSec) {
+async function storeResult(key: string, value: string, ttlSec: number): Promise<void> {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return;
   try { await fetch(`${url}/set/${encodeURIComponent(key)}/${encodeURIComponent(value)}/EX/${ttlSec}`, { headers: { Authorization: `Bearer ${token}` } }); } catch {}
 }
-async function getStoredResult(key) {
+async function getStoredResult(key: string): Promise<string | null> {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return null;
