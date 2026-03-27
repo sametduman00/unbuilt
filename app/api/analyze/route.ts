@@ -536,9 +536,9 @@ export async function POST(req: NextRequest) {
 
   // 2. Rate limit
   const rl = rateLimit(userId, 10, 600000);
-  if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests." }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" } });
+  if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests. Please slow down." }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" } });
 
-  // 3. Parse + validate BEFORE any credit deduction
+  // 3. Parse + validate BEFORE any credit logic
   let body: { idea?: unknown; tool?: unknown };
   try { body = await req.json(); } catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
   const { idea, tool: toolType } = body;
@@ -548,8 +548,9 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "Idea is too long (max 500 characters)." }, { status: 400 });
 
   const normalizedKey = await normalizeQuery(idea);
+  const resultKey = `result:analyze:${userId}:${normalizedKey}`;
 
-  // 4a. In-memory cache → free, no credit
+  // 4a. In-memory cache hit — free, no credit deduction
   const cached = getCached(normalizedKey, TTL_MS.analyze);
   if (cached) {
     const enc = new TextEncoder();
@@ -562,9 +563,8 @@ export async function POST(req: NextRequest) {
     }}), { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
   }
 
-  // 4b. Redis result store → retry gets same result for free (1hr window)
-  const resultKey = `result:analyze:${userId}:${normalizedKey}`;
-  const storedResult = await getOrStoreResult(resultKey);
+  // 4b. Redis stored result — retry/replay within 1hr gets free response
+  const storedResult = await getStoredResult(resultKey);
   if (storedResult) {
     const enc = new TextEncoder();
     return new Response(new ReadableStream({ start(c) {
@@ -576,10 +576,10 @@ export async function POST(req: NextRequest) {
     }}), { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
   }
 
-  // 5. Atomic lock → concurrent duplicate → 409
+  // 5. Atomic lock — blocks concurrent duplicate / double-click
   const lockKey = `idem:analyze:${userId}:${normalizedKey}`;
   const locked = await acquireIdempotencyLock(lockKey, 600);
-  if (!locked) return new Response(JSON.stringify({ error: "Analysis already in progress. Please wait." }), { status: 409, headers: { "Content-Type": "application/json" } });
+  if (!locked) return new Response(JSON.stringify({ error: "This analysis is already in progress. Please wait." }), { status: 409, headers: { "Content-Type": "application/json" } });
 
   // 6. Deduct credit — only after all checks pass
   const hasCredits = await deductCredit(userId);
@@ -594,11 +594,7 @@ export async function POST(req: NextRequest) {
     async start(controller) {
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ meta: { cached: false, key: normalizedKey } })}\n\n`));
       try {
-        const [
-          youtubeContext, appStoreContext, gplayContext, serperContext,
-          trendsContext, segmentsContext, customerContext, gtmContext,
-          reviewsContext, financialContext, fundabilityContext, redditContext, twitterContext,
-        ] = await Promise.all([
+        const [youtubeContext, appStoreContext, gplayContext, serperContext, trendsContext, segmentsContext, customerContext, gtmContext, reviewsContext, financialContext, fundabilityContext, redditContext, twitterContext] = await Promise.all([
           fetchYouTubeContext(idea), fetchAppStoreContext(idea), fetchGPlayContext(idea),
           fetchSerperContext(idea), fetchTrendsContext(idea), fetchSegmentsContext(idea),
           fetchCustomerBehaviorContext(idea), fetchGTMContext(idea), fetchReviewsContext(idea),
@@ -607,7 +603,6 @@ export async function POST(req: NextRequest) {
         ]);
         const combinedAppContext = [appStoreContext, gplayContext].filter(Boolean).join("");
         const socialContext = [redditContext, twitterContext].filter(Boolean).join("");
-
         let full = "";
         const anthropicStream = client.messages.stream({
           model: "claude-opus-4-6", max_tokens: 24000,
@@ -621,12 +616,10 @@ export async function POST(req: NextRequest) {
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`));
           }
         }
-
         if (full) {
           setCached(normalizedKey, full);
-          await getOrStoreResult(resultKey, full, 3600); // store for 1hr — retries free
+          await storeResult(resultKey, full, 3600); // store 1hr — retries/replays free
         }
-
         if (full && userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
           try {
             let jsonToSave = full;
@@ -635,16 +628,10 @@ export async function POST(req: NextRequest) {
               if (fenceMatch) {
                 const parsed = JSON.parse(fenceMatch[1]);
                 const [itunesRaw] = await Promise.allSettled([
-                  fetch(`https://itunes.apple.com/search?${new URLSearchParams({ term: idea, entity: "software", limit: "8", country: "us" })}`, { signal: AbortSignal.timeout(5000) })
-                    .then(r => r.json()).then(d => d.results ?? []).catch(() => []),
+                  fetch(`https://itunes.apple.com/search?${new URLSearchParams({ term: idea, entity: "software", limit: "8", country: "us" })}`, { signal: AbortSignal.timeout(5000) }).then(r => r.json()).then(d => d.results ?? []).catch(() => []),
                 ]);
                 if (itunesRaw.status === "fulfilled" && itunesRaw.value.length > 0) {
-                  parsed.itunesApps = itunesRaw.value.slice(0, 8).map((a: Record<string, unknown>) => ({
-                    trackName: a.trackName, artworkUrl60: a.artworkUrl60,
-                    averageUserRating: a.averageUserRating, userRatingCount: a.userRatingCount,
-                    description: String(a.description || "").slice(0, 200),
-                    formattedPrice: a.formattedPrice, sellerName: a.sellerName,
-                  }));
+                  parsed.itunesApps = itunesRaw.value.slice(0, 8).map((a: Record<string, unknown>) => ({ trackName: a.trackName, artworkUrl60: a.artworkUrl60, averageUserRating: a.averageUserRating, userRatingCount: a.userRatingCount, description: String(a.description || "").slice(0, 200), formattedPrice: a.formattedPrice, sellerName: a.sellerName }));
                 }
                 jsonToSave = full.replace(fenceMatch[1], JSON.stringify(parsed));
               }
