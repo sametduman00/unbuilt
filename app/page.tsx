@@ -3822,7 +3822,7 @@ function HomeInner() {
                             </span>
                             <button
                               onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}}
-                              style={display:"inline-flex",alignItems:"center",gap:5,fontSize:"0.72rem",fontWeight:600,padding:"5px 14px",borderRadius:999,background:"rgba(99,102,241,0.1)",color:"rgb(79,82,221)",border:"1px solid rgba(99,102,241,0.22)",cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,transition:"opacity 0.12s"}}
+                              style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:"0.72rem",fontWeight:600,padding:"5px 14px",borderRadius:999,background:"rgba(99,102,241,0.1)",color:"rgb(79,82,221)",border:"1px solid rgba(99,102,241,0.22)",cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,transition:"opacity 0.12s"}}
                               onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
                               onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
                             >Dig my idea →</button>
