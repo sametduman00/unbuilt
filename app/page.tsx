@@ -3628,7 +3628,7 @@ function HomeInner() {
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" as const }}>
                       <button
                         onClick={() => router.push("/?tool=gap-analysis")}
-                        style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 16px", background: "#7c6fff", color: "#fff", borderRadius: 8, fontSize: "0.8rem", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", border: "none", letterSpacing: "-0.01em", transition: "opacity 0.12s" }}
+                        style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 18px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
                         onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"}
                         onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
                       >
@@ -3637,7 +3637,7 @@ function HomeInner() {
                       </button>
                       <button
                         onClick={() => router.push("/?tool=stack-advisor")}
-                        style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 16px", background: "#38bdf8", color: "#fff", borderRadius: 8, fontSize: "0.8rem", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", border: "none", letterSpacing: "-0.01em", transition: "opacity 0.12s" }}
+                        style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 18px", background: "rgba(16,185,129,0.1)", color: "rgb(5,150,105)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(16,185,129,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
                         onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
                       >
@@ -3742,7 +3742,7 @@ function HomeInner() {
                                       onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
                                       onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
                                     >
-                                      Dig my angle →
+                                      Dig my idea →
                                     </button>
                                   </div>
                                 </div>
@@ -3822,10 +3822,10 @@ function HomeInner() {
                             </span>
                             <button
                               onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}}
-                              style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:"0.7rem",fontWeight:700,padding:"5px 12px",borderRadius:6,background:"#7c6fff",color:"#fff",cursor:"pointer",border:"none",fontFamily:"inherit",letterSpacing:"-0.01em",whiteSpace:"nowrap",flexShrink:0,transition:"opacity 0.12s"}}
+                              style={display:"inline-flex",alignItems:"center",gap:5,fontSize:"0.72rem",fontWeight:600,padding:"5px 14px",borderRadius:999,background:"rgba(99,102,241,0.1)",color:"rgb(79,82,221)",border:"1px solid rgba(99,102,241,0.22)",cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,transition:"opacity 0.12s"}}
                               onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
                               onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
-                            >Dig my angle →</button>
+                            >Dig my idea →</button>
                           </div>
                         </div>
                                     ))}
