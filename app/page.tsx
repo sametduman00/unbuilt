@@ -3855,7 +3855,7 @@ function HomeInner() {
                         Don't build what<br/><em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>already exists.</em>
                       </h1>
                       <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 440, margin: "0 auto" }}>
-                        Describe your idea. We'll scan 70+ live sources — Reddit, App Store, X, competitors — and tell you exactly where the gap is.
+                        Describe your idea. We'll scan 70+ live sources and tell you exactly where the gap is.
                       </p>
                     </div>
                   )}
