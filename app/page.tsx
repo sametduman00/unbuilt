@@ -3738,7 +3738,7 @@ function HomeInner() {
                                     <span style={{ fontSize:"0.75rem", color:"var(--clr-text-3)", display:"flex", alignItems:"center", gap:4, flexWrap:"wrap" as const }}>{ctaText}</span>
                                     <button
                                       onClick={e => { e.preventDefault(); router.push("/?tool=gap-analysis"); }}
-                                      style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:"0.7rem", fontWeight:700, padding:"5px 12px", borderRadius:6, background:"#7c6fff", color:"#fff", cursor:"pointer", border:"none", fontFamily:"inherit", letterSpacing:"-0.01em", whiteSpace:"nowrap", flexShrink:0, transition:"opacity 0.12s" }}
+                                      style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "5px 12px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.72rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", whiteSpace: "nowrap", flexShrink: 0, transition: "opacity 0.12s" }}
                                       onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
                                       onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
                                     >
@@ -3822,7 +3822,7 @@ function HomeInner() {
                             </span>
                             <button
                               onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}}
-                              style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:"0.72rem",fontWeight:600,padding:"5px 14px",borderRadius:999,background:"rgba(99,102,241,0.1)",color:"rgb(79,82,221)",border:"1px solid rgba(99,102,241,0.22)",cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,transition:"opacity 0.12s"}}
+                              style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "5px 12px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.72rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", whiteSpace: "nowrap", flexShrink: 0, transition: "opacity 0.12s" }}
                               onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
                               onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
                             >Dig my idea →</button>
