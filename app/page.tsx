@@ -3846,15 +3846,15 @@ function HomeInner() {
                 <div ref={inputSectionRef}>
                   {/* Dig hero — clean */}
                   {selectedTool === "gap-analysis" && (
-                    <div style={{ textAlign: "center" as const, padding: "36px 24px 20px" }}>
+                    <div style={{ textAlign: "center" as const, padding: "20px 24px 10px" }}>
                       <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "0.6875rem", color: "var(--clr-text-3)", marginBottom: 14, letterSpacing: "0.03em" }}>
                         <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
                         live data, updated every hour
                       </div>
-                      <h1 style={{ fontSize: "3rem", fontWeight: 800, letterSpacing: "-0.05em", lineHeight: 1.05, color: "var(--clr-text)", marginBottom: 14 }}>
+                      <h1 style={{ fontSize: "3rem", fontWeight: 800, letterSpacing: "-0.05em", lineHeight: 1.05, color: "var(--clr-text)", marginBottom: 8 }}>
                         Don't build what<br/><em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>already exists.</em>
                       </h1>
-                      <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 440, margin: "0 auto" }}>
+                      <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, whiteSpace: "nowrap" }}>
                         Describe your idea. We'll scan 70+ live sources and tell you exactly where the gap is.
                       </p>
                     </div>
