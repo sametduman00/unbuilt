@@ -150,14 +150,18 @@ function AppSidebarInner() {
   return (
     <aside style={{ width: 220, minWidth: 220, background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)", display: "flex", flexDirection: "column", position: "fixed", top: 0, bottom: 0, left: 0, zIndex: 50 }}>
 
-      <div
-        onClick={() => handleToolClick("pulse")}
-        style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "18px 16px 16px", borderBottom: "1px solid var(--clr-border)", cursor: "pointer", flexShrink: 0 }}
-      >
-        <svg width="28" height="28" viewBox="0 0 19 19" fill="none">
-          <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2.2" strokeLinecap="round" />
+      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-start", gap: "10px", padding: "20px 20px 18px 20px", borderBottom: "1px solid var(--clr-border)", cursor: "pointer", flexShrink: 0 }}>
+        <svg width="24" height="24" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2"  y="2"  width="15" height="15" rx="3.5" fill="#222"/>
+          <rect x="21" y="2"  width="15" height="15" rx="3.5" fill="#777"/>
+          <rect x="2"  y="21" width="15" height="15" rx="3.5" fill="#777"/>
+          <rect x="21" y="21" width="15" height="15" rx="3.5" fill="#777"/>
+          <rect x="40" y="21" width="15" height="15" rx="3.5" fill="#777"/>
+          <rect x="2"  y="40" width="15" height="15" rx="3.5" fill="#222"/>
+          <rect x="21" y="40" width="15" height="15" rx="3.5" fill="#777"/>
+          <rect x="40" y="40" width="15" height="15" rx="3.5" fill="#222"/>
         </svg>
-        <span style={{ fontWeight: 700, fontSize: "1.15rem", color: "var(--clr-text)", letterSpacing: "-0.025em" }}>Unbuilt</span>
+        <span style={{ fontWeight: 500, fontSize: "22px", color: "var(--clr-text)", letterSpacing: "0.01em", lineHeight: 1, fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>unbuilt</span>
       </div>
 
       <div style={{ padding: "8px 10px 4px" }}>
