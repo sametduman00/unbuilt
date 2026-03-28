@@ -1031,10 +1031,12 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                     </button>
                   </div>
                 </div>
-                <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14 }}>
-                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#10b981", marginBottom:6 }}>Break-Even</div>
-                  <div style={{ fontSize:22, fontWeight:800, color:"#111827", marginBottom:6 }}>Month 1</div>
-                  <div style={{ fontSize:12, color:"#6b7280" }}>First customers cover your costs</div>
+                <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14, display:"flex", flexDirection:"column" as const, gap:6 }}>
+                  <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#10b981", marginBottom:2 }}>Break-Even</div>
+                  <div style={{ padding:"8px 10px", background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8 }}>
+                    <div style={{ fontSize:22, fontWeight:800, color:"#111827", marginBottom:4 }}>Month 1</div>
+                    <div style={{ fontSize:12, color:"#6b7280" }}>First customers cover your costs</div>
+                  </div>
                 </div>
                 <div style={{ background:"#f0fdfe", border:"1px solid #a5f3fc", borderRadius:10, padding:14 }}>
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#0891b2", marginBottom:6 }}>12-Month Potential</div>
