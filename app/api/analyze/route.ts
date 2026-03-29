@@ -295,7 +295,7 @@ const USER_PROMPT = (
   socialContext: string
 ) => `Analyze the market for: "${idea}"
 
-CRITICAL: Every field you produce MUST be grounded in the live data below. Do NOT invent data. If the live data is insufficient for a field, use what you have and be explicit.
+CRITICAL: Every field you produce MUST be grounded in the live data below. Do NOT invent data. If the live data is insufficient for a field, you MUST explicitly write "Insufficient live data — could not verify." Do NOT fill gaps using your training memory. Do NOT invent statistics, company names, quotes, or market figures. A field marked as insufficient is far more valuable than a hallucinated answer.
 
 ${appStoreContext}
 ${youtubeContext}
@@ -491,7 +491,7 @@ RULES -- follow exactly:
 - "communitySignals": 4-6 from live Reddit/Twitter data. "sentiment": "pain"|"need"|"positive".
 - "marketSize": from live market data, not training memory.
 - "validationChecklist": 4-5 assumptions. "howToTest": action doable in 1 week.
-- CRITICAL: If live data is sparse for a field, write what you found and flag uncertainty. Never fabricate specifics.`;
+- CRITICAL: If live data is sparse or missing for any field, write EXACTLY "Insufficient live data — could not verify." Never fill from training memory. Never fabricate names, quotes, statistics, or figures. An honest gap is always better than a hallucination.`;
 
 // ---- Main POST handler --------------------------------------------------------------------------------------------------------------------
 // -- Idempotency helpers (Redis SET NX EX = atomic, no TOCTOU) --------------
