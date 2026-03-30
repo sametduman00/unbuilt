@@ -1901,6 +1901,8 @@ function InputSection({
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   showSampleReport: boolean; setShowSampleReport: (v: (prev: boolean) => boolean) => void;
 }) {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { const fn = () => setIsMobile(window.innerWidth <= 768); fn(); window.addEventListener("resize", fn); return () => window.removeEventListener("resize", fn); }, []);
   const MAX_IDEA_CHARS = 2000;
   const canSubmit = idea.trim().length >= 40 && !loading;
   const charCount = idea.trim().length;
