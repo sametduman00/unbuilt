@@ -462,3 +462,45 @@ body, p, span, button, input, textarea, select, label, a {
   /* dig-result-panel height fix */
   .dig-result-panel { height: auto !important; overflow: visible !important; }
 }
+
+/* ════════════════════════════════════════════════
+   REPORT MOBILE — catch-all for nested components
+   ════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Contain everything */
+  #sample-report-panel,
+  #gap-tab-content {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Every grid inside → single column */
+  #sample-report-panel [style*="grid-template-columns"],
+  #gap-tab-content [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Every wide flex → column */
+  #gap-tab-content > div { overflow-x: hidden !important; }
+
+  /* Nested flex containers: wrap */
+  #gap-tab-content [style*="display: flex"],
+  #gap-tab-content [style*="display:flex"] {
+    flex-wrap: wrap !important;
+    min-width: 0 !important;
+  }
+
+  /* Prevent individual items from exceeding container */  
+  #gap-tab-content * {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* But allow small SVG/icon elements to keep their size */
+  #gap-tab-content svg { max-width: unset !important; flex-shrink: 0 !important; }
+  #gap-tab-content span[style*="border-radius: 50%"],
+  #gap-tab-content span[style*="border-radius:50%"],
+  #gap-tab-content div[style*="border-radius: 50%"] { max-width: unset !important; }
+}
