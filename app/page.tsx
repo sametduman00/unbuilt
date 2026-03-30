@@ -3721,7 +3721,7 @@ function HomeInner() {
                                   </a>
                                   <div style={{ borderTop:"1px solid var(--clr-border)", padding:"8px 14px", display:"flex", justifyContent:"flex-end", marginTop:"auto" }}>
                                     <button
-                                      onClick={e=>{e.preventDefault();setIdea(s.tagline||s.title||"");handleSelectTool("gap-analysis");}}
+                                      onClick={e=>{e.preventDefault();handleSelectTool("gap-analysis");setTimeout(()=>setIdea(s.tagline||s.title||""),0);}}
                                       style={{ fontSize:"0.6875rem", fontWeight:600, color:"#534AB7", background:"rgba(99,102,241,0.08)", border:"0.5px solid rgba(99,102,241,0.25)", borderRadius:999, padding:"4px 12px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}
                                     >Dig this niche →</button>
                                   </div>
