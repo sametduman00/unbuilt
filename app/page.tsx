@@ -3749,19 +3749,8 @@ function HomeInner() {
                         {!pulseAsLoading&&pulseAsDays.length===0&&<div style={{ textAlign:"center", padding:"4rem 0", color:"var(--clr-text-3)" }}>No App Store data yet. Check back after 08:00 UTC.</div>}
                         {!pulseAsLoading&&asFiltered.length>0&&(
                           <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                            {(() => {
-                              const byDate = new Map<string,{day:typeof pulseAsDays[0];apps:typeof allAsApps}>();
-                              for (const day of pulseAsDays) { const da=asFiltered.filter(a=>day.apps.some(da=>da.app_id===a.app_id)); if(da.length>0) byDate.set(day.date,{day,apps:da}); }
-                              return Array.from(byDate.values()).map(({day,apps})=>(
-                                <div key={day.date}>
-                                  <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
-                                    <span style={{ fontSize:"0.875rem", fontWeight:700, color:"var(--clr-text)" }}>{pulseFmtDate(day.date)}</span>
-                                    {day.isToday&&<span style={{ fontSize:"0.5625rem", fontWeight:700, padding:"0.15rem 0.5rem", borderRadius:999, background:"rgba(0,122,255,0.12)", color:"#007AFF" }}>TODAY</span>}
-                                    <span style={{ fontSize:"0.75rem", color:"var(--clr-text-4)" }}>{apps.length} apps</span>
-                                  </div>
-                                  <div style={{ display:"flex", flexDirection:"column", gap:6, marginBottom:16 }}>
-                                    {apps.map(app=>(
-                                      <div key={app.app_id} style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden"}}>
+                            {asFiltered.map(app=>(
+                              <div key={app.app_id} style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden"}}>
                                         <a href={app.store_url} target="_blank" rel="noopener noreferrer"
                             style={{display:"flex",flexDirection:"column",gap:"0.875rem",padding:"1.25rem",textDecoration:"none",color:"inherit",transition:"background 0.15s"}}
                             onMouseEnter={e=>e.currentTarget.style.background="rgba(var(--clr-text-rgb),0.02)"}
@@ -3824,11 +3813,7 @@ function HomeInner() {
                             </div>
                           </div>
                         </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              ));
-                            })()}
+                            ))}
                           </div>
                         )}
                       </div>
