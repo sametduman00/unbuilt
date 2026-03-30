@@ -1219,7 +1219,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
   };
 
   return (
-    <div style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:16, overflow:"hidden", display:"flex", height:"calc(100vh - 76px)", marginTop:8 }}>
+    <div className="dig-result-panel" style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:16, overflow:"hidden", display:"flex", height:"calc(100vh - 76px)", marginTop:8 }}>
       <div style={{ width:220, borderRight:"1px solid #e5e7eb", padding:"14px 8px", flexShrink:0, background:"#fafafa", display:"flex", flexDirection:"column" as const, gap:2, overflowY:"auto" as const }}>
         <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.09em", color:"#9ca3af", marginBottom:8, paddingLeft:8, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:8 }}>
           <span>Analysis</span>
@@ -3693,7 +3693,7 @@ function HomeInner() {
                           <div style={{ textAlign:"center", padding:"3rem 0", color:"var(--clr-text-3)" }}>No results. <button onClick={()=>{setPulsePhSearch("");setPulsePhTopic("all");}} style={{ color:"#DA552F", background:"none", border:"none", cursor:"pointer" }}>Clear</button></div>
                         )}
                         {!pulseLoading && phFiltered.length>0 && (
-                          <div style={{ display:"grid", gridTemplateColumns:"repeat(2,minmax(0,1fr))", gap:10 }}>
+                          <div className="ph-card-grid" style={{ display:"grid", gridTemplateColumns:"repeat(2,minmax(0,1fr))", gap:10 }}>
                             {phFiltered.map((s,i)=>{
                               return (
                                 <div key={s.title+i} style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column" }}>
@@ -3790,7 +3790,7 @@ function HomeInner() {
 </div>}
                           </a>
                           {/* A-2 footer */}
-                          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",borderTop:"1px solid var(--clr-border)"}}>
+                          <div className="as-a2-footer" style={{display:"grid",gridTemplateColumns:"1fr 1fr",borderTop:"1px solid var(--clr-border)"}}>
                             <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRight:"1px solid var(--clr-border)"}}>
                               <div style={{flexShrink:0,width:30,height:30,borderRadius:8,background:"rgba(99,102,241,0.08)",display:"flex",alignItems:"center",justifyContent:"center"}}>
                                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#534AB7" strokeWidth="1.3"/><path d="M11 11l2.5 2.5" stroke="#534AB7" strokeWidth="1.3" strokeLinecap="round"/></svg>
