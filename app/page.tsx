@@ -3742,14 +3742,14 @@ function HomeInner() {
                                         <span style={{fontSize:"0.75rem",fontWeight:500,color:"var(--clr-text-2)"}}>{"Got a better idea?"}</span>
                                         <span style={{fontSize:"0.7rem",color:"var(--clr-text-4)",marginLeft:6}}>{"Analyze the gap, find what's missing"}</span>
                                       </div>
-                                      <button onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}} style={{flexShrink:0,marginLeft:12,display:"inline-flex",alignItems:"center",gap:5,padding:"4px 12px",background:"rgba(99,102,241,0.1)",color:"rgb(79,82,221)",borderRadius:999,fontSize:"0.72rem",fontWeight:600,fontFamily:"inherit",cursor:"pointer",border:"1px solid rgba(99,102,241,0.25)",whiteSpace:"nowrap",transition:"opacity 0.12s"}} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.opacity="0.8"}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.opacity="1"}}>{"Dig →"}</button>
+                                      <button onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}} style={{flexShrink:0,marginLeft:12,display:"inline-flex",alignItems:"center",gap:5,padding:"4px 12px",background:"rgba(99,102,241,0.1)",color:"rgb(79,82,221)",borderRadius:999,fontSize:"0.72rem",fontWeight:600,fontFamily:"inherit",cursor:"pointer",border:"1px solid rgba(99,102,241,0.25)",whiteSpace:"nowrap",transition:"opacity 0.12s"}}>{"Dig →"}</button>
                                     </div>
                                     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 14px",background:"rgba(16,185,129,0.03)"}}>
                                       <div>
                                         <span style={{fontSize:"0.75rem",fontWeight:500,color:"var(--clr-text-2)"}}>{"Want to build this yourself?"}</span>
                                         <span style={{fontSize:"0.7rem",color:"var(--clr-text-4)",marginLeft:6}}>{"Get your personal tool stack"}</span>
                                       </div>
-                                      <button onClick={e=>{e.preventDefault();router.push("/?tool=stack");}} style={{flexShrink:0,marginLeft:12,display:"inline-flex",alignItems:"center",gap:5,padding:"4px 12px",background:"rgba(16,185,129,0.1)",color:"rgb(5,150,105)",borderRadius:999,fontSize:"0.72rem",fontWeight:600,fontFamily:"inherit",cursor:"pointer",border:"1px solid rgba(16,185,129,0.25)",whiteSpace:"nowrap",transition:"opacity 0.12s"}} onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.opacity="0.8"}} onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.opacity="1"}}>{"Stack →"}</button>
+                                      <button onClick={e=>{e.preventDefault();router.push("/?tool=stack");}} style={{flexShrink:0,marginLeft:12,display:"inline-flex",alignItems:"center",gap:5,padding:"4px 12px",background:"rgba(16,185,129,0.1)",color:"rgb(5,150,105)",borderRadius:999,fontSize:"0.72rem",fontWeight:600,fontFamily:"inherit",cursor:"pointer",border:"1px solid rgba(16,185,129,0.25)",whiteSpace:"nowrap",transition:"opacity 0.12s"}}>{"Stack →"}</button>
                                     </div>
                                   </div></div>
                                 </div>
@@ -3830,8 +3830,8 @@ function HomeInner() {
                             <button
                               onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}}
                               style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "5px 12px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.72rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", whiteSpace: "nowrap", flexShrink: 0, transition: "opacity 0.12s" }}
-                              onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.opacity="0.8"}}
-                              onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.opacity="1"}}
+                             
+                             
                             >Dig my idea →</button>
                           </div>
                         </div>
