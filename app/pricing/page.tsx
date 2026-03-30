@@ -91,7 +91,7 @@ export default function PricingPage() {
   };
 
   return (
-    <main style={{ minHeight: "100vh", background: "var(--clr-bg)", padding: "32px 24px 80px", maxWidth: 860, margin: "0 auto" }}>
+    <main className="pricing-main" style={{ minHeight: "100vh", background: "var(--clr-bg)", padding: "32px 24px 80px", maxWidth: 860, margin: "0 auto" }}>
 
       {/* ── Header ── */}
       <div style={{ textAlign: "center", marginBottom: 28 }}>
@@ -100,14 +100,14 @@ export default function PricingPage() {
           Pulse is free.<br />
           <span style={{ color: "var(--clr-text-3)", fontWeight: 400, fontStyle: "italic" }}>Dig and Stack cost 1 credit each.</span>
         </h1>
-        <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text-2)", margin: "0 auto", whiteSpace: "nowrap" as const }}>
+        <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text-2)", margin: "0 auto", whiteSpace: "normal" as const }}>
           No subscription · No monthly fee · Credits never expire · Buy when you need, use when you want.
         </p>
       </div>
 
       {/* ── Credit packs ── */}
       <div style={{ marginBottom: 10 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+        <div className="pricing-packs-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
           {PACKAGES.map((pkg) => (
             <div key={pkg.slug} style={{
               background: "var(--clr-surface)",
@@ -166,7 +166,7 @@ export default function PricingPage() {
       {/* ── Why the price ── */}
       <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginBottom: 32 }}>
         <p style={{ fontSize: "0.9375rem", fontWeight: 800, letterSpacing: "-0.01em", color: "var(--clr-text)", textAlign: "center", marginBottom: 16 }}>Why does a credit cost $0.80–$1.00?</p>
-        <div style={{ display: "flex", gap: 24, flexWrap: "wrap" as const, alignItems: "stretch" }}>
+        <div className="pricing-why-flex" style={{ display: "flex", gap: 24, flexWrap: "wrap" as const, alignItems: "stretch" }}>
           {/* Left */}
           <div style={{ flex: 1, minWidth: 220, display: "flex", flexDirection: "column" as const, gap: 12 }}>
             <p style={{ ...s.muted, margin: 0 }}>
@@ -212,7 +212,7 @@ export default function PricingPage() {
       {/* ── What 1 credit gets you ── */}
       <div style={{ marginTop: 36, marginBottom: 48 }}>
         <p style={{ ...s.label, textAlign: "center", marginBottom: 20 }}>What 1 credit gets you</p>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
+        <div className="pricing-credits-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
           {[
             { name: "Pulse", badge: "FREE", badgeColor: "#ef4444", iconColor: "#ef4444", iconPath: "pulse",
               desc: "Live feed of today's launches with AI analysis of what each product is missing.",
@@ -257,7 +257,7 @@ export default function PricingPage() {
             If Unbuilt saved you time or money, a crypto tip goes directly to keeping it running. No pressure, genuinely appreciated.
           </p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10 }}>
+        <div className="pricing-wallets-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10 }}>
           {WALLETS.map((w) => (
             <div key={w.symbol} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "14px 10px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
@@ -321,7 +321,7 @@ export default function PricingPage() {
         </div>
 
         {/* Legal docs */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+        <div className="pricing-legal-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
           {[
             ["/legal/terms-of-service", "Terms of Service"],
             ["/legal/privacy-policy", "Privacy Policy"],
