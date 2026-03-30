@@ -251,3 +251,17 @@ body, p, span, button, input, textarea, select, label, a {
 @media (max-width: 768px) {
   .diff-note { display: none !important; }
 }
+
+/* Dig submit row mobile */
+@media (max-width: 768px) {
+  .dig-submit-row {
+    flex-direction: column-reverse !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  .dig-submit-row > * { width: 100% !important; }
+  .dig-submit-row > div { justify-content: space-between !important; }
+  /* Sample report tabs — scrollable on mobile */
+  .dig-result-panel > div:first-child { overflow-x: hidden !important; overflow-y: auto !important; }
+  #gap-tab-content { overflow-y: auto !important; min-height: 300px !important; }
+}
