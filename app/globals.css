@@ -270,3 +270,13 @@ body, p, span, button, input, textarea, select, label, a {
 @media (max-width: 768px) {
   .dig-submit-row > button { width: 100% !important; justify-content: center !important; }
 }
+
+/* Dig input card mobile */
+@media (max-width: 768px) {
+  .dig-card-body { padding: 1rem !important; }
+  .dig-idea-label { white-space: normal !important; word-break: break-word !important; }
+  .dig-opus-badge { white-space: normal !important; font-size: 0.65rem !important; }
+  /* Dig submit row full-width children */
+  .dig-submit-row > button { width: 100% !important; justify-content: center !important; }
+  .dig-submit-row > div { width: 100% !important; justify-content: space-between !important; }
+}
