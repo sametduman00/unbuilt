@@ -2524,7 +2524,9 @@ function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
 const PHASE_COLORS = ["var(--clr-text)", "var(--clr-text-2)", "var(--clr-text-3)", "var(--clr-text-5)", "var(--clr-text-6)"];
 const PHASE_BGS = ["rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)"];
 
-function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVideos?: YouTubeVideo[] }) {
+function StackAdvisorResult({
+  const [mob, setMob] = useState(false);
+  useEffect(() => { const chk = () => setMob(window.innerWidth <= 768); chk(); window.addEventListener("resize", chk); return () => window.removeEventListener("resize", chk); }, []); data, ytVideos }: { data: StackAdvisorData; ytVideos?: YouTubeVideo[] }) {
   // Build a lookup: tool name (lowercased) â best matching YouTube video
   const ytToolMap = new Map<string, YouTubeVideo>();
   if (ytVideos && ytVideos.length > 0) {
