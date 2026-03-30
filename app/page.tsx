@@ -578,7 +578,7 @@ function ThreatDots({ level }: { level: number }) {
 
 function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack }: { data: GapAnalysisData; itunesApps?: ITunesApp[]; gplayApps?: GooglePlayApp[]; idea?: string; onSwitchToStack?: (idea: string) => void }) {
   const [mob, setMob] = useState(false);
-  useEffect(() => { const chk = () => setMob(window.innerWidth <= 768); chk(); window.addEventListener("resize", chk); return () => window.removeEventListener("resize", chk); }, []);
+  useEffect(() => { const mq = window.matchMedia("(max-width: 768px)"); const chk = () => setMob(mq.matches); chk(); mq.addEventListener("change", chk); return () => mq.removeEventListener("change", chk); }, []);
   data = {
     ...data,
     competitors: data.competitors?.filter((c: GapCompetitor) => c?.name) ?? [],
@@ -1222,7 +1222,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
 
   return (
     <div className="dig-result-panel" style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:16, overflow:"hidden", display:"flex", flexDirection: mob ? "column" : "row" as const, height: mob ? "auto" : "calc(100vh - 76px)", marginTop:8 }}>
-      <div style={{ width: mob ? "100%" : 220, borderRight: mob ? "none" : "1px solid #e5e7eb", borderBottom: mob ? "1px solid #e5e7eb" : "none", padding: mob ? "8px" : "14px 8px", flexShrink:0, background:"#fafafa", display:"flex", flexDirection: mob ? "row" : "column" as const, flexWrap: mob ? "wrap" as const : "nowrap" as const, gap: mob ? 4 : 2, overflowY: mob ? "visible" : "auto" as const }}>
+      <div style={{ width: mob ? "100%" : 220, borderRight: mob ? "none" : "1px solid #e5e7eb", borderBottom: mob ? "1px solid #e5e7eb" : "none", padding: mob ? "8px" : "14px 8px", flexShrink:0, background:"#fafafa", display:"flex", flexDirection: "column" as const, flexWrap: "nowrap" as const, gap: mob ? 3 : 2, maxHeight: mob ? "220px" : "none", overflowY: "auto" as const }}>
         <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.09em", color:"#9ca3af", marginBottom:8, paddingLeft:8, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:8 }}>
           <span>Analysis</span>
           <span style={{ display:"inline-flex", alignItems:"center", gap:4, padding:"2px 7px", borderRadius:999, background:"#dcfce7", border:"1px solid #86efac", fontSize:9, fontWeight:700, color:"#16a34a" }}>
@@ -1902,7 +1902,7 @@ function InputSection({
   showSampleReport: boolean; setShowSampleReport: (v: (prev: boolean) => boolean) => void;
 }) {
   const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => { const fn = () => setIsMobile(window.innerWidth <= 768); fn(); window.addEventListener("resize", fn); return () => window.removeEventListener("resize", fn); }, []);
+  useEffect(() => { const mq = window.matchMedia("(max-width: 768px)"); const fn = () => setIsMobile(mq.matches); fn(); mq.addEventListener("change", fn); return () => mq.removeEventListener("change", fn); }, []);
   const MAX_IDEA_CHARS = 2000;
   const canSubmit = idea.trim().length >= 40 && !loading;
   const charCount = idea.trim().length;
@@ -2526,7 +2526,7 @@ const PHASE_BGS = ["rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0
 
 function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVideos?: YouTubeVideo[] }) {
   const [mob, setMob] = useState(false);
-  useEffect(() => { const chk = () => setMob(window.innerWidth <= 768); chk(); window.addEventListener("resize", chk); return () => window.removeEventListener("resize", chk); }, []);
+  useEffect(() => { const mq = window.matchMedia("(max-width: 768px)"); const chk = () => setMob(mq.matches); chk(); mq.addEventListener("change", chk); return () => mq.removeEventListener("change", chk); }, []);
   // Build a lookup: tool name (lowercased) â best matching YouTube video
   const ytToolMap = new Map<string, YouTubeVideo>();
   if (ytVideos && ytVideos.length > 0) {
@@ -2897,7 +2897,7 @@ function AiBlock({ what, diff, gap }: { what:string|null; diff:string|null; gap:
 
 function HomeInner() {
   const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => { const fn = () => setIsMobile(window.innerWidth <= 768); fn(); window.addEventListener("resize", fn); return () => window.removeEventListener("resize", fn); }, []);
+  useEffect(() => { const mq = window.matchMedia("(max-width: 768px)"); const fn = () => setIsMobile(mq.matches); fn(); mq.addEventListener("change", fn); return () => mq.removeEventListener("change", fn); }, []);
   const { isSignedIn } = useAuth();
   const { user } = useUser();
   const [credits, setCredits] = useState<number | null>(null);
