@@ -280,3 +280,78 @@ body, p, span, button, input, textarea, select, label, a {
   .dig-submit-row > button { width: 100% !important; justify-content: center !important; }
   .dig-submit-row > div { width: 100% !important; justify-content: space-between !important; }
 }
+
+/* ── Sample Report Panel — Mobile ──────────────────── */
+@media (max-width: 768px) {
+  /* Contain the whole panel */
+  #sample-report-panel {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+  }
+
+  /* dig-result-panel already stacked by earlier CSS */
+  /* Force content panel overflow hidden */
+  #gap-tab-content {
+    overflow-x: hidden !important;
+    padding: 14px !important;
+  }
+
+  /* All grids inside sample report → 1 column */
+  #sample-report-panel [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+  #gap-tab-content [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Stack flex containers that use space-between → column */
+  #gap-tab-content [style*="space-between"] {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  /* Score circle + text flex → wrap */
+  #gap-tab-content [style*="gap: 20px"] {
+    flex-wrap: wrap !important;
+  }
+
+  /* Prevent any element from exceeding container width */
+  #gap-tab-content > * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+  #gap-tab-content > div > * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Fix min-width on text containers */
+  #gap-tab-content [style*="min-width"] {
+    min-width: 0 !important;
+  }
+
+  /* Market data cards → wrap */
+  #gap-tab-content [style*="display: flex"][style*="gap: 12px"] {
+    flex-wrap: wrap !important;
+  }
+  #gap-tab-content [style*="display: flex"][style*="gap: 10px"] {
+    flex-wrap: wrap !important;
+  }
+  #gap-tab-content [style*="display: flex"][style*="gap: 8px"] {
+    flex-wrap: wrap !important;
+  }
+
+  /* Tables → scrollable */
+  #gap-tab-content table {
+    display: block !important;
+    overflow-x: auto !important;
+    max-width: 100% !important;
+  }
+
+  /* Monospace cost table */
+  #gap-tab-content [style*="fontFamily: \"monospace\""],
+  #gap-tab-content [style*="font-family: monospace"] {
+    font-size: 11px !important;
+  }
+}
