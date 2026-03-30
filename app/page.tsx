@@ -3693,10 +3693,10 @@ function HomeInner() {
                           <div style={{ textAlign:"center", padding:"3rem 0", color:"var(--clr-text-3)" }}>No results. <button onClick={()=>{setPulsePhSearch("");setPulsePhTopic("all");}} style={{ color:"#DA552F", background:"none", border:"none", cursor:"pointer" }}>Clear</button></div>
                         )}
                         {!pulseLoading && phFiltered.length>0 && (
-                          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                          <div style={{ display:"grid", gridTemplateColumns:"repeat(2,minmax(0,1fr))", gap:10 }}>
                             {phFiltered.map((s,i)=>{
                               return (
-                                <div key={s.title+i} style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden" }}>
+                                <div key={s.title+i} style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column" }}>
                                   <a href={s.externalUrl||s.url} target="_blank" rel="noopener noreferrer"
                                     style={{ display:"flex", alignItems:"flex-start", gap:"1rem", padding:"1.125rem 1.125rem 0.875rem", textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
                                     onMouseEnter={e=>e.currentTarget.style.background="rgba(0,0,0,0.02)"}
@@ -3719,7 +3719,7 @@ function HomeInner() {
                                       )}
                                     </div>
                                   </a>
-                                  <div style={{ borderTop:"1px solid var(--clr-border)", padding:"8px 14px", display:"flex", justifyContent:"flex-end" }}>
+                                  <div style={{ borderTop:"1px solid var(--clr-border)", padding:"8px 14px", display:"flex", justifyContent:"flex-end", marginTop:"auto" }}>
                                     <button
                                       onClick={e=>{e.preventDefault();setIdea(s.tagline||s.title||"");handleSelectTool("gap-analysis");}}
                                       style={{ fontSize:"0.6875rem", fontWeight:600, color:"#534AB7", background:"rgba(99,102,241,0.08)", border:"0.5px solid rgba(99,102,241,0.25)", borderRadius:999, padding:"4px 12px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}
