@@ -3822,17 +3822,28 @@ function HomeInner() {
 {app.claude_build_with&&app.claude_build_with.length>0&&<div style={{display:"grid",gridTemplateColumns:"80px 1fr",gap:"6px",paddingTop:8,borderTop:"1px solid var(--clr-border)"}}><span style={{fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)",paddingTop:4}}>Build with</span><div style={{display:"flex",flexWrap:"wrap",gap:5}}>{app.claude_build_with.map((t:{name:string;role:string})=><div key={t.name} style={{display:"flex",flexDirection:"column",alignItems:"center",background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:7,padding:"3px 9px",gap:1}}><span style={{fontSize:"0.72rem",fontWeight:600,color:"var(--clr-text)"}}>{t.name}</span><span style={{fontSize:"0.6rem",color:"var(--clr-text-4)"}}>{t.role}</span></div>)}<a href="/stack" onClick={e=>e.stopPropagation()} style={{display:"inline-block",background:"rgba(16,185,129,0.1)",color:"rgb(5,150,105)",border:"1px solid rgba(16,185,129,0.25)",borderRadius:999,padding:"3px 11px",fontSize:"0.72rem",fontWeight:600,textDecoration:"none",alignSelf:"center"}}>Stack →</a></div></div>}
 </div>}
                           </a>
-                          {/* CTA strip */}
-                          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 14px 10px",background:"var(--clr-bg)",borderTop:"1px solid var(--clr-border)",gap:12}}>
-                            <span style={{fontSize:"0.75rem",color:"var(--clr-text-3)"}}>
-                              {app.category ? <><strong>{app.category}</strong> space just got a new player.</> : <>A new app just launched in this space.</>}
-                            </span>
-                            <button
-                              onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}}
-                              style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "5px 12px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.72rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", whiteSpace: "nowrap", flexShrink: 0, transition: "opacity 0.12s" }}
-                              onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
-                              onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
-                            >Dig my idea →</button>
+                          {/* A-2 footer */}
+                          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",borderTop:"1px solid var(--clr-border)"}}>
+                            <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRight:"1px solid var(--clr-border)"}}>
+                              <div style={{flexShrink:0,width:30,height:30,borderRadius:8,background:"rgba(99,102,241,0.08)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#534AB7" strokeWidth="1.3"/><path d="M11 11l2.5 2.5" stroke="#534AB7" strokeWidth="1.3" strokeLinecap="round"/></svg>
+                              </div>
+                              <div style={{flex:1,minWidth:0}}>
+                                <div style={{fontSize:"0.6875rem",fontWeight:600,color:"var(--clr-text)",marginBottom:1}}>Benzer bir fikrin mi var?</div>
+                                <div style={{fontSize:"0.625rem",color:"var(--clr-text-4)"}}>Rakipleri ve boşlukları analiz et</div>
+                              </div>
+                              <button onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"#534AB7",background:"rgba(99,102,241,0.08)",border:"0.5px solid rgba(99,102,241,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Dig →</button>
+                            </div>
+                            <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px"}}>
+                              <div style={{flexShrink:0,width:30,height:30,borderRadius:8,background:"rgba(16,185,129,0.08)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1.2" stroke="rgb(5,150,105)" strokeWidth="1.3"/><rect x="9" y="2" width="5" height="5" rx="1.2" stroke="rgb(5,150,105)" strokeWidth="1.3"/><rect x="2" y="9" width="5" height="5" rx="1.2" stroke="rgb(5,150,105)" strokeWidth="1.3"/><rect x="9" y="9" width="5" height="5" rx="1.2" stroke="rgb(5,150,105)" strokeWidth="1.3"/></svg>
+                              </div>
+                              <div style={{flex:1,minWidth:0}}>
+                                <div style={{fontSize:"0.6875rem",fontWeight:600,color:"var(--clr-text)",marginBottom:1}}>Bunu inşa etmek ister misin?</div>
+                                <div style={{fontSize:"0.625rem",color:"var(--clr-text-4)"}}>Sana özel araç stack’i al</div>
+                              </div>
+                              <button onClick={e=>{e.preventDefault();router.push("/?tool=stack");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"rgb(5,150,105)",background:"rgba(16,185,129,0.08)",border:"0.5px solid rgba(16,185,129,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Stack →</button>
+                            </div>
                           </div>
                         </div>
                                     ))}
