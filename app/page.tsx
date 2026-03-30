@@ -2832,9 +2832,9 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
   };
 
   return (
-    <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden", display: "flex", height: "calc(100vh - 180px)", marginTop: 8 }}>
+    <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden", display: "flex", flexDirection: mob ? "column" : "row" as const, height: mob ? "auto" : "calc(100vh - 180px)", marginTop: 8 }}>
       {/* Left tab sidebar */}
-      <div style={{ width: 220, borderRight: "1px solid #e5e7eb", padding: "14px 8px", flexShrink: 0, background: "#fafafa", display: "flex", flexDirection: "column" as const, gap: 2, overflowY: "auto" as const }}>
+      <div style={{ width: mob ? "100%" : 220, borderRight: mob ? "none" : "1px solid #e5e7eb", borderBottom: mob ? "1px solid #e5e7eb" : "none", padding: mob ? "8px" : "14px 8px", flexShrink: 0, background: "#fafafa", display: "flex", flexDirection: "column" as const, gap: 2, overflowY: "auto" as const, maxHeight: mob ? "200px" : "none" }}>
         <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.09em", color: "#9ca3af", marginBottom: 8, paddingLeft: 8, display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: 8 }}>
           <span>Stack</span>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 7px", borderRadius: 999, background: "#dbeafe", border: "1px solid #93c5fd", fontSize: 9, fontWeight: 700, color: "#1d4ed8" }}>
@@ -2860,7 +2860,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
       </div>
 
       {/* Right content */}
-      <div id="stack-tab-content" style={{ flex: 1, padding: 22, overflowY: "auto" as const, background: "white" }}>
+      <div id="stack-tab-content" style={{ flex: 1, padding: mob ? 12 : 22, overflowY: "auto" as const, overflowX: "hidden" as const, background: "white", boxSizing: "border-box" as const }}>
         {renderStackTab()}
       </div>
     </div>
