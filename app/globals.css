@@ -422,3 +422,43 @@ body, p, span, button, input, textarea, select, label, a {
     flex-shrink: 0;
   }
 }
+
+/* ── Mobile responsive overrides ──────────────────── */
+@media (max-width: 768px) {
+  /* Stack extras — Budget/TechLevel single column */
+  .stack-extras-grid { grid-template-columns: 1fr !important; }
+
+  /* Gap analysis nav panel — full width on mobile */
+  .gap-nav-panel {
+    width: 100% !important;
+    max-height: none !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    padding: 8px !important;
+    gap: 4px !important;
+  }
+  /* Tab buttons inside nav — compact on mobile */
+  .gap-nav-panel button {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    white-space: normal !important;
+    text-align: left !important;
+    font-size: 11px !important;
+    padding: 6px 8px !important;
+  }
+
+  /* Gap tab content panel */
+  .gap-tab-content-panel {
+    padding: 14px !important;
+    overflow-x: hidden !important;
+  }
+
+  /* All 2-col report grids → 1 col */
+  .report-grid-2 { grid-template-columns: 1fr !important; }
+  .report-grid-3 { grid-template-columns: 1fr !important; }
+
+  /* dig-result-panel height fix */
+  .dig-result-panel { height: auto !important; overflow: visible !important; }
+}
