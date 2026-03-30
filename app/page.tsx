@@ -3623,7 +3623,7 @@ function HomeInner() {
                     <p style={{ fontSize: "1.62rem", fontWeight: 400, color: "var(--clr-text-3)", fontStyle: "italic", margin: "0 0 14px", letterSpacing: "-0.02em", lineHeight: 1 }}>
                       Another idea dropped?
                     </p>
-                    <p style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", lineHeight: 1.6, margin: "0 0 18px", whiteSpace: "nowrap" as const }}>
+                    <p style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", lineHeight: 1.6, margin: "0 0 18px", whiteSpace: "normal" as const }}>
                       <strong style={{ color: "var(--clr-text)", fontWeight: 700 }}>Don't build what already exists.</strong>
                       {" "}We'll show you what doesn't — and exactly how to build it.
                     </p>
