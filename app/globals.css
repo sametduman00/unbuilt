@@ -129,7 +129,10 @@ body, p, span, button, input, textarea, select, label, a {
 
 /* ── Tool cards — scoped ────────────────────────────────────── */
 [data-tool-grid] { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 1rem !important; width: 100% !important; }
-@media (max-width: 768px) { [data-tool-grid] { grid-template-columns: 1fr !important; gap: 0.75rem !important; } }
+@media (max-width: 768px) {
+  /* Prevent text overflow */
+  .app-content-wrapper span[style*="nowrap"] { white-space: normal !important; }
+ [data-tool-grid] { grid-template-columns: 1fr !important; gap: 0.75rem !important; } }
 [data-tool-grid] > a, [data-tool-grid] > div {
   background: #ffffff !important; border: 1px solid rgba(0,0,0,0.08) !important; border-radius: 16px !important;
   text-decoration: none !important; color: inherit !important; position: relative !important; overflow: hidden !important;
