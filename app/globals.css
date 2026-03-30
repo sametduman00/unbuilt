@@ -236,3 +236,21 @@ body, p, span, button, input, textarea, select, label, a {
 @media (max-width: 480px) {
   .as-a2-footer button, .as-a2-footer a { font-size: 0.625rem !important; padding: 3px 8px !important; }
 }
+
+/* Mobile top header */
+.app-mobile-header {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 52px;
+  background: var(--clr-surface);
+  border-bottom: 0.5px solid var(--clr-border);
+  z-index: 99;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+@media (max-width: 768px) {
+  .app-mobile-header { display: flex !important; }
+  .app-content-wrapper { padding-top: 52px !important; }
+}
