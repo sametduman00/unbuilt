@@ -1396,7 +1396,7 @@ function GapAnalysisSkeleton() {
         {[1,2,3].map(n => <div key={n} className="shimmer" style={{ height: 80, borderRadius: 12, marginBottom: 8 }} />)}
       </div>
       {/* SWOT skeleton */}
-      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: "0.625rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.625rem" }}>
         {[1,2,3,4].map(n => <div key={n} className="shimmer" style={{ height: 100, borderRadius: 12 }} />)}
       </div>
     </div>
@@ -1717,7 +1717,7 @@ function TrendFeedResult({ data }: { data: any }) {
             }}>
               {a.bestOpportunity.title}
             </h3>
-            <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: "0.75rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
               {[
                 { label: "Who", value: a.bestOpportunity.who },
                 { label: "What", value: a.bestOpportunity.what },
@@ -3575,7 +3575,7 @@ function HomeInner() {
                     </div>
                     <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", fontStyle: "italic", lineHeight: 1.4 }}>{idea}</div>
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 5, marginBottom: 6 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5, marginBottom: 6 }}>
                     {sources.map((s, i) => {
                       const isDone = i < scanStep;
                       const isActive = i === scanStep;
