@@ -52,6 +52,8 @@ function IconGap({ color }: { color: string }) {
       <path d="M11 1.5V4M11 18v2.5M1.5 11H4M18 11h2.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { const fn = () => setIsMobile(window.innerWidth <= 768); fn(); window.addEventListener("resize", fn); return () => window.removeEventListener("resize", fn); }, []);
 }
 function IconRadar({ color }: { color: string }) {
   return (
@@ -696,7 +698,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                 </div>
               </div>
             </div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:10 }}>
+            <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr 1fr", gap:10 }}>
               <div style={{ background:"#f0fdfb", border:"1px solid #ccfbf1", borderRadius:10, padding:14 }}>
                 <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#0d9488", marginBottom:6, letterSpacing:"0.07em" }}>Biggest Opportunity</div>
                 <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.marketGaps?.[0]?.title??"-"}</div>
