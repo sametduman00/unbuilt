@@ -3748,7 +3748,7 @@ function HomeInner() {
                         {pulseAsLoading&&<div style={{ display:"flex",flexDirection:"column",gap:8 }}>{[1,2,3].map(i=><div key={i} className="shimmer" style={{ height:80, borderRadius:10 }}/>)}</div>}
                         {!pulseAsLoading&&pulseAsDays.length===0&&<div style={{ textAlign:"center", padding:"4rem 0", color:"var(--clr-text-3)" }}>No App Store data yet. Check back after 08:00 UTC.</div>}
                         {!pulseAsLoading&&asFiltered.length>0&&(
-                          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                          <div key={pulseAsCat+"_"+pulseAsSearch} style={{ display:"flex", flexDirection:"column", gap:8 }}>
                             {asFiltered.map(app=>(
                               <div key={app.app_id} style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden"}}>
                                         <a href={app.store_url} target="_blank" rel="noopener noreferrer"
