@@ -3835,7 +3835,7 @@ function HomeInner() {
                       <h1 style={{ fontSize: "3rem", fontWeight: 800, letterSpacing: "-0.05em", lineHeight: 1.05, color: "var(--clr-text)", marginBottom: 8 }}>
                         Don't build what<br/><em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>already exists.</em>
                       </h1>
-                      <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, whiteSpace: "nowrap" }}>
+                      <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, whiteSpace: "normal" }}>
                         Describe your idea. We'll scan 70+ live sources and tell you exactly where the gap is.
                       </p>
                     </div>
