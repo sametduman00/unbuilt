@@ -117,9 +117,7 @@ export default function MobileNav() {
                       {credits !== null ? `${credits} credits` : "Loading..."}
                     </span>
                   </div>
-                  <Link href="/pricing" onClick={close} style={{ fontSize:12, fontWeight:600, color:"#7c6fff", textDecoration:"none", background:"rgba(124,111,255,0.1)", border:"0.5px solid rgba(124,111,255,0.3)", borderRadius:999, padding:"4px 12px" }}>
-                    + Buy Credits
-                  </Link>
+
                 </div>
 
                 {DIV}
@@ -146,7 +144,13 @@ export default function MobileNav() {
               </>
             )}
 
-            {/* Product accordion */}
+            {/* Buy Credits — always visible */}
+            <Link href="/pricing" onClick={close} style={{ ...ROW, background:"rgba(124,111,255,0.06)" } as React.CSSProperties}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c6fff" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              <span style={{ color:"#7c6fff", fontWeight:600 }}>Buy Credits</span>
+            </Link>
+            {DIV}
+                        {/* Product accordion */}
             <button onClick={() => toggle("product")} style={{ ...ROW, width:"100%", background:"none", border:"none", cursor:"pointer", fontFamily:"inherit", justifyContent:"space-between" } as React.CSSProperties}>
               <span style={{ display:"flex", alignItems:"center", gap:12 }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
