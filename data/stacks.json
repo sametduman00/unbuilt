@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03",
+  "lastUpdated": "2026-03-30",
   "tools": [
     {
       "name": "Vercel",
@@ -217,7 +217,7 @@
       "category": "database",
       "description": "Serverless MySQL with branching and zero-downtime migrations",
       "website": "planetscale.com",
-      "freeTier": "Removed free tier in 2024 \u2014 paid only",
+      "freeTier": "Removed free tier in 2024 — paid only",
       "pricing": [
         {
           "plan": "Scaler",
@@ -420,7 +420,7 @@
     {
       "name": "Supabase Auth",
       "category": "auth",
-      "description": "Built-in auth included with Supabase \u2014 email, social, phone, MFA",
+      "description": "Built-in auth included with Supabase — email, social, phone, MFA",
       "website": "supabase.com/auth",
       "freeTier": "50,000 MAUs included with Supabase free tier",
       "pricing": [
@@ -465,7 +465,7 @@
     {
       "name": "Lucia",
       "category": "auth",
-      "description": "Lightweight open-source auth library \u2014 bring your own database",
+      "description": "Lightweight open-source auth library — bring your own database",
       "website": "lucia-auth.com",
       "freeTier": "Completely free and open-source",
       "pricing": [
@@ -487,7 +487,7 @@
       "category": "payments",
       "description": "Payment processing, subscriptions, invoicing, and billing portal",
       "website": "stripe.com",
-      "freeTier": "No monthly fee \u2014 pay per transaction only",
+      "freeTier": "No monthly fee — pay per transaction only",
       "pricing": [
         {
           "plan": "Standard",
@@ -515,9 +515,9 @@
     {
       "name": "Lemon Squeezy",
       "category": "payments",
-      "description": "Merchant of record \u2014 handles tax, compliance, and billing globally",
+      "description": "Merchant of record — handles tax, compliance, and billing globally",
       "website": "lemonsqueezy.com",
-      "freeTier": "No monthly fee \u2014 pay per transaction only",
+      "freeTier": "No monthly fee — pay per transaction only",
       "pricing": [
         {
           "plan": "Standard",
@@ -540,9 +540,9 @@
     {
       "name": "Paddle",
       "category": "payments",
-      "description": "Merchant of record for SaaS \u2014 handles tax, billing, compliance",
+      "description": "Merchant of record for SaaS — handles tax, billing, compliance",
       "website": "paddle.com",
-      "freeTier": "No monthly fee \u2014 revenue share only",
+      "freeTier": "No monthly fee — revenue share only",
       "pricing": [
         {
           "plan": "Standard",
@@ -567,7 +567,7 @@
       "category": "payments",
       "description": "Simple platform for selling digital products and memberships",
       "website": "gumroad.com",
-      "freeTier": "No monthly fee \u2014 flat 10% per sale",
+      "freeTier": "No monthly fee — flat 10% per sale",
       "pricing": [
         {
           "plan": "Standard",
@@ -616,7 +616,7 @@
     {
       "name": "Anthropic",
       "category": "ai",
-      "description": "Claude \u2014 advanced reasoning, coding, analysis, and vision",
+      "description": "Claude — advanced reasoning, coding, analysis, and vision",
       "website": "anthropic.com",
       "freeTier": "Free tier with rate limits via API",
       "pricing": [
@@ -647,7 +647,7 @@
     {
       "name": "Groq",
       "category": "ai",
-      "description": "Ultra-fast LLM inference \u2014 Llama, Mixtral, Gemma on custom hardware",
+      "description": "Ultra-fast LLM inference — Llama, Mixtral, Gemma on custom hardware",
       "website": "groq.com",
       "freeTier": "Free tier with rate limits (30 req/min)",
       "pricing": [
@@ -707,7 +707,7 @@
     {
       "name": "Replicate",
       "category": "ai",
-      "description": "Run open-source AI models via API \u2014 images, video, audio, LLMs",
+      "description": "Run open-source AI models via API — images, video, audio, LLMs",
       "website": "replicate.com",
       "freeTier": "Small free credit for exploration",
       "pricing": [
@@ -803,7 +803,7 @@
     {
       "name": "Webflow",
       "category": "nocode",
-      "description": "Visual web design and CMS platform \u2014 pixel-perfect sites",
+      "description": "Visual web design and CMS platform — pixel-perfect sites",
       "website": "webflow.com",
       "freeTier": "2 projects, webflow.io subdomain, 1GB bandwidth",
       "pricing": [
@@ -873,7 +873,7 @@
     {
       "name": "Glide",
       "category": "nocode",
-      "description": "Build mobile and web apps from spreadsheets \u2014 no code",
+      "description": "Build mobile and web apps from spreadsheets — no code",
       "website": "glideapps.com",
       "freeTier": "3 apps, 500 rows, Glide branding",
       "pricing": [
@@ -902,8 +902,8 @@
     },
     {
       "name": "FlutterFlow",
-      "category": "nocode",
-      "description": "Visual Flutter app builder \u2014 native iOS, Android, and web",
+      "category": "mobile",
+      "description": "Visual Flutter app builder — native iOS, Android, and web",
       "website": "flutterflow.io",
       "freeTier": "Build and preview for free, no code export",
       "pricing": [
@@ -932,7 +932,7 @@
     },
     {
       "name": "Adalo",
-      "category": "nocode",
+      "category": "mobile",
       "description": "No-code native mobile and web app builder",
       "website": "adalo.com",
       "freeTier": "Build and test for free (Adalo branding, no publish)",
@@ -993,7 +993,7 @@
     {
       "name": "Make.com",
       "category": "automation",
-      "description": "Visual automation platform \u2014 connect APIs, transform data, build workflows",
+      "description": "Visual automation platform — connect APIs, transform data, build workflows",
       "website": "make.com",
       "freeTier": "1,000 operations/mo, 2 active scenarios",
       "pricing": [
@@ -1053,7 +1053,7 @@
     {
       "name": "n8n",
       "category": "automation",
-      "description": "Open-source workflow automation \u2014 self-host or cloud",
+      "description": "Open-source workflow automation — self-host or cloud",
       "website": "n8n.io",
       "freeTier": "Free self-hosted (unlimited), cloud starts at Starter",
       "pricing": [
@@ -1113,7 +1113,7 @@
     {
       "name": "Resend",
       "category": "email",
-      "description": "Modern email API built for developers \u2014 React Email compatible",
+      "description": "Modern email API built for developers — React Email compatible",
       "website": "resend.com",
       "freeTier": "3,000 emails/mo, 1 domain",
       "pricing": [
@@ -1173,7 +1173,7 @@
     {
       "name": "SendGrid",
       "category": "email",
-      "description": "Email delivery by Twilio \u2014 transactional and marketing",
+      "description": "Email delivery by Twilio — transactional and marketing",
       "website": "sendgrid.com",
       "freeTier": "100 emails/day forever",
       "pricing": [
@@ -1203,7 +1203,7 @@
     {
       "name": "Mailgun",
       "category": "email",
-      "description": "Email API for developers \u2014 sending, receiving, and tracking",
+      "description": "Email API for developers — sending, receiving, and tracking",
       "website": "mailgun.com",
       "freeTier": "100 emails/day for first 3 months (trial)",
       "pricing": [
@@ -1233,7 +1233,7 @@
     {
       "name": "Loops",
       "category": "email",
-      "description": "Email platform for SaaS \u2014 onboarding sequences and product updates",
+      "description": "Email platform for SaaS — onboarding sequences and product updates",
       "website": "loops.so",
       "freeTier": "1,000 contacts, 2,000 emails/mo",
       "pricing": [
@@ -1288,7 +1288,7 @@
     {
       "name": "AWS S3",
       "category": "storage",
-      "description": "Industry-standard object storage \u2014 infinitely scalable",
+      "description": "Industry-standard object storage — infinitely scalable",
       "website": "aws.amazon.com/s3",
       "freeTier": "5GB storage, 20K GET, 2K PUT/mo for 12 months",
       "pricing": [
@@ -1318,7 +1318,7 @@
     {
       "name": "Uploadthing",
       "category": "storage",
-      "description": "File uploads for Next.js \u2014 simple API, built-in CDN",
+      "description": "File uploads for Next.js — simple API, built-in CDN",
       "website": "uploadthing.com",
       "freeTier": "2GB storage, 2GB bandwidth/mo",
       "pricing": [
@@ -1373,7 +1373,7 @@
     {
       "name": "PostHog",
       "category": "analytics",
-      "description": "Product analytics, session replay, feature flags, A/B testing \u2014 all-in-one",
+      "description": "Product analytics, session replay, feature flags, A/B testing — all-in-one",
       "website": "posthog.com",
       "freeTier": "1M events/mo, 5K sessions, 1M feature flag requests",
       "pricing": [
@@ -1428,7 +1428,7 @@
     {
       "name": "Plausible",
       "category": "analytics",
-      "description": "Privacy-focused web analytics \u2014 lightweight, no cookies",
+      "description": "Privacy-focused web analytics — lightweight, no cookies",
       "website": "plausible.io",
       "freeTier": "No free tier (30-day trial only)",
       "pricing": [
@@ -1548,7 +1548,7 @@
     {
       "name": "Strapi",
       "category": "cms",
-      "description": "Open-source headless CMS \u2014 self-hosted or cloud",
+      "description": "Open-source headless CMS — self-hosted or cloud",
       "website": "strapi.io",
       "freeTier": "Free self-hosted (unlimited), cloud has free tier",
       "pricing": [
@@ -1638,7 +1638,7 @@
     {
       "name": "React Native",
       "category": "mobile",
-      "description": "Cross-platform mobile framework by Meta \u2014 JavaScript/TypeScript",
+      "description": "Cross-platform mobile framework by Meta — JavaScript/TypeScript",
       "website": "reactnative.dev",
       "freeTier": "Free and open-source",
       "pricing": [
@@ -1658,7 +1658,7 @@
     {
       "name": "Telegram Bot API",
       "category": "messaging",
-      "description": "Build bots for Telegram \u2014 free, no approval needed, rich features",
+      "description": "Build bots for Telegram — free, no approval needed, rich features",
       "website": "core.telegram.org/bots",
       "freeTier": "Completely free, no limits on messages",
       "pricing": [
@@ -1794,7 +1794,7 @@
     {
       "name": "Datadog",
       "category": "monitoring",
-      "description": "Full-stack observability \u2014 APM, logs, metrics, synthetics",
+      "description": "Full-stack observability — APM, logs, metrics, synthetics",
       "website": "datadoghq.com",
       "freeTier": "5 hosts, 1-day log retention, basic dashboards",
       "pricing": [
@@ -1824,7 +1824,7 @@
     {
       "name": "Lovable",
       "category": "ai_builders",
-      "description": "AI full-stack app builder \u2014 describe what you want, get a deployed app",
+      "description": "AI full-stack app builder — describe what you want, get a deployed app",
       "website": "lovable.dev",
       "freeTier": "Limited free generations, preview deployments",
       "pricing": [
@@ -1857,7 +1857,7 @@
     {
       "name": "Bolt.new",
       "category": "ai_builders",
-      "description": "AI full-stack app builder in the browser \u2014 edit, preview, deploy instantly",
+      "description": "AI full-stack app builder in the browser — edit, preview, deploy instantly",
       "website": "bolt.new",
       "freeTier": "Limited free generations and previews",
       "pricing": [
@@ -1890,7 +1890,7 @@
     {
       "name": "v0 by Vercel",
       "category": "ai_builders",
-      "description": "AI UI component generator \u2014 describe a UI, get React/Tailwind code",
+      "description": "AI UI component generator — describe a UI, get React/Tailwind code",
       "website": "v0.dev",
       "freeTier": "Limited free generations per day",
       "pricing": [
@@ -1950,7 +1950,7 @@
     {
       "name": "Windsurf",
       "category": "ai_builders",
-      "description": "AI code editor by Codeium \u2014 inline completions, chat, and agentic flows",
+      "description": "AI code editor by Codeium — inline completions, chat, and agentic flows",
       "website": "codeium.com/windsurf",
       "freeTier": "Free tier with basic completions",
       "pricing": [
@@ -1982,7 +1982,7 @@
     {
       "name": "Replit",
       "category": "ai_builders",
-      "description": "Browser IDE with AI \u2014 build, run, and deploy apps from anywhere",
+      "description": "Browser IDE with AI — build, run, and deploy apps from anywhere",
       "website": "replit.com",
       "freeTier": "Free repls, community hosting, basic AI",
       "pricing": [
@@ -2015,7 +2015,7 @@
     {
       "name": "GitHub Copilot",
       "category": "ai_builders",
-      "description": "AI pair programmer \u2014 inline suggestions, chat, and multi-file edits",
+      "description": "AI pair programmer — inline suggestions, chat, and multi-file edits",
       "website": "github.com/features/copilot",
       "freeTier": "Free tier with 2,000 completions/mo and 50 chat messages/mo",
       "pricing": [
@@ -2047,7 +2047,7 @@
     {
       "name": "Claude Code",
       "category": "ai_builders",
-      "description": "AI coding agent CLI by Anthropic \u2014 agentic coding with terminal access",
+      "description": "AI coding agent CLI by Anthropic — agentic coding with terminal access",
       "website": "claude.ai/code",
       "freeTier": "Usage-based via Anthropic API (free tier available)",
       "pricing": [
@@ -2641,7 +2641,7 @@
     },
     {
       "name": "Hasura",
-      "category": "nocode",
+      "category": "database",
       "description": "Instant GraphQL and REST APIs over databases without coding.",
       "website": "hasura.io",
       "freeTier": "Free tier for single database, 60 req/min",
@@ -2663,7 +2663,7 @@
     },
     {
       "name": "Penpot",
-      "category": "nocode",
+      "category": "design",
       "description": "Open-source design and prototyping platform for cross-domain teams.",
       "website": "penpot.app",
       "freeTier": "Self-hosted or cloud free tier, unlimited projects",
@@ -3058,28 +3058,6 @@
       "lastUpdated": "2026-03"
     },
     {
-      "name": "Coderabbit",
-      "category": "ai_builders",
-      "description": "AI-powered code review tool for GitHub and GitLab pull requests.",
-      "website": "coderabbit.ai",
-      "freeTier": "Free for open-source, 200 files/hour",
-      "pricing": [
-        {
-          "plan": "Free",
-          "price": "$0",
-          "limits": "see website for details"
-        }
-      ],
-      "bestFor": [
-        "developer-tools",
-        "ai-coding",
-        "productivity"
-      ],
-      "noCode": false,
-      "openSource": true,
-      "lastUpdated": "2026-03"
-    },
-    {
       "name": "Vonage",
       "category": "messaging",
       "description": "Communication APIs for SMS, voice, video, and messaging.",
@@ -3125,7 +3103,7 @@
     },
     {
       "name": "Figma",
-      "category": "nocode",
+      "category": "design",
       "description": "Collaborative interface design and prototyping tool.",
       "website": "figma.com",
       "freeTier": "3 projects, unlimited viewers",
@@ -3146,70 +3124,148 @@
       "lastUpdated": "2026-03"
     },
     {
-      "name": "GitLab",
-      "category": "hosting",
-      "description": "DevOps platform with Git repos, CI/CD pipelines, and container registry.",
-      "website": "about.gitlab.com",
-      "freeTier": "Unlimited repos, 400 CI/CD minutes/month, 5GB storage",
+      "name": "Capacitor",
+      "category": "mobile",
+      "description": "Cross-platform native runtime for web apps (iOS & Android)",
+      "website": "capacitorjs.com",
+      "freeTier": "Free, open source",
       "pricing": [
         {
           "plan": "Free",
           "price": "$0",
-          "limits": "see website for details"
+          "limits": "Open source, full features"
         }
       ],
       "bestFor": [
-        "cloud",
-        "deployment",
-        "infrastructure"
+        "mobile",
+        "cross-platform",
+        "ionic",
+        "webapps"
       ],
       "noCode": false,
-      "openSource": false,
-      "lastUpdated": "2026-03"
+      "openSource": true
     },
     {
-      "name": "Bitbucket",
-      "category": "hosting",
-      "description": "Git repository hosting with built-in CI/CD pipelines.",
-      "website": "bitbucket.org",
-      "freeTier": "Unlimited private repos, 50 build minutes/month",
+      "name": "Flutter",
+      "category": "mobile",
+      "description": "Google's UI toolkit for building natively compiled apps for mobile, web, and desktop",
+      "website": "flutter.dev",
+      "freeTier": "Free, open source",
       "pricing": [
         {
           "plan": "Free",
           "price": "$0",
-          "limits": "see website for details"
+          "limits": "Open source, full features"
         }
       ],
       "bestFor": [
-        "cloud",
-        "deployment",
-        "infrastructure"
+        "mobile",
+        "cross-platform",
+        "ios",
+        "android",
+        "dart"
       ],
       "noCode": false,
-      "openSource": false,
-      "lastUpdated": "2026-03"
+      "openSource": true
     },
     {
-      "name": "Codeberg",
-      "category": "hosting",
-      "description": "Free and open-source code collaboration platform powered by Forgejo.",
-      "website": "codeberg.org",
-      "freeTier": "Unlimited repos, pages hosting, CI/CD included",
+      "name": "Polar.sh",
+      "category": "payments",
+      "description": "Developer-first billing and monetization platform. Open source, built for OSS and indie hackers.",
+      "website": "polar.sh",
+      "freeTier": "Free to start, 5% fee",
       "pricing": [
         {
           "plan": "Free",
-          "price": "$0",
-          "limits": "see website for details"
+          "price": "$0 + 5% fee",
+          "limits": "All features included"
         }
       ],
       "bestFor": [
-        "cloud",
-        "deployment",
-        "infrastructure"
+        "payments",
+        "subscriptions",
+        "indie",
+        "oss",
+        "saas"
       ],
       "noCode": false,
-      "openSource": false,
-      "lastUpdated": "2026-03"
+      "openSource": true
+    },
+    {
+      "name": "PayPal",
+      "category": "payments",
+      "description": "Global payments platform supporting 200+ markets and 25 currencies",
+      "website": "paypal.com",
+      "freeTier": "No monthly fee",
+      "pricing": [
+        {
+          "plan": "Standard",
+          "price": "3.49% + fixed fee",
+          "limits": "Per transaction, varies by country"
+        }
+      ],
+      "bestFor": [
+        "payments",
+        "global",
+        "consumer",
+        "international"
+      ],
+      "noCode": false
+    },
+    {
+      "name": "Firebase Auth",
+      "category": "auth",
+      "description": "Google's authentication service with 10+ sign-in providers. Part of Firebase.",
+      "website": "firebase.google.com/products/auth",
+      "freeTier": "10k verifications/month free",
+      "pricing": [
+        {
+          "plan": "Spark (Free)",
+          "price": "$0/mo",
+          "limits": "10k phone verifications/mo"
+        },
+        {
+          "plan": "Blaze",
+          "price": "Pay as you go",
+          "limits": "$0.0055 per verification above free tier"
+        }
+      ],
+      "bestFor": [
+        "auth",
+        "mobile",
+        "firebase",
+        "google",
+        "nocode"
+      ],
+      "noCode": false
+    },
+    {
+      "name": "Hetzner",
+      "category": "hosting",
+      "description": "European VPS and dedicated server provider. Best price/performance for self-hosted apps.",
+      "website": "hetzner.com",
+      "freeTier": "No free tier",
+      "pricing": [
+        {
+          "plan": "CX22",
+          "price": "€3.79/mo",
+          "limits": "2 vCPU, 4GB RAM, 40GB SSD"
+        },
+        {
+          "plan": "CX32",
+          "price": "€7.29/mo",
+          "limits": "4 vCPU, 8GB RAM, 80GB SSD"
+        }
+      ],
+      "bestFor": [
+        "hosting",
+        "vps",
+        "self-hosted",
+        "europe",
+        "cheap"
+      ],
+      "noCode": false
     }
-  ]
+  ],
+  "toolCount": 125
 }
