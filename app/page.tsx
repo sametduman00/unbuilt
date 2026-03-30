@@ -1962,9 +1962,9 @@ function InputSection({
         </div>
         )}
 
-        <div style={{ padding: "1.375rem 1.5rem" }}>
+        <div className="dig-card-body" style={{ padding: "1.375rem 1.5rem" }}>
           {/* Idea textarea */}
-          <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text-4)", marginBottom: "0.5rem", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+          <label className="dig-idea-label" style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text-4)", marginBottom: "0.5rem", letterSpacing: "0.04em", textTransform: "uppercase" }}>
             {tool.inputLabel}
           </label>
           <textarea
