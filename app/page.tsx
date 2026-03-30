@@ -2100,7 +2100,7 @@ function InputSection({
           )}
 
           {/* Submit row */}
-          <div style={{
+          <div className="dig-submit-row" style={{
             display: "flex", alignItems: "center", justifyContent: "space-between",
             marginTop: "1.125rem", paddingTop: "1.125rem",
             borderTop: "1px solid var(--clr-border-deep)",
