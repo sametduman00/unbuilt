@@ -52,8 +52,6 @@ function IconGap({ color }: { color: string }) {
       <path d="M11 1.5V4M11 18v2.5M1.5 11H4M18 11h2.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => { const fn = () => setIsMobile(window.innerWidth <= 768); fn(); window.addEventListener("resize", fn); return () => window.removeEventListener("resize", fn); }, []);
 }
 function IconRadar({ color }: { color: string }) {
   return (
@@ -2524,9 +2522,9 @@ function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
 const PHASE_COLORS = ["var(--clr-text)", "var(--clr-text-2)", "var(--clr-text-3)", "var(--clr-text-5)", "var(--clr-text-6)"];
 const PHASE_BGS = ["rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)"];
 
-function StackAdvisorResult({
+function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVideos?: YouTubeVideo[] }) {
   const [mob, setMob] = useState(false);
-  useEffect(() => { const chk = () => setMob(window.innerWidth <= 768); chk(); window.addEventListener("resize", chk); return () => window.removeEventListener("resize", chk); }, []); data, ytVideos }: { data: StackAdvisorData; ytVideos?: YouTubeVideo[] }) {
+  useEffect(() => { const chk = () => setMob(window.innerWidth <= 768); chk(); window.addEventListener("resize", chk); return () => window.removeEventListener("resize", chk); }, []);
   // Build a lookup: tool name (lowercased) â best matching YouTube video
   const ytToolMap = new Map<string, YouTubeVideo>();
   if (ytVideos && ytVideos.length > 0) {
@@ -2896,6 +2894,8 @@ function AiBlock({ what, diff, gap }: { what:string|null; diff:string|null; gap:
 }
 
 function HomeInner() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { const fn = () => setIsMobile(window.innerWidth <= 768); fn(); window.addEventListener("resize", fn); return () => window.removeEventListener("resize", fn); }, []);
   const { isSignedIn } = useAuth();
   const { user } = useUser();
   const [credits, setCredits] = useState<number | null>(null);
