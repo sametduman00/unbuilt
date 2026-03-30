@@ -2119,8 +2119,8 @@ function InputSection({
                   cursor: "pointer", fontFamily: "inherit",
                   transition: "all 0.15s",
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(99,102,241,0.13)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = showSampleReport ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.07)"; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(99,102,241,0.13)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = showSampleReport ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.07)"; }}
               >
                 {showSampleReport ? "Hide Sample ↑" : "Sample Report ↓"}
               </button>
@@ -3631,8 +3631,8 @@ function HomeInner() {
                       <button
                         onClick={() => router.push("/?tool=gap-analysis")}
                         style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 18px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
-                        onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = "0.85"}
-                        onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = "1"}
+                        onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"}
+                        onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
                       >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                         Dig my idea →
@@ -3640,8 +3640,8 @@ function HomeInner() {
                       <button
                         onClick={() => router.push("/?tool=stack-advisor")}
                         style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 18px", background: "rgba(16,185,129,0.1)", color: "rgb(5,150,105)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(16,185,129,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = "0.85"; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
                       >
                         Get my Stack →
                       </button>
@@ -3736,16 +3736,17 @@ function HomeInner() {
                                     </div>
                                   </a>
                                   {/* CTA strip */}
-                                  {/* CTA strip */}
                                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 14px 10px", background:"var(--clr-bg)", borderTop:"1px solid var(--clr-border)", gap:12 }}>
                                     <span style={{ fontSize:"0.75rem", color:"var(--clr-text-3)", display:"flex", alignItems:"center", gap:4, flexWrap:"wrap" as const }}>{ctaText}</span>
                                     <button
                                       onClick={e => { e.preventDefault(); router.push("/?tool=gap-analysis"); }}
                                       style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "5px 12px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.72rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", whiteSpace: "nowrap", flexShrink: 0, transition: "opacity 0.12s" }}
-                                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = "0.8"; }}
-                                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
-                                    >Dig my idea →</button>
-                                  </div></div>
+                                      onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
+                                      onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
+                                    >
+                                      Dig my idea →
+                                    </button>
+                                  </div>
                                 </div>
                               );
                             })}
@@ -3814,7 +3815,12 @@ function HomeInner() {
                                 ))}
                               </div>
                             )}
-                            {(app.claude_what||app.claude_difficulty||app.claude_competitors||app.claude_build_with)&&(<div style={{display:"flex",flexDirection:"column",marginTop:4}}>{app.claude_what&&<div style={{display:"grid",gridTemplateColumns:"88px 1fr",gap:"8px",alignItems:"flex-start",paddingTop:10,borderTop:"1px solid var(--clr-border)",marginTop:2}}><span style={{fontSize:"0.625rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)",paddingTop:2}}>What</span><p style={{fontSize:"0.8125rem",color:"var(--clr-text-3)",margin:0,lineHeight:1.5}}>{app.claude_what}</p></div>}{app.claude_difficulty&&(<div style={{display:"grid",gridTemplateColumns:"88px 1fr",gap:"8px",alignItems:"center",paddingTop:10,borderTop:"1px solid var(--clr-border)",marginTop:2}}><span style={{fontSize:"0.625rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)"}}>Difficulty</span><div style={{display:"flex",alignItems:"center",gap:5,flexWrap:"wrap"}}><span style={{width:7,height:7,borderRadius:"50%",background:app.claude_difficulty==="simple"?"#639922":app.claude_difficulty==="medium"?"#BA7517":"#A32D2D",flexShrink:0,display:"inline-block"}}/><span style={{fontSize:"0.8125rem",fontWeight:600,color:app.claude_difficulty==="simple"?"#3B6D11":app.claude_difficulty==="medium"?"#854F0B":"#A32D2D",textTransform:"capitalize"}}>{app.claude_difficulty}</span>{app.claude_difficulty_note&&<span style={{fontSize:"0.75rem",color:"var(--clr-text-4)"}}>{"— "}{app.claude_difficulty_note}</span>}</div></div>)}{app.claude_competitors&&app.claude_competitors.length>0&&<div style={{display:"grid",gridTemplateColumns:"88px 1fr",gap:"8px",alignItems:"center",paddingTop:10,borderTop:"1px solid var(--clr-border)",marginTop:2}}><span style={{fontSize:"0.625rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)"}}>Competitors</span><div style={{display:"flex",flexWrap:"wrap",gap:6}}>{app.claude_competitors.map((comp:string)=><a key={comp} href={"https://apps.apple.com/search?term="+encodeURIComponent(comp)} target="_blank" rel="noopener noreferrer" onClick={e=>{e.preventDefault();e.stopPropagation();fetch("https://itunes.apple.com/search?term="+encodeURIComponent(comp)+"&entity=software&limit=1&country=us").then(r=>r.json()).then(d=>{const url=d.results?.[0]?.trackViewUrl;if(url) window.open(url,"_blank");}).catch(()=>{});}} style={{fontSize:"0.75rem",padding:"2px 10px",borderRadius:999,background:"var(--clr-surface)",border:"1px solid var(--clr-border)",color:"var(--clr-text-3)",whiteSpace:"nowrap",textDecoration:"none",cursor:"pointer"}}>{comp}</a>)}</div></div>}{app.claude_build_with&&app.claude_build_with.length>0&&<div style={{display:"grid",gridTemplateColumns:"88px 1fr",gap:"8px",alignItems:"flex-start",paddingTop:10,borderTop:"1px solid var(--clr-border)",marginTop:2}}><span style={{fontSize:"0.625rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)",paddingTop:6}}>Build it with</span><div style={{display:"flex",flexDirection:"column",gap:10}}><div style={{display:"flex",flexWrap:"wrap",gap:6}}>{app.claude_build_with.map((t:{name:string;role:string})=><div key={t.name} style={{display:"flex",flexDirection:"column",alignItems:"center",background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:8,padding:"4px 10px",gap:2}}><span style={{fontSize:"0.75rem",fontWeight:600,color:"var(--clr-text)"}}>{t.name}</span><span style={{fontSize:"0.625rem",color:"var(--clr-text-4)"}}>{t.role}</span></div>)}</div><a href="/stack" onClick={e=>e.stopPropagation()} style={{display:"inline-block",background:"rgba(16,185,129,0.1)",color:"rgb(5,150,105)",border:"1px solid rgba(16,185,129,0.25)",borderRadius:999,padding:"6px 16px",fontSize:"0.8125rem",fontWeight:600,textDecoration:"none",alignSelf:"flex-start"}}>{"Stack →"}</a></div></div>}</div>)}
+                            {(app.claude_what||app.claude_difficulty||app.claude_competitors||app.claude_build_with)&&<div style={{marginTop:8}}>
+{app.claude_what&&<div style={{display:"grid",gridTemplateColumns:"80px 1fr",gap:"6px",paddingTop:8,borderTop:"1px solid var(--clr-border)"}}><span style={{fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)",paddingTop:2}}>What</span><p style={{fontSize:"0.8rem",color:"var(--clr-text-3)",margin:0,lineHeight:1.5}}>{app.claude_what}</p></div>}
+{app.claude_difficulty&&<div style={{display:"grid",gridTemplateColumns:"80px 1fr",gap:"6px",paddingTop:8,borderTop:"1px solid var(--clr-border)"}}><span style={{fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)"}}>Difficulty</span><div style={{display:"flex",alignItems:"center",gap:5}}><span style={{width:7,height:7,borderRadius:"50%",background:app.claude_difficulty==="simple"?"#639922":app.claude_difficulty==="medium"?"#BA7517":"#A32D2D",flexShrink:0,display:"inline-block"}}/><span style={{fontSize:"0.8rem",fontWeight:600,color:app.claude_difficulty==="simple"?"#3B6D11":app.claude_difficulty==="medium"?"#854F0B":"#A32D2D",textTransform:"capitalize"}}>{app.claude_difficulty}</span>{app.claude_difficulty_note&&<span style={{fontSize:"0.75rem",color:"var(--clr-text-4)"}}>{"— "}{app.claude_difficulty_note}</span>}</div></div>}
+{app.claude_competitors&&app.claude_competitors.length>0&&<div style={{display:"grid",gridTemplateColumns:"80px 1fr",gap:"6px",paddingTop:8,borderTop:"1px solid var(--clr-border)"}}><span style={{fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)"}}>Competitors</span><div style={{display:"flex",flexWrap:"wrap",gap:5}}>{app.claude_competitors.map((comp:string)=><a key={comp} href={"https://apps.apple.com/search?term="+encodeURIComponent(comp)} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{fontSize:"0.75rem",padding:"2px 9px",borderRadius:999,background:"var(--clr-surface)",border:"1px solid var(--clr-border)",color:"var(--clr-text-3)",textDecoration:"none",whiteSpace:"nowrap"}}>{comp}</a>)}</div></div>}
+{app.claude_build_with&&app.claude_build_with.length>0&&<div style={{display:"grid",gridTemplateColumns:"80px 1fr",gap:"6px",paddingTop:8,borderTop:"1px solid var(--clr-border)"}}><span style={{fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)",paddingTop:4}}>Build with</span><div style={{display:"flex",flexWrap:"wrap",gap:5}}>{app.claude_build_with.map((t:{name:string;role:string})=><div key={t.name} style={{display:"flex",flexDirection:"column",alignItems:"center",background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:7,padding:"3px 9px",gap:1}}><span style={{fontSize:"0.72rem",fontWeight:600,color:"var(--clr-text)"}}>{t.name}</span><span style={{fontSize:"0.6rem",color:"var(--clr-text-4)"}}>{t.role}</span></div>)}<a href="/stack" onClick={e=>e.stopPropagation()} style={{display:"inline-block",background:"rgba(16,185,129,0.1)",color:"rgb(5,150,105)",border:"1px solid rgba(16,185,129,0.25)",borderRadius:999,padding:"3px 11px",fontSize:"0.72rem",fontWeight:600,textDecoration:"none",alignSelf:"center"}}>Stack →</a></div></div>}
+</div>}
                           </a>
                           {/* CTA strip */}
                           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 14px 10px",background:"var(--clr-bg)",borderTop:"1px solid var(--clr-border)",gap:12}}>
@@ -3824,8 +3830,8 @@ function HomeInner() {
                             <button
                               onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}}
                               style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "5px 12px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.72rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", whiteSpace: "nowrap", flexShrink: 0, transition: "opacity 0.12s" }}
-                             
-                             
+                              onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
+                              onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
                             >Dig my idea →</button>
                           </div>
                         </div>
@@ -4087,8 +4093,8 @@ ${sections.join("\n")}
                         color: "white", fontSize: "0.775rem", fontWeight: 700,
                         cursor: "pointer", fontFamily: "inherit", letterSpacing: "-0.01em",
                       }}
-                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = "0.9"}
-                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = "1"}
+                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.9"}
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
                     >
                       <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="white" strokeWidth="1.8" strokeLinecap="round"/></svg>
                       New analysis
