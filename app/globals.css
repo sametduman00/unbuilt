@@ -150,19 +150,8 @@ body, p, span, button, input, textarea, select, label, a {
 
 
 
-/* ═══════════════════════════════════════════════
-   RESPONSIVE — Mobile & Tablet
-   Strategy: show mobile elements always, hide on desktop
-═══════════════════════════════════════════════ */
 
-/* ── Global overflow fix — prevents ALL horizontal scroll ── */
-html, body {
-  overflow-x: hidden !important;
-  max-width: 100vw !important;
-}
-* { box-sizing: border-box; }
-
-/* ── Mobile elements: visible by default ── */
+/* ── Mobile Nav & Header (always rendered, hidden on desktop) ── */
 .app-mobile-nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
@@ -177,12 +166,10 @@ html, body {
 .app-mobile-nav a, .app-mobile-nav button {
   display: flex; flex-direction: column; align-items: center; gap: 3px;
   text-decoration: none; color: var(--clr-text-3);
-  font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+  font-size: 10px; font-weight: 600;
   padding: 4px 14px; background: none; border: none;
   cursor: pointer; font-family: inherit;
 }
-.app-mobile-nav a svg, .app-mobile-nav button svg { opacity: 0.55; }
-
 .app-mobile-header {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -202,59 +189,35 @@ html, body {
   .app-mobile-header { display: none !important; }
 }
 
-/* ── Mobile: hide sidebar, adjust layout ── */
+/* ── Mobile layout fixes ── */
 @media (max-width: 768px) {
+  /* Prevent horizontal scroll */
+  html, body { overflow-x: hidden; }
+
   /* Sidebar off */
   .app-sidebar-el { display: none !important; }
 
-  /* Content wrapper: no left margin, top/bottom padding for fixed bars */
+  /* Content wrapper */
   .app-content-wrapper {
     margin-left: 0 !important;
     padding-top: 52px !important;
     padding-bottom: 64px !important;
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
   }
 
-  /* main element */
-  main {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
+  /* PH grid 1 column */
+  .ph-card-grid { grid-template-columns: 1fr !important; }
 
-  /* All text/content: prevent overflow */
-  .app-content-wrapper * {
-    max-width: 100% !important;
-    word-break: break-word;
-    overflow-wrap: break-word;
-  }
-  /* But don't constrain images weirdly */
-  .app-content-wrapper img { max-width: 100%; height: auto; }
-
-  /* Hero card — full width */
-  .app-content-wrapper > div { overflow-x: hidden; }
-
-  /* PH grid: 2-col → 1-col */
-  .ph-card-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* A-2 footer: side-by-side → stacked */
-  .as-a2-footer {
-    grid-template-columns: 1fr !important;
-  }
+  /* A-2 footer stacked */
+  .as-a2-footer { grid-template-columns: 1fr !important; }
   .as-a2-footer > div:first-child {
     border-right: none !important;
     border-bottom: 0.5px solid var(--clr-border) !important;
   }
 
-  /* Dig result panel: side-by-side → vertical */
+  /* Dig panel stacked */
   .dig-result-panel {
     flex-direction: column !important;
     height: auto !important;
-    min-height: 0 !important;
     overflow: visible !important;
   }
   .dig-result-panel > div:first-child {
@@ -265,14 +228,7 @@ html, body {
     border-bottom: 1px solid #e5e7eb !important;
   }
   #gap-tab-content {
-    flex: 1 !important;
     min-height: 350px !important;
     padding: 14px !important;
-    overflow-y: auto !important;
   }
-}
-
-@media (max-width: 480px) {
-  .app-content-wrapper { padding-left: 0 !important; padding-right: 0 !important; }
-  main { padding-left: 8px !important; padding-right: 8px !important; }
 }
