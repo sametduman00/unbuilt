@@ -1,5 +1,3 @@
-import GlobalHeader from "../components/GlobalHeader";
-
 const roles = [
   {
     id: 1,
@@ -65,10 +63,8 @@ const perks = [
 export default function CareersPage() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--clr-bg)", color: "var(--clr-text)" }}>
-      <GlobalHeader />
-
       {/* Hero */}
-      <section style={{ maxWidth: 800, margin: "0 auto", padding: "140px 2rem 80px", textAlign: "center" }}>
+      <section style={{ maxWidth: 800, margin: "0 auto", padding: "48px 2rem 80px", textAlign: "center" }}>
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 6,
           fontSize: "0.75rem", fontWeight: 600,
