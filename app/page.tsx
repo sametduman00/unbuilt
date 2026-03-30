@@ -3695,57 +3695,35 @@ function HomeInner() {
                         {!pulseLoading && phFiltered.length>0 && (
                           <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
                             {phFiltered.map((s,i)=>{
-                              const mc=PULSE_MOVE_COLORS[s.movementType??""];
-                              const gap=pulseParseGap(s.claudeGap);
-                              const topic1 = s.topics?.[0] || "";
-                              const topic2 = s.topics?.[1] || "";
-                              const topicStr = topic2 ? `${topic1} × ${topic2}` : topic1;
-                              const titleWord = s.title?.split(" ")?.[0] || "this";
-                              const ctaVariants = [
-                                topicStr ? <>Building in <strong>{topicStr}</strong>? There's a gap here.</> : <>See a gap in this space?</>,
-                                topicStr ? <>Got a better angle on <strong>{topicStr}</strong>?</> : <>Your take could be different.</>,
-                                <><strong>{titleWord}</strong> just validated this market. Your turn.</>,
-                                topicStr ? <>The <strong>{topicStr}</strong> space just moved. Worth checking.</> : <>This space just moved.</>,
-                                <>Someone built it. Now find out if yours is <strong>different enough</strong>.</>,
-                              ];
-                              const ctaText = ctaVariants[i % ctaVariants.length];
                               return (
-                                <div key={s.title+i} style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderLeft:mc?"3px solid "+mc:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden" }}>
+                                <div key={s.title+i} style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden" }}>
                                   <a href={s.externalUrl||s.url} target="_blank" rel="noopener noreferrer"
-                                    style={{ display:"flex", alignItems:"flex-start", gap:"1rem", padding:"1.125rem", textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
+                                    style={{ display:"flex", alignItems:"flex-start", gap:"1rem", padding:"1.125rem 1.125rem 0.875rem", textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
                                     onMouseEnter={e=>e.currentTarget.style.background="rgba(0,0,0,0.02)"}
                                     onMouseLeave={e=>e.currentTarget.style.background="transparent"}
                                   >
                                     {s.imageUrl
-                                      ? <img src={s.imageUrl} alt="" width={56} height={56} style={{ borderRadius:12, flexShrink:0, objectFit:"cover", border:"1px solid var(--clr-border)" }}/>
-                                      : <div style={{ width:56, height:56, borderRadius:12, background:"var(--clr-border)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.5rem" }}>{s.emoji}</div>
+                                      ? <img src={s.imageUrl} alt="" width={48} height={48} style={{ borderRadius:10, flexShrink:0, objectFit:"cover", border:"1px solid var(--clr-border)" }}/>
+                                      : <div style={{ width:48, height:48, borderRadius:10, background:"var(--clr-border)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.25rem" }}>{s.emoji}</div>
                                     }
                                     <div style={{ flex:1, minWidth:0 }}>
-                                      <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:3, flexWrap:"wrap" }}>
+                                      <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:3 }}>
                                         <span style={{ fontSize:"0.9375rem", fontWeight:600, color:"var(--clr-text)", letterSpacing:"-0.015em" }}>{s.title}</span>
-                                        {mc&&s.movementType&&<span style={{ fontSize:"0.5625rem", fontWeight:700, padding:"0.1rem 0.4rem", borderRadius:999, background:mc+"20", color:mc, letterSpacing:"0.04em", textTransform:"uppercase" }}>{s.movementType==="rank_jump"?"RANK ↑":s.movementType==="new_entry"?"NEW":s.movementType==="review_spike"?"REVIEWS↑":"TOP"}</span>}
-                                        <span style={{ fontSize:"0.6875rem", color:"var(--clr-text-4)", marginLeft:"auto" }}>{pulseRelTime(s.timestamp)}</span>
+                                        <span style={{ fontSize:"0.6875rem", color:"var(--clr-text-4)", marginLeft:"auto", flexShrink:0 }}>{pulseRelTime(s.timestamp)}</span>
                                       </div>
-                                      {s.tagline&&<p style={{ fontSize:"0.8125rem", color:"var(--clr-text-3)", margin:"0 0 6px", lineHeight:1.45 }}>{s.tagline}</p>}
+                                      {s.tagline&&<p style={{ fontSize:"0.8125rem", color:"var(--clr-text-3)", margin:"0 0 8px", lineHeight:1.45 }}>{s.tagline}</p>}
                                       {s.topics&&s.topics.length>0&&(
                                         <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
                                           {s.topics.map((t,ti)=><span key={t} style={{ fontSize:"0.5625rem", fontWeight:600, padding:"0.15rem 0.5rem", borderRadius:999, background:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length]+"18", color:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length] }}>{t}</span>)}
                                         </div>
                                       )}
-                                      {gap&&<AiBlock what={gap.what??null} diff={gap.different??null} gap={gap.missing??null}/>}
                                     </div>
                                   </a>
-                                  {/* CTA strip */}
-                                  <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 14px 10px", background:"var(--clr-bg)", borderTop:"1px solid var(--clr-border)", gap:12 }}>
-                                    <span style={{ fontSize:"0.75rem", color:"var(--clr-text-3)", display:"flex", alignItems:"center", gap:4, flexWrap:"wrap" as const }}>{ctaText}</span>
+                                  <div style={{ borderTop:"1px solid var(--clr-border)", padding:"8px 14px", display:"flex", justifyContent:"flex-end" }}>
                                     <button
-                                      onClick={e => { e.preventDefault(); router.push("/?tool=gap-analysis"); }}
-                                      style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "5px 12px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.72rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", whiteSpace: "nowrap", flexShrink: 0, transition: "opacity 0.12s" }}
-                                      onMouseEnter={e=>(e.currentTarget as HTMLButtonElement).style.opacity="0.8"}
-                                      onMouseLeave={e=>(e.currentTarget as HTMLButtonElement).style.opacity="1"}
-                                    >
-                                      Dig my idea →
-                                    </button>
+                                      onClick={e=>{e.preventDefault();setIdea(s.tagline||s.title||"");handleSelectTool("gap-analysis");}}
+                                      style={{ fontSize:"0.6875rem", fontWeight:600, color:"#534AB7", background:"rgba(99,102,241,0.08)", border:"0.5px solid rgba(99,102,241,0.25)", borderRadius:999, padding:"4px 12px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}
+                                    >Dig this niche →</button>
                                   </div>
                                 </div>
                               );
