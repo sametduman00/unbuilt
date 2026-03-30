@@ -3513,14 +3513,14 @@ function HomeInner() {
       `}</style>
 
       {/* Shell */}
-      <div style={{ display: "flex", height: "100vh" }}>
+      <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
 
         {/* Sidebar */}
 
 
 
         {/* Main content */}
-        <main style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto", padding: "0 16px" }}>
+        <main style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto", overflowX: "hidden", padding: "0 16px", maxWidth: "100%" }}>
 
           {/* ── Scanning overlay ── */}
           {scanStep >= 0 ? (() => {
