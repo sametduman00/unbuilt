@@ -225,8 +225,9 @@ body, p, span, button, input, textarea, select, label, a {
   }
   .dig-result-panel > div:first-child {
     width: 100% !important;
-    max-height: 220px !important;
-    overflow-y: auto !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
     border-right: none !important;
     border-bottom: 1px solid #e5e7eb !important;
   }
@@ -264,4 +265,8 @@ body, p, span, button, input, textarea, select, label, a {
   /* Sample report tabs — scrollable on mobile */
   .dig-result-panel > div:first-child { overflow-x: hidden !important; overflow-y: auto !important; }
   #gap-tab-content { overflow-y: auto !important; min-height: 300px !important; }
+}
+
+@media (max-width: 768px) {
+  .dig-submit-row > button { width: 100% !important; justify-content: center !important; }
 }
