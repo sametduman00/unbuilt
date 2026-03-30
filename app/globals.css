@@ -235,3 +235,14 @@ body, p, span, button, input, textarea, select, label, a {
     padding: 14px !important;
   }
 }
+
+/* ── Pricing page mobile ── */
+@media (max-width: 768px) {
+  .pricing-main { padding: 16px 16px 80px !important; max-width: 100% !important; }
+  .pricing-packs-grid { grid-template-columns: 1fr !important; }
+  .pricing-credits-grid { grid-template-columns: 1fr !important; }
+  .pricing-wallets-grid { grid-template-columns: 1fr 1fr !important; }
+  .pricing-legal-grid { grid-template-columns: 1fr 1fr !important; }
+  .pricing-why-flex { flex-direction: column !important; }
+  .pricing-why-flex > div { min-width: unset !important; width: 100% !important; }
+}
