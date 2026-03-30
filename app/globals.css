@@ -355,3 +355,70 @@ body, p, span, button, input, textarea, select, label, a {
     font-size: 11px !important;
   }
 }
+
+/* ── Stack input extras mobile ── */
+@media (max-width: 768px) {
+  .stack-extras-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  .stack-platform-flex {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .stack-platform-flex > button {
+    flex: 1 1 auto !important;
+    min-width: 80px !important;
+  }
+}
+
+/* ── Stack result panel mobile ── */
+@media (max-width: 768px) {
+  .stack-result-panel {
+    flex-direction: column !important;
+    height: auto !important;
+    overflow: visible !important;
+    border-radius: 12px !important;
+  }
+  .stack-nav-panel {
+    width: 100% !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    flex-shrink: 0 !important;
+  }
+  .stack-result-panel > div:last-child {
+    width: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    height: auto !important;
+  }
+  /* All grids inside stack result → 1 column */
+  .stack-result-panel [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+  /* Stack flex containers → wrap or column */
+  .stack-result-panel [style*="space-between"] {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  .stack-result-panel [style*="display: flex"] {
+    flex-wrap: wrap !important;
+  }
+  /* Prevent overflow */
+  .stack-result-panel > * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .stack-result-panel * {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .stack-result-panel svg {
+    max-width: none !important;
+    flex-shrink: 0;
+  }
+}
