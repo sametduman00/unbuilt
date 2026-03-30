@@ -246,3 +246,8 @@ body, p, span, button, input, textarea, select, label, a {
   .pricing-why-flex { flex-direction: column !important; }
   .pricing-why-flex > div { min-width: unset !important; width: 100% !important; }
 }
+
+/* Difficulty note — hidden on mobile */
+@media (max-width: 768px) {
+  .diff-note { display: none !important; }
+}
