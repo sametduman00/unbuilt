@@ -147,22 +147,9 @@ body, p, span, button, input, textarea, select, label, a {
 [data-tool-grid] p { font-size: 0.875rem !important; line-height: 1.65 !important; color: #666666 !important; }
 [data-tool-grid] div[style*="margin-top: 0.875rem"] { color: #0891b2 !important; font-size: 0.875rem !important; font-weight: 600 !important; }
 
+
 /* ── Responsive ─────────────────────────────────── */
-@media (max-width: 768px) {
-  .app-sidebar-el { display: none !important; }
-  .app-content-wrapper { margin-left: 0 !important; padding-bottom: 60px !important; }
-  .app-mobile-nav { display: flex !important; }
-  /* PH 2-col → 1-col */
-  .ph-card-grid { grid-template-columns: 1fr !important; }
-  /* A-2 footer → stack */
-  .as-a2-footer { grid-template-columns: 1fr !important; }
-  .as-a2-footer > div { border-right: none !important; border-bottom: 0.5px solid var(--clr-border); }
-  .as-a2-footer > div:last-child { border-bottom: none !important; }
-}
-@media (max-width: 480px) {
-  /* Extra small phones */
-  .as-a2-footer .a2-btn { font-size: 0.625rem !important; padding: 3px 8px !important; }
-}
+
 /* Mobile bottom nav — hidden on desktop */
 .app-mobile-nav {
   display: none;
@@ -179,7 +166,73 @@ body, p, span, button, input, textarea, select, label, a {
   display: flex; flex-direction: column; align-items: center; gap: 3px;
   text-decoration: none; color: var(--clr-text-3);
   font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
-  padding: 6px 16px; border-radius: 8px;
-  transition: color 0.12s;
+  padding: 4px 20px; border-radius: 8px; transition: color 0.12s;
 }
-.app-mobile-nav a:hover, .app-mobile-nav a.active { color: var(--clr-text); }
+.app-mobile-nav a:hover { color: var(--clr-text); }
+.app-mobile-nav a svg { opacity: 0.55; }
+.app-mobile-nav a:hover svg { opacity: 1; }
+
+/* Mobile menu overlay */
+.mobile-menu-overlay {
+  display: none;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200;
+}
+.mobile-menu-overlay.open { display: block; }
+.mobile-menu-panel {
+  position: fixed; bottom: 56px; left: 0; right: 0;
+  background: var(--clr-surface); border-top: 0.5px solid var(--clr-border);
+  border-radius: 16px 16px 0 0;
+  padding: 12px 16px 20px;
+  z-index: 201; transform: translateY(100%);
+  transition: transform 0.25s ease;
+}
+.mobile-menu-panel.open { transform: translateY(0); }
+.mobile-menu-panel a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 4px; border-bottom: 0.5px solid var(--clr-border);
+  text-decoration: none; color: var(--clr-text); font-size: 14px; font-weight: 500;
+}
+.mobile-menu-panel a:last-child { border-bottom: none; }
+
+@media (max-width: 768px) {
+  .app-sidebar-el { display: none !important; }
+  .app-content-wrapper { margin-left: 0 !important; padding-bottom: 60px !important; }
+  .app-mobile-nav { display: flex !important; }
+
+  /* PH 2-col → 1-col */
+  .ph-card-grid { grid-template-columns: 1fr !important; }
+
+  /* A-2 footer → stack vertically */
+  .as-a2-footer { grid-template-columns: 1fr !important; }
+  .as-a2-footer > div:first-child { border-right: none !important; border-bottom: 0.5px solid var(--clr-border) !important; }
+
+  /* Dig result panel → vertical stack */
+  .dig-result-panel {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .dig-result-panel > div:first-child {
+    width: 100% !important;
+    max-height: 260px !important;
+    overflow-y: auto !important;
+    border-bottom: 0.5px solid var(--clr-border) !important;
+  }
+  #gap-tab-content {
+    flex: 1 !important;
+    min-height: 400px !important;
+    padding: 16px !important;
+  }
+
+  /* Hero text overflow fix */
+  .app-content-wrapper p { word-break: break-word; overflow-wrap: break-word; }
+
+  /* General overflow fixes */
+  .app-content-wrapper { overflow-x: hidden; }
+  main { overflow-x: hidden; }
+}
+
+@media (max-width: 480px) {
+  .as-a2-footer button, .as-a2-footer a { font-size: 0.625rem !important; padding: 3px 8px !important; }
+}
