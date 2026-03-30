@@ -2119,8 +2119,8 @@ function InputSection({
                   cursor: "pointer", fontFamily: "inherit",
                   transition: "all 0.15s",
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(99,102,241,0.13)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = showSampleReport ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.07)"; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(99,102,241,0.13)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = showSampleReport ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.07)"; }}
               >
                 {showSampleReport ? "Hide Sample ↑" : "Sample Report ↓"}
               </button>
@@ -3631,8 +3631,8 @@ function HomeInner() {
                       <button
                         onClick={() => router.push("/?tool=gap-analysis")}
                         style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 18px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
-                        onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"}
-                        onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
+                        onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = "0.85"}
+                        onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = "1"}
                       >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                         Dig my idea →
@@ -3640,8 +3640,8 @@ function HomeInner() {
                       <button
                         onClick={() => router.push("/?tool=stack-advisor")}
                         style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 18px", background: "rgba(16,185,129,0.1)", color: "rgb(5,150,105)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(16,185,129,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = "0.85"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
                       >
                         Get my Stack →
                       </button>
@@ -4093,8 +4093,8 @@ ${sections.join("\n")}
                         color: "white", fontSize: "0.775rem", fontWeight: 700,
                         cursor: "pointer", fontFamily: "inherit", letterSpacing: "-0.01em",
                       }}
-                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.9"}
-                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = "0.9"}
+                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = "1"}
                     >
                       <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="white" strokeWidth="1.8" strokeLinecap="round"/></svg>
                       New analysis
