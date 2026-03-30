@@ -146,3 +146,40 @@ body, p, span, button, input, textarea, select, label, a {
 [data-tool-grid] div[style*="0.825rem"][style*="500"] { font-size: 0.78rem !important; color: #0891b2 !important; }
 [data-tool-grid] p { font-size: 0.875rem !important; line-height: 1.65 !important; color: #666666 !important; }
 [data-tool-grid] div[style*="margin-top: 0.875rem"] { color: #0891b2 !important; font-size: 0.875rem !important; font-weight: 600 !important; }
+
+/* ── Responsive ─────────────────────────────────── */
+@media (max-width: 768px) {
+  .app-sidebar-el { display: none !important; }
+  .app-content-wrapper { margin-left: 0 !important; padding-bottom: 60px !important; }
+  .app-mobile-nav { display: flex !important; }
+  /* PH 2-col → 1-col */
+  .ph-card-grid { grid-template-columns: 1fr !important; }
+  /* A-2 footer → stack */
+  .as-a2-footer { grid-template-columns: 1fr !important; }
+  .as-a2-footer > div { border-right: none !important; border-bottom: 0.5px solid var(--clr-border); }
+  .as-a2-footer > div:last-child { border-bottom: none !important; }
+}
+@media (max-width: 480px) {
+  /* Extra small phones */
+  .as-a2-footer .a2-btn { font-size: 0.625rem !important; padding: 3px 8px !important; }
+}
+/* Mobile bottom nav — hidden on desktop */
+.app-mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 56px;
+  background: var(--clr-surface);
+  border-top: 0.5px solid var(--clr-border);
+  z-index: 100;
+  align-items: center;
+  justify-content: space-around;
+}
+.app-mobile-nav a {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  text-decoration: none; color: var(--clr-text-3);
+  font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+  padding: 6px 16px; border-radius: 8px;
+  transition: color 0.12s;
+}
+.app-mobile-nav a:hover, .app-mobile-nav a.active { color: var(--clr-text); }
