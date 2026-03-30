@@ -577,6 +577,8 @@ function ThreatDots({ level }: { level: number }) {
 }
 
 function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack }: { data: GapAnalysisData; itunesApps?: ITunesApp[]; gplayApps?: GooglePlayApp[]; idea?: string; onSwitchToStack?: (idea: string) => void }) {
+  const [mob, setMob] = useState(false);
+  useEffect(() => { const chk = () => setMob(window.innerWidth <= 768); chk(); window.addEventListener("resize", chk); return () => window.removeEventListener("resize", chk); }, []);
   data = {
     ...data,
     competitors: data.competitors?.filter((c: GapCompetitor) => c?.name) ?? [],
@@ -1219,8 +1221,8 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
   };
 
   return (
-    <div className="dig-result-panel" style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:16, overflow:"hidden", display:"flex", height:"calc(100vh - 76px)", marginTop:8 }}>
-      <div style={{ width:220, borderRight:"1px solid #e5e7eb", padding:"14px 8px", flexShrink:0, background:"#fafafa", display:"flex", flexDirection:"column" as const, gap:2, overflowY:"auto" as const }}>
+    <div className="dig-result-panel" style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:16, overflow:"hidden", display:"flex", flexDirection: mob ? "column" : "row" as const, height: mob ? "auto" : "calc(100vh - 76px)", marginTop:8 }}>
+      <div style={{ width: mob ? "100%" : 220, borderRight: mob ? "none" : "1px solid #e5e7eb", borderBottom: mob ? "1px solid #e5e7eb" : "none", padding: mob ? "8px" : "14px 8px", flexShrink:0, background:"#fafafa", display:"flex", flexDirection: mob ? "row" : "column" as const, flexWrap: mob ? "wrap" as const : "nowrap" as const, gap: mob ? 4 : 2, overflowY: mob ? "visible" : "auto" as const }}>
         <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.09em", color:"#9ca3af", marginBottom:8, paddingLeft:8, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:8 }}>
           <span>Analysis</span>
           <span style={{ display:"inline-flex", alignItems:"center", gap:4, padding:"2px 7px", borderRadius:999, background:"#dcfce7", border:"1px solid #86efac", fontSize:9, fontWeight:700, color:"#16a34a" }}>
@@ -1240,7 +1242,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
           );
         })}
       </div>
-      <div id="gap-tab-content" style={{ flex:1, padding:22, overflowY:"auto" as const, background:"white" }}>
+      <div id="gap-tab-content" style={{ flex:1, padding: mob ? 12 : 22, overflowY:"auto" as const, overflowX:"hidden" as const, background:"white", boxSizing:"border-box" as const }}>
         {renderTab()}
       </div>
     </div>
@@ -1392,7 +1394,7 @@ function GapAnalysisSkeleton() {
         {[1,2,3].map(n => <div key={n} className="shimmer" style={{ height: 80, borderRadius: 12, marginBottom: 8 }} />)}
       </div>
       {/* SWOT skeleton */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.625rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: "0.625rem" }}>
         {[1,2,3,4].map(n => <div key={n} className="shimmer" style={{ height: 100, borderRadius: 12 }} />)}
       </div>
     </div>
@@ -1713,7 +1715,7 @@ function TrendFeedResult({ data }: { data: any }) {
             }}>
               {a.bestOpportunity.title}
             </h3>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: "0.75rem" }}>
               {[
                 { label: "Who", value: a.bestOpportunity.who },
                 { label: "What", value: a.bestOpportunity.what },
@@ -2004,7 +2006,7 @@ function InputSection({
 
           {/* Stack extras */}
           {tool.hasExtras && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", marginTop: "1.125rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "1.25rem", marginTop: "1.125rem" }}>
               {/* Budget */}
               <div>
                 <label style={{ display: "block", fontSize: "0.7rem", fontWeight: 600, color: "var(--clr-text-4)", marginBottom: "0.5rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
@@ -3571,7 +3573,7 @@ function HomeInner() {
                     </div>
                     <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", fontStyle: "italic", lineHeight: 1.4 }}>{idea}</div>
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5, marginBottom: 6 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 5, marginBottom: 6 }}>
                     {sources.map((s, i) => {
                       const isDone = i < scanStep;
                       const isActive = i === scanStep;
