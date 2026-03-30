@@ -224,12 +224,7 @@ export default function PulsePage() {
         {tab==="appstore" && (
           <div>
             <div style={{marginBottom:"1.25rem"}}>
-              <h1 style={{fontSize:"1.75rem",fontWeight:700,letterSpacing:"-0.03em",margin:"0 0 0.25rem"}}>What Launched Today</h1>
-              <div style={{display:"flex",alignItems:"center",gap:8}}>
-                <span style={{fontSize:"0.75rem",color:"var(--clr-text-3)"}}>via</span>
-                <span style={{fontSize:"0.75rem",fontWeight:600,color:"#007AFF"}}>App Store</span>
-                <span style={{fontSize:"0.625rem",fontWeight:700,padding:"0.2rem 0.6rem",borderRadius:999,background:"rgba(0,122,255,0.12)",color:"#007AFF",letterSpacing:"0.05em"}}>NEW TODAY</span>
-              </div>
+              <h1 style={{fontSize:"1.75rem",fontWeight:700,letterSpacing:"-0.03em",margin:0}}>What Launched Today</h1>
             </div>
             <Toolbar search={asSearch} onSearch={setAsSearch} topic={asCat} onTopic={setAsCat} topics={asCategories} sort={asSort} onSort={setAsSort} sortOptions={[{value:"newest",label:"Newest first"},{value:"az",label:"A → Z"}]} count={asFiltered.length} total={allAsApps.length} accentColor="#007AFF"/>
             {asLoading && <Skeleton/>}
@@ -291,12 +286,7 @@ export default function PulsePage() {
         {tab==="ph" && (
           <div>
             <div style={{marginBottom:"1.25rem"}}>
-              <h1 style={{fontSize:"1.75rem",fontWeight:700,letterSpacing:"-0.03em",margin:"0 0 0.25rem"}}>What Launched Today</h1>
-              <div style={{display:"flex",alignItems:"center",gap:8}}>
-                <span style={{fontSize:"0.75rem",color:"var(--clr-text-3)"}}>via</span>
-                <span style={{fontSize:"0.75rem",fontWeight:600,color:"#DA552F"}}>Product Hunt</span>
-                <span style={{fontSize:"0.625rem",fontWeight:700,padding:"0.2rem 0.6rem",borderRadius:999,background:"rgba(218,85,47,0.12)",color:"#DA552F",letterSpacing:"0.05em"}}>TODAY</span>
-              </div>
+              <h1 style={{fontSize:"1.75rem",fontWeight:700,letterSpacing:"-0.03em",margin:0}}>What Launched Today</h1>
             </div>
             <Toolbar search={phSearch} onSearch={setPhSearch} topic={phTopic} onTopic={setPhTopic} topics={phTopics} sort={phSort} onSort={setPhSort} sortOptions={[{value:"newest",label:"Newest first"},{value:"az",label:"A → Z"}]} count={phFiltered.length} total={ph.length} accentColor="#DA552F"/>
             {loading && <Skeleton/>}
