@@ -148,7 +148,7 @@ function AppSidebarInner() {
   );
 
   return (
-    <aside style={{ width: 220, minWidth: 220, background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)", display: "flex", flexDirection: "column", position: "fixed", top: 0, bottom: 0, left: 0, zIndex: 50 }}>
+    <aside className="app-sidebar-el" style={{ width: 220, minWidth: 220, background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)", display: "flex", flexDirection: "column", position: "fixed", top: 0, bottom: 0, left: 0, zIndex: 50 }}>
 
       <div onClick={() => router.push("/")} style={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-start", gap: "10px", padding: "20px 20px 18px 20px", borderBottom: "1px solid var(--clr-border)", cursor: "pointer", flexShrink: 0 }}>
         <svg width="24" height="24" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
