@@ -57,29 +57,7 @@ export default function PricingPage() {
   const { openSignIn } = useClerk();
   const [paddleReady, setPaddleReady] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
-
-  // Paddle close button + mobile fix
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const observer = new MutationObserver(() => {
-      const frame = document.querySelector('iframe.paddle-frame');
-      if (frame && !document.getElementById('paddle-close-btn')) {
-        const btn = document.createElement('button');
-        btn.id = 'paddle-close-btn';
-        btn.innerText = '✕';
-        btn.setAttribute('style', 'position:fixed;top:14px;right:14px;z-index:2147483648;width:40px;height:40px;border-radius:50%;background:#fff;border:none;font-size:20px;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,0.25);');
-        btn.onclick = () => {
-          try { if ((window as any).Paddle?.Checkout?.close) (window as any).Paddle.Checkout.close(); } catch(e) {}
-          document.querySelectorAll('iframe.paddle-frame, [class*="paddle-frame"]').forEach((el: Element) => (el as HTMLElement).remove());
-          document.getElementById('paddle-close-btn')?.remove();
-        };
-        document.body.appendChild(btn);
-      }
-      if (!frame) document.getElementById('paddle-close-btn')?.remove();
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-    return () => observer.disconnect();
-  }, []);
+  const [checkoutPkg, setCheckoutPkg] = useState<typeof PACKAGES[0] | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -95,18 +73,33 @@ export default function PricingPage() {
 
   const handleBuy = (pkg: typeof PACKAGES[0]) => {
     if (!isSignedIn) { openSignIn(); return; }
-    if (!paddleReady || !(window as any).Paddle) return;
-    window.scrollTo({ top: 0 });
-    (window as any).Paddle.Checkout.open({
-      items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
-      customData: { user_id: user?.id ?? "", package_slug: pkg.slug },
-      settings: {
-        frameStyle: "colorBackground: '#ffffff'; borderRadius: 12px;",
-        frameInitialHeight: 450,
-        theme: "light",
-      },
-    });
+    setCheckoutPkg(pkg);
   };
+
+  const closeCheckout = () => {
+    setCheckoutPkg(null);
+    // Clean up any paddle elements
+    document.querySelectorAll('[id^="paddle"]').forEach((el: Element) => (el as HTMLElement).remove());
+  };
+
+  useEffect(() => {
+    if (!checkoutPkg || !paddleReady || !(window as any).Paddle) return;
+    // Small delay to let the modal render
+    const t = setTimeout(() => {
+      try {
+        (window as any).Paddle.Checkout.open({
+          items: [{ priceId: checkoutPkg.paddlePriceId, quantity: 1 }],
+          customData: { user_id: user?.id ?? "", package_slug: checkoutPkg.slug },
+          settings: {
+            displayMode: "inline",
+            frameTarget: "paddle-checkout-frame",
+            frameInitialHeight: 450,
+          },
+        });
+      } catch(e) { console.error("Paddle error:", e); }
+    }, 100);
+    return () => clearTimeout(t);
+  }, [checkoutPkg, paddleReady]);
 
   const copyAddr = (addr: string) => {
     navigator.clipboard.writeText(addr);
@@ -374,6 +367,28 @@ export default function PricingPage() {
           © {new Date().getFullYear()} Unbuilt. All rights reserved.
         </p>
       </div>
+
+      {/* ── Paddle Checkout Modal ── */}
+      {checkoutPkg && (
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) closeCheckout(); }}
+          style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}
+        >
+          <div style={{ background: "white", borderRadius: 16, width: "100%", maxWidth: 500, maxHeight: "92vh", overflow: "auto", position: "relative" }}>
+            {/* Close */}
+            <button onClick={closeCheckout} style={{ position: "sticky", top: 0, float: "right", margin: "10px 10px 0 0", zIndex: 1, background: "white", border: "1px solid #e5e7eb", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "inherit" }}>✕</button>
+            <div style={{ padding: "0 16px 8px", marginTop: 8 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#6b7280", marginBottom: 2 }}>
+                {checkoutPkg.hook}
+              </div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: "#111827" }}>{checkoutPkg.price}</div>
+              <div style={{ fontSize: 12, color: "#9ca3af" }}>{checkoutPkg.credits} credits · {checkoutPkg.perCredit} each</div>
+            </div>
+            {/* Paddle mounts here */}
+            <div id="paddle-checkout-frame" style={{ minHeight: 420, width: "100%" }} />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
