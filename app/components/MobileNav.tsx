@@ -61,8 +61,8 @@ export default function MobileNav() {
     <>
       {/* Top header */}
       <header className="app-mobile-header">
-        <Link href="/" onClick={() => close()}
-          style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", textDecoration:"none" }}>
+        <div onClick={() => { close(); window.location.href="/"; }}
+          style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer" }}>
           <svg width="20" height="20" viewBox="0 0 56 56" fill="none">
             <rect x="2"  y="2"  width="15" height="15" rx="3.5" fill="#222"/>
             <rect x="21" y="2"  width="15" height="15" rx="3.5" fill="#777"/>
@@ -74,7 +74,7 @@ export default function MobileNav() {
             <rect x="40" y="40" width="15" height="15" rx="3.5" fill="#222"/>
           </svg>
           <span style={{ fontWeight:600, fontSize:16, color:"var(--clr-text)" }}>unbuilt</span>
-        </Link>
+        </div>
         <button onClick={() => { setMenuOpen(o=>!o); setExpanded(null); }}
           style={{ background:"none", border:"none", cursor:"pointer", padding:6, color:"var(--clr-text)", display:"flex" }}>
           {menuOpen
