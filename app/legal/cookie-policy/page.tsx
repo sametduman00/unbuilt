@@ -1,140 +1,33 @@
-const S = ({ children, style, ...props }: React.HTMLAttributes<HTMLElement> & { as?: string }) => (
-  <section style={{ marginBottom: "2.5rem", ...style }} {...props}>{children}</section>
+const S = ({ children }: { children: React.ReactNode }) => (
+  <section style={{ marginBottom: "2.5rem" }}>{children}</section>
 );
 const H2 = ({ children }: { children: React.ReactNode }) => (
   <h2 style={{ fontSize: 20, fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>{children}</h2>
 );
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--clr-text)", marginBottom: "0.5rem" }}>{children}</h3>
-);
 const P = ({ children }: { children: React.ReactNode }) => (
   <p style={{ color: "var(--clr-text)", marginBottom: "0.75rem" }}>{children}</p>
 );
+const UL = ({ children }: { children: React.ReactNode }) => (
+  <ul style={{ paddingLeft: "1.5rem", marginBottom: "0.75rem", color: "var(--clr-text)", lineHeight: 1.8 }}>{children}</ul>
+);
+const LI = ({ children }: { children: React.ReactNode }) => <li>{children}</li>;
+const B = ({ children }: { children: React.ReactNode }) => <strong style={{ fontWeight: 600 }}>{children}</strong>;
+const A = ({ href, children }: { href: string; children: React.ReactNode }) => (
+  <a href={href} style={{ color: "var(--clr-accent)", textDecoration: "underline" }}>{children}</a>
+);
 
-export default function CookiePolicyPage() {
+export default function CookiePage() {
   return (
     <>
-      <S>
-        <P>
-          This Cookie Policy explains how Unbuilt uses cookies and similar technologies when you visit and use our service.
-        </P>
-      </S>
-
-      <S>
-        <H2>1. What Are Cookies</H2>
-        <P>
-          Cookies are small text files stored on your device when you visit a website. They help the site remember your preferences and understand how you interact with the service. Cookies may be &quot;session&quot; cookies (deleted when you close your browser) or &quot;persistent&quot; cookies (remaining until they expire or you delete them).
-        </P>
-      </S>
-
-      <S>
-        <H2>2. Cookies We Use</H2>
-
-        <H3>Essential Cookies</H3>
-        <P>
-          These cookies are required for the service to function and cannot be disabled. They are set by our authentication provider, Clerk, and are used to:
-        </P>
-        <div style={{
-          background: "var(--clr-surface)",
-          border: "1px solid var(--clr-border)",
-          borderRadius: 8,
-          padding: "1rem 1.25rem",
-          marginBottom: "1rem",
-        }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, color: "var(--clr-text)" }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid var(--clr-border)" }}>
-                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Purpose</th>
-                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Provider</th>
-                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Duration</th>
-              </tr>
-            </thead>
-            <tbody style={{ color: "var(--clr-text)" }}>
-              <tr style={{ borderBottom: "1px solid var(--clr-border)" }}>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Authentication & session management</td>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Clerk</td>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Session</td>
-              </tr>
-              <tr style={{ borderBottom: "1px solid var(--clr-border)" }}>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>CSRF protection</td>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Clerk</td>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Session</td>
-              </tr>
-              <tr>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>User preferences</td>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Unbuilt</td>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>1 year</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <H3>Analytics Cookies</H3>
-        <P>
-          We use analytics cookies to understand how visitors interact with Unbuilt. This helps us improve the service, identify popular features, and fix issues. Analytics data is aggregated and does not personally identify you.
-        </P>
-        <div style={{
-          background: "var(--clr-surface)",
-          border: "1px solid var(--clr-border)",
-          borderRadius: 8,
-          padding: "1rem 1.25rem",
-          marginBottom: "1rem",
-        }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, color: "var(--clr-text)" }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid var(--clr-border)" }}>
-                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Purpose</th>
-                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Provider</th>
-                <th style={{ textAlign: "left", padding: "0.5rem 0", color: "var(--clr-text)", fontWeight: 700 }}>Duration</th>
-              </tr>
-            </thead>
-            <tbody style={{ color: "var(--clr-text)" }}>
-              <tr style={{ borderBottom: "1px solid var(--clr-border)" }}>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Page views & feature usage</td>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Analytics</td>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>1 year</td>
-              </tr>
-              <tr>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Performance monitoring</td>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>Analytics</td>
-                <td style={{ padding: "0.5rem 0", color: "var(--clr-text)" }}>1 year</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </S>
-
-      <S>
-        <H2>3. Managing Cookies</H2>
-        <P>
-          Most web browsers allow you to control cookies through their settings. You can typically find these in the &quot;Options&quot; or &quot;Preferences&quot; menu of your browser. You can set your browser to block or delete cookies, though this may affect the functionality of the service.
-        </P>
-        <P>
-          Please note that disabling essential cookies will prevent you from logging in and using authenticated features of Unbuilt.
-        </P>
-      </S>
-
-      <S>
-        <H2>4. Third-Party Cookies</H2>
-        <P>
-          We do not use third-party advertising cookies. The only third-party cookies are those set by Clerk for authentication purposes.
-        </P>
-      </S>
-
-      <S>
-        <H2>5. Changes to This Policy</H2>
-        <P>
-          We may update this Cookie Policy from time to time to reflect changes in our practices or for operational, legal, or regulatory reasons. The &quot;Last updated&quot; date at the top of this page indicates when the policy was last revised.
-        </P>
-      </S>
-
-      <S>
-        <H2>6. Contact</H2>
-        <P>
-          If you have any questions about our use of cookies, please contact us at{" "}
-          <a href="mailto:builder@unbuilt.me" style={{ color: "#888", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>.
-        </P>
-      </S>
+      <S><H2>1. Introduction</H2><P>This Cookie Policy explains how unbuilt.me uses cookies and similar technologies. Cookies are small text files stored on your device.</P></S>
+      <S><H2>2. Types of Cookies We Use</H2><P><B>Essential Cookies:</B> Necessary for the Service to function — authentication, security and fraud prevention, API request validation. Without these, the Service cannot operate.</P><P><B>Functional Cookies:</B> Store user preferences such as interface settings and usage preferences.</P><P><B>Analytics Cookies:</B> Used with your consent to understand how users interact with the Service and improve performance.</P></S>
+      <S><H2>3. Third-Party Cookies</H2><UL><LI>Clerk — authentication</LI><LI>Supabase — session handling</LI><LI>Vercel — infrastructure and performance</LI><LI>Paddle — payment processing</LI></UL><P>These providers may process data according to their own privacy policies.</P></S>
+      <S><H2>4. Legal Basis (EU Users)</H2><UL><LI>essential cookies — legitimate interest</LI><LI>analytics cookies — consent</LI></UL></S>
+      <S><H2>5. Cookie Duration</H2><UL><LI>Session cookies — deleted when you close your browser</LI><LI>Persistent cookies — stored for a limited time</LI><LI>authentication cookies — short-term session</LI><LI>preference cookies — longer duration</LI></UL></S>
+      <S><H2>6. Managing Cookies</H2><P>You can control cookies through browser settings or the cookie consent banner. Blocking cookies may affect functionality.</P></S>
+      <S><H2>7. Consent</H2><P>Where required by law, we request your consent before placing non-essential cookies. You can withdraw consent at any time.</P></S>
+      <S><H2>8. Updates</H2><P>We may update this Cookie Policy at any time.</P></S>
+      <S><H2>9. Contact</H2><P><A href="mailto:builder@unbuilt.me">builder@unbuilt.me</A></P></S>
     </>
   );
 }
