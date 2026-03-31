@@ -59,39 +59,20 @@ export default function PricingPage() {
   const { openSignIn } = useClerk();
   const [copied, setCopied] = useState<string | null>(null);
 
-  // Load Paddle once
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if ((window as any).Paddle) return; // already loaded
-    const script = document.createElement("script");
-    script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
-    script.async = true;
-    script.onload = () => {
-      if (!(window as any).Paddle) return;
-      (window as any).Paddle.Initialize({
-        token: "live_52661022360279de7c131bad447",
-        eventCallback: (ev: any) => {
-          if (ev.name === "checkout.closed") {
-            document.body.style.overflow = "";
-            document.body.style.position = "";
-          }
-        },
-      });
-    };
-    document.head.appendChild(script);
-  }, []);
+
 
   const handleBuy = (pkg: typeof PACKAGES[0]) => {
     if (!isSignedIn) { openSignIn(); return; }
-    const Paddle = (window as any).Paddle;
-    if (!Paddle) { alert("Payment is loading, please wait a moment and try again."); return; }
-    // Lock scroll and go to top so overlay is visible
-    document.body.style.overflow = "hidden";
-    window.scrollTo(0, 0);
-    Paddle.Checkout.open({
-      items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
-      customData: { user_id: user?.id ?? "", package_slug: pkg.slug },
+    // Open Paddle hosted checkout in new tab — works on all browsers including Safari
+    const params = new URLSearchParams({
+      user_id: user?.id ?? "",
+      package_slug: pkg.slug,
     });
+    window.open(
+      `https://checkout.paddle.com/checkout/buy/${pkg.paddlePriceId}?${params.toString()}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
   const copyAddr = (addr: string) => {
