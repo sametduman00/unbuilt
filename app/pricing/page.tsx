@@ -76,6 +76,11 @@ export default function PricingPage() {
     (window as any).Paddle.Checkout.open({
       items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
       customData: { user_id: user?.id ?? "", package_slug: pkg.slug },
+      settings: {
+        frameStyle: "colorBackground: '#ffffff'; borderRadius: 12px;",
+        frameInitialHeight: 450,
+        theme: "light",
+      },
     });
   };
 
