@@ -58,6 +58,29 @@ export default function PricingPage() {
   const [paddleReady, setPaddleReady] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
 
+  // Paddle close button + mobile fix
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const observer = new MutationObserver(() => {
+      const frame = document.querySelector('iframe.paddle-frame');
+      if (frame && !document.getElementById('paddle-close-btn')) {
+        const btn = document.createElement('button');
+        btn.id = 'paddle-close-btn';
+        btn.innerText = '✕';
+        btn.setAttribute('style', 'position:fixed;top:14px;right:14px;z-index:2147483648;width:40px;height:40px;border-radius:50%;background:#fff;border:none;font-size:20px;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,0.25);');
+        btn.onclick = () => {
+          try { if ((window as any).Paddle?.Checkout?.close) (window as any).Paddle.Checkout.close(); } catch(e) {}
+          document.querySelectorAll('iframe.paddle-frame, [class*="paddle-frame"]').forEach((el: Element) => (el as HTMLElement).remove());
+          document.getElementById('paddle-close-btn')?.remove();
+        };
+        document.body.appendChild(btn);
+      }
+      if (!frame) document.getElementById('paddle-close-btn')?.remove();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     const script = document.createElement("script");
@@ -73,6 +96,7 @@ export default function PricingPage() {
   const handleBuy = (pkg: typeof PACKAGES[0]) => {
     if (!isSignedIn) { openSignIn(); return; }
     if (!paddleReady || !(window as any).Paddle) return;
+    window.scrollTo({ top: 0 });
     (window as any).Paddle.Checkout.open({
       items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
       customData: { user_id: user?.id ?? "", package_slug: pkg.slug },
