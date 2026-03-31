@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const CLERK = ["https://clerk.unbuilt.me","https://*.clerk.accounts.dev","https://api.clerk.com","https://accounts.google.com"];
-const PADDLE = ["https://cdn.paddle.com","https://js.paddle.com","https://checkout.paddle.com","https://vendor.paddle.com"];
+const PADDLE = ["https://cdn.paddle.com","https://js.paddle.com","https://checkout.paddle.com","https://vendor.paddle.com","https://buy.paddle.com","https://*.paddle.com","https://paddle.com"];
 const ANALYTICS = ["https://www.googletagmanager.com","https://www.google-analytics.com","https://analytics.google.com"];
 const PROFITWELL = ["https://public.profitwell.com","https://api.profitwell.com"];
 const CDN = ["https://cdnjs.cloudflare.com"];
@@ -15,7 +15,7 @@ function buildCSP() {
     "img-src": ["'self'","data:","blob:",...MEDIA,"https://www.googletagmanager.com","https://clerk.unbuilt.me","https://*.clerk.accounts.dev","https://img.clerk.com"],
     "font-src": ["'self'","data:","https://fonts.gstatic.com"],
     "connect-src": ["'self'","https://www.unbuilt.me",...CLERK,...PADDLE,...ANALYTICS,...PROFITWELL,"https://region1.google-analytics.com"],
-    "frame-src": ["https://checkout.paddle.com","https://accounts.google.com"],
+    "frame-src": ["https://checkout.paddle.com","https://*.paddle.com","https://accounts.google.com"],
     "frame-ancestors": ["'none'"],
     "worker-src": ["'self'","blob:"],
     "form-action": ["'self'","https://checkout.paddle.com"],
@@ -37,7 +37,7 @@ const securityHeaders = [
   { key: "X-DNS-Prefetch-Control", value: "on" },
   { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
-  { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
+  { key: "Cross-Origin-Resource-Policy", value: "cross-origin" },
 ];
 
 const nextConfig: NextConfig = {
