@@ -64,7 +64,12 @@ export default function PricingPage() {
     script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
     script.onload = () => {
       if (!(window as any).Paddle) return;
-      (window as any).Paddle.Initialize({ token: "live_52661022360279de7c131bad447" });
+      (window as any).Paddle.Initialize({
+        token: "live_52661022360279de7c131bad447",
+        eventCallback: (ev: any) => {
+          if (ev.name === "checkout.closed") { document.body.style.overflow = ""; }
+        },
+      });
       setPaddleReady(true);
     };
     document.head.appendChild(script);
