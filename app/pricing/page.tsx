@@ -1,6 +1,8 @@
 "use client";
 import { useUser, SignInButton, useClerk } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
+import Script from "next/script";
+import { generatePdf, type ReportData } from "@/app/lib/generatePdf";
 
 const PACKAGES = [
   {
@@ -55,31 +57,38 @@ const WALLETS = [
 export default function PricingPage() {
   const { isSignedIn, user } = useUser();
   const { openSignIn } = useClerk();
-  const [paddleReady, setPaddleReady] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
 
+  // Load Paddle once
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if ((window as any).Paddle) return; // already loaded
     const script = document.createElement("script");
     script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
+    script.async = true;
     script.onload = () => {
       if (!(window as any).Paddle) return;
       (window as any).Paddle.Initialize({
         token: "live_52661022360279de7c131bad447",
         eventCallback: (ev: any) => {
-          if (ev.name === "checkout.closed") { document.body.style.overflow = ""; }
+          if (ev.name === "checkout.closed") {
+            document.body.style.overflow = "";
+            document.body.style.position = "";
+          }
         },
       });
-      setPaddleReady(true);
     };
     document.head.appendChild(script);
   }, []);
 
   const handleBuy = (pkg: typeof PACKAGES[0]) => {
     if (!isSignedIn) { openSignIn(); return; }
-    if (!(window as any).Paddle) return;
-    window.scrollTo({ top: 0, behavior: "instant" });
-    (window as any).Paddle.Checkout.open({
+    const Paddle = (window as any).Paddle;
+    if (!Paddle) { alert("Payment is loading, please wait a moment and try again."); return; }
+    // Lock scroll and go to top so overlay is visible
+    document.body.style.overflow = "hidden";
+    window.scrollTo(0, 0);
+    Paddle.Checkout.open({
       items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
       customData: { user_id: user?.id ?? "", package_slug: pkg.slug },
     });
@@ -99,7 +108,7 @@ export default function PricingPage() {
   return (
     <main className="pricing-main" style={{ minHeight: "100vh", background: "var(--clr-bg)", padding: "32px 24px 80px", maxWidth: 860, margin: "0 auto" }}>
 
-      {/* ── Header ── */}
+      {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 28 }}>
         <p style={{ ...s.label, color: "var(--clr-text-4)", marginBottom: 14 }}>Pricing</p>
         <h1 style={{ fontSize: "1.625rem", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.15, margin: "0 0 14px" }}>
@@ -111,35 +120,29 @@ export default function PricingPage() {
         </p>
       </div>
 
-      {/* ── Credit packs ── */}
+      {/* Credit packs */}
       <div style={{ marginBottom: 10 }}>
         <div className="pricing-packs-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
           {PACKAGES.map((pkg) => (
             <div key={pkg.slug} style={{
               background: "var(--clr-surface)",
               border: pkg.highlight ? "2px solid #7c6fff" : "1px solid var(--clr-border)",
-              borderRadius: 14,
-              padding: "24px 20px 20px",
-              position: "relative",
-              display: "flex",
-              flexDirection: "column",
+              borderRadius: 14, padding: "24px 20px 20px",
+              position: "relative", display: "flex", flexDirection: "column",
             }}>
               {pkg.badge && (
                 <div style={{ position: "absolute", top: -1, left: "50%", transform: "translateX(-50%)", background: "#7c6fff", color: "#fff", fontSize: 10, fontWeight: 800, padding: "3px 12px", borderRadius: "0 0 8px 8px", letterSpacing: "0.08em" }}>
                   {pkg.badge}
                 </div>
               )}
-              {/* Hook */}
               <div style={{ marginBottom: 14 }}>
                 <div style={{ fontSize: "0.75rem", fontWeight: 700, color: pkg.highlight ? "#7c6fff" : "var(--clr-text-4)", marginBottom: 2 }}>{pkg.hook}</div>
                 <div style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", lineHeight: 1.45 }}>{pkg.hookSub}</div>
               </div>
-              {/* Price */}
               <div style={{ marginBottom: 18 }}>
                 <div style={{ fontSize: "2rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.03em", lineHeight: 1 }}>{pkg.price}</div>
                 <div style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", marginTop: 4 }}>{pkg.credits} credits · {pkg.perCredit} each</div>
               </div>
-              {/* Perks */}
               <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
                 {pkg.perks.map((p) => (
                   <li key={p} style={{ display: "flex", alignItems: "flex-start", gap: 7, fontSize: "0.75rem", color: "var(--clr-text-3)" }}>
@@ -147,13 +150,13 @@ export default function PricingPage() {
                   </li>
                 ))}
               </ul>
-              {/* CTA */}
               <button onClick={() => handleBuy(pkg)} style={{ display: "block", width: "100%", padding: "11px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.875rem", fontWeight: 700, cursor: "pointer", background: pkg.highlight ? "#7c6fff" : "transparent", border: pkg.highlight ? "none" : "1px solid var(--clr-border)", color: pkg.highlight ? "#fff" : "var(--clr-text)" }}>
                 {isSignedIn ? `Buy ${pkg.credits} credits` : "Sign in to buy"}
               </button>
             </div>
           ))}
         </div>
+
         {/* Trust badge */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 14, flexWrap: "wrap" as const }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text-4)" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -169,53 +172,44 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* ── Why the price ── */}
+      {/* Why the price */}
       <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginBottom: 32 }}>
         <p style={{ fontSize: "0.9375rem", fontWeight: 800, letterSpacing: "-0.01em", color: "var(--clr-text)", textAlign: "center", marginBottom: 16 }}>Why does a credit cost $0.80–$1.00?</p>
         <div className="pricing-why-flex" style={{ display: "flex", gap: 24, flexWrap: "wrap" as const, alignItems: "stretch" }}>
-          {/* Left */}
           <div style={{ flex: 1, minWidth: 220, display: "flex", flexDirection: "column" as const, gap: 12 }}>
             <p style={{ ...s.muted, margin: 0 }}>
               Every query runs on <strong style={{ color: "var(--clr-text)" }}>Claude Opus 4.6 with Extended Thinking</strong> — Anthropic's most capable model. No cheaper shortcuts, no batching, no caching tricks.
             </p>
             <p style={{ ...s.muted, margin: 0 }}>
               Don't take our word for it — verify the numbers yourself with{" "}
-              <a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener noreferrer" style={{ color: "var(--clr-text)", fontWeight: 600 }}>
-                Anthropic's official pricing ↗
-              </a>
+              <a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener noreferrer" style={{ color: "var(--clr-text)", fontWeight: 600 }}>Anthropic's official pricing ↗</a>
             </p>
             <div style={{ marginTop: "auto", paddingTop: 8, borderTop: "1px solid var(--clr-border)", display: "flex", alignItems: "center", gap: 8 }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text-4)" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>We show our math. You check it. That's the deal.</span>
             </div>
           </div>
-          {/* Right */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-          <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "14px 18px", minWidth: 250 }}>
-            <p style={{ ...s.label, marginBottom: 10 }}>Cost per query</p>
-            {[
-              ["~20,000 input tokens", "× $15/1M", "= $0.30"],
-              ["~5,000 output tokens", "× $75/1M", "= $0.375"],
-            ].map(([a, b, c]) => (
-              <div key={a} style={{ display: "flex", gap: 6, fontSize: "0.75rem", fontFamily: "monospace", marginBottom: 4 }}>
-                <span style={{ color: "var(--clr-text-3)", flex: 1 }}>{a}</span>
-                <span style={{ color: "var(--clr-text-4)" }}>{b}</span>
-                <span style={{ color: "var(--clr-text)", fontWeight: 700, minWidth: 52, textAlign: "right" as const }}>{c}</span>
+            <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "14px 18px", minWidth: 250 }}>
+              <p style={{ ...s.label, marginBottom: 10 }}>Cost per query</p>
+              {[["~20,000 input tokens", "× $15/1M", "= $0.30"],["~5,000 output tokens", "× $75/1M", "= $0.375"]].map(([a, b, c]) => (
+                <div key={a} style={{ display: "flex", gap: 6, fontSize: "0.75rem", fontFamily: "monospace", marginBottom: 4 }}>
+                  <span style={{ color: "var(--clr-text-3)", flex: 1 }}>{a}</span>
+                  <span style={{ color: "var(--clr-text-4)" }}>{b}</span>
+                  <span style={{ color: "var(--clr-text)", fontWeight: 700, minWidth: 52, textAlign: "right" as const }}>{c}</span>
+                </div>
+              ))}
+              <div style={{ borderTop: "1px solid var(--clr-border)", marginTop: 8, paddingTop: 8, display: "flex", justifyContent: "space-between", fontSize: "0.8rem", fontFamily: "monospace" }}>
+                <span style={{ color: "var(--clr-text-3)" }}>Our total cost</span>
+                <span style={{ color: "var(--clr-text)", fontWeight: 800 }}>~$0.675</span>
               </div>
-            ))}
-            <div style={{ borderTop: "1px solid var(--clr-border)", marginTop: 8, paddingTop: 8, display: "flex", justifyContent: "space-between", fontSize: "0.8rem", fontFamily: "monospace" }}>
-              <span style={{ color: "var(--clr-text-3)" }}>Our total cost</span>
-              <span style={{ color: "var(--clr-text)", fontWeight: 800 }}>~$0.675</span>
+              <p style={{ fontSize: 10, color: "var(--clr-text-5)", margin: "6px 0 0", fontStyle: "italic" }}>The rest: hosting, search APIs, infrastructure.</p>
             </div>
-            <p style={{ fontSize: 10, color: "var(--clr-text-5)", margin: "6px 0 0", fontStyle: "italic" }}>
-              The rest: hosting, search APIs, infrastructure.
-            </p>
-          </div>
           </div>
         </div>
       </div>
 
-      {/* ── What 1 credit gets you ── */}
+      {/* What 1 credit gets you */}
       <div style={{ marginTop: 36, marginBottom: 48 }}>
         <p style={{ ...s.label, textAlign: "center", marginBottom: 20 }}>What 1 credit gets you</p>
         <div className="pricing-credits-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
@@ -255,7 +249,7 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* ── Donate ── */}
+      {/* Support the project */}
       <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 48 }}>
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <p style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--clr-text)", margin: "0 0 6px" }}>Support the project</p>
@@ -283,24 +277,18 @@ export default function PricingPage() {
         </div>
       </div>
 
-
-      {/* ── Footer ── */}
+      {/* Footer */}
       <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 36, marginTop: 48 }}>
-
-        {/* Payment logos */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "var(--clr-text-5)", marginBottom: 14 }}>Secure payment</p>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap" as const }}>
-            {/* Paddle */}
             <a href="https://www.paddle.com" target="_blank" rel="noopener noreferrer" style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid var(--clr-border)", background: "#fff", display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
               <svg width="18" height="18" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#0C1F3D"/><path d="M9 8h7.5c3.5 0 6 2.2 6 5.5s-2.5 5.5-6 5.5H12v5H9V8zm3 8.5h4.5c1.8 0 3-1 3-3s-1.2-3-3-3H12v6z" fill="#fff"/></svg>
               <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#0C1F3D", fontFamily: "inherit" }}>Paddle</span>
             </a>
-            {/* Visa */}
             <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid var(--clr-border)", background: "#fff", display: "flex", alignItems: "center" }}>
               <span style={{ fontSize: "1.1rem", fontWeight: 900, color: "#1A1F71", fontStyle: "italic", letterSpacing: "0.04em", fontFamily: "Georgia, serif" }}>VISA</span>
             </div>
-            {/* Mastercard */}
             <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid var(--clr-border)", background: "#fff", display: "flex", alignItems: "center", gap: 6 }}>
               <div style={{ position: "relative", width: 34, height: 22, display: "flex", alignItems: "center" }}>
                 <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#EB001B", position: "absolute", left: 0 }} />
@@ -308,25 +296,15 @@ export default function PricingPage() {
               </div>
               <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "#333", fontFamily: "inherit" }}>Mastercard</span>
             </div>
-            {/* PayPal */}
-            <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid var(--clr-border)", background: "#fff", display: "flex", alignItems: "center" }}>
-              <span style={{ fontSize: "0.875rem", fontWeight: 800, fontFamily: "inherit" }}>
-                <span style={{ color: "#003087" }}>Pay</span><span style={{ color: "#009CDE" }}>Pal</span>
-              </span>
-            </div>
-            {/* Amex */}
             <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "none", background: "#016FD0", display: "flex", alignItems: "center" }}>
               <span style={{ fontSize: "0.8rem", fontWeight: 800, color: "#fff", letterSpacing: "0.06em", fontFamily: "inherit" }}>AMEX</span>
             </div>
-            {/* SSL */}
             <div style={{ height: 36, padding: "0 14px", borderRadius: 7, border: "1px solid #bbf7d0", background: "#f0fdf4", display: "flex", alignItems: "center", gap: 5 }}>
               <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M6 0.5L1 2.5v4C1 9.5 3.2 12.3 6 13.2 8.8 12.3 11 9.5 11 6.5v-4L6 0.5z" fill="#16a34a" opacity=".25" stroke="#16a34a" strokeWidth="1"/><path d="M4 7l1.5 1.5L8 5.5" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#16a34a", fontFamily: "inherit" }}>SSL Secured</span>
             </div>
           </div>
         </div>
-
-        {/* Legal docs */}
         <div className="pricing-legal-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
           {[
             ["/legal/terms-of-service", "Terms of Service"],
@@ -338,20 +316,15 @@ export default function PricingPage() {
             ["/legal/disclaimer", "Disclaimer"],
             ["/legal/do-not-sell", "Do Not Sell My Info"],
           ].map(([href, label]) => (
-            <a key={href} href={href} style={{ display: "block", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.75rem", color: "var(--clr-text-3)", textDecoration: "none", textAlign: "center" as const, fontWeight: 500, transition: "color 0.1s" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--clr-text)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--clr-text-3)")}
-            >
+            <a key={href} href={href} style={{ display: "block", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.75rem", color: "var(--clr-text-3)", textDecoration: "none", textAlign: "center" as const, fontWeight: 500 }}>
               {label}
             </a>
           ))}
         </div>
-
         <p style={{ textAlign: "center", fontSize: "0.7rem", color: "var(--clr-text-5)", marginTop: 16 }}>
           © {new Date().getFullYear()} Unbuilt. All rights reserved.
         </p>
       </div>
-
     </main>
   );
 }
