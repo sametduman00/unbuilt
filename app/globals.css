@@ -525,3 +525,6 @@ iframe[class*="paddle"] {
     border-radius: 0 !important;
   }
 }
+
+/* iOS Safari Paddle overlay fix */
+body[style*="position: fixed"] { overflow: hidden !important; }
