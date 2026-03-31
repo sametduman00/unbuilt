@@ -59,20 +59,54 @@ export default function PricingPage() {
   const { openSignIn } = useClerk();
   const [copied, setCopied] = useState<string | null>(null);
 
+  const [paddleReady, setPaddleReady] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const existing = document.querySelector('script[src*="paddle.com"]');
+    if (existing) { if ((window as any).Paddle) setPaddleReady(true); return; }
+    const script = document.createElement("script");
+    script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
+    script.async = true;
+    script.onload = () => {
+      if (!(window as any).Paddle) return;
+      (window as any).Paddle.Initialize({
+        token: "live_52661022360279de7c131bad447",
+        eventCallback: (ev: any) => {
+          if (ev.name === "checkout.closed" || ev.name === "checkout.completed") {
+            // iOS Safari: restore scroll
+            const scrollY = parseInt(document.body.style.top || "0") * -1;
+            document.body.style.position = "";
+            document.body.style.top = "";
+            document.body.style.width = "";
+            document.body.style.overflow = "";
+            window.scrollTo(0, scrollY);
+          }
+        },
+      });
+      setPaddleReady(true);
+    };
+    document.head.appendChild(script);
+  }, []);
+
 
 
   const handleBuy = (pkg: typeof PACKAGES[0]) => {
     if (!isSignedIn) { openSignIn(); return; }
-    // Open Paddle hosted checkout in new tab — works on all browsers including Safari
-    const params = new URLSearchParams({
-      user_id: user?.id ?? "",
-      package_slug: pkg.slug,
+    if (!paddleReady || !(window as any).Paddle) {
+      alert("Checkout is loading, please try again in a moment.");
+      return;
+    }
+    // iOS Safari: lock body scroll so overlay is visible
+    const scrollY = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    document.body.style.overflow = "hidden";
+    (window as any).Paddle.Checkout.open({
+      items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
+      customData: { user_id: user?.id ?? "", package_slug: pkg.slug },
     });
-    window.open(
-      `https://checkout.paddle.com/checkout/buy/${pkg.paddlePriceId}?${params.toString()}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
   };
 
   const copyAddr = (addr: string) => {
