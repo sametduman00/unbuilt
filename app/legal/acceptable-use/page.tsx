@@ -8,84 +8,25 @@ const P = ({ children }: { children: React.ReactNode }) => (
   <p style={{ color: "var(--clr-text)", marginBottom: "0.75rem" }}>{children}</p>
 );
 const UL = ({ children }: { children: React.ReactNode }) => (
-  <ul style={{ color: "var(--clr-text)", paddingLeft: "1.25rem", marginBottom: "0.75rem", listStyleType: "disc" }}>{children}</ul>
+  <ul style={{ paddingLeft: "1.5rem", marginBottom: "0.75rem", color: "var(--clr-text)", lineHeight: 1.8 }}>{children}</ul>
 );
-const LI = ({ children }: { children: React.ReactNode }) => (
-  <li style={{ marginBottom: "0.35rem" }}>{children}</li>
+const LI = ({ children }: { children: React.ReactNode }) => <li>{children}</li>;
+const B = ({ children }: { children: React.ReactNode }) => <strong style={{ fontWeight: 600 }}>{children}</strong>;
+const A = ({ href, children }: { href: string; children: React.ReactNode }) => (
+  <a href={href} style={{ color: "var(--clr-accent)", textDecoration: "underline" }}>{children}</a>
 );
 
 export default function AcceptableUsePage() {
   return (
     <>
-      <S>
-        <P>
-          This Acceptable Use Policy outlines the rules and guidelines for using Unbuilt. By using the service, you agree to comply with this policy. Violations may result in suspension or termination of your account.
-        </P>
-      </S>
-
-      <S>
-        <H2>1. Permitted Use</H2>
-        <P>Unbuilt is designed for legitimate market research and business intelligence purposes. You may use the service to:</P>
-        <UL>
-          <LI>Research market opportunities and competitive landscapes</LI>
-          <LI>Analyze trends and identify gaps in specific industries</LI>
-          <LI>Inform your own product development and business strategy</LI>
-          <LI>Generate insights for internal planning and decision-making</LI>
-        </UL>
-      </S>
-
-      <S>
-        <H2>2. Prohibited Activities</H2>
-        <P>You must not use Unbuilt to:</P>
-        <UL>
-          <LI><strong style={{ color: "var(--clr-text)" }}>Scrape or harvest data</strong> — Use automated tools, bots, crawlers, or scripts to extract data from the service at scale</LI>
-          <LI><strong style={{ color: "var(--clr-text)" }}>Overload the service</strong> — Send excessive requests intended to degrade performance or availability for other users</LI>
-          <LI><strong style={{ color: "var(--clr-text)" }}>Circumvent access controls</strong> — Bypass rate limits, authentication, or any security measures</LI>
-          <LI><strong style={{ color: "var(--clr-text)" }}>Reverse engineer</strong> — Attempt to decompile, disassemble, or extract the source code or underlying algorithms</LI>
-          <LI><strong style={{ color: "var(--clr-text)" }}>Resell or redistribute</strong> — Package and resell analysis results as a competing data product or service</LI>
-          <LI><strong style={{ color: "var(--clr-text)" }}>Generate harmful content</strong> — Use the service to produce content that is illegal, defamatory, or violates third-party rights</LI>
-          <LI><strong style={{ color: "var(--clr-text)" }}>Misrepresent AI output</strong> — Present AI-generated analysis as human-written professional advice (financial, legal, medical)</LI>
-        </UL>
-      </S>
-
-      <S>
-        <H2>3. Rate Limits</H2>
-        <P>
-          To ensure fair access for all users, Unbuilt enforces rate limits on API requests. Programmatic access beyond normal browser-based usage is not permitted without prior written authorization. If you need higher volume access, contact us to discuss enterprise options.
-        </P>
-      </S>
-
-      <S>
-        <H2>4. Account Responsibility</H2>
-        <P>
-          You are responsible for all activity under your account. Do not share your credentials with unauthorized parties. If you suspect unauthorized access, notify us immediately at{" "}
-          <a href="mailto:builder@unbuilt.me" style={{ color: "var(--clr-text-3)", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>.
-        </P>
-      </S>
-
-      <S>
-        <H2>5. Reporting Violations</H2>
-        <P>
-          If you become aware of any misuse of the service, please report it to{" "}
-          <a href="mailto:builder@unbuilt.me" style={{ color: "var(--clr-text-3)", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>.
-          We investigate all reports and take appropriate action.
-        </P>
-      </S>
-
-      <S>
-        <H2>6. Enforcement</H2>
-        <P>
-          We reserve the right to suspend or terminate accounts that violate this policy, with or without prior notice. In cases of severe or repeated violations, we may pursue legal remedies.
-        </P>
-      </S>
-
-      <S>
-        <H2>7. Contact</H2>
-        <P>
-          Questions about this policy? Contact us at{" "}
-          <a href="mailto:builder@unbuilt.me" style={{ color: "var(--clr-text-3)", textDecoration: "underline", textUnderlineOffset: 3 }}>builder@unbuilt.me</a>.
-        </P>
-      </S>
+      <S><P>You agree to use the Service responsibly. You may NOT:</P></S>
+      <S><H2>1. Abuse the Credit System</H2><UL><LI>attempt to obtain credits without payment</LI><LI>create multiple accounts to bypass limits</LI><LI>exploit billing, pricing, or credit logic</LI></UL></S>
+      <S><H2>2. Abuse AI Systems</H2><UL><LI>attempt prompt injection or manipulation</LI><LI>attempt to extract system prompts or internal logic</LI><LI>attempt to bypass safeguards or restrictions</LI></UL></S>
+      <S><H2>3. Automate or Scrape</H2><UL><LI>use bots, scripts, or automated tools</LI><LI>perform excessive or abusive requests</LI><LI>scrape or extract data at scale</LI></UL></S>
+      <S><H2>4. Disrupt the Service</H2><UL><LI>overload systems or infrastructure</LI><LI>attempt to degrade performance</LI><LI>interfere with other users</LI></UL></S>
+      <S><H2>5. Violate Security</H2><UL><LI>attempt unauthorized access</LI><LI>probe, scan, or exploit vulnerabilities</LI><LI>bypass rate limits or protections</LI></UL></S>
+      <S><H2>6. Illegal or Harmful Use</H2><UL><LI>use the Service for fraud, scams, or illegal activity</LI><LI>generate harmful, misleading, or abusive content</LI></UL></S>
+      <S><H2>7. Enforcement</H2><P>We may, at our sole discretion, suspend or terminate accounts, revoke credits, and block access without notice. Any attempt to violate these rules is considered a violation.</P></S>
     </>
   );
 }
