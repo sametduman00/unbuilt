@@ -74,13 +74,7 @@ export default function PricingPage() {
         token: "live_52661022360279de7c131bad447",
         eventCallback: (ev: any) => {
           if (ev.name === "checkout.closed" || ev.name === "checkout.completed") {
-            // iOS Safari: restore scroll
-            const scrollY = parseInt(document.body.style.top || "0") * -1;
-            document.body.style.position = "";
-            document.body.style.top = "";
-            document.body.style.width = "";
             document.body.style.overflow = "";
-            window.scrollTo(0, scrollY);
           }
         },
       });
@@ -97,12 +91,6 @@ export default function PricingPage() {
       alert("Checkout is loading, please try again in a moment.");
       return;
     }
-    // iOS Safari: lock body scroll so overlay is visible
-    const scrollY = window.scrollY;
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = "100%";
-    document.body.style.overflow = "hidden";
     (window as any).Paddle.Checkout.open({
       items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
       customData: { user_id: user?.id ?? "", package_slug: pkg.slug },
