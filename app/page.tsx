@@ -1261,7 +1261,7 @@ function DigSampleReport() {
     <div style={{ padding: "20px 0 40px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-4)" }}>Sample Dig Report</span>
-        <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>« AI habit tracker with social accountability for Gen Z »</span>
+        <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>« sleep tracking app for shift workers and nurses »</span>
       </div>
       <div style={{ padding: "0 16px 16px 12px" }}>
         <GapAnalysisResult data={data} itunesApps={(data as any).itunesApps ?? []} gplayApps={(data as any).gplayApps ?? []} />
