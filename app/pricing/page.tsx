@@ -86,6 +86,8 @@ export default function PricingPage() {
     if (!checkoutPkg || !paddleReady || !(window as any).Paddle) return;
     // Small delay to let the modal render
     const t = setTimeout(() => {
+      const target = document.getElementById("paddle-checkout-frame");
+      if (!target) { console.error("Paddle target not found"); return; }
       try {
         (window as any).Paddle.Checkout.open({
           items: [{ priceId: checkoutPkg.paddlePriceId, quantity: 1 }],
@@ -97,7 +99,7 @@ export default function PricingPage() {
           },
         });
       } catch(e) { console.error("Paddle error:", e); }
-    }, 100);
+    }, 400);
     return () => clearTimeout(t);
   }, [checkoutPkg, paddleReady]);
 
