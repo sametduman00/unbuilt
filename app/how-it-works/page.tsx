@@ -9,7 +9,7 @@ const ACCENT = {
   pulse: { color: "#ef4444", bg: "rgba(239,68,68,0.1)", border: "rgba(239,68,68,0.2)" },
   dig:   { color: "#7c6fff", bg: "rgba(124,111,255,0.1)", border: "rgba(124,111,255,0.2)" },
   stack: { color: "#38bdf8", bg: "rgba(56,189,248,0.1)", border: "rgba(56,189,248,0.2)" },
-};
+}
 
 function PulseIcon() {
   return (
@@ -184,18 +184,19 @@ function PulseTab() {
           <Step n={1} color={c} title="Open Pulse" desc="No query needed. The feed is already live and populated with today's launches from Product Hunt and the App Store." />
           <Step n={2} color={c} title="Choose your feed" desc="Switch between Product Hunt (today's launches across all categories) and App Store (new iOS apps submitted today). Both update automatically." />
           <Step n={3} color={c} title="Filter and search" desc="Narrow by topic — AI, Productivity, SaaS, Games, and more. Search by keyword to find what's relevant to your market." />
-          <Step n={4} color={c} title="Spot the gap" desc="Every card has a MISS label — what the product is missing. That's your opening. 'Dig my angle' sends that gap straight into Dig for a full analysis." />
+          <Step n={4} color={c} title="Spot the gap" desc="Each card shows what the product does, how hard it is to build a competitor, who the main competitors are, and 3 recommended tools to build it with. Hit 'Dig my idea' for a full market analysis, or 'Get my Stack' for a tool plan." />
         </div>
       </Card>
 
       <Card>
         <SectionLabel>What each card shows</SectionLabel>
         <div>
-          <OutputRow emoji="🔵" label="WHAT — Core function" desc="What the product actually does, in one sentence." />
-          <OutputRow emoji="🟢" label="DIFF — Differentiator" desc="What makes it different from everything else in the category." />
-          <OutputRow emoji="🔴" label="MISS — The gap" desc="What's missing. The unserved use case, the excluded audience, the feature nobody built. This is your opportunity." />
+          <OutputRow emoji="📌" label="WHAT" desc="What the product does — one clear sentence describing the core function." />
+          <OutputRow emoji="🔧" label="DIFFICULTY" desc="How hard it is to build a competitor: Easy, Medium, or Hard — with a one-line explanation of what makes it complex." />
+          <OutputRow emoji="⚔️" label="COMPETITORS" desc="The main apps already in this space. Who you'd be up against if you built something similar." />
+          <OutputRow emoji="🛠️" label="BUILD WITH" desc="3 recommended tools to build this product, each with their specific role in the stack." />
           <div style={{ paddingTop: 10 }}>
-            <OutputRow emoji="📋" label="Full card" desc="Product name, platform, category, all three AI labels. Click 'Dig my angle' to run a full Dig report on that gap." />
+            <OutputRow emoji="🔗" label="Bottom actions" desc="'Dig my idea' runs a full market analysis on this space. 'Get my Stack' generates a phased build plan. Both cost 1 credit." />
           </div>
         </div>
       </Card>
@@ -310,9 +311,9 @@ function StackTab() {
       </Card>
 
       <Card>
-        <SectionLabel>The Vibe Guide — what makes Stack different</SectionLabel>
+        <SectionLabel>How to actually do this — what makes Stack different</SectionLabel>
         <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, margin: "0 0 12px" }}>
-          Every tool recommendation includes a <strong style={{ color: "var(--clr-text)" }}>Vibe Guide</strong> — not just "use Supabase" but exactly what to click, what to type, and what to paste. Built for builders who want to ship, not read documentation.
+          Every tool recommendation includes a <strong style={{ color: "var(--clr-text)" }}>How to actually do this</strong> section — not just "use Supabase" but exactly what to click, what to type, and what to paste. Built for vibe coders who want to ship, not read documentation.
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {[
