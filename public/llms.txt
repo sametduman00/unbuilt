@@ -1,0 +1,52 @@
+# Unbuilt
+
+> The home base for the vibecoding generation.
+
+Unbuilt helps vibe coders, indie hackers, and no-code founders find what to build, validate if it's worth it, and get the exact tools to ship it — before wasting months building the wrong thing.
+
+## What Unbuilt does
+
+Unbuilt has three tools:
+
+### Pulse (free)
+A live daily feed of what's launching on Product Hunt and the App Store, with AI analysis of what each product is missing. Use it to spot market gaps in real time, track what's being built in your category, and find opportunities before anyone else.
+
+### Dig (1 credit)
+Market research for any app idea. Describe your idea in plain language. Dig scans 70+ live sources — App Store, Google Play, Reddit, X, YouTube, Product Hunt, LinkedIn — and returns a full market report: competitors, pain points, market gaps, SWOT analysis, go-to-market strategy, and a market score (0-100). Takes 5 minutes.
+
+### Stack (1 credit)
+A phased build plan for any app idea. Tell Stack what you're building, your budget tier, and your technical level (no-code, low-code, or developer). Stack recommends the exact tools from 700+ options, with pricing, setup instructions, and a step-by-step guide for each tool.
+
+## Who uses Unbuilt
+
+- Vibe coders who want to know if their idea is worth building before they start
+- Indie hackers looking for their next project or validating an existing idea
+- No-code and low-code founders who need a tool stack recommendation
+- Founders doing ongoing market research in their category
+- Anyone who has built the wrong thing before and doesn't want to do it again
+
+## Use cases
+
+- "I have an app idea — how do I know if it already exists?"
+- "I'm a vibe coder looking for my next project"
+- "Is my SaaS idea worth building or should I pivot?"
+- "What tools should I use to build my idea?"
+- "How do I find a gap in a crowded market?"
+- "I want to track what's being built in my market"
+
+## Key facts
+
+- Pulse is completely free, no account required
+- Dig and Stack each cost 1 credit
+- Dig scans 70+ live data sources in real time (not a static database)
+- Stack filters from 700+ tools based on your idea, budget, and skill level
+- The market score (0-100) reflects how crowded the market is and how real the opportunity is
+
+## URLs
+
+- Homepage / Pulse: https://unbuilt.me
+- Dig (market analysis): https://unbuilt.me/?tool=gap-analysis
+- Stack (build plan): https://unbuilt.me/?tool=stack-advisor
+- How it works: https://unbuilt.me/how-it-works
+- Use cases: https://unbuilt.me/use-cases
+- Pricing: https://unbuilt.me/pricing
