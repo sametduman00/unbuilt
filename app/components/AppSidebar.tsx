@@ -95,6 +95,7 @@ function AppSidebarInner() {
   ];
 
   const PRODUCT: readonly (readonly [string, string])[] = [
+    ["/use-cases", "Use Cases"],
     ["/pricing", "Pricing"],
     ["/help", "Help"],
     ["/careers", "Careers"],
