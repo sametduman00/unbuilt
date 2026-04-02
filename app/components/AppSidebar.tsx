@@ -95,7 +95,6 @@ function AppSidebarInner() {
   ];
 
   const PRODUCT: readonly (readonly [string, string])[] = [
-    ["/use-cases", "Use Cases"],
     ["/pricing", "Pricing"],
     ["/help", "Help"],
     ["/careers", "Careers"],
@@ -179,6 +178,7 @@ function AppSidebarInner() {
 
       <div style={{ padding: "8px 8px 10px", borderTop: "1px solid var(--clr-border)" }}>
 
+        <Link href="/use-cases" style={{ display: "flex", alignItems: "center", gap: 9, padding: "7px 10px", borderRadius: 8, color: "var(--clr-text-2)", fontSize: 13, textDecoration: "none", transition: "background 0.1s" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.05)"} onMouseLeave={e => e.currentTarget.style.background = ""}><svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ opacity: 0.4, flexShrink: 0 }}><path d="M2 2h12v12H2zM5 5h6M5 8h4M5 11h3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>Use Cases</Link>
         <Link href="/how-it-works" style={{ display: "flex", alignItems: "center", gap: 9, padding: "7px 10px", borderRadius: 8, color: "var(--clr-text-2)", fontSize: 13, textDecoration: "none", transition: "background 0.1s" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.05)"} onMouseLeave={e => e.currentTarget.style.background = ""}><svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ opacity: 0.4, flexShrink: 0 }}><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3"/><path d="M8 7v5M8 5v.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>How it works</Link>
         <Flyout label="Docs" sectionLabel="Legal & Policies" items={DOCS} icon={
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ opacity: 0.4, flexShrink: 0 }}>
