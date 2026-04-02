@@ -17,7 +17,7 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Unbuilt — Know What to Build. Know How to Build It.",
+  title: "Unbuilt — for vibecoders",
   description: "Unbuilt is the home base for vibe coders. Pulse tracks what's launching daily. Dig analyzes any app idea against 70+ live sources in 5 minutes. Stack recommends the exact tools to build it from 700+ options.",
   keywords: [
     "vibe coding",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     "vibe coder tools",
   ],
   openGraph: {
-    title: "Unbuilt — Know What to Build. Know How to Build It.",
+    title: "Unbuilt — for vibecoders",
     description: "The home base for vibe coders. Find what to build, validate if it's worth it, and get the exact tools to ship it.",
     url: "https://unbuilt.me",
     siteName: "Unbuilt",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Unbuilt — Know What to Build. Know How to Build It.",
+    title: "Unbuilt — for vibecoders",
     description: "The home base for vibe coders. Pulse, Dig, Stack — find the gap, validate the idea, ship the right thing.",
     site: "@Unbuilt_me",
   },
