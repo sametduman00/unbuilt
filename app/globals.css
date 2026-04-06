@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Figtree:wght@300;400;500;600&display=swap');
 
-/* ── Color tokens — Perplexity-style light palette ──────────── */
+/* ââ Color tokens â Perplexity-style light palette ââââââââââââ */
 :root {
   --clr-bg: #fcfcf9;
   --clr-surface: #f2f2ef;
@@ -33,7 +33,7 @@
   --clr-btn-text: #ffffff;
 }
 
-/* ── Base ───────────────────────────────────────────────────── */
+/* ââ Base âââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
@@ -50,7 +50,7 @@ body {
   font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* ── Typography ─────────────────────────────────────────────── */
+/* ââ Typography âââââââââââââââââââââââââââââââââââââââââââââââ */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Syne', -apple-system, sans-serif !important;
   font-weight: 700;
@@ -66,14 +66,14 @@ body, p, span, button, input, textarea, select, label, a {
   font-family: 'Figtree', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-/* ── Scrollbar ──────────────────────────────────────────────── */
+/* ââ Scrollbar ââââââââââââââââââââââââââââââââââââââââââââââââ */
 ::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
 ::selection { background: rgba(8,145,178,0.15); color: var(--clr-text); }
 
-/* ── Shimmer ────────────────────────────────────────────────── */
+/* ââ Shimmer ââââââââââââââââââââââââââââââââââââââââââââââââââ */
 .shimmer {
   background: linear-gradient(90deg, var(--clr-surface) 25%, var(--clr-surface-2) 50%, var(--clr-surface) 75%);
   background-size: 200% 100%;
@@ -84,7 +84,7 @@ body, p, span, button, input, textarea, select, label, a {
   100% { background-position: -200% 0; }
 }
 
-/* ── Prose inside cards ─────────────────────────────────────── */
+/* ââ Prose inside cards âââââââââââââââââââââââââââââââââââââââ */
 .card-prose p { color: var(--clr-text-3); line-height: 1.75; margin-bottom: 0.625rem; font-size: 0.9375rem; }
 .card-prose ul { list-style: none; padding: 0; margin: 0 0 0.75rem 0; display: flex; flex-direction: column; gap: 0.375rem; }
 .card-prose ul li { color: var(--clr-text-3); padding: 0.4rem 0.5rem 0.4rem 1rem; position: relative; line-height: 1.65; font-size: 0.9375rem; border-radius: 6px; transition: background 0.15s; }
@@ -100,7 +100,7 @@ body, p, span, button, input, textarea, select, label, a {
 .card-prose a { color: var(--clr-accent); }
 .card-prose a:hover { color: var(--clr-accent-hover); }
 
-/* ── Clerk Auth UI ──────────────────────────────────────────── */
+/* ââ Clerk Auth UI ââââââââââââââââââââââââââââââââââââââââââââ */
 .cl-card, .cl-modalContent, .cl-userButtonPopoverCard {
   background: #ffffff !important;
   border: 1px solid rgba(0,0,0,0.1) !important;
@@ -108,7 +108,7 @@ body, p, span, button, input, textarea, select, label, a {
 }
 .cl-headerTitle { color: #1a1a1a !important; }
 .cl-headerSubtitle { color: #666666 !important; }
-.cl-footer, .cl-userButtonPopoverFooter { display: none !important; }
+.cl-userButtonPopoverFooter { display: none !important; }
 .cl-userButtonPopoverActionButton,
 .cl-userButtonPopoverActionButton span,
 .cl-userButtonPopoverActionButtonText,
@@ -127,7 +127,7 @@ body, p, span, button, input, textarea, select, label, a {
 .cl-userPreviewMainIdentifier, .cl-userPreviewSecondaryIdentifier, .cl-userButtonPopoverActionButtonText { color: #1a1a1a !important; }
 .cl-userButtonPopoverCard { background-color: #ffffff !important; border: 1px solid rgba(0,0,0,0.1) !important; }
 
-/* ── Tool cards — scoped ────────────────────────────────────── */
+/* ââ Tool cards â scoped ââââââââââââââââââââââââââââââââââââââ */
 [data-tool-grid] { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 1rem !important; width: 100% !important; }
 @media (max-width: 768px) {
   /* Prevent text overflow */
@@ -154,7 +154,7 @@ body, p, span, button, input, textarea, select, label, a {
 
 
 
-/* ── Mobile Nav & Header (always rendered, hidden on desktop) ── */
+/* ââ Mobile Nav & Header (always rendered, hidden on desktop) ââ */
 .app-mobile-nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
@@ -186,13 +186,13 @@ body, p, span, button, input, textarea, select, label, a {
   padding: 0 16px;
 }
 
-/* ── Desktop: hide mobile elements ── */
+/* ââ Desktop: hide mobile elements ââ */
 @media (min-width: 769px) {
   .app-mobile-nav { display: none !important; }
   .app-mobile-header { display: none !important; }
 }
 
-/* ── Mobile layout fixes ── */
+/* ââ Mobile layout fixes ââ */
 @media (max-width: 768px) {
   /* Prevent horizontal scroll */
   html, body { overflow-x: hidden; }
@@ -237,7 +237,7 @@ body, p, span, button, input, textarea, select, label, a {
   }
 }
 
-/* ── Pricing page mobile ── */
+/* ââ Pricing page mobile ââ */
 @media (max-width: 768px) {
   .pricing-main { padding: 16px 16px 80px !important; max-width: 100% !important; }
   .pricing-packs-grid { grid-template-columns: 1fr !important; }
@@ -248,7 +248,7 @@ body, p, span, button, input, textarea, select, label, a {
   .pricing-why-flex > div { min-width: unset !important; width: 100% !important; }
 }
 
-/* Difficulty note — hidden on mobile */
+/* Difficulty note â hidden on mobile */
 @media (max-width: 768px) {
   .diff-note { display: none !important; }
 }
@@ -262,7 +262,7 @@ body, p, span, button, input, textarea, select, label, a {
   }
   .dig-submit-row > * { width: 100% !important; }
   .dig-submit-row > div { justify-content: space-between !important; }
-  /* Sample report tabs — scrollable on mobile */
+  /* Sample report tabs â scrollable on mobile */
   .dig-result-panel > div:first-child { overflow-x: hidden !important; overflow-y: auto !important; }
   #gap-tab-content { overflow-y: auto !important; min-height: 300px !important; }
 }
@@ -281,7 +281,7 @@ body, p, span, button, input, textarea, select, label, a {
   .dig-submit-row > div { width: 100% !important; justify-content: space-between !important; }
 }
 
-/* ── Sample Report Panel — Mobile ──────────────────── */
+/* ââ Sample Report Panel â Mobile ââââââââââââââââââââ */
 @media (max-width: 768px) {
   /* Contain the whole panel */
   #sample-report-panel {
@@ -296,7 +296,7 @@ body, p, span, button, input, textarea, select, label, a {
     padding: 14px !important;
   }
 
-  /* All grids inside sample report → 1 column */
+  /* All grids inside sample report â 1 column */
   #sample-report-panel [style*="grid-template-columns"] {
     grid-template-columns: 1fr !important;
   }
@@ -304,13 +304,13 @@ body, p, span, button, input, textarea, select, label, a {
     grid-template-columns: 1fr !important;
   }
 
-  /* Stack flex containers that use space-between → column */
+  /* Stack flex containers that use space-between â column */
   #gap-tab-content [style*="space-between"] {
     flex-direction: column !important;
     gap: 10px !important;
   }
 
-  /* Score circle + text flex → wrap */
+  /* Score circle + text flex â wrap */
   #gap-tab-content [style*="gap: 20px"] {
     flex-wrap: wrap !important;
   }
@@ -331,7 +331,7 @@ body, p, span, button, input, textarea, select, label, a {
     min-width: 0 !important;
   }
 
-  /* Market data cards → wrap */
+  /* Market data cards â wrap */
   #gap-tab-content [style*="display: flex"][style*="gap: 12px"] {
     flex-wrap: wrap !important;
   }
@@ -342,7 +342,7 @@ body, p, span, button, input, textarea, select, label, a {
     flex-wrap: wrap !important;
   }
 
-  /* Tables → scrollable */
+  /* Tables â scrollable */
   #gap-tab-content table {
     display: block !important;
     overflow-x: auto !important;
@@ -356,7 +356,7 @@ body, p, span, button, input, textarea, select, label, a {
   }
 }
 
-/* ── Stack input extras mobile ── */
+/* ââ Stack input extras mobile ââ */
 @media (max-width: 768px) {
   .stack-extras-grid {
     grid-template-columns: 1fr !important;
@@ -372,7 +372,7 @@ body, p, span, button, input, textarea, select, label, a {
   }
 }
 
-/* ── Stack result panel mobile ── */
+/* ââ Stack result panel mobile ââ */
 @media (max-width: 768px) {
   .stack-result-panel {
     flex-direction: column !important;
@@ -395,11 +395,11 @@ body, p, span, button, input, textarea, select, label, a {
     overflow-y: visible !important;
     height: auto !important;
   }
-  /* All grids inside stack result → 1 column */
+  /* All grids inside stack result â 1 column */
   .stack-result-panel [style*="grid-template-columns"] {
     grid-template-columns: 1fr !important;
   }
-  /* Stack flex containers → wrap or column */
+  /* Stack flex containers â wrap or column */
   .stack-result-panel [style*="space-between"] {
     flex-direction: column !important;
     gap: 10px !important;
@@ -423,12 +423,12 @@ body, p, span, button, input, textarea, select, label, a {
   }
 }
 
-/* ── Mobile responsive overrides ──────────────────── */
+/* ââ Mobile responsive overrides ââââââââââââââââââââ */
 @media (max-width: 768px) {
-  /* Stack extras — Budget/TechLevel single column */
+  /* Stack extras â Budget/TechLevel single column */
   .stack-extras-grid { grid-template-columns: 1fr !important; }
 
-  /* Gap analysis nav panel — full width on mobile */
+  /* Gap analysis nav panel â full width on mobile */
   .gap-nav-panel {
     width: 100% !important;
     max-height: none !important;
@@ -439,7 +439,7 @@ body, p, span, button, input, textarea, select, label, a {
     padding: 8px !important;
     gap: 4px !important;
   }
-  /* Tab buttons inside nav — compact on mobile */
+  /* Tab buttons inside nav â compact on mobile */
   .gap-nav-panel button {
     flex: 1 1 auto !important;
     min-width: 0 !important;
@@ -455,7 +455,7 @@ body, p, span, button, input, textarea, select, label, a {
     overflow-x: hidden !important;
   }
 
-  /* All 2-col report grids → 1 col */
+  /* All 2-col report grids â 1 col */
   .report-grid-2 { grid-template-columns: 1fr !important; }
   .report-grid-3 { grid-template-columns: 1fr !important; }
 
@@ -463,9 +463,9 @@ body, p, span, button, input, textarea, select, label, a {
   .dig-result-panel { height: auto !important; overflow: visible !important; }
 }
 
-/* ════════════════════════════════════════════════
-   REPORT MOBILE — catch-all for nested components
-   ════════════════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââââââââââââ
+   REPORT MOBILE â catch-all for nested components
+   ââââââââââââââââââââââââââââââââââââââââââââââââ */
 @media (max-width: 768px) {
   /* Contain everything */
   #sample-report-panel,
@@ -475,13 +475,13 @@ body, p, span, button, input, textarea, select, label, a {
     box-sizing: border-box !important;
   }
 
-  /* Every grid inside → single column */
+  /* Every grid inside â single column */
   #sample-report-panel [style*="grid-template-columns"],
   #gap-tab-content [style*="grid-template-columns"] {
     grid-template-columns: 1fr !important;
   }
 
-  /* Every wide flex → column */
+  /* Every wide flex â column */
   #gap-tab-content > div { overflow-x: hidden !important; }
 
   /* Nested flex containers: wrap */
@@ -505,7 +505,7 @@ body, p, span, button, input, textarea, select, label, a {
   #gap-tab-content div[style*="border-radius: 50%"] { max-width: unset !important; }
 }
 
-/* ── Paddle Checkout — Mobile Fix ── */
+/* ââ Paddle Checkout â Mobile Fix ââ */
 .paddle-frame,
 .paddle-frame-overlay,
 iframe[class*="paddle"] {
