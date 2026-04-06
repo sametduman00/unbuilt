@@ -10,6 +10,7 @@ export default function SignInPage() {
       background: "#09090f",
     }}>
       <SignIn
+        signUpUrl="/sign-up"
         appearance={{
           elements: {
             rootBox: { width: "100%" , maxWidth: 420 },
