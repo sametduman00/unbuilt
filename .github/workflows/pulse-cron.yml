@@ -2,15 +2,23 @@ name: Pulse Daily
 
 on:
   schedule:
+    # Step 1: fetch at 07:15 UTC daily
     - cron: "15 7 * * *"
+    # Step 2 rounds: analyze remaining every 30min until done
+    - cron: "0 8 * * *"
+    - cron: "30 8 * * *"
+    - cron: "0 9 * * *"
+    - cron: "30 9 * * *"
+    - cron: "0 10 * * *"
   workflow_dispatch:
 
 jobs:
   pulse-fetch:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '15 7 * * *'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Fetch PH products and update feed cache
+      - name: Fetch today PH products and save cache
         run: |
           curl -f -X GET \
             "https://www.unbuilt.me/api/pulse/cron" \
@@ -20,11 +28,11 @@ jobs:
           echo "Fetch complete"
 
   pulse-analyze:
-    needs: pulse-fetch
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule != '15 7 * * *'
     runs-on: ubuntu-latest
     timeout-minutes: 28
     steps:
-      - name: Analyze unanalyzed PH products (batch loop)
+      - name: Analyze all unanalyzed products (batch loop)
         run: |
           MAX=50
           RUN=0
