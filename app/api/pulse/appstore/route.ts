@@ -10,7 +10,7 @@ export async function GET() {
       .from("appstore_daily_cache")
       .select("fetch_date, apps, app_count, generated_at")
       .order("fetch_date", { ascending: false })
-      .limit(3); // only last 3 days
+      .limit(7); // last 7 days
 
     if (!rows || rows.length === 0) {
       return NextResponse.json({ days: [], totalApps: 0 });

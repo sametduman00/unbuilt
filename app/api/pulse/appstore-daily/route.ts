@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
     const analyzed = await analyzeAppsWithVision(englishApps);
     const { error } = await sb.from("appstore_daily_cache").insert({ fetch_date: today, apps: analyzed, app_count: analyzed.length, generated_at: new Date().toISOString() });
     if (error) console.error("[APPSTORE] Insert error:", error.message);
-    const cutoff = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10); // keep 3 days
+    const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10); // keep 7 days
     await sb.from("appstore_daily_cache").delete().lt("fetch_date", cutoff);
     return NextResponse.json({ ok: true, fetched: apps.length, english: englishApps.length, saved: analyzed.length });
   } catch (err) {

@@ -187,8 +187,8 @@ export async function saveSnapshots(snapshots: AppSnapshot[]): Promise<{ ok: boo
 export async function cleanupOldSnapshots(): Promise<number> {
   try {
     const sb = getSupabase();
-    const sixMonthsMs = 3 * 24 * 60 * 60 * 1000; // 3 days — keeps only what is needed
-    const cutoff = new Date(Date.now() - sixMonthsMs).toISOString();
+    const retentionMs = 7 * 24 * 60 * 60 * 1000; // 7 days retention
+    const cutoff = new Date(Date.now() - retentionMs).toISOString();
     const { count } = await sb
       .from("pulse_snapshots")
       .delete({ count: "exact" })
