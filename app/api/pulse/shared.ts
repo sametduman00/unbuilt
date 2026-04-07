@@ -147,6 +147,12 @@ export async function fetchPlayStore(): Promise<AppSnapshot[]> {
 /* ── Save snapshots to Supabase ───────────────────────────────── */
 
 export async function saveSnapshots(snapshots: AppSnapshot[]): Promise<{ ok: boolean; count: number }> {
+  // Limit to 1000 snapshots to reduce Disk IO on Supabase
+  const LIMITED_MAX = 1000;
+  if (snapshots.length > LIMITED_MAX) {
+    console.log(`[PULSE] Limiting snapshots from ${snapshots.length} to ${LIMITED_MAX}`);
+    snapshots = snapshots.slice(0, LIMITED_MAX);
+  }
   if (snapshots.length === 0) return { ok: false, count: 0 };
   const sb = getSupabase();
   const now = new Date().toISOString();
@@ -176,12 +182,12 @@ export async function saveSnapshots(snapshots: AppSnapshot[]): Promise<{ ok: boo
   return { ok: true, count: totalInserted };
 }
 
-/* ── Cleanup old snapshots (keep 6 months) ────────────────────── */
+/* ── Cleanup old snapshots (keep 35 days for monthly comparison) ──────── */
 
 export async function cleanupOldSnapshots(): Promise<number> {
   try {
     const sb = getSupabase();
-    const sixMonthsMs = 6 * 30 * 24 * 60 * 60 * 1000;
+    const sixMonthsMs = 35 * 24 * 60 * 60 * 1000; // 35 days — enough for monthly comparison, saves Disk IO
     const cutoff = new Date(Date.now() - sixMonthsMs).toISOString();
     const { count } = await sb
       .from("pulse_snapshots")
@@ -230,7 +236,8 @@ export async function loadSnapshotsAt(
     .select("*")
     .gte("captured_at", batchStart)
     .lte("captured_at", batchEnd)
-    .order("rank", { ascending: true });
+    .order("rank", { ascending: true })
+    .limit(1000);
 
   if (!data || data.length === 0) return null;
   return data as AppSnapshot[];
