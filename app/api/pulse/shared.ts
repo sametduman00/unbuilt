@@ -187,7 +187,7 @@ export async function saveSnapshots(snapshots: AppSnapshot[]): Promise<{ ok: boo
 export async function cleanupOldSnapshots(): Promise<number> {
   try {
     const sb = getSupabase();
-    const sixMonthsMs = 35 * 24 * 60 * 60 * 1000; // 35 days — enough for monthly comparison, saves Disk IO
+    const sixMonthsMs = 3 * 24 * 60 * 60 * 1000; // 3 days — keeps only what is needed
     const cutoff = new Date(Date.now() - sixMonthsMs).toISOString();
     const { count } = await sb
       .from("pulse_snapshots")
