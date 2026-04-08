@@ -9,7 +9,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth, useUser, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Types ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Types âââââââââââââââââââââââââââââââââââââââââââââââââââââ
 type ToolId = "gap-analysis" | "competitor-radar" | "trend-feed" | "stack-advisor";
 type Budget = "bootstrap" | "growing" | "funded" | "scale";
 type TechLevel = "nocode" | "lowcode" | "developer";
@@ -43,7 +43,7 @@ interface Section {
   isLast: boolean;
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ SVG Icons ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ SVG Icons ââââââââââââââââââââââââââââââââââââââââââââââââââ
 function IconGap({ color }: { color: string }) {
   return (
     <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -87,14 +87,14 @@ const TOOL_ICONS: Record<ToolId, (c: string) => React.ReactNode> = {
   "stack-advisor": (c) => <IconStack color={c} />,
 };
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Tool definitions ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Tool definitions âââââââââââââââââââââââââââââââââââââââââââ
 const TOOLS: ToolConfig[] = [
   {
     id: "trend-feed",
     userLabel: "I need inspiration",
     name: "Trend Feed",
     tagline: "Real signals, no noise",
-    description: "What's actually rising in a market right now. Emerging niches, dying trends, and contrarian bets Ã¢ÂÂ powered by AI, not Twitter hype.",
+    description: "What's actually rising in a market right now. Emerging niches, dying trends, and contrarian bets — powered by AI, not Twitter hype.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/trend-feed",
@@ -112,7 +112,7 @@ const TOOLS: ToolConfig[] = [
     userLabel: "I have an idea",
     name: "Dig",
     tagline: "Find the gaps before you build",
-    description: "Spot what competitors are missing. Get a brutally honest read on where you actually have a shot Ã¢ÂÂ before you spend months building the wrong thing.",
+    description: "Spot what competitors are missing. Get a brutally honest read on where you actually have a shot — before you spend months building the wrong thing.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/analyze",
@@ -129,7 +129,7 @@ const TOOLS: ToolConfig[] = [
     userLabel: "I'm already building",
     name: "Competitor Radar",
     tagline: "Know your rivals inside out",
-    description: "Deep competitive intelligence on who you're really up against Ã¢ÂÂ their strategies, exploitable weaknesses, and exactly how to outmaneuver them.",
+    description: "Deep competitive intelligence on who you're really up against — their strategies, exploitable weaknesses, and exactly how to outmaneuver them.",
     accentColor: "var(--clr-accent)",
     accentRgb: "var(--clr-accent-rgb)",
     apiPath: "/api/radar",
@@ -157,35 +157,35 @@ const TOOLS: ToolConfig[] = [
   },
 ];
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Section metadata (for results cards) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Section metadata (for results cards) ââââââââââââââââââââââ
 const SECTION_META: Record<string, { bg: string; color: string }> = {
-  "ÃÂ°ÃÂÃÂÃÂ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ¤": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ³ÃÂ¯ÃÂ¸ÃÂ":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ¢ÃÂÃÂ¡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ¯": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ¢ÃÂÃÂ ÃÂ¯ÃÂ¸ÃÂ":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂª": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂ©ÃÂ¸": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ£": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂºÃÂ¯ÃÂ¸ÃÂ":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ¢ÃÂÃÂÃÂ¯ÃÂ¸ÃÂ":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ¥": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ¡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂ§ÃÂ²": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂ§ÃÂ ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ ÃÂ¯ÃÂ¸ÃÂ":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ°": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ®": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
-  "ÃÂ°ÃÂÃÂÃÂ¡ÃÂ¯ÃÂ¸ÃÂ":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð¤": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð³ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "â¡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð¯": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "â ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ðª": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð©¸": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð£": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ðºï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "âï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð¥": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð¡": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð§²": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð§ ": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð°": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð®": { bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
+  "ð¡ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
 };
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Markdown component map ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Markdown component map âââââââââââââââââââââââââââââââââââââ
 const MD: Record<string, (props: any) => React.ReactElement> = {
   table: ({ children }) => (
     <div className="table-wrap"><table>{children}</table></div>
@@ -217,7 +217,7 @@ function parseSections(markdown: string, isStreaming: boolean): Section[] {
       const isLast = idx === arr.length - 1 && isStreaming;
       if (!body.trim() && !isLast) return [];
       return [{
-        emoji: m ? m[0].trim() : "ÃÂ°ÃÂÃÂÃÂ",
+        emoji: m ? m[0].trim() : "ð",
         title: raw.replace(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)\s*/u, "").trim(),
         body,
         isLast,
@@ -225,7 +225,7 @@ function parseSections(markdown: string, isStreaming: boolean): Section[] {
     });
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Score parser ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Score parser âââââââââââââââââââââââââââââââââââââââââââââââ
 function parseScore(body: string): { score: number; label: string; summary: string } | null {
   const clean = (s: string) => s.replace(/\*\*/g, "").replace(/\*/g, "").replace(/---+/g, "").replace(/\s+/g, " ").trim();
   const scoreMatch = body.match(/Score:\s*\**(\d+)\**/i);
@@ -241,7 +241,7 @@ function parseScore(body: string): { score: number; label: string; summary: stri
   return { score, label, summary: summaryLines.join(" ").trim() };
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Section Result Card ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Section Result Card ââââââââââââââââââââââââââââââââââââââââ
 function SectionCard({ section, showCursor }: { section: Section; showCursor: boolean }) {
   const meta = SECTION_META[section.emoji] ?? { bg: "rgba(var(--clr-text-rgb),0.1)", color: "var(--clr-text-2)" };
   if (!section.body.trim() && !showCursor) return null;
@@ -263,19 +263,19 @@ function SectionCard({ section, showCursor }: { section: Section; showCursor: bo
   );
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Trend Feed Visual Components ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Trend Feed Visual Components âââââââââââââââââââââââââââââ
 
 function parseBullets(body: string): { title: string; desc: string; badge?: string }[] {
   const lines = body.split("\n").filter((l) => l.trim());
   const bullets: { title: string; desc: string; badge?: string }[] = [];
   for (const line of lines) {
-    const clean = line.replace(/^[-*Ã¢ÂÂ¢]\s*/, "").trim();
+    const clean = line.replace(/^[-*•]\s*/, "").trim();
     if (!clean) continue;
-    // Extract badge like **ÃÂ°ÃÂÃÂÃÂ¥ High Activity** or **ÃÂ°ÃÂÃÂÃÂ Growing**
-    const badgeMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-Ã¢ÂÂÃ¢ÂÂ:]\s*/);
+    // Extract badge like **ð¥ High Activity** or **ð Growing**
+    const badgeMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-—–:]\s*/);
     const rest = badgeMatch ? clean.slice(badgeMatch[0].length) : clean;
     // Split on **: bold title followed by colon/dash
-    const titleMatch = rest.match(/^\*\*([^*]+)\*\*\s*[-Ã¢ÂÂÃ¢ÂÂ:]?\s*([\s\S]*)/);
+    const titleMatch = rest.match(/^\*\*([^*]+)\*\*\s*[-—–:]?\s*([\s\S]*)/);
     if (titleMatch) {
       bullets.push({
         title: titleMatch[1].trim(),
@@ -295,9 +295,9 @@ function parseNicheBullets(body: string): { title: string; desc: string; score: 
   const lines = body.split("\n").filter((l) => l.trim());
   const niches: { title: string; desc: string; score: number }[] = [];
   for (const line of lines) {
-    const clean = line.replace(/^[-*Ã¢ÂÂ¢]\s*/, "").trim();
+    const clean = line.replace(/^[-*•]\s*/, "").trim();
     if (!clean) continue;
-    const titleMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-Ã¢ÂÂÃ¢ÂÂ:]?\s*([\s\S]*)/);
+    const titleMatch = clean.match(/^\*\*([^*]+)\*\*\s*[-—–:]?\s*([\s\S]*)/);
     const title = titleMatch ? titleMatch[1].trim() : "";
     const rest = titleMatch ? titleMatch[2].trim() : clean;
     // Estimate opportunity score from language cues
@@ -317,7 +317,7 @@ function TrendRisingSection({ section, isStreaming }: { section: Section; isStre
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-        <span style={{ fontSize: "1.25rem" }}>ÃÂ°ÃÂÃÂÃÂ</span>
+        <span style={{ fontSize: "1.25rem" }}>ð</span>
         <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
@@ -372,7 +372,7 @@ function TrendDyingSection({ section, isStreaming }: { section: Section; isStrea
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-        <span style={{ fontSize: "1.25rem" }}>ÃÂ°ÃÂÃÂÃÂ</span>
+        <span style={{ fontSize: "1.25rem" }}>ð</span>
         <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
@@ -423,7 +423,7 @@ function TrendNichesSection({ section, isStreaming }: { section: Section; isStre
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-        <span style={{ fontSize: "1.25rem" }}>ÃÂ°ÃÂÃÂÃÂ¡</span>
+        <span style={{ fontSize: "1.25rem" }}>ð¡</span>
         <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
           {section.title}
         </h3>
@@ -484,7 +484,7 @@ function TrendPatternHero({ section, isStreaming }: { section: Section; isStream
     }}>
       <div style={{ position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
-          <span style={{ fontSize: "1.5rem" }}>ÃÂ°ÃÂÃÂÃÂ¥</span>
+          <span style={{ fontSize: "1.5rem" }}>ð¥</span>
           <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--clr-text)", margin: 0, letterSpacing: "-0.02em" }}>
             {section.title}
           </h3>
@@ -626,7 +626,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
     if (s.includes("app store") || s.includes("itunes")) return <Pill text="App Store" color="blue" />;
     if (s.includes("play store") || s.includes("google play")) return <Pill text="Google Play" color="green" />;
     if (s.includes("linkedin")) return <Pill text="LinkedIn" color="blue" />;
-    const short = source.length > 20 ? source.substring(0,18)+"Ã¢ÂÂ¦" : source;
+    const short = source.length > 20 ? source.substring(0,18)+"…" : source;
     return <Pill text={short} color="gray" />;
   };
 
@@ -664,7 +664,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
   // Parse market size value: extract leading number for big display + rest as subtitle
   const parseMarketVal = (val: string) => {
     const m = val.match(/^(\$[\d.,]+[BMKTbmkt]?(?:[\d.,]+[BMKTbmkt]?)?)(.*)$/);
-    if (m && m[2].trim().length > 0) return { num: m[1], sub: m[2].trim().replace(/^[-Ã¢ÂÂÃ¢ÂÂ(]\s*/, '') };
+    if (m && m[2].trim().length > 0) return { num: m[1], sub: m[2].trim().replace(/^[-–—(]\s*/, '') };
     return { num: val.length > 12 ? val.substring(0,12) : val, sub: val.length > 12 ? val.substring(12) : "" };
   };
 
@@ -690,9 +690,9 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                 )}
                 {/* Key numbers row */}
                 <div style={{ display:"flex", gap:12, marginTop:12, flexWrap:"wrap" as const }}>
-                  {data.marketSize?.tam && <div style={{ fontSize:12, color:"#374151" }}>Ã°ÂÂÂ <strong>TAM:</strong> {parseMarketVal(data.marketSize.tam).num}</div>}
-                  {data.competitors?.[0] && <div style={{ fontSize:12, color:"#374151" }}>Ã¢ÂÂ <strong>Top threat:</strong> {data.competitors[0].name}</div>}
-                  {data.marketGaps?.[0] && <div style={{ fontSize:12, color:"#374151" }}>Ã°ÂÂÂ¯ <strong>Best gap:</strong> {data.marketGaps[0].title}</div>}
+                  {data.marketSize?.tam && <div style={{ fontSize:12, color:"#374151" }}>📈 <strong>TAM:</strong> {parseMarketVal(data.marketSize.tam).num}</div>}
+                  {data.competitors?.[0] && <div style={{ fontSize:12, color:"#374151" }}>⚔ <strong>Top threat:</strong> {data.competitors[0].name}</div>}
+                  {data.marketGaps?.[0] && <div style={{ fontSize:12, color:"#374151" }}>🎯 <strong>Best gap:</strong> {data.marketGaps[0].title}</div>}
                 </div>
               </div>
             </div>
@@ -727,7 +727,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
             <Card title="Market Sizing" sub="TAM to SAM to SOM funnel" right={<Pill text="Multi-source" color="blue" />}>
               <div style={{ display:"flex", flexDirection:(typeof window!=="undefined"&&window.innerWidth<768)?"column":"row" as const, alignItems:"stretch", gap:(typeof window!=="undefined"&&window.innerWidth<768)?12:10, marginBottom:16 }}>
                 {[{ val:data.marketSize.tam, label:"TAM", sub:"Everyone who could buy" }, null, { val:data.marketSize.sam, label:"SAM", sub:"People you can reach" }, null, { val:data.marketSize.som, label:"SOM", sub:"Realistic customers" }].map((item,i) =>
-                  item===null ? <div key={i} style={{ display:"flex", alignItems:"center", color:"#9ca3af", fontSize:18, flexShrink:0 }}>Ã¢ÂÂ</div> : (() => {
+                  item===null ? <div key={i} style={{ display:"flex", alignItems:"center", color:"#9ca3af", fontSize:18, flexShrink:0 }}>→</div> : (() => {
                     const { num, sub: valSub } = parseMarketVal(item.val);
                     return (
                       <div key={i} style={{ flex:1, background:"#fafafa", borderRadius:10, padding:"16px 10px", border:"1px solid #f3f4f6", display:"flex", flexDirection:"column" as const, alignItems:"center", textAlign:"center" as const, minHeight:110 }}>
@@ -742,7 +742,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
               </div>
               {data.marketSize.growthRate && (
                 <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8, padding:"10px 14px", display:"flex", alignItems:"center", gap:10 }}>
-                  <span style={{ color:"#16a34a", fontWeight:700, fontSize:16 }}>Ã¢ÂÂ</span>
+                  <span style={{ color:"#16a34a", fontWeight:700, fontSize:16 }}>↗</span>
                   <span style={{ fontSize:13, fontWeight:600, color:"#15803d" }}>{data.marketSize.growthRate} annual growth</span>
                   <Pill text="Growing" color="green" />
                 </div>
@@ -757,7 +757,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                     <span style={{ fontSize:14, fontWeight:700, color:"#111827" }}>{seg.name}</span>
                     <Pill text={seg.fit.toUpperCase()} color={seg.fit==="primary"?"blue":seg.fit==="secondary"?"green":"orange"} />
                     {seg.size && <span style={{ fontSize:13, fontWeight:600, color:"#374151" }}>{seg.size}</span>}
-                    {seg.growth && <span style={{ fontSize:12, color:"#10b981", fontWeight:600 }}>Ã¢ÂÂ {seg.growth}</span>}
+                    {seg.growth && <span style={{ fontSize:12, color:"#10b981", fontWeight:600 }}>↑ {seg.growth}</span>}
                   </div>
                   <p style={{ fontSize:13, color:"#6b7280", margin:0 }}>{seg.description}</p>
                 </div>
@@ -806,7 +806,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
             </Card>
           )}
           {data.redditPosts && data.redditPosts.length > 0 && (
-            <Card title="Reddit Posts" sub={"Live posts from Reddit Ã¢ÂÂ " + data.redditPosts.length + " found"} right={<Pill text="Reddit" color="orange" />}>
+            <Card title="Reddit Posts" sub={"Live posts from Reddit — " + data.redditPosts.length + " found"} right={<Pill text="Reddit" color="orange" />}>
               {data.redditPosts.map((post, i) => (
                 <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14, marginBottom:10 }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8, gap:10 }}>
@@ -814,7 +814,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                       <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:5, flexWrap:"wrap" as const }}>
                         <Pill text={post.subreddit} color="orange" />
                         <Pill text={post.sentiment.toUpperCase()} color={post.sentiment==="pain"?"red":post.sentiment==="need"?"orange":"green"} />
-                        {post.upvotes != null && <span style={{ fontSize:11, color:"#9ca3af" }}>Ã¢ÂÂ {post.upvotes.toLocaleString()}</span>}
+                        {post.upvotes != null && <span style={{ fontSize:11, color:"#9ca3af" }}>↑ {post.upvotes.toLocaleString()}</span>}
                       </div>
                       <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:5 }}>{post.title}</div>
                       <p style={{ fontSize:12, color:"#6b7280", margin:0, lineHeight:1.5 }}>{post.body}</p>
@@ -825,7 +825,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
             </Card>
           )}
           {data.xPosts && data.xPosts.length > 0 && (
-            <Card title="X / Twitter Posts" sub={"Live posts from X Ã¢ÂÂ " + data.xPosts.length + " found"} right={<Pill text="X / Twitter" color="dark" />}>
+            <Card title="X / Twitter Posts" sub={"Live posts from X — " + data.xPosts.length + " found"} right={<Pill text="X / Twitter" color="dark" />}>
               {data.xPosts.map((post, i) => (
                 <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:12, marginBottom:8 }}>
                   <div style={{ display:"flex", alignItems:"flex-start", gap:10 }}>
@@ -836,7 +836,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                       <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:4, flexWrap:"wrap" as const }}>
                         <span style={{ fontSize:13, fontWeight:600, color:"#111827" }}>{post.handle}</span>
                         <Pill text={post.sentiment.toUpperCase()} color={post.sentiment==="pain"?"red":post.sentiment==="need"?"orange":"green"} />
-                        {post.likes != null && <span style={{ fontSize:11, color:"#9ca3af" }}>Ã¢ÂÂ¥ {post.likes.toLocaleString()}</span>}
+                        {post.likes != null && <span style={{ fontSize:11, color:"#9ca3af" }}>♥ {post.likes.toLocaleString()}</span>}
                       </div>
                       <p style={{ fontSize:13, color:"#374151", margin:0, lineHeight:1.5 }}>{post.text}</p>
                     </div>
@@ -867,11 +867,11 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                   <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
                     <div>
                       <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#10b981", marginBottom:5, letterSpacing:"0.06em" }}>Strengths</div>
-                      {c.strengths?.map((s,j) => <div key={j} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>Ã¢ÂÂ¢ {s}</div>)}
+                      {c.strengths?.map((s,j) => <div key={j} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>• {s}</div>)}
                     </div>
                     <div>
                       <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ef4444", marginBottom:5, letterSpacing:"0.06em" }}>Weaknesses</div>
-                      {c.weaknesses?.map((w,j) => <div key={j} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>Ã¢ÂÂ¢ {w}</div>)}
+                      {c.weaknesses?.map((w,j) => <div key={j} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>• {w}</div>)}
                     </div>
                   </div>
                 </div>
@@ -900,7 +900,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                     <div style={{ display:"flex", alignItems:"center", gap:7, flexWrap:"wrap" as const, marginBottom:2 }}>
                       <span style={{ fontSize:13, fontWeight:600, color:"#111827" }}>{app.trackName??app.name??app.title??"Unknown"}</span>
                       <Pill text={app._src} color={app._src==="App Store"?"blue":"green"} />
-                      {(app.averageUserRating||app.rating) && <span style={{ fontSize:11, color:"#f59e0b", fontWeight:600 }}>Ã¢ÂÂ {(app.averageUserRating||app.rating)?.toFixed(1)}</span>}
+                      {(app.averageUserRating||app.rating) && <span style={{ fontSize:11, color:"#f59e0b", fontWeight:600 }}>★ {(app.averageUserRating||app.rating)?.toFixed(1)}</span>}
                     </div>
                     <p style={{ fontSize:11, color:"#6b7280", margin:0, overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" as const }}>{app.description??""}</p>
                   </div>
@@ -935,7 +935,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                 {([{ key:"strengths" as const, label:"Strengths", bg:"#dcfce7", border:"#bbf7d0", tc:"#15803d" }, { key:"weaknesses" as const, label:"Weaknesses", bg:"#fff7ed", border:"#fed7aa", tc:"#ea580c" }, { key:"opportunities" as const, label:"Opportunities", bg:"#eff6ff", border:"#bfdbfe", tc:"#2563eb" }, { key:"threats" as const, label:"Threats", bg:"#fef2f2", border:"#fecaca", tc:"#dc2626" }]).map(({ key, label, bg, border, tc }) => (
                   <div key={key} style={{ background:bg, border:"1px solid "+border, borderRadius:8, padding:12 }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:tc, marginBottom:8, letterSpacing:"0.07em" }}>{label}</div>
-                    {(data.swot?.[key] as string[])?.map((item,i) => <div key={i} style={{ fontSize:12, color:"#374151", marginBottom:4 }}>Ã¢ÂÂ¢ {item}</div>)}
+                    {(data.swot?.[key] as string[])?.map((item,i) => <div key={i} style={{ fontSize:12, color:"#374151", marginBottom:4 }}>• {item}</div>)}
                   </div>
                 ))}
               </div>
@@ -958,7 +958,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
               {(data.targetCustomerDeep.triggerEvents?.length??0) > 0 && (
                 <div style={{ background:"#fff7ed", border:"1px solid #fed7aa", borderRadius:8, padding:12, marginBottom:10 }}>
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ea580c", marginBottom:7, letterSpacing:"0.07em" }}>Trigger Events</div>
-                  {data.targetCustomerDeep.triggerEvents?.map((t,i) => <div key={i} style={{ fontSize:13, color:"#374151", marginBottom:4 }}>Ã¢ÂÂ¢ {t}</div>)}
+                  {data.targetCustomerDeep.triggerEvents?.map((t,i) => <div key={i} style={{ fontSize:13, color:"#374151", marginBottom:4 }}>• {t}</div>)}
                 </div>
               )}
               {(data.targetCustomerDeep.whereToFindThem?.length??0) > 0 && (
@@ -1024,12 +1024,12 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                 <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14, display:"flex", flexDirection:"column" as const, gap:6 }}>
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ef4444" }}>Monthly Burn</div>
                   <div style={{ fontSize:22, fontWeight:800, color:"#111827" }}>{data.financialDeep.monthlyBurn.total}</div>
-                  <div style={{ fontSize:11, color:"#6b7280" }}>Infra {data.financialDeep.monthlyBurn.infrastructure} ÃÂ· Tools {data.financialDeep.monthlyBurn.tools} ÃÂ· Mkt {data.financialDeep.monthlyBurn.marketing}</div>
+                  <div style={{ fontSize:11, color:"#6b7280" }}>Infra {data.financialDeep.monthlyBurn.infrastructure} · Tools {data.financialDeep.monthlyBurn.tools} · Mkt {data.financialDeep.monthlyBurn.marketing}</div>
                   <div style={{ marginTop:4, padding:"8px 10px", background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8 }}>
                     <div style={{ fontSize:11, color:"#166534", marginBottom:6 }}>No-code tools can build this for <b>&lt;$50/mo</b></div>
                     <button onClick={() => onSwitchToStack?.(idea ?? data.appStoreQuery ?? "")}
                       style={{ width:"100%", padding:"6px 0", borderRadius:6, background:"#16a34a", border:"none", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
-                      Build it with Stack Ã¢ÂÂ
+                      Build it with Stack →
                     </button>
                   </div>
                 </div>
@@ -1037,7 +1037,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#10b981", marginBottom:2 }}>Break-Even</div>
                   <div style={{ padding:"8px 10px", background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8 }}>
                     <div style={{ fontSize:22, fontWeight:800, color:"#111827", marginBottom:4 }}>Month 1</div>
-                    <div style={{ fontSize:12, color:"#6b7280" }}>Build with our Stack Ã¢ÂÂ costs covered from day one</div>
+                    <div style={{ fontSize:12, color:"#6b7280" }}>Build with our Stack — costs covered from day one</div>
                   </div>
                 </div>
                 <div style={{ background:"#f0fdfe", border:"1px solid #a5f3fc", borderRadius:10, padding:14 }}>
@@ -1046,7 +1046,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                   <div style={{ fontSize:12, color:"#6b7280" }}>MRR (Middle estimate)</div>
                 </div>
               </div>
-              <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:10, letterSpacing:"0.07em" }}>Revenue Projections Ã¢ÂÂ Year 1</div>
+              <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:10, letterSpacing:"0.07em" }}>Revenue Projections — Year 1</div>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10 }}>
                 {([{ key:"cautious" as const, label:"Cautious", color:"#6b7280", highlight:false }, { key:"middle" as const, label:"Middle", color:"#0ea5e9", highlight:true }, { key:"optimistic" as const, label:"Optimistic", color:"#10b981", highlight:false }]).map(({ key, label, color, highlight }) => {
                   const s = data.financialDeep?.revenueScenarios?.[key];
@@ -1104,7 +1104,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
             </Card>
           )}
           {data.customerInterviewGuide && (
-            <Card title="Customer Interview Guide" sub={"Non-leading questions Ã¢ÂÂ Target: "+data.customerInterviewGuide.targetInterviews+" interviews"}>
+            <Card title="Customer Interview Guide" sub={"Non-leading questions — Target: "+data.customerInterviewGuide.targetInterviews+" interviews"}>
               <div style={{ marginBottom:14 }}>
                 <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:9, letterSpacing:"0.07em" }}>Questions to Ask</div>
                 {data.customerInterviewGuide.questions.map((q,i) => (
@@ -1117,15 +1117,15 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
               <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10 }}>
                 <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:8, padding:12 }}>
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#2563eb", marginBottom:7 }}>Where to Find</div>
-                  {data.customerInterviewGuide.whereToFindThem.map((w,i) => <div key={i} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>Ã¢ÂÂ¢ {w}</div>)}
+                  {data.customerInterviewGuide.whereToFindThem.map((w,i) => <div key={i} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>• {w}</div>)}
                 </div>
                 <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8, padding:12 }}>
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#16a34a", marginBottom:7 }}>Green Signals</div>
-                  {data.customerInterviewGuide.greenSignals.map((s,i) => <div key={i} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>Ã¢ÂÂ¢ {s}</div>)}
+                  {data.customerInterviewGuide.greenSignals.map((s,i) => <div key={i} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>• {s}</div>)}
                 </div>
                 <div style={{ background:"#fef2f2", border:"1px solid #fecaca", borderRadius:8, padding:12 }}>
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#dc2626", marginBottom:7 }}>Red Signals</div>
-                  {data.customerInterviewGuide.redSignals.map((s,i) => <div key={i} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>Ã¢ÂÂ¢ {s}</div>)}
+                  {data.customerInterviewGuide.redSignals.map((s,i) => <div key={i} style={{ fontSize:12, color:"#374151", marginBottom:3 }}>• {s}</div>)}
                 </div>
               </div>
             </Card>
@@ -1165,7 +1165,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                   </div>
                   {phase.steps.map((step,j) => (
                     <div key={j} style={{ display:"flex", gap:8, marginBottom:6 }}>
-                      <span style={{ color:"#10b981", fontSize:14, flexShrink:0 }}>Ã¢ÂÂ</span>
+                      <span style={{ color:"#10b981", fontSize:14, flexShrink:0 }}>✓</span>
                       <span style={{ fontSize:13, color:"#374151" }}>{step}</span>
                     </div>
                   ))}
@@ -1198,7 +1198,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                 <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:10, letterSpacing:"0.07em" }}>Working For You</div>
                 {data.synthesis.workingForYou.map((item,i) => (
                   <div key={i} style={{ display:"flex", gap:8, marginBottom:7 }}>
-                    <span style={{ color:"#10b981", fontSize:14, flexShrink:0 }}>Ã¢ÂÂ</span>
+                    <span style={{ color:"#10b981", fontSize:14, flexShrink:0 }}>●</span>
                     <span style={{ fontSize:13, color:"#374151" }}>{item}</span>
                   </div>
                 ))}
@@ -1207,7 +1207,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                 <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:10, letterSpacing:"0.07em" }}>Watch Out</div>
                 {data.synthesis.watchOutFor.map((item,i) => (
                   <div key={i} style={{ display:"flex", gap:8, marginBottom:7 }}>
-                    <span style={{ color:"#f59e0b", fontSize:14, flexShrink:0 }}>Ã¢ÂÂ</span>
+                    <span style={{ color:"#f59e0b", fontSize:14, flexShrink:0 }}>●</span>
                     <span style={{ fontSize:13, color:"#374151" }}>{item}</span>
                   </div>
                 ))}
@@ -1234,10 +1234,10 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
           const isActive = activeTab === tab.id;
           return (
             <button key={tab.id} onClick={() => { setActiveTab(tab.id); document.getElementById('gap-tab-content')?.scrollTo({top:0}); }} style={{ display:"flex", alignItems:"center", width:"100%", padding:"8px 10px", borderRadius:8, background:isActive?"white":"transparent", border:"1px solid "+(isActive?"#e5e7eb":"transparent"), cursor:"pointer", textAlign:"left" as const, boxShadow:isActive?"0 1px 2px rgba(0,0,0,0.05)":"none", gap:8 }}>
-              <span style={{ fontSize:12, color:tab.id==="overview"?"#6366f1":"#10b981", flexShrink:0 }}>{tab.id==="overview"?"Ã¢ÂÂ":"Ã¢ÂÂ"}</span>
+              <span style={{ fontSize:12, color:tab.id==="overview"?"#6366f1":"#10b981", flexShrink:0 }}>{tab.id==="overview"?"●":"✓"}</span>
               <span style={{ fontSize:13, fontWeight:isActive?600:400, color:isActive?"#111827":"#374151", flex:1 }}>{tab.label}</span>
               {tab.score !== undefined && <span style={{ background:"#6366f1", color:"white", padding:"1px 6px", borderRadius:4, fontSize:11, fontWeight:700, flexShrink:0 }}>{tab.score}</span>}
-              <span style={{ fontSize:12, color:"#9ca3af", flexShrink:0 }}>{isActive?"Ã¢ÂÂ":"Ã¢ÂÂº"}</span>
+              <span style={{ fontSize:12, color:"#9ca3af", flexShrink:0 }}>{isActive?"↓":"›"}</span>
             </button>
           );
         })}
@@ -1249,10 +1249,10 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
   );
 }
 
-// Ã¢ÂÂÃ¢ÂÂ DIG SAMPLE REPORT Ã¢ÂÂ "sleep tracking app for shift workers and nurses" Ã¢ÂÂÃ¢ÂÂ
+// ── DIG SAMPLE REPORT — "sleep tracking app for shift workers and nurses" ──
 
-// Ã¢ÂÂÃ¢ÂÂ DIG SAMPLE REPORT Ã¢ÂÂ Real API data, rendered with GapAnalysisResult Ã¢ÂÂÃ¢ÂÂ
-const DIG_SAMPLE_JSON = `{"appStoreQuery":"shift worker sleep","marketScore":68,"marketScoreLabel":"Real Opportunity","marketScoreSummary":"The sleep app market is booming at 14.4% CAGR, but the only direct shift-worker sleep competitor (Timeshifter) has a dismal 2.6-star rating on Google Play, and mainstream trackers like Sleep Cycle and AutoSleep fundamentally assume a 9-to-5 sleep window, leaving shift workers vocally underserved on Reddit and forums.","competitors":[{"name":"Timeshifter Shift Work","tagline":"Science-based shift work sleep and alertness optimization","threatLevel":4,"strengths":["Only dedicated shift-work app with B2B enterprise sales channel"],"weaknesses":["Abysmal 2.6-star rating on Google Play signals poor execution"]},{"name":"SleepSync (Monash University)","tagline":"World-first personalized sleep-wake scheduling for shift workers","threatLevel":3,"strengths":["Peer-reviewed clinical evidence from ICU and ED nurse trials"],"weaknesses":["Academic research project, not yet a commercial consumer product"]},{"name":"Sleep Cycle","tagline":"AI sound-analysis sleep tracker for over 3 million users","threatLevel":3,"strengths":["Massive user base with 22K reviews and 4.7-star rating"],"weaknesses":["Assumes standard nighttime sleep window, ignores shift schedules"]},{"name":"AutoSleep","tagline":"Automatic Apple Watch sleep tracking with no button presses","threatLevel":2,"strengths":["61K reviews at 4.7 stars, seamless Apple Watch integration"],"weaknesses":["No shift-aware features or circadian rhythm personalization"]},{"name":"AfterShift","tagline":"Indie sleep and recovery app for shift workers","threatLevel":2,"strengths":["Purpose-built for non-9-to-5 users, founder active on Reddit"],"weaknesses":["Solo side project with no visible traction or funding"]},{"name":"Shift Worker Sleep Management","tagline":"Sleep planning for night and rotating shift workers","threatLevel":2,"strengths":["Directly targets rotating and night shift sleep planning"],"weaknesses":["Minimal visibility, no reviews or market presence data available"]}],"painPoints":[{"quote":"I have an Epix Gen 2 and have played with the nap feature as well as activating sleep mode and nothing seems to do a fair job tracking sleep for variable shift workers","source":"Reddit r/GarminWatches","severity":"high"},{"quote":"Are there any sleep tracker apps that will record sleep during the day, because specifically for sleep tracking on nights I have found most apps do not register daytime sleep properly","source":"Reddit r/Nightshift","severity":"high"},{"quote":"Data without intervention is just anxiety in a ring, we do not need more sleep scores, we need tech that actually triggers behavioral change","source":"Twitter/X","severity":"high"},{"quote":"Nurses at high risk of shift work disorder commonly experienced as excessive sleepiness face a significant increase in the risk of errors, accidents and injuries","source":"Monash University / YouTube research summary","severity":"high"},{"quote":"I built a sleep app that does not assume you work 9 to 5 because every sleep tracker I tried was fundamentally broken for anyone on rotating shifts","source":"Reddit r/SideProject","severity":"medium"}],"marketGaps":[{"title":"Circadian-Aware Adaptive Sleep Scheduling","description":"SleepSync research proved personalized sleep-wake timing improves outcomes for shift workers, yet no commercial app integrates real-time shift calendar data with circadian biology to generate dynamic sleep plans","opportunityScore":9,"status":"emerging"},{"title":"Daytime Sleep Tracking That Actually Works","description":"Reddit users report that mainstream trackers like Garmin and most apps fail to properly detect or score daytime sleep, a critical need for night shift workers who sleep from 7am to 3pm","opportunityScore":9,"status":"untapped"},{"title":"Nurse-Specific Wellness Integration","description":"Mental health apps for nurses exist (Bearable, Happify, Moodfit) and shift calendars exist (Shwoca, LRHSoft) but no single app combines sleep tracking, mood logging, and shift scheduling in one nurse-focused experience","opportunityScore":8,"status":"untapped"},{"title":"B2B Hospital Safety and Compliance Channel","description":"Timeshifter positions for enterprise but has terrible ratings; hospitals face liability from fatigued nurse errors, creating a B2B buyer willing to pay per-seat for a proven fatigue management tool","opportunityScore":8,"status":"emerging"},{"title":"Actionable Interventions Over Passive Scores","description":"Twitter signal confirms users are frustrated with passive sleep scores that cause anxiety without driving behavioral change; an app that delivers timed light exposure, caffeine cutoff, and nap alerts fills this gap","opportunityScore":7,"status":"untapped"}],"swot":{"strengths":["Direct competitor Timeshifter has 2.6 stars, massive execution gap","Clinical validation exists via SleepSync peer-reviewed research","Sleep app market growing at 14.4% CAGR through 2033","Reddit threads show vocal unmet demand from shift workers"],"weaknesses":["Niche audience requires specialized circadian science expertise","Sleep tracking accuracy depends on device hardware integration","High customer acquisition costs in health app category"],"opportunities":["B2B hospital sales for nurse fatigue risk reduction","No dominant player in shift-specific sleep niche yet","Eight Sleep $1.5B valuation proves investor appetite for sleep tech","Combine shift calendar plus sleep tracking in single app"],"threats":["Sleep Cycle or AutoSleep could add shift-aware features","Apple or Garmin could natively support variable sleep windows","Timeshifter may improve execution with enterprise revenue","Aggressive pricing pressure and high CAC in sleep market"]},"opportunity":{"headline":"The leading shift-work sleep competitor has a 2.6-star rating and the only clinically validated solution is stuck in academia Ã¢ÂÂ this is a wide-open niche inside a $3.6B market growing at 14.4% CAGR","urgency":"high","actionItems":[{"step":1,"action":"Validate with 20 ICU and ED nurses in 2 weeks","detail":"SleepSync research targeted ICU and emergency department nurses specifically; recruit from r/Nightshift, r/nursing, and nursing Facebook groups to run problem interviews"},{"step":2,"action":"Build an MVP that solves daytime sleep tracking and shift-aware scheduling","detail":"Reddit data shows the two highest-severity pain points are broken daytime sleep detection and no integration with shift calendars; solve these two problems first"},{"step":3,"action":"License or replicate the SleepSync circadian algorithm","detail":"Monash University published their methodology in PMC; use the peer-reviewed personalized sleep-wake management protocol as a science-backed differentiator"},{"step":4,"action":"Launch a B2B pilot with one hospital system","detail":"Timeshifter markets to enterprises to reduce employee fatigue risk and absenteeism; pitch a free pilot to a single hospital system to generate outcome data and a case study"},{"step":5,"action":"Pursue seed funding in the $2-5M range","detail":"Sleep.ai raised $5.5M and Eight Sleep hit $1.5B valuation; investor appetite for sleep tech is demonstrably strong, and a shift-worker niche with clinical evidence is a compelling thesis"}]},"targetCustomer":{"persona":"The Exhausted Night Shift Nurse","jobTitle":"ICU or Emergency Department Registered Nurse","demographics":"Ages 25-45, works at hospitals with 200+ beds, predominantly female, rotates between day and night shifts every 2-4 weeks","painPoints":["Sleep apps do not track daytime sleep accurately after a night shift","Rotating schedules destroy any consistent sleep routine","Chronic fatigue increases risk of medical errors and personal health problems"],"currentTools":["Sleep Cycle or AutoSleep for general tracking","Shift Work Calendar apps like Shwoca for scheduling","Calm or Headspace for relaxation before sleep"],"willingnessToPay":"$4.99 to $9.99 per month for consumer; hospitals willing to pay $3-8 per seat per month for B2B fatigue management"},"targetCustomerDeep":{"whoTheyAre":"Registered nurses and healthcare workers in ICUs, emergency departments, and other 24/7 hospital units who rotate between day and night shifts. The SleepSync trial specifically recruited intensive care and emergency department nurses at high risk of shift work disorder. They are joined by a broader population of paramedics, firefighters, factory workers, and logistics workers on rotating schedules.","howTheyThink":"They are pragmatic problem-solvers who value tools that fit seamlessly into chaotic schedules without adding cognitive load. They are deeply skeptical of wellness apps that feel generic or designed for 9-to-5 desk workers. As one Reddit user put it, they need apps that do not assume you work 9 to 5. They want actionable guidance, not just sleep scores that create anxiety without driving change.","availableMoney":"Individual nurses earn $70K-$95K annually and typically spend $5-15 per month on health and wellness apps. The larger opportunity is institutional: US hospitals collectively spend billions on workforce wellness programs, and a fatigue management app can be positioned as a risk reduction and patient safety investment.","howTheyBuy":"They discover apps through peer recommendations in nursing communities, Reddit threads in r/Nightshift and r/nursing, and word of mouth on units. They evaluate by trying free tiers and reading App Store reviews. Institutional buying happens through nursing leadership, occupational health departments, or chief nursing officers evaluating fatigue management solutions.","triggerEvents":["Starting a new rotating shift schedule at a hospital for the first time","Experiencing a near-miss medical error attributed to fatigue after a night shift","A colleague or peer recommending a solution after visibly struggling with sleep"],"whereToFindThem":["Reddit communities: r/Nightshift, r/nursing, r/GarminWatches","Nursing Facebook groups and allnurses.com forums","Hospital employee wellness programs and nursing conferences"]},"industryTrends":{"now":[{"trend":"Sleep monitoring apps market has reached $1.4 billion in 2026 with accelerating consumer adoption","evidence":"Persistence Market Research reports global sleep monitoring apps market at US$1.4 billion in 2026 growing to US$3.6 billion by 2033 at 14.4% CAGR","impact":"high"},{"trend":"Massive venture capital flowing into sleep technology with Eight Sleep reaching unicorn status","evidence":"Eight Sleep raised $50M at $1.5B valuation in March 2026 per TechCrunch; Sleep.ai raised $5.5M in 2025 for AI sleep solutions","impact":"high"},{"trend":"Academic research validating mobile apps for shift worker sleep management","evidence":"Monash University published SleepSync pilot trial in PMC demonstrating improved sleep and mood outcomes in 27 ICU and ED nurses over two weeks","impact":"medium"}],"emerging":[{"trend":"AI-powered personalized sleep interventions replacing passive tracking","evidence":"Eight Sleep expanding into predictive AI-driven health per BusinessWire; Sleep.ai building AI models to analyze sleep patterns per MedCity News","impact":"high"},{"trend":"Enterprise and B2B channels emerging for shift worker fatigue management","evidence":"Timeshifter positions to employers to reduce employee risk and increase safety and productivity per their website; SleepSync research framed around hospital patient safety outcomes","impact":"medium"}],"structural":[{"trend":"Sleep trackers market scaling toward $18.37 billion by 2035 as sleep becomes a pillar of preventive health","evidence":"Precedence Research projects global sleep trackers market from $7.02B in 2025 to $18.37B by 2035","impact":"high"},{"trend":"Basic sleep tracking commoditizing while personalized intervention-based apps capture premium value","evidence":"Persistence Market Research notes basic tracking captures 50% of revenue in 2026 but intervention-driven apps command higher willingness to pay; Twitter signal confirms demand for tech that triggers behavioral change over passive scores","impact":"high"}]},"marketSegments":[{"name":"Hospital Nurses on Rotating Shifts","fit":"primary","size":"$180M","growth":"14.4%","description":"There are approximately 4 million registered nurses in the US alone, with a large percentage working rotating or night shifts in hospitals. SleepSync research specifically targeted ICU and ED nurses as highest-risk for shift work disorder. This is the beachhead segment with the clearest pain and willingness to pay both individually and through employer wellness programs."},{"name":"General Shift Workers (Manufacturing, Logistics, Emergency Services)","fit":"secondary","size":"$520M","growth":"14.4%","description":"Approximately 16% of the US workforce does shift work including factory workers, warehouse workers, paramedics, firefighters, and police. Timeshifter and shift calendar apps like Shwoca target this broader group. The pain points are universal but the messaging and features must be adapted beyond healthcare."},{"name":"Enterprise Hospital and Healthcare Systems","fit":"secondary","size":"$300M","growth":"17.5%","description":"B2B sales to hospital systems and healthcare employers who face regulatory pressure, liability from fatigue-related errors, and high nurse turnover. Timeshifter already targets this channel but has poor product ratings. Research Nester projects the broader sleep monitoring apps market growing at 17.5% CAGR suggesting strong enterprise demand."},{"name":"Sleep App Power Users with Wearables","fit":"tertiary","size":"$1.4B","growth":"14.4%","description":"Users of Apple Watch, Garmin, Oura Ring, and other wearables who are frustrated with default sleep tracking that assumes nighttime sleep. Reddit r/GarminWatches users specifically report broken tracking for variable schedules. Integration partnerships with wearable platforms could unlock this segment."}],"goToMarket":{"channels":[{"name":"Nursing Community Organic Marketing","type":"primary","estimatedCAC":"$3","description":"Reddit r/Nightshift, r/nursing, allnurses.com forums, and nursing Facebook groups are where shift workers actively seek sleep solutions. The AfterShift founder successfully posted in r/SideProject. Organic community seeding with a free tier drives lowest CAC."},{"name":"App Store Optimization for Shift Sleep Keywords","type":"primary","estimatedCAC":"$5","description":"Live search data shows searches for shift worker sleep app and free sleep tracking app for shift workers with minimal quality results. Timeshifter has the only dedicated listing and it has 2.6 stars. ASO for these keywords is high-ROI with low competition."},{"name":"B2B Hospital Wellness Program Sales","type":"secondary","estimatedCAC":"$150","description":"Higher CAC but dramatically higher LTV. Timeshifter positions for enterprise sales. Pitch to chief nursing officers and occupational health departments using SleepSync-style clinical evidence to reduce fatigue-related incidents. LinkedIn notes high customer acquisition costs as a risk in North America sleep apps market."},{"name":"Clinical Research Partnerships","type":"secondary","estimatedCAC":"$8","description":"Monash University published SleepSync research; partner with sleep medicine researchers at academic medical centers to validate the app and generate peer-reviewed evidence that drives organic press coverage and hospital trust"},{"name":"Healthcare Influencer and Nurse Creator Partnerships","type":"experimental","estimatedCAC":"$12","description":"Nurse influencers on TikTok and Instagram have large followings. DailyNurse and similar publications cover wellness tools for nurses specifically. Sponsor content targeting the intersection of nursing burnout and sleep health."}],"launchTarget":"ICU and emergency department nurses working rotating 12-hour shifts at a single large hospital system in a major US metro area","launchPhases":[{"phase":1,"name":"Nurse Beta Community","duration":"3-4 months","steps":["Recruit 50-100 night shift nurses from r/Nightshift, r/nursing, and allnurses.com for a free beta program","Launch MVP with two core features: daytime-aware sleep tracking and shift calendar integration","Collect sleep outcome data and NPS scores to build initial clinical-quality evidence","Iterate on circadian-based sleep scheduling recommendations using SleepSync published methodology"]},{"phase":2,"name":"Consumer App Store Launch","duration":"3-4 months","steps":["Launch on iOS and Android with freemium model targeting shift worker sleep keywords","Publish beta outcome data as blog posts and pitch to nursing and health tech publications like MobiHealthNews and Sleepopolis","Add Apple Watch and Garmin integration to solve the wearable tracking gap identified on Reddit"]},{"phase":3,"name":"B2B Hospital Pilot and Seed Round","duration":"4-6 months","steps":["Pitch a free 90-day pilot to two to three hospital systems using nurse beta outcome data","Build enterprise admin dashboard for nurse managers to monitor team fatigue risk","Use hospital pilot data and consumer traction to raise a $2-4M seed round"]}]},"customerInterviewGuide":{"questions":["Walk me through what happens from the moment your last shift ends to when you actually fall asleep Ã¢ÂÂ what does that look like?","When you transition from day shifts to night shifts, how do you currently try to adjust your sleep, and what usually goes wrong?","Have you tried any apps or tools to help with your sleep around shift work, and what made you keep using them or stop?","Can you tell me about a time when poor sleep after a shift affected your work performance or personal life?","If something could change about how you manage sleep around your shifts, what would make the biggest difference for you?"],"whereToFindThem":["Reddit r/Nightshift and r/nursing communities","allnurses.com forums and nursing Facebook groups","Hospital break rooms and nursing union meetings","Night shift productivity and wellness Discord servers"],"greenSignals":["Nurse describes a detailed workaround they have built to manage sleep around rotating shifts, indicating high motivation to solve this problem","Interviewee has tried and abandoned multiple sleep apps specifically because they could not handle non-standard sleep windows","Hospital manager expresses concern about fatigue-related errors and says they would pay for a fatigue management tool"],"redSignals":["Most nurses say they sleep fine and do not perceive shift-related sleep disruption as a significant problem","Interviewees are unwilling to use any app for sleep and prefer to just deal with it or rely on caffeine alone","Hospital decision-makers see fatigue management as a personal responsibility not an institutional investment"],"targetInterviews":20},"financialDeep":{"monthlyBurn":{"total":"$8,500","infrastructure":"$1,200 Ã¢ÂÂ cloud hosting, sleep data storage, API integrations with wearable platforms","tools":"$800 Ã¢ÂÂ analytics, monitoring, development tools, and app store fees","marketing":"$3,500 Ã¢ÂÂ community marketing, ASO, content creation for nursing communities","acquisition":"$3,000 Ã¢ÂÂ based on estimated $3-5 CAC for organic nursing community channels to acquire 600-1000 monthly users"},"breakEvenMonth":"Month 14","twelveMonthMRR":"$18,000","revenueScenarios":{"cautious":{"mrr":"$8,000","probability":"30%","assumption":"Consumer-only freemium model converts 3% of 5,000 free users at $4.99 per month with no B2B traction"},"middle":{"mrr":"$18,000","probability":"45%","assumption":"8,000 free users at 4% conversion to $5.99 per month premium plus one small hospital pilot at $500 per month"},"optimistic":{"mrr":"$45,000","probability":"25%","assumption":"15,000 free users at 5% conversion plus two hospital B2B contracts at $3,000 per month each for 200-seat deployments"}},"pricingBenchmark":"AutoSleep charges a one-time $8.99; Sleep Cycle and SleepScore offer subscriptions at $3.99-$9.99 per month; Timeshifter charges premium pricing for enterprise shift work plans; general sleep apps cluster around $4.99-$6.99 per month for consumer premium"},"fundabilityRadar":{"team":{"score":6,"note":"Requires credible sleep science or circadian biology expertise; SleepSync was built by Monash University researchers, setting a high bar for scientific legitimacy"},"marketSize":{"score":8,"note":"Sleep monitoring apps market at $1.4B growing to $3.6B by 2033 at 14.4% CAGR; broader sleep trackers market reaching $18.37B by 2035 per Precedence Research"},"product":{"score":8,"note":"Leading direct competitor Timeshifter has 2.6-star rating; clear execution gap to build a better product with shift-aware tracking and circadian scheduling"},"competition":{"score":7,"note":"Niche is lightly contested with no dominant player; Timeshifter has poor reviews, SleepSync is academic, AfterShift is a side project, and mainstream trackers ignore shift workers"},"marketing":{"score":7,"note":"Tight-knit nursing communities on Reddit, allnurses.com, and Facebook groups provide efficient organic acquisition; B2B hospital channel offers high-LTV distribution"},"fundingNeed":{"score":7,"note":"Sleep.ai raised $5.5M and Eight Sleep hit $1.5B valuation proving strong investor appetite; a shift-worker niche with clinical data could raise $2-4M seed comfortably"}},"communitySignals":[{"quote":"I have an Epix Gen 2 and have played with the nap feature as well as activating sleep mode and nothing seems to do a fair job tracking sleep for variable shift workers","source":"reddit","sentiment":"pain","subredditOrHandle":"r/GarminWatches"},{"quote":"Are there any sleep tracker apps that will record sleep during the day because most apps do not register daytime sleep properly","source":"reddit","sentiment":"pain","subredditOrHandle":"r/Nightshift"},{"quote":"Specifically for sleep I have found the Oura ring to track best because I work nights and it will learn your sleep cycle and register when it is off","source":"reddit","sentiment":"need","subredditOrHandle":"r/Nightshift"},{"quote":"Data without intervention is just anxiety in a ring, we do not need more sleep scores, we need tech that actually triggers behavioral change","source":"twitter","sentiment":"pain","subredditOrHandle":"@justineliaa reply"},{"quote":"I built a sleep app that does not assume you work 9 to 5 because every sleep tracker I tried was fundamentally broken for anyone on rotating shifts","source":"reddit","sentiment":"need","subredditOrHandle":"r/SideProject"}],"redditPosts":[{"subreddit":"r/GarminWatches","title":"Anyone found a good way to track sleep for variable shift workers","body":"I have an Epix Gen 2 similar to Fenix 7 and have played with the nap feature manually as well as activating sleep mode. Nothing seems to do a fair job. I have set my sleep schedule to 3-11 and manually enter sleep mode when I am early but it seems there are a lot of times I wake up and it does not register properly.","upvotes":0,"sentiment":"pain"},{"subreddit":"r/Nightshift","title":"Are there any sleep tracker apps that will record sleep during the day","body":"Specifically for sleep I have found the Oura ring to track best. I work nights and it will learn your sleep cycle and register when it is off. Most standard sleep tracking apps do not register daytime sleep properly for night shift workers.","upvotes":0,"sentiment":"need"},{"subreddit":"r/SideProject","title":"I built a sleep app that does not assume you work 9 to 5","body":"So I built AfterShift, a sleep and recovery app designed specifically for shift workers. Every sleep tracker I tried was fundamentally broken for anyone on rotating shifts. Sleepcraft is another sleep tracking app with individual scores but it still does not handle variable schedules well.","upvotes":0,"sentiment":"need"},{"subreddit":"r/Nightshift","title":"Discussion on sleep tracker apps recording daytime sleep","body":"The Oura ring learns your sleep cycle for night shift work and registers when it is off. Most apps assume you sleep at night and fail to properly record split or daytime sleep sessions that shift workers rely on.","upvotes":0,"sentiment":"pain"},{"subreddit":"r/GarminWatches","title":"Sleep tracking issues for shift workers using Garmin devices","body":"I have activated sleep mode manually and set my schedule to 3-11 but there are a lot of times I wake up and the watch does not capture it properly. Variable shift sleep is fundamentally not supported by Garmin's default sleep tracking algorithm.","upvotes":0,"sentiment":"pain"}],"xPosts":[{"handle":"@unknown_replier","text":"Data without intervention is just anxiety in a ring. We do not need more sleep scores, we need tech that actually triggers behavioral change.","likes":0,"sentiment":"pain"},{"handle":"@unknown_replier","text":"Note: Only one Twitter/X post was found in the live data provided. Remaining X post slots cannot be populated without fabrication. The single signal strongly suggests users want actionable interventions, not passive tracking.","likes":0,"sentiment":"need"}],"oneLiner":"The only sleep app that adapts to your shift schedule instead of assuming you sleep at night.","marketSize":{"tam":"$3.6B Ã¢ÂÂ global sleep monitoring apps market by 2033 per Persistence Market Research","sam":"$520M Ã¢ÂÂ shift workers and healthcare workers sleep optimization segment within sleep apps market","som":"$5.2M Ã¢ÂÂ realistic first 2 years capturing nurse early adopters and 1-2 hospital B2B pilots in the US","growthRate":"14.4% CAGR from Persistence Market Research 2026-2033 forecast"},"validationChecklist":[{"assumption":"Night shift nurses actively seek and would pay for a shift-specific sleep app","risk":"high","howToTest":"Post a landing page in r/Nightshift and r/nursing describing the app concept and measure email signups over 7 days; target 200 signups from 2000 page views"},{"assumption":"Daytime sleep tracking is a must-have feature that mainstream apps genuinely fail at","risk":"high","howToTest":"Interview 10 night shift nurses this week and ask them to show you their current sleep tracker data; verify if daytime sleep sessions are missing or inaccurate"},{"assumption":"Hospital systems would buy a B2B fatigue management app for their nursing staff","risk":"high","howToTest":"Cold email 15 chief nursing officers and occupational health directors at large hospital systems with a one-page pitch and track response rates; target 3 discovery calls"},{"assumption":"Users want actionable sleep scheduling guidance, not just passive tracking metrics","risk":"medium","howToTest":"Create a simple prototype that generates a personalized sleep schedule based on an entered shift pattern and test it with 10 nurses; measure whether they find the recommendations useful and would follow them"},{"assumption":"The nursing community channels on Reddit and allnurses.com are efficient acquisition channels","risk":"medium","howToTest":"Post genuinely helpful sleep tips for shift workers in r/Nightshift and r/nursing with a subtle mention of the project; track engagement, DMs, and link clicks over one week"}],"synthesis":{"oneParagraph":"This is a genuinely compelling niche: the sleep app market is growing at 14.4% CAGR toward $3.6B, investors are pouring money into sleep tech (Eight Sleep at $1.5B, Sleep.ai at $5.5M), and the only dedicated shift-worker competitor Timeshifter has a miserable 2.6-star rating on Google Play while mainstream trackers like Sleep Cycle and AutoSleep fundamentally ignore non-standard sleep schedules. The clinical validation from Monash University's SleepSync research proves the concept works, but no one has turned it into a polished commercial product Ã¢ÂÂ creating a rare window where academic evidence, market demand, and competitive weakness all align for a focused new entrant.","workingForYou":["Timeshifter's 2.6-star rating proves demand exists but execution has failed, giving a clear opening","Peer-reviewed SleepSync research provides a validated scientific framework to build upon without starting from zero","Multiple Reddit threads show shift workers actively searching for sleep solutions and finding nothing adequate"],"watchOutFor":["Sleep Cycle with 22K reviews or AutoSleep with 61K reviews could ship shift-aware features and instantly dominate the niche","LinkedIn market research warns of aggressive pricing pressure and high customer acquisition costs in the sleep app space","Building a scientifically credible circadian algorithm requires sleep science expertise that is difficult and expensive to hire"]},"itunesApps":[{"trackName":"Sleep Cycle - Tracker & Sounds","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3d/8d/22/3d8d22b7-89da-b59f-3992-e88665c6a272/AppIconSleepCycle-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/60x60bb.jpg","averageUserRating":4.66296,"userRatingCount":21559,"description":"Built on science, Sleep Cycle uses sound analysis to track and improve sleep for over 3 million users worldwide. Our AI sleep coach, sleep tracker and Smart Alarm clock app help users to identify pote","formattedPrice":"Free","sellerName":"Sleep Cycle AB"},{"trackName":"Eight Sleep","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7f/e7/9a/7fe79a9b-b9ee-0d1b-4b70-f3c53f00d841/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/60x60bb.jpg","averageUserRating":4.74362,"userRatingCount":14541,"description":"The Eight Sleep Pod is the intelligent sleep system that gives you up to one hour more of sleep every night. It cools. It heats. It elevates. \\n\\nPERSONALIZED SLEEP WITH AUTOPILOT\\nAutopilot is the intel","formattedPrice":"Free","sellerName":"Eight Sleep, Inc"},{"trackName":"Sleep Monitor: Sleep Tracker","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/de/2c/89/de2c8960-191b-14a3-7da6-3e1a43f40c6f/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/60x60bb.jpg","averageUserRating":4.61003,"userRatingCount":5026,"description":"Are you a snorer or a sleep talker? Sleep Monitor is your professional sleep companion to help you sleep better and feel more refreshed.\\nWith advanced technology and an easy-to-use interface, the app ","formattedPrice":"Free","sellerName":"Xi'an Monster Software Technology Co., Ltd"},{"trackName":"Sleep Tracker: Recorder, Sound","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/cb/69/8d/cb698d7c-3653-0492-5628-3c5319598393/AppIcon-0-0-1x_U007emarketing-0-6-0-sRGB-85-220.png/60x60bb.jpg","averageUserRating":4.75783,"userRatingCount":7309,"description":"Do you know how you sleep every night? \\nSLEEP TRACKER is your intelligent sleep assistant, now available for FREE download. Our app combines a precise sleep recorder and sleep-talking tracker with a r","formattedPrice":"Free","sellerName":"Leap Health Fitness Limited"},{"trackName":"Supershift Shift Work Calendar","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/68/1d/43/681d4330-7d09-3f14-f229-9ef0217d2dec/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-85-220.png/60x60bb.jpg","averageUserRating":4.86263,"userRatingCount":4768,"description":"Supershift is great for keeping up with your shift working schedule and all other calendar events in between. With Supershift, scheduling is easy and quick, plus it works with the Apple Watch for a qu","formattedPrice":"Free","sellerName":"Supershift GmbH"},{"trackName":"My Shift Planner - Calendar","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/12/53/95125311-40a8-97d0-ddd9-ee067e9359a4/AppIcon-0-0-1x_U007emarketing-0-8-0-0-85-220.png/60x60bb.jpg","averageUserRating":4.81996,"userRatingCount":3094,"description":"MyShiftPlanner Ã¢ÂÂ The Ultimate Shift Work Calendar. Stay organised, save time and take control of your shift life withÃÂ MyShiftPlanner, the #1 calendar app made just for shift workers.\\n\\nFromÃÂ nurses, dri","formattedPrice":"Free","sellerName":"MyBuzz Technologies Limited"},{"trackName":"Sleep Recorder & Sleep Tracker","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b8/6a/11/b86a11d6-b20b-f2be-9a43-22729492cd24/AppIconSleepRecorderFree-0-0-1x_U007emarketing-0-8-0-85-220.png/60x60bb.jpg","averageUserRating":4.50479,"userRatingCount":12940,"description":"Analyze snoring, talking, sounds, and more. Track your night like never before!\\nAwake or deep, light sleep too, Track it allÃ¢ÂÂitÃ¢ÂÂs made for you.\\n\\n\\nÃ¢ÂÂ Sleep Quality Analysis\\nÃ¢ÂÂ Sleep Stages Tracking\\nÃ¢ÂÂ Sno","formattedPrice":"Free","sellerName":"Apirox, s.r.o."},{"trackName":"Pillow: Sleep Tracker","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/5f/e2/95/5fe295c3-91dd-9917-e535-c62bbe7aa6d7/AppIcon-v5-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-85-220.png/60x60bb.jpg","averageUserRating":4.37249,"userRatingCount":95363,"description":"Sleep trouble? Sleep better with Pillow, your smart sleep tracker. Pillow can analyze your sleep cycles automatically using your Apple Watch, iPhone or iPad.\\n\\nUse Pillow as a smart alarm clock to wake","formattedPrice":"Free","sellerName":"Neybox Digital Ltd."}]}`;
+// ── DIG SAMPLE REPORT — Real API data, rendered with GapAnalysisResult ──
+const DIG_SAMPLE_JSON = `{"appStoreQuery":"shift worker sleep","marketScore":68,"marketScoreLabel":"Real Opportunity","marketScoreSummary":"The sleep app market is booming at 14.4% CAGR, but the only direct shift-worker sleep competitor (Timeshifter) has a dismal 2.6-star rating on Google Play, and mainstream trackers like Sleep Cycle and AutoSleep fundamentally assume a 9-to-5 sleep window, leaving shift workers vocally underserved on Reddit and forums.","competitors":[{"name":"Timeshifter Shift Work","tagline":"Science-based shift work sleep and alertness optimization","threatLevel":4,"strengths":["Only dedicated shift-work app with B2B enterprise sales channel"],"weaknesses":["Abysmal 2.6-star rating on Google Play signals poor execution"]},{"name":"SleepSync (Monash University)","tagline":"World-first personalized sleep-wake scheduling for shift workers","threatLevel":3,"strengths":["Peer-reviewed clinical evidence from ICU and ED nurse trials"],"weaknesses":["Academic research project, not yet a commercial consumer product"]},{"name":"Sleep Cycle","tagline":"AI sound-analysis sleep tracker for over 3 million users","threatLevel":3,"strengths":["Massive user base with 22K reviews and 4.7-star rating"],"weaknesses":["Assumes standard nighttime sleep window, ignores shift schedules"]},{"name":"AutoSleep","tagline":"Automatic Apple Watch sleep tracking with no button presses","threatLevel":2,"strengths":["61K reviews at 4.7 stars, seamless Apple Watch integration"],"weaknesses":["No shift-aware features or circadian rhythm personalization"]},{"name":"AfterShift","tagline":"Indie sleep and recovery app for shift workers","threatLevel":2,"strengths":["Purpose-built for non-9-to-5 users, founder active on Reddit"],"weaknesses":["Solo side project with no visible traction or funding"]},{"name":"Shift Worker Sleep Management","tagline":"Sleep planning for night and rotating shift workers","threatLevel":2,"strengths":["Directly targets rotating and night shift sleep planning"],"weaknesses":["Minimal visibility, no reviews or market presence data available"]}],"painPoints":[{"quote":"I have an Epix Gen 2 and have played with the nap feature as well as activating sleep mode and nothing seems to do a fair job tracking sleep for variable shift workers","source":"Reddit r/GarminWatches","severity":"high"},{"quote":"Are there any sleep tracker apps that will record sleep during the day, because specifically for sleep tracking on nights I have found most apps do not register daytime sleep properly","source":"Reddit r/Nightshift","severity":"high"},{"quote":"Data without intervention is just anxiety in a ring, we do not need more sleep scores, we need tech that actually triggers behavioral change","source":"Twitter/X","severity":"high"},{"quote":"Nurses at high risk of shift work disorder commonly experienced as excessive sleepiness face a significant increase in the risk of errors, accidents and injuries","source":"Monash University / YouTube research summary","severity":"high"},{"quote":"I built a sleep app that does not assume you work 9 to 5 because every sleep tracker I tried was fundamentally broken for anyone on rotating shifts","source":"Reddit r/SideProject","severity":"medium"}],"marketGaps":[{"title":"Circadian-Aware Adaptive Sleep Scheduling","description":"SleepSync research proved personalized sleep-wake timing improves outcomes for shift workers, yet no commercial app integrates real-time shift calendar data with circadian biology to generate dynamic sleep plans","opportunityScore":9,"status":"emerging"},{"title":"Daytime Sleep Tracking That Actually Works","description":"Reddit users report that mainstream trackers like Garmin and most apps fail to properly detect or score daytime sleep, a critical need for night shift workers who sleep from 7am to 3pm","opportunityScore":9,"status":"untapped"},{"title":"Nurse-Specific Wellness Integration","description":"Mental health apps for nurses exist (Bearable, Happify, Moodfit) and shift calendars exist (Shwoca, LRHSoft) but no single app combines sleep tracking, mood logging, and shift scheduling in one nurse-focused experience","opportunityScore":8,"status":"untapped"},{"title":"B2B Hospital Safety and Compliance Channel","description":"Timeshifter positions for enterprise but has terrible ratings; hospitals face liability from fatigued nurse errors, creating a B2B buyer willing to pay per-seat for a proven fatigue management tool","opportunityScore":8,"status":"emerging"},{"title":"Actionable Interventions Over Passive Scores","description":"Twitter signal confirms users are frustrated with passive sleep scores that cause anxiety without driving behavioral change; an app that delivers timed light exposure, caffeine cutoff, and nap alerts fills this gap","opportunityScore":7,"status":"untapped"}],"swot":{"strengths":["Direct competitor Timeshifter has 2.6 stars, massive execution gap","Clinical validation exists via SleepSync peer-reviewed research","Sleep app market growing at 14.4% CAGR through 2033","Reddit threads show vocal unmet demand from shift workers"],"weaknesses":["Niche audience requires specialized circadian science expertise","Sleep tracking accuracy depends on device hardware integration","High customer acquisition costs in health app category"],"opportunities":["B2B hospital sales for nurse fatigue risk reduction","No dominant player in shift-specific sleep niche yet","Eight Sleep $1.5B valuation proves investor appetite for sleep tech","Combine shift calendar plus sleep tracking in single app"],"threats":["Sleep Cycle or AutoSleep could add shift-aware features","Apple or Garmin could natively support variable sleep windows","Timeshifter may improve execution with enterprise revenue","Aggressive pricing pressure and high CAC in sleep market"]},"opportunity":{"headline":"The leading shift-work sleep competitor has a 2.6-star rating and the only clinically validated solution is stuck in academia — this is a wide-open niche inside a $3.6B market growing at 14.4% CAGR","urgency":"high","actionItems":[{"step":1,"action":"Validate with 20 ICU and ED nurses in 2 weeks","detail":"SleepSync research targeted ICU and emergency department nurses specifically; recruit from r/Nightshift, r/nursing, and nursing Facebook groups to run problem interviews"},{"step":2,"action":"Build an MVP that solves daytime sleep tracking and shift-aware scheduling","detail":"Reddit data shows the two highest-severity pain points are broken daytime sleep detection and no integration with shift calendars; solve these two problems first"},{"step":3,"action":"License or replicate the SleepSync circadian algorithm","detail":"Monash University published their methodology in PMC; use the peer-reviewed personalized sleep-wake management protocol as a science-backed differentiator"},{"step":4,"action":"Launch a B2B pilot with one hospital system","detail":"Timeshifter markets to enterprises to reduce employee fatigue risk and absenteeism; pitch a free pilot to a single hospital system to generate outcome data and a case study"},{"step":5,"action":"Pursue seed funding in the $2-5M range","detail":"Sleep.ai raised $5.5M and Eight Sleep hit $1.5B valuation; investor appetite for sleep tech is demonstrably strong, and a shift-worker niche with clinical evidence is a compelling thesis"}]},"targetCustomer":{"persona":"The Exhausted Night Shift Nurse","jobTitle":"ICU or Emergency Department Registered Nurse","demographics":"Ages 25-45, works at hospitals with 200+ beds, predominantly female, rotates between day and night shifts every 2-4 weeks","painPoints":["Sleep apps do not track daytime sleep accurately after a night shift","Rotating schedules destroy any consistent sleep routine","Chronic fatigue increases risk of medical errors and personal health problems"],"currentTools":["Sleep Cycle or AutoSleep for general tracking","Shift Work Calendar apps like Shwoca for scheduling","Calm or Headspace for relaxation before sleep"],"willingnessToPay":"$4.99 to $9.99 per month for consumer; hospitals willing to pay $3-8 per seat per month for B2B fatigue management"},"targetCustomerDeep":{"whoTheyAre":"Registered nurses and healthcare workers in ICUs, emergency departments, and other 24/7 hospital units who rotate between day and night shifts. The SleepSync trial specifically recruited intensive care and emergency department nurses at high risk of shift work disorder. They are joined by a broader population of paramedics, firefighters, factory workers, and logistics workers on rotating schedules.","howTheyThink":"They are pragmatic problem-solvers who value tools that fit seamlessly into chaotic schedules without adding cognitive load. They are deeply skeptical of wellness apps that feel generic or designed for 9-to-5 desk workers. As one Reddit user put it, they need apps that do not assume you work 9 to 5. They want actionable guidance, not just sleep scores that create anxiety without driving change.","availableMoney":"Individual nurses earn $70K-$95K annually and typically spend $5-15 per month on health and wellness apps. The larger opportunity is institutional: US hospitals collectively spend billions on workforce wellness programs, and a fatigue management app can be positioned as a risk reduction and patient safety investment.","howTheyBuy":"They discover apps through peer recommendations in nursing communities, Reddit threads in r/Nightshift and r/nursing, and word of mouth on units. They evaluate by trying free tiers and reading App Store reviews. Institutional buying happens through nursing leadership, occupational health departments, or chief nursing officers evaluating fatigue management solutions.","triggerEvents":["Starting a new rotating shift schedule at a hospital for the first time","Experiencing a near-miss medical error attributed to fatigue after a night shift","A colleague or peer recommending a solution after visibly struggling with sleep"],"whereToFindThem":["Reddit communities: r/Nightshift, r/nursing, r/GarminWatches","Nursing Facebook groups and allnurses.com forums","Hospital employee wellness programs and nursing conferences"]},"industryTrends":{"now":[{"trend":"Sleep monitoring apps market has reached $1.4 billion in 2026 with accelerating consumer adoption","evidence":"Persistence Market Research reports global sleep monitoring apps market at US$1.4 billion in 2026 growing to US$3.6 billion by 2033 at 14.4% CAGR","impact":"high"},{"trend":"Massive venture capital flowing into sleep technology with Eight Sleep reaching unicorn status","evidence":"Eight Sleep raised $50M at $1.5B valuation in March 2026 per TechCrunch; Sleep.ai raised $5.5M in 2025 for AI sleep solutions","impact":"high"},{"trend":"Academic research validating mobile apps for shift worker sleep management","evidence":"Monash University published SleepSync pilot trial in PMC demonstrating improved sleep and mood outcomes in 27 ICU and ED nurses over two weeks","impact":"medium"}],"emerging":[{"trend":"AI-powered personalized sleep interventions replacing passive tracking","evidence":"Eight Sleep expanding into predictive AI-driven health per BusinessWire; Sleep.ai building AI models to analyze sleep patterns per MedCity News","impact":"high"},{"trend":"Enterprise and B2B channels emerging for shift worker fatigue management","evidence":"Timeshifter positions to employers to reduce employee risk and increase safety and productivity per their website; SleepSync research framed around hospital patient safety outcomes","impact":"medium"}],"structural":[{"trend":"Sleep trackers market scaling toward $18.37 billion by 2035 as sleep becomes a pillar of preventive health","evidence":"Precedence Research projects global sleep trackers market from $7.02B in 2025 to $18.37B by 2035","impact":"high"},{"trend":"Basic sleep tracking commoditizing while personalized intervention-based apps capture premium value","evidence":"Persistence Market Research notes basic tracking captures 50% of revenue in 2026 but intervention-driven apps command higher willingness to pay; Twitter signal confirms demand for tech that triggers behavioral change over passive scores","impact":"high"}]},"marketSegments":[{"name":"Hospital Nurses on Rotating Shifts","fit":"primary","size":"$180M","growth":"14.4%","description":"There are approximately 4 million registered nurses in the US alone, with a large percentage working rotating or night shifts in hospitals. SleepSync research specifically targeted ICU and ED nurses as highest-risk for shift work disorder. This is the beachhead segment with the clearest pain and willingness to pay both individually and through employer wellness programs."},{"name":"General Shift Workers (Manufacturing, Logistics, Emergency Services)","fit":"secondary","size":"$520M","growth":"14.4%","description":"Approximately 16% of the US workforce does shift work including factory workers, warehouse workers, paramedics, firefighters, and police. Timeshifter and shift calendar apps like Shwoca target this broader group. The pain points are universal but the messaging and features must be adapted beyond healthcare."},{"name":"Enterprise Hospital and Healthcare Systems","fit":"secondary","size":"$300M","growth":"17.5%","description":"B2B sales to hospital systems and healthcare employers who face regulatory pressure, liability from fatigue-related errors, and high nurse turnover. Timeshifter already targets this channel but has poor product ratings. Research Nester projects the broader sleep monitoring apps market growing at 17.5% CAGR suggesting strong enterprise demand."},{"name":"Sleep App Power Users with Wearables","fit":"tertiary","size":"$1.4B","growth":"14.4%","description":"Users of Apple Watch, Garmin, Oura Ring, and other wearables who are frustrated with default sleep tracking that assumes nighttime sleep. Reddit r/GarminWatches users specifically report broken tracking for variable schedules. Integration partnerships with wearable platforms could unlock this segment."}],"goToMarket":{"channels":[{"name":"Nursing Community Organic Marketing","type":"primary","estimatedCAC":"$3","description":"Reddit r/Nightshift, r/nursing, allnurses.com forums, and nursing Facebook groups are where shift workers actively seek sleep solutions. The AfterShift founder successfully posted in r/SideProject. Organic community seeding with a free tier drives lowest CAC."},{"name":"App Store Optimization for Shift Sleep Keywords","type":"primary","estimatedCAC":"$5","description":"Live search data shows searches for shift worker sleep app and free sleep tracking app for shift workers with minimal quality results. Timeshifter has the only dedicated listing and it has 2.6 stars. ASO for these keywords is high-ROI with low competition."},{"name":"B2B Hospital Wellness Program Sales","type":"secondary","estimatedCAC":"$150","description":"Higher CAC but dramatically higher LTV. Timeshifter positions for enterprise sales. Pitch to chief nursing officers and occupational health departments using SleepSync-style clinical evidence to reduce fatigue-related incidents. LinkedIn notes high customer acquisition costs as a risk in North America sleep apps market."},{"name":"Clinical Research Partnerships","type":"secondary","estimatedCAC":"$8","description":"Monash University published SleepSync research; partner with sleep medicine researchers at academic medical centers to validate the app and generate peer-reviewed evidence that drives organic press coverage and hospital trust"},{"name":"Healthcare Influencer and Nurse Creator Partnerships","type":"experimental","estimatedCAC":"$12","description":"Nurse influencers on TikTok and Instagram have large followings. DailyNurse and similar publications cover wellness tools for nurses specifically. Sponsor content targeting the intersection of nursing burnout and sleep health."}],"launchTarget":"ICU and emergency department nurses working rotating 12-hour shifts at a single large hospital system in a major US metro area","launchPhases":[{"phase":1,"name":"Nurse Beta Community","duration":"3-4 months","steps":["Recruit 50-100 night shift nurses from r/Nightshift, r/nursing, and allnurses.com for a free beta program","Launch MVP with two core features: daytime-aware sleep tracking and shift calendar integration","Collect sleep outcome data and NPS scores to build initial clinical-quality evidence","Iterate on circadian-based sleep scheduling recommendations using SleepSync published methodology"]},{"phase":2,"name":"Consumer App Store Launch","duration":"3-4 months","steps":["Launch on iOS and Android with freemium model targeting shift worker sleep keywords","Publish beta outcome data as blog posts and pitch to nursing and health tech publications like MobiHealthNews and Sleepopolis","Add Apple Watch and Garmin integration to solve the wearable tracking gap identified on Reddit"]},{"phase":3,"name":"B2B Hospital Pilot and Seed Round","duration":"4-6 months","steps":["Pitch a free 90-day pilot to two to three hospital systems using nurse beta outcome data","Build enterprise admin dashboard for nurse managers to monitor team fatigue risk","Use hospital pilot data and consumer traction to raise a $2-4M seed round"]}]},"customerInterviewGuide":{"questions":["Walk me through what happens from the moment your last shift ends to when you actually fall asleep — what does that look like?","When you transition from day shifts to night shifts, how do you currently try to adjust your sleep, and what usually goes wrong?","Have you tried any apps or tools to help with your sleep around shift work, and what made you keep using them or stop?","Can you tell me about a time when poor sleep after a shift affected your work performance or personal life?","If something could change about how you manage sleep around your shifts, what would make the biggest difference for you?"],"whereToFindThem":["Reddit r/Nightshift and r/nursing communities","allnurses.com forums and nursing Facebook groups","Hospital break rooms and nursing union meetings","Night shift productivity and wellness Discord servers"],"greenSignals":["Nurse describes a detailed workaround they have built to manage sleep around rotating shifts, indicating high motivation to solve this problem","Interviewee has tried and abandoned multiple sleep apps specifically because they could not handle non-standard sleep windows","Hospital manager expresses concern about fatigue-related errors and says they would pay for a fatigue management tool"],"redSignals":["Most nurses say they sleep fine and do not perceive shift-related sleep disruption as a significant problem","Interviewees are unwilling to use any app for sleep and prefer to just deal with it or rely on caffeine alone","Hospital decision-makers see fatigue management as a personal responsibility not an institutional investment"],"targetInterviews":20},"financialDeep":{"monthlyBurn":{"total":"$8,500","infrastructure":"$1,200 — cloud hosting, sleep data storage, API integrations with wearable platforms","tools":"$800 — analytics, monitoring, development tools, and app store fees","marketing":"$3,500 — community marketing, ASO, content creation for nursing communities","acquisition":"$3,000 — based on estimated $3-5 CAC for organic nursing community channels to acquire 600-1000 monthly users"},"breakEvenMonth":"Month 14","twelveMonthMRR":"$18,000","revenueScenarios":{"cautious":{"mrr":"$8,000","probability":"30%","assumption":"Consumer-only freemium model converts 3% of 5,000 free users at $4.99 per month with no B2B traction"},"middle":{"mrr":"$18,000","probability":"45%","assumption":"8,000 free users at 4% conversion to $5.99 per month premium plus one small hospital pilot at $500 per month"},"optimistic":{"mrr":"$45,000","probability":"25%","assumption":"15,000 free users at 5% conversion plus two hospital B2B contracts at $3,000 per month each for 200-seat deployments"}},"pricingBenchmark":"AutoSleep charges a one-time $8.99; Sleep Cycle and SleepScore offer subscriptions at $3.99-$9.99 per month; Timeshifter charges premium pricing for enterprise shift work plans; general sleep apps cluster around $4.99-$6.99 per month for consumer premium"},"fundabilityRadar":{"team":{"score":6,"note":"Requires credible sleep science or circadian biology expertise; SleepSync was built by Monash University researchers, setting a high bar for scientific legitimacy"},"marketSize":{"score":8,"note":"Sleep monitoring apps market at $1.4B growing to $3.6B by 2033 at 14.4% CAGR; broader sleep trackers market reaching $18.37B by 2035 per Precedence Research"},"product":{"score":8,"note":"Leading direct competitor Timeshifter has 2.6-star rating; clear execution gap to build a better product with shift-aware tracking and circadian scheduling"},"competition":{"score":7,"note":"Niche is lightly contested with no dominant player; Timeshifter has poor reviews, SleepSync is academic, AfterShift is a side project, and mainstream trackers ignore shift workers"},"marketing":{"score":7,"note":"Tight-knit nursing communities on Reddit, allnurses.com, and Facebook groups provide efficient organic acquisition; B2B hospital channel offers high-LTV distribution"},"fundingNeed":{"score":7,"note":"Sleep.ai raised $5.5M and Eight Sleep hit $1.5B valuation proving strong investor appetite; a shift-worker niche with clinical data could raise $2-4M seed comfortably"}},"communitySignals":[{"quote":"I have an Epix Gen 2 and have played with the nap feature as well as activating sleep mode and nothing seems to do a fair job tracking sleep for variable shift workers","source":"reddit","sentiment":"pain","subredditOrHandle":"r/GarminWatches"},{"quote":"Are there any sleep tracker apps that will record sleep during the day because most apps do not register daytime sleep properly","source":"reddit","sentiment":"pain","subredditOrHandle":"r/Nightshift"},{"quote":"Specifically for sleep I have found the Oura ring to track best because I work nights and it will learn your sleep cycle and register when it is off","source":"reddit","sentiment":"need","subredditOrHandle":"r/Nightshift"},{"quote":"Data without intervention is just anxiety in a ring, we do not need more sleep scores, we need tech that actually triggers behavioral change","source":"twitter","sentiment":"pain","subredditOrHandle":"@justineliaa reply"},{"quote":"I built a sleep app that does not assume you work 9 to 5 because every sleep tracker I tried was fundamentally broken for anyone on rotating shifts","source":"reddit","sentiment":"need","subredditOrHandle":"r/SideProject"}],"redditPosts":[{"subreddit":"r/GarminWatches","title":"Anyone found a good way to track sleep for variable shift workers","body":"I have an Epix Gen 2 similar to Fenix 7 and have played with the nap feature manually as well as activating sleep mode. Nothing seems to do a fair job. I have set my sleep schedule to 3-11 and manually enter sleep mode when I am early but it seems there are a lot of times I wake up and it does not register properly.","upvotes":0,"sentiment":"pain"},{"subreddit":"r/Nightshift","title":"Are there any sleep tracker apps that will record sleep during the day","body":"Specifically for sleep I have found the Oura ring to track best. I work nights and it will learn your sleep cycle and register when it is off. Most standard sleep tracking apps do not register daytime sleep properly for night shift workers.","upvotes":0,"sentiment":"need"},{"subreddit":"r/SideProject","title":"I built a sleep app that does not assume you work 9 to 5","body":"So I built AfterShift, a sleep and recovery app designed specifically for shift workers. Every sleep tracker I tried was fundamentally broken for anyone on rotating shifts. Sleepcraft is another sleep tracking app with individual scores but it still does not handle variable schedules well.","upvotes":0,"sentiment":"need"},{"subreddit":"r/Nightshift","title":"Discussion on sleep tracker apps recording daytime sleep","body":"The Oura ring learns your sleep cycle for night shift work and registers when it is off. Most apps assume you sleep at night and fail to properly record split or daytime sleep sessions that shift workers rely on.","upvotes":0,"sentiment":"pain"},{"subreddit":"r/GarminWatches","title":"Sleep tracking issues for shift workers using Garmin devices","body":"I have activated sleep mode manually and set my schedule to 3-11 but there are a lot of times I wake up and the watch does not capture it properly. Variable shift sleep is fundamentally not supported by Garmin's default sleep tracking algorithm.","upvotes":0,"sentiment":"pain"}],"xPosts":[{"handle":"@unknown_replier","text":"Data without intervention is just anxiety in a ring. We do not need more sleep scores, we need tech that actually triggers behavioral change.","likes":0,"sentiment":"pain"},{"handle":"@unknown_replier","text":"Note: Only one Twitter/X post was found in the live data provided. Remaining X post slots cannot be populated without fabrication. The single signal strongly suggests users want actionable interventions, not passive tracking.","likes":0,"sentiment":"need"}],"oneLiner":"The only sleep app that adapts to your shift schedule instead of assuming you sleep at night.","marketSize":{"tam":"$3.6B — global sleep monitoring apps market by 2033 per Persistence Market Research","sam":"$520M — shift workers and healthcare workers sleep optimization segment within sleep apps market","som":"$5.2M — realistic first 2 years capturing nurse early adopters and 1-2 hospital B2B pilots in the US","growthRate":"14.4% CAGR from Persistence Market Research 2026-2033 forecast"},"validationChecklist":[{"assumption":"Night shift nurses actively seek and would pay for a shift-specific sleep app","risk":"high","howToTest":"Post a landing page in r/Nightshift and r/nursing describing the app concept and measure email signups over 7 days; target 200 signups from 2000 page views"},{"assumption":"Daytime sleep tracking is a must-have feature that mainstream apps genuinely fail at","risk":"high","howToTest":"Interview 10 night shift nurses this week and ask them to show you their current sleep tracker data; verify if daytime sleep sessions are missing or inaccurate"},{"assumption":"Hospital systems would buy a B2B fatigue management app for their nursing staff","risk":"high","howToTest":"Cold email 15 chief nursing officers and occupational health directors at large hospital systems with a one-page pitch and track response rates; target 3 discovery calls"},{"assumption":"Users want actionable sleep scheduling guidance, not just passive tracking metrics","risk":"medium","howToTest":"Create a simple prototype that generates a personalized sleep schedule based on an entered shift pattern and test it with 10 nurses; measure whether they find the recommendations useful and would follow them"},{"assumption":"The nursing community channels on Reddit and allnurses.com are efficient acquisition channels","risk":"medium","howToTest":"Post genuinely helpful sleep tips for shift workers in r/Nightshift and r/nursing with a subtle mention of the project; track engagement, DMs, and link clicks over one week"}],"synthesis":{"oneParagraph":"This is a genuinely compelling niche: the sleep app market is growing at 14.4% CAGR toward $3.6B, investors are pouring money into sleep tech (Eight Sleep at $1.5B, Sleep.ai at $5.5M), and the only dedicated shift-worker competitor Timeshifter has a miserable 2.6-star rating on Google Play while mainstream trackers like Sleep Cycle and AutoSleep fundamentally ignore non-standard sleep schedules. The clinical validation from Monash University's SleepSync research proves the concept works, but no one has turned it into a polished commercial product — creating a rare window where academic evidence, market demand, and competitive weakness all align for a focused new entrant.","workingForYou":["Timeshifter's 2.6-star rating proves demand exists but execution has failed, giving a clear opening","Peer-reviewed SleepSync research provides a validated scientific framework to build upon without starting from zero","Multiple Reddit threads show shift workers actively searching for sleep solutions and finding nothing adequate"],"watchOutFor":["Sleep Cycle with 22K reviews or AutoSleep with 61K reviews could ship shift-aware features and instantly dominate the niche","LinkedIn market research warns of aggressive pricing pressure and high customer acquisition costs in the sleep app space","Building a scientifically credible circadian algorithm requires sleep science expertise that is difficult and expensive to hire"]},"itunesApps":[{"trackName":"Sleep Cycle - Tracker & Sounds","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3d/8d/22/3d8d22b7-89da-b59f-3992-e88665c6a272/AppIconSleepCycle-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/60x60bb.jpg","averageUserRating":4.66296,"userRatingCount":21559,"description":"Built on science, Sleep Cycle uses sound analysis to track and improve sleep for over 3 million users worldwide. Our AI sleep coach, sleep tracker and Smart Alarm clock app help users to identify pote","formattedPrice":"Free","sellerName":"Sleep Cycle AB"},{"trackName":"Eight Sleep","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7f/e7/9a/7fe79a9b-b9ee-0d1b-4b70-f3c53f00d841/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/60x60bb.jpg","averageUserRating":4.74362,"userRatingCount":14541,"description":"The Eight Sleep Pod is the intelligent sleep system that gives you up to one hour more of sleep every night. It cools. It heats. It elevates. \\n\\nPERSONALIZED SLEEP WITH AUTOPILOT\\nAutopilot is the intel","formattedPrice":"Free","sellerName":"Eight Sleep, Inc"},{"trackName":"Sleep Monitor: Sleep Tracker","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/de/2c/89/de2c8960-191b-14a3-7da6-3e1a43f40c6f/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/60x60bb.jpg","averageUserRating":4.61003,"userRatingCount":5026,"description":"Are you a snorer or a sleep talker? Sleep Monitor is your professional sleep companion to help you sleep better and feel more refreshed.\\nWith advanced technology and an easy-to-use interface, the app ","formattedPrice":"Free","sellerName":"Xi'an Monster Software Technology Co., Ltd"},{"trackName":"Sleep Tracker: Recorder, Sound","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/cb/69/8d/cb698d7c-3653-0492-5628-3c5319598393/AppIcon-0-0-1x_U007emarketing-0-6-0-sRGB-85-220.png/60x60bb.jpg","averageUserRating":4.75783,"userRatingCount":7309,"description":"Do you know how you sleep every night? \\nSLEEP TRACKER is your intelligent sleep assistant, now available for FREE download. Our app combines a precise sleep recorder and sleep-talking tracker with a r","formattedPrice":"Free","sellerName":"Leap Health Fitness Limited"},{"trackName":"Supershift Shift Work Calendar","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/68/1d/43/681d4330-7d09-3f14-f229-9ef0217d2dec/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-85-220.png/60x60bb.jpg","averageUserRating":4.86263,"userRatingCount":4768,"description":"Supershift is great for keeping up with your shift working schedule and all other calendar events in between. With Supershift, scheduling is easy and quick, plus it works with the Apple Watch for a qu","formattedPrice":"Free","sellerName":"Supershift GmbH"},{"trackName":"My Shift Planner - Calendar","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/12/53/95125311-40a8-97d0-ddd9-ee067e9359a4/AppIcon-0-0-1x_U007emarketing-0-8-0-0-85-220.png/60x60bb.jpg","averageUserRating":4.81996,"userRatingCount":3094,"description":"MyShiftPlanner – The Ultimate Shift Work Calendar. Stay organised, save time and take control of your shift life with MyShiftPlanner, the #1 calendar app made just for shift workers.\\n\\nFrom nurses, dri","formattedPrice":"Free","sellerName":"MyBuzz Technologies Limited"},{"trackName":"Sleep Recorder & Sleep Tracker","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b8/6a/11/b86a11d6-b20b-f2be-9a43-22729492cd24/AppIconSleepRecorderFree-0-0-1x_U007emarketing-0-8-0-85-220.png/60x60bb.jpg","averageUserRating":4.50479,"userRatingCount":12940,"description":"Analyze snoring, talking, sounds, and more. Track your night like never before!\\nAwake or deep, light sleep too, Track it all—it’s made for you.\\n\\n\\n● Sleep Quality Analysis\\n● Sleep Stages Tracking\\n● Sno","formattedPrice":"Free","sellerName":"Apirox, s.r.o."},{"trackName":"Pillow: Sleep Tracker","artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/5f/e2/95/5fe295c3-91dd-9917-e535-c62bbe7aa6d7/AppIcon-v5-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-85-220.png/60x60bb.jpg","averageUserRating":4.37249,"userRatingCount":95363,"description":"Sleep trouble? Sleep better with Pillow, your smart sleep tracker. Pillow can analyze your sleep cycles automatically using your Apple Watch, iPhone or iPad.\\n\\nUse Pillow as a smart alarm clock to wake","formattedPrice":"Free","sellerName":"Neybox Digital Ltd."}]}`;
 
 function DigSampleReport() {
   const data = parseGapAnalysisJSON(DIG_SAMPLE_JSON);
@@ -1261,7 +1261,7 @@ function DigSampleReport() {
     <div style={{ padding: "20px 0 40px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-4)" }}>Sample Dig Report</span>
-        <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>ÃÂ« sleep tracking app for shift workers and nurses ÃÂ»</span>
+        <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>« sleep tracking app for shift workers and nurses »</span>
       </div>
       <div style={{ padding: "0 16px 16px 12px" }}>
         <GapAnalysisResult data={data} itunesApps={(data as any).itunesApps ?? []} gplayApps={(data as any).gplayApps ?? []} />
@@ -1270,8 +1270,8 @@ function DigSampleReport() {
   );
 }
 
-// Ã¢ÂÂÃ¢ÂÂ STACK SAMPLE REPORT Ã¢ÂÂ Real API data, rendered with StackAdvisorResult Ã¢ÂÂÃ¢ÂÂ
-const STACK_SAMPLE_JSON = `{"headline":"Use Lovable AI to build a full-stack marketplace MVP in days, backed by free Supabase and Vercel Ã¢ÂÂ validate demand first with a Telegram bot.","phases":[{"name":"Phase 0: Validate","subtitle":"Prove 20+ people want this before writing code","tools":[{"name":"Telegram Bot API","purpose":"Collect seller/buyer interest and test the concept manually","price":"Free","free":true,"alternatives":[{"name":"WhatsApp Business API","reason":"Use if your users prefer WhatsApp; same idea but reaches non-tech-savvy users"},{"name":"Google Forms","reason":"Use if you want pure survey data; less engaging but zero setup"}]}],"costs":{"tools":[{"name":"Telegram Bot API","purpose":"Collect early demand","freeTier":true,"monthlyCost":"$0"}],"total":"$0/mo"},"vibeGuide":[{"tool":"Telegram Bot API","url":"https://core.telegram.org/bots","prompt":"Step 1: Create a Telegram account if you don't have one. Step 2: Message @BotFather and type '/newbot'. Follow the prompts to create a bot called 'JewelryMarketplaceTest'. Step 3: Copy your API token. Step 4: Paste this into a text file to save. Step 5: Go to https://api.telegram.org/bot[YOUR_TOKEN]/setWebhook and in your browser, replace [YOUR_TOKEN] with the token from step 3 and visit the URL. If you see {'ok': true}, it works. Now message your bot link to 20 potential artisans and buyers and ask: 'Would you sell/buy handmade jewelry on a platform like Etsy? Why or why not?'","tip":"Don't overthink this. A text-based bot is enough. Record responses in a Google Doc. You're looking for patterns: Do people actually want this? Would they pay?"},{"tool":"ChatGPT","url":"https://chat.openai.com","prompt":"I'm building a handmade jewelry marketplace. Write me 5 short Telegram messages I can send to potential artisans asking if they'd use a platform to sell handmade jewelry. Make them casual, not salesy. Include a link where they can reply.","tip":"Copy-paste these messages into your Telegram bot. If 15+ out of 20 people say yes, you've got product-market fit."}]},{"name":"Phase 1: MVP","subtitle":"Full-stack marketplace live in 1 week, $0-20/mo","tools":[{"name":"Lovable","purpose":"AI full-stack app builder Ã¢ÂÂ describe your marketplace, get deployed code","price":"Free tier or $20/mo Pro","free":true,"alternatives":[{"name":"Bolt.new","reason":"Use if you want free generations with no subscription; slightly less polished UI but 100% free"},{"name":"Bubble","reason":"Use if you want a fully managed no-code platform; costs $32+/mo but no code to manage"}]},{"name":"Supabase","purpose":"Postgres database, user auth, file storage for product images Ã¢ÂÂ all in one","price":"Free tier","free":true,"alternatives":[{"name":"Firebase","reason":"Use if you want Google's ecosystem; NoSQL instead of SQL, good for real-time features"},{"name":"Neon","reason":"Use if you want serverless Postgres without managing compute; free tier includes 0.5GB storage"}]},{"name":"Vercel","purpose":"Deploy your front-end instantly, auto-scale with zero config","price":"Free tier","free":true,"alternatives":[{"name":"Netlify","reason":"Use if you prefer Netlify's UX; same free tier (100GB bandwidth/mo), slight edge in form handling"},{"name":"Cloudflare Pages","reason":"Use if you want unlimited bandwidth; free tier is best for static sites"}]},{"name":"Stripe","purpose":"Payment processing for buyer Ã¢ÂÂ seller transactions, automatic seller payouts","price":"2.9% + $0.30 per transaction (no monthly fee)","free":true,"alternatives":[{"name":"Lemon Squeezy","reason":"Use if selling from EU/non-US; acts as merchant of record, handles tax automatically (5% fee)"},{"name":"Paddle","reason":"Use for global SaaS; similar to Lemon Squeezy, 5% + $0.50/txn, handles compliance"}]},{"name":"Resend","purpose":"Send transactional emails (order confirmations, review reminders, seller notifications)","price":"Free tier: 3,000 emails/mo","free":true,"alternatives":[{"name":"SendGrid","reason":"Use if you need higher volume; 100 emails/day forever free, unlimited with paid plan"},{"name":"Postmark","reason":"Use for best deliverability; 100 emails/mo free, better transactional email focus"}]}],"costs":{"tools":[{"name":"Lovable","purpose":"Build full-stack app","freeTier":true,"monthlyCost":"$0 or $20/mo Pro"},{"name":"Supabase","purpose":"Database, auth, storage","freeTier":true,"monthlyCost":"$0"},{"name":"Vercel","purpose":"Hosting","freeTier":true,"monthlyCost":"$0"},{"name":"Stripe","purpose":"Payments","freeTier":true,"monthlyCost":"$0 (2.9% + $0.30/txn)"},{"name":"Resend","purpose":"Transactional emails","freeTier":true,"monthlyCost":"$0"}],"total":"$0-20/mo (free tier) or $25/mo if you upgrade Supabase Pro early"},"vibeGuide":[{"tool":"Lovable","url":"https://lovable.dev","prompt":"Build me a full-stack handmade jewelry marketplace app with: 1) Signup/login for both buyers and sellers, 2) Sellers can list products with title, description, price, and upload 3 photos, 3) Buyers can browse all products, filter by seller, and leave reviews (1-5 stars + text), 4) Shopping cart and Stripe checkout that sends 70% to seller and 30% to platform, 5) Seller dashboard showing their products, sales, and reviews, 6) Search bar to find products by name. Use Supabase for the database. Deploy to Vercel. Make it look modern and clean with a teal and gold color scheme.","tip":"Be specific. Lovable generates better code when you describe exactly what you want. If the first version isn't right, iterate: 'Remove the product ratings filter' or 'Make the product images larger'."},{"tool":"Supabase","url":"https://supabase.com","prompt":"Step 1: Go to https://supabase.com and click 'Start your project'. Sign up with GitHub. Step 2: Create a new project and copy your 'Project URL' and 'Anon Key'. Step 3: Paste these into your Lovable app's Supabase config. Step 4: In Supabase dashboard, go to 'SQL Editor' and create three tables: 'sellers' (id, name, email, bio, created_at), 'products' (id, seller_id, title, description, price, image_urls, created_at), 'reviews' (id, product_id, buyer_email, rating, text, created_at). Step 5: Enable 'Row Level Security' so sellers can only edit their own products.","tip":"Don't worry about complex SQL. Supabase has templates. Just make sure each table has an id (primary key) and seller_id references the sellers table. Test with a dummy row."},{"tool":"Stripe","url":"https://stripe.com","prompt":"Step 1: Go to https://stripe.com and click 'Get started'. Sign up with your email. Step 2: Complete the verification (you'll enter your business info Ã¢ÂÂ say 'Marketplace Platform'). Step 3: Go to 'Developers' > 'API keys' and copy your 'Publishable key' and 'Secret key'. Step 4: Paste these into your Lovable code. Step 5: Test a transaction: Go to your deployed app, add a product to cart, checkout with card '4242 4242 4242 4242', any future date, any CVC.","tip":"Stripe is safe for testing in this mode. Don't go live with real cards until you've tested 5+ times. In your code, set aside 30% for platform fee before sending the rest to the seller."}]},{"name":"Phase 2: Growth","subtitle":"Scale to 100+ sellers, add reviews and search","tools":[{"name":"Supabase Pro","purpose":"Move from free tier when you exceed 500MB database or 50K MAU","price":"$25/mo","free":false,"alternatives":[{"name":"Neon Pro","reason":"Use if you prefer serverless Postgres; $19/mo, better for variable traffic"},{"name":"Firebase Blaze","reason":"Use if staying on Google ecosystem; pay-as-you-go, no monthly minimum"}]},{"name":"Meilisearch","purpose":"Fast full-text product search with typo correction (seller name, product title, description)","price":"Free (self-hosted on Vercel) or $0/mo","free":true,"alternatives":[{"name":"Algolia","reason":"Use if you need AI-powered relevance; free tier: 10K searches/mo, better UX but pricier"},{"name":"Typesense","reason":"Use if you want simpler setup; free self-hosted, instant search, good typo tolerance"}]},{"name":"PostHog","purpose":"Track user behavior: How many sellers sign up? Which products get clicked? Where do buyers drop off?","price":"Free tier: 1M events/mo","free":true,"alternatives":[{"name":"Mixpanel","reason":"Use for advanced funnels and retention; free tier: 20M events/mo but less intuitive"},{"name":"Umami","reason":"Use for privacy-first analytics; free self-hosted, simple web analytics"}]},{"name":"Resend Pro","purpose":"Upgrade if sending >3K emails/mo (order confirmations, review reminders, seller alerts)","price":"$20/mo","free":false,"alternatives":[{"name":"Brevo","reason":"Use for unlimited contacts; free tier: 300 emails/day, better for marketing"},{"name":"SendGrid","reason":"Use for high volume; 100 emails/day free, then $19.95/mo"}]}],"costs":{"tools":[{"name":"Supabase Pro","purpose":"Scale database","freeTier":false,"monthlyCost":"$25"},{"name":"Meilisearch","purpose":"Fast search","freeTier":true,"monthlyCost":"$0"},{"name":"PostHog","purpose":"Analytics","freeTier":true,"monthlyCost":"$0"},{"name":"Resend Pro","purpose":"Emails at scale","freeTier":false,"monthlyCost":"$20"}],"total":"$45/mo"},"vibeGuide":[{"tool":"ChatGPT","url":"https://chat.openai.com","prompt":"I have a marketplace built on Supabase + Vercel. I want to add instant product search (when a buyer types 'gold ring', results appear in <500ms). How do I integrate Meilisearch? Give me a simple step-by-step guide, not codeÃ¢ÂÂjust concepts.","tip":"Meilisearch sits between your app and database, pre-indexes all products for speed. Tell ChatGPT your current stack ('Supabase + Lovable') and it'll give simpler answers."},{"tool":"PostHog","url":"https://posthog.com","prompt":"Step 1: Go to https://posthog.com and sign up. Step 2: Create a new project, select 'Web'. Copy your API key. Step 3: In your Lovable code, add PostHog tracking: log when someone signs up, views a product, adds to cart, and checks out. Step 4: View the 'Events' tab in PostHog to see user flows.","tip":"PostHog is free for 1M events/mo. Track the critical path: signup Ã¢ÂÂ browse Ã¢ÂÂ buy. Ignore vanity metrics."}]},{"name":"Phase 3: Scale","subtitle":"Multi-country seller payouts, advanced moderation, 10K+ users","tools":[{"name":"Stripe Connect","purpose":"Automatic seller payouts to bank accounts worldwide; manage commissions per transaction","price":"Included in Stripe (no extra fee)","free":false,"alternatives":[{"name":"Paddle Seller Payouts","reason":"Use if sellers are in EU/APAC; handles local tax compliance automatically"},{"name":"Lemon Squeezy Seller Payouts","reason":"Use for EU-first marketplace; built-in seller payout management"}]},{"name":"Railway","purpose":"Run background jobs: auto-send weekly seller stats, generate seller invoices, cleanup old carts","price":"$5/mo (Hobby) + usage","free":false,"alternatives":[{"name":"Render","reason":"Use if you prefer Render's UX; $7/mo starter, same functionality"},{"name":"Fly.io","reason":"Use if you need global deployment; always-free tier, good for edge workers"}]},{"name":"Sentry","purpose":"Error tracking: if a seller's checkout fails, you know immediately with full error logs","price":"Free tier: 5K errors/mo","free":true,"alternatives":[{"name":"LogRocket","reason":"Use for session replay; see exactly what a user did before hitting an error"},{"name":"Better Stack","reason":"Use for uptime monitoring; also tracks logs and errors, free tier adequate"}]}],"costs":{"tools":[{"name":"Stripe Connect","purpose":"Seller payouts","freeTier":false,"monthlyCost":"$0 (included, 2.9% + $0.30/txn)"},{"name":"Railway","purpose":"Background jobs","freeTier":false,"monthlyCost":"$5"},{"name":"Sentry","purpose":"Error tracking","freeTier":true,"monthlyCost":"$0"}],"total":"$5/mo"},"vibeGuide":[{"tool":"Stripe","url":"https://stripe.com/docs/connect","prompt":"Read the Stripe Connect overview at https://stripe.com/docs/connect (just the intro, ~5 min). The key concept: instead of you holding all money, sellers get connected accounts. You take your 30% commission, the rest goes to their bank account automatically.","tip":"This is a major shiftÃ¢ÂÂsellers see automatic payouts to their bank every week. It builds trust. Don't implement until you have 10+ regular sellers."}]}],"buildOrder":[{"week":"Days 1-2","title":"Validation","steps":["Create Telegram bot, send to 20 potential artisans/buyers","Record responses: Do they want it? Would they pay?","If <15/20 say yes, pivot idea and repeat"]},{"week":"Days 3-4","title":"Build MVP Structure","steps":["Open Lovable.dev, paste the full-stack marketplace prompt","Wait 5-10 min for Lovable to generate code","Review generated app, make 2-3 tweaks (colors, field names)"]},{"week":"Day 5","title":"Connect Backend & Payments","steps":["Create Supabase project, copy API keys to Lovable config","Set up Stripe account, add publishable + secret keys to code","Add 3 Supabase tables: sellers, products, reviews (use Supabase SQL templates)"]},{"week":"Days 6-7","title":"Deploy & Test","steps":["Deploy Lovable app to Vercel (one click)","Create test accounts: 2 sellers, 2 buyers","Test full flow: seller lists product Ã¢ÂÂ buyer buys Ã¢ÂÂ check Stripe dashboard for payment"]},{"week":"Week 2","title":"Launch & Iterate","steps":["Invite 10 beta testers (use Telegram list from Days 1-2)","Collect feedback (Google Form)","Fix bugs, add small features based on feedback (new filters, better product descriptions)","Go live to public"]}],"timeToMvp":"1-2 weeks","mistakes":[{"title":"Building before validating","description":"Don't spend a week building if nobody wants it. Use the Telegram bot in Days 1-2 to talk to 20 people. If 15+ don't say 'yes I'd use this', stop and rethink. Two days of talk beats five days of coding the wrong thing."},{"title":"Choosing the wrong builder (Bubble vs. Lovable)","description":"Bubble ($32/mo) is tempting but locks you inÃ¢ÂÂyou can't export code or customize deeply. Lovable ($20/mo or free) generates real code you can edit, so you're not trapped. For a low-code founder, Lovable gives you way more control."},{"title":"Implementing seller payouts from day one","description":"Don't use Stripe Connect yetÃ¢ÂÂit's complex. Collect all payment into your Stripe account, manually send invoices to sellers for their cut for the first month. Once you have 10+ active sellers, automate with Stripe Connect. Early simplicity > perfect automation."}],"scalability":[{"trigger":"100+ sellers","whatBreaks":"Free Supabase's 500MB database fills up; queries slow down after 10K+ products","upgradeTo":"Supabase Pro ($25/mo, 8GB storage)","severity":"medium"},{"trigger":"5K+ products listed","whatBreaks":"Search becomes slow without indexing; users wait 2+ seconds for results","upgradeTo":"Add Meilisearch ($0 free self-hosted or $29/mo cloud)","severity":"medium"},{"trigger":"1K+ daily transactions","whatBreaks":"Stripe API limits; webhook processing lags; seller notifications slow","upgradeTo":"Implement async job queue with Railway ($5-20/mo) to batch notifications","severity":"high"},{"trigger":"10K+ MAU (monthly active users)","whatBreaks":"Vercel free tier (6K build minutes/mo) maxes out; cold start latency increases","upgradeTo":"Vercel Pro ($20/mo) or move backend to Render/Railway ($25+/mo)","severity":"medium"}],"upgrades":[{"tool":"Supabase Free","trigger":"When database exceeds 400MB or you hit 40K MAU","migrateTo":"Supabase Pro ($25/mo, 8GB storage, priority support)"},{"tool":"Vercel Free","trigger":"When builds take >30 min or you need faster deploys (Week 3+)","migrateTo":"Vercel Pro ($20/mo, unlimited builds, faster edge functions)"},{"tool":"Resend Free","trigger":"When sending >2K emails/mo (order confirmations + reviews)","migrateTo":"Resend Pro ($20/mo) or Brevo ($0/mo, 300/day free)"},{"tool":"Stripe Standard","trigger":"When Stripe Connect is needed (10+ active sellers, auto-payouts)","migrateTo":"Stripe Connect ($0 monthly, built-in seller account management)"}]}
+// ── STACK SAMPLE REPORT — Real API data, rendered with StackAdvisorResult ──
+const STACK_SAMPLE_JSON = `{"headline":"Use Lovable AI to build a full-stack marketplace MVP in days, backed by free Supabase and Vercel — validate demand first with a Telegram bot.","phases":[{"name":"Phase 0: Validate","subtitle":"Prove 20+ people want this before writing code","tools":[{"name":"Telegram Bot API","purpose":"Collect seller/buyer interest and test the concept manually","price":"Free","free":true,"alternatives":[{"name":"WhatsApp Business API","reason":"Use if your users prefer WhatsApp; same idea but reaches non-tech-savvy users"},{"name":"Google Forms","reason":"Use if you want pure survey data; less engaging but zero setup"}]}],"costs":{"tools":[{"name":"Telegram Bot API","purpose":"Collect early demand","freeTier":true,"monthlyCost":"$0"}],"total":"$0/mo"},"vibeGuide":[{"tool":"Telegram Bot API","url":"https://core.telegram.org/bots","prompt":"Step 1: Create a Telegram account if you don't have one. Step 2: Message @BotFather and type '/newbot'. Follow the prompts to create a bot called 'JewelryMarketplaceTest'. Step 3: Copy your API token. Step 4: Paste this into a text file to save. Step 5: Go to https://api.telegram.org/bot[YOUR_TOKEN]/setWebhook and in your browser, replace [YOUR_TOKEN] with the token from step 3 and visit the URL. If you see {'ok': true}, it works. Now message your bot link to 20 potential artisans and buyers and ask: 'Would you sell/buy handmade jewelry on a platform like Etsy? Why or why not?'","tip":"Don't overthink this. A text-based bot is enough. Record responses in a Google Doc. You're looking for patterns: Do people actually want this? Would they pay?"},{"tool":"ChatGPT","url":"https://chat.openai.com","prompt":"I'm building a handmade jewelry marketplace. Write me 5 short Telegram messages I can send to potential artisans asking if they'd use a platform to sell handmade jewelry. Make them casual, not salesy. Include a link where they can reply.","tip":"Copy-paste these messages into your Telegram bot. If 15+ out of 20 people say yes, you've got product-market fit."}]},{"name":"Phase 1: MVP","subtitle":"Full-stack marketplace live in 1 week, $0-20/mo","tools":[{"name":"Lovable","purpose":"AI full-stack app builder — describe your marketplace, get deployed code","price":"Free tier or $20/mo Pro","free":true,"alternatives":[{"name":"Bolt.new","reason":"Use if you want free generations with no subscription; slightly less polished UI but 100% free"},{"name":"Bubble","reason":"Use if you want a fully managed no-code platform; costs $32+/mo but no code to manage"}]},{"name":"Supabase","purpose":"Postgres database, user auth, file storage for product images — all in one","price":"Free tier","free":true,"alternatives":[{"name":"Firebase","reason":"Use if you want Google's ecosystem; NoSQL instead of SQL, good for real-time features"},{"name":"Neon","reason":"Use if you want serverless Postgres without managing compute; free tier includes 0.5GB storage"}]},{"name":"Vercel","purpose":"Deploy your front-end instantly, auto-scale with zero config","price":"Free tier","free":true,"alternatives":[{"name":"Netlify","reason":"Use if you prefer Netlify's UX; same free tier (100GB bandwidth/mo), slight edge in form handling"},{"name":"Cloudflare Pages","reason":"Use if you want unlimited bandwidth; free tier is best for static sites"}]},{"name":"Stripe","purpose":"Payment processing for buyer → seller transactions, automatic seller payouts","price":"2.9% + $0.30 per transaction (no monthly fee)","free":true,"alternatives":[{"name":"Lemon Squeezy","reason":"Use if selling from EU/non-US; acts as merchant of record, handles tax automatically (5% fee)"},{"name":"Paddle","reason":"Use for global SaaS; similar to Lemon Squeezy, 5% + $0.50/txn, handles compliance"}]},{"name":"Resend","purpose":"Send transactional emails (order confirmations, review reminders, seller notifications)","price":"Free tier: 3,000 emails/mo","free":true,"alternatives":[{"name":"SendGrid","reason":"Use if you need higher volume; 100 emails/day forever free, unlimited with paid plan"},{"name":"Postmark","reason":"Use for best deliverability; 100 emails/mo free, better transactional email focus"}]}],"costs":{"tools":[{"name":"Lovable","purpose":"Build full-stack app","freeTier":true,"monthlyCost":"$0 or $20/mo Pro"},{"name":"Supabase","purpose":"Database, auth, storage","freeTier":true,"monthlyCost":"$0"},{"name":"Vercel","purpose":"Hosting","freeTier":true,"monthlyCost":"$0"},{"name":"Stripe","purpose":"Payments","freeTier":true,"monthlyCost":"$0 (2.9% + $0.30/txn)"},{"name":"Resend","purpose":"Transactional emails","freeTier":true,"monthlyCost":"$0"}],"total":"$0-20/mo (free tier) or $25/mo if you upgrade Supabase Pro early"},"vibeGuide":[{"tool":"Lovable","url":"https://lovable.dev","prompt":"Build me a full-stack handmade jewelry marketplace app with: 1) Signup/login for both buyers and sellers, 2) Sellers can list products with title, description, price, and upload 3 photos, 3) Buyers can browse all products, filter by seller, and leave reviews (1-5 stars + text), 4) Shopping cart and Stripe checkout that sends 70% to seller and 30% to platform, 5) Seller dashboard showing their products, sales, and reviews, 6) Search bar to find products by name. Use Supabase for the database. Deploy to Vercel. Make it look modern and clean with a teal and gold color scheme.","tip":"Be specific. Lovable generates better code when you describe exactly what you want. If the first version isn't right, iterate: 'Remove the product ratings filter' or 'Make the product images larger'."},{"tool":"Supabase","url":"https://supabase.com","prompt":"Step 1: Go to https://supabase.com and click 'Start your project'. Sign up with GitHub. Step 2: Create a new project and copy your 'Project URL' and 'Anon Key'. Step 3: Paste these into your Lovable app's Supabase config. Step 4: In Supabase dashboard, go to 'SQL Editor' and create three tables: 'sellers' (id, name, email, bio, created_at), 'products' (id, seller_id, title, description, price, image_urls, created_at), 'reviews' (id, product_id, buyer_email, rating, text, created_at). Step 5: Enable 'Row Level Security' so sellers can only edit their own products.","tip":"Don't worry about complex SQL. Supabase has templates. Just make sure each table has an id (primary key) and seller_id references the sellers table. Test with a dummy row."},{"tool":"Stripe","url":"https://stripe.com","prompt":"Step 1: Go to https://stripe.com and click 'Get started'. Sign up with your email. Step 2: Complete the verification (you'll enter your business info — say 'Marketplace Platform'). Step 3: Go to 'Developers' > 'API keys' and copy your 'Publishable key' and 'Secret key'. Step 4: Paste these into your Lovable code. Step 5: Test a transaction: Go to your deployed app, add a product to cart, checkout with card '4242 4242 4242 4242', any future date, any CVC.","tip":"Stripe is safe for testing in this mode. Don't go live with real cards until you've tested 5+ times. In your code, set aside 30% for platform fee before sending the rest to the seller."}]},{"name":"Phase 2: Growth","subtitle":"Scale to 100+ sellers, add reviews and search","tools":[{"name":"Supabase Pro","purpose":"Move from free tier when you exceed 500MB database or 50K MAU","price":"$25/mo","free":false,"alternatives":[{"name":"Neon Pro","reason":"Use if you prefer serverless Postgres; $19/mo, better for variable traffic"},{"name":"Firebase Blaze","reason":"Use if staying on Google ecosystem; pay-as-you-go, no monthly minimum"}]},{"name":"Meilisearch","purpose":"Fast full-text product search with typo correction (seller name, product title, description)","price":"Free (self-hosted on Vercel) or $0/mo","free":true,"alternatives":[{"name":"Algolia","reason":"Use if you need AI-powered relevance; free tier: 10K searches/mo, better UX but pricier"},{"name":"Typesense","reason":"Use if you want simpler setup; free self-hosted, instant search, good typo tolerance"}]},{"name":"PostHog","purpose":"Track user behavior: How many sellers sign up? Which products get clicked? Where do buyers drop off?","price":"Free tier: 1M events/mo","free":true,"alternatives":[{"name":"Mixpanel","reason":"Use for advanced funnels and retention; free tier: 20M events/mo but less intuitive"},{"name":"Umami","reason":"Use for privacy-first analytics; free self-hosted, simple web analytics"}]},{"name":"Resend Pro","purpose":"Upgrade if sending >3K emails/mo (order confirmations, review reminders, seller alerts)","price":"$20/mo","free":false,"alternatives":[{"name":"Brevo","reason":"Use for unlimited contacts; free tier: 300 emails/day, better for marketing"},{"name":"SendGrid","reason":"Use for high volume; 100 emails/day free, then $19.95/mo"}]}],"costs":{"tools":[{"name":"Supabase Pro","purpose":"Scale database","freeTier":false,"monthlyCost":"$25"},{"name":"Meilisearch","purpose":"Fast search","freeTier":true,"monthlyCost":"$0"},{"name":"PostHog","purpose":"Analytics","freeTier":true,"monthlyCost":"$0"},{"name":"Resend Pro","purpose":"Emails at scale","freeTier":false,"monthlyCost":"$20"}],"total":"$45/mo"},"vibeGuide":[{"tool":"ChatGPT","url":"https://chat.openai.com","prompt":"I have a marketplace built on Supabase + Vercel. I want to add instant product search (when a buyer types 'gold ring', results appear in <500ms). How do I integrate Meilisearch? Give me a simple step-by-step guide, not code—just concepts.","tip":"Meilisearch sits between your app and database, pre-indexes all products for speed. Tell ChatGPT your current stack ('Supabase + Lovable') and it'll give simpler answers."},{"tool":"PostHog","url":"https://posthog.com","prompt":"Step 1: Go to https://posthog.com and sign up. Step 2: Create a new project, select 'Web'. Copy your API key. Step 3: In your Lovable code, add PostHog tracking: log when someone signs up, views a product, adds to cart, and checks out. Step 4: View the 'Events' tab in PostHog to see user flows.","tip":"PostHog is free for 1M events/mo. Track the critical path: signup → browse → buy. Ignore vanity metrics."}]},{"name":"Phase 3: Scale","subtitle":"Multi-country seller payouts, advanced moderation, 10K+ users","tools":[{"name":"Stripe Connect","purpose":"Automatic seller payouts to bank accounts worldwide; manage commissions per transaction","price":"Included in Stripe (no extra fee)","free":false,"alternatives":[{"name":"Paddle Seller Payouts","reason":"Use if sellers are in EU/APAC; handles local tax compliance automatically"},{"name":"Lemon Squeezy Seller Payouts","reason":"Use for EU-first marketplace; built-in seller payout management"}]},{"name":"Railway","purpose":"Run background jobs: auto-send weekly seller stats, generate seller invoices, cleanup old carts","price":"$5/mo (Hobby) + usage","free":false,"alternatives":[{"name":"Render","reason":"Use if you prefer Render's UX; $7/mo starter, same functionality"},{"name":"Fly.io","reason":"Use if you need global deployment; always-free tier, good for edge workers"}]},{"name":"Sentry","purpose":"Error tracking: if a seller's checkout fails, you know immediately with full error logs","price":"Free tier: 5K errors/mo","free":true,"alternatives":[{"name":"LogRocket","reason":"Use for session replay; see exactly what a user did before hitting an error"},{"name":"Better Stack","reason":"Use for uptime monitoring; also tracks logs and errors, free tier adequate"}]}],"costs":{"tools":[{"name":"Stripe Connect","purpose":"Seller payouts","freeTier":false,"monthlyCost":"$0 (included, 2.9% + $0.30/txn)"},{"name":"Railway","purpose":"Background jobs","freeTier":false,"monthlyCost":"$5"},{"name":"Sentry","purpose":"Error tracking","freeTier":true,"monthlyCost":"$0"}],"total":"$5/mo"},"vibeGuide":[{"tool":"Stripe","url":"https://stripe.com/docs/connect","prompt":"Read the Stripe Connect overview at https://stripe.com/docs/connect (just the intro, ~5 min). The key concept: instead of you holding all money, sellers get connected accounts. You take your 30% commission, the rest goes to their bank account automatically.","tip":"This is a major shift—sellers see automatic payouts to their bank every week. It builds trust. Don't implement until you have 10+ regular sellers."}]}],"buildOrder":[{"week":"Days 1-2","title":"Validation","steps":["Create Telegram bot, send to 20 potential artisans/buyers","Record responses: Do they want it? Would they pay?","If <15/20 say yes, pivot idea and repeat"]},{"week":"Days 3-4","title":"Build MVP Structure","steps":["Open Lovable.dev, paste the full-stack marketplace prompt","Wait 5-10 min for Lovable to generate code","Review generated app, make 2-3 tweaks (colors, field names)"]},{"week":"Day 5","title":"Connect Backend & Payments","steps":["Create Supabase project, copy API keys to Lovable config","Set up Stripe account, add publishable + secret keys to code","Add 3 Supabase tables: sellers, products, reviews (use Supabase SQL templates)"]},{"week":"Days 6-7","title":"Deploy & Test","steps":["Deploy Lovable app to Vercel (one click)","Create test accounts: 2 sellers, 2 buyers","Test full flow: seller lists product → buyer buys → check Stripe dashboard for payment"]},{"week":"Week 2","title":"Launch & Iterate","steps":["Invite 10 beta testers (use Telegram list from Days 1-2)","Collect feedback (Google Form)","Fix bugs, add small features based on feedback (new filters, better product descriptions)","Go live to public"]}],"timeToMvp":"1-2 weeks","mistakes":[{"title":"Building before validating","description":"Don't spend a week building if nobody wants it. Use the Telegram bot in Days 1-2 to talk to 20 people. If 15+ don't say 'yes I'd use this', stop and rethink. Two days of talk beats five days of coding the wrong thing."},{"title":"Choosing the wrong builder (Bubble vs. Lovable)","description":"Bubble ($32/mo) is tempting but locks you in—you can't export code or customize deeply. Lovable ($20/mo or free) generates real code you can edit, so you're not trapped. For a low-code founder, Lovable gives you way more control."},{"title":"Implementing seller payouts from day one","description":"Don't use Stripe Connect yet—it's complex. Collect all payment into your Stripe account, manually send invoices to sellers for their cut for the first month. Once you have 10+ active sellers, automate with Stripe Connect. Early simplicity > perfect automation."}],"scalability":[{"trigger":"100+ sellers","whatBreaks":"Free Supabase's 500MB database fills up; queries slow down after 10K+ products","upgradeTo":"Supabase Pro ($25/mo, 8GB storage)","severity":"medium"},{"trigger":"5K+ products listed","whatBreaks":"Search becomes slow without indexing; users wait 2+ seconds for results","upgradeTo":"Add Meilisearch ($0 free self-hosted or $29/mo cloud)","severity":"medium"},{"trigger":"1K+ daily transactions","whatBreaks":"Stripe API limits; webhook processing lags; seller notifications slow","upgradeTo":"Implement async job queue with Railway ($5-20/mo) to batch notifications","severity":"high"},{"trigger":"10K+ MAU (monthly active users)","whatBreaks":"Vercel free tier (6K build minutes/mo) maxes out; cold start latency increases","upgradeTo":"Vercel Pro ($20/mo) or move backend to Render/Railway ($25+/mo)","severity":"medium"}],"upgrades":[{"tool":"Supabase Free","trigger":"When database exceeds 400MB or you hit 40K MAU","migrateTo":"Supabase Pro ($25/mo, 8GB storage, priority support)"},{"tool":"Vercel Free","trigger":"When builds take >30 min or you need faster deploys (Week 3+)","migrateTo":"Vercel Pro ($20/mo, unlimited builds, faster edge functions)"},{"tool":"Resend Free","trigger":"When sending >2K emails/mo (order confirmations + reviews)","migrateTo":"Resend Pro ($20/mo) or Brevo ($0/mo, 300/day free)"},{"tool":"Stripe Standard","trigger":"When Stripe Connect is needed (10+ active sellers, auto-payouts)","migrateTo":"Stripe Connect ($0 monthly, built-in seller account management)"}]}
 `;
 
 function StackSampleReport() {
@@ -1281,7 +1281,7 @@ function StackSampleReport() {
     <div style={{ padding: "20px 0 40px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-4)" }}>Sample Stack Report</span>
-        <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>ÃÂ« Handmade jewelry marketplace with payments & reviews ÃÂ»</span>
+        <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>« Handmade jewelry marketplace with payments & reviews »</span>
       </div>
       <StackAdvisorResult data={data} />
     </div>
@@ -1316,14 +1316,14 @@ function NoCreditsModal({ idea, onClose }: { idea: string; onClose: () => void }
           </div>
         )}
         <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, margin: "0 0 20px" }}>
-          Buy a credit pack and your prompt will be right here waiting Ã¢ÂÂ no need to retype anything.
+          Buy a credit pack and your prompt will be right here waiting — no need to retype anything.
         </p>
         <div style={{ display: "flex", gap: 10 }}>
           <a
             href="/pricing"
             style={{ flex: 1, display: "block", textAlign: "center" as const, padding: "11px 0", borderRadius: 9, background: "#7c6fff", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}
           >
-            Buy credits Ã¢ÂÂ
+            Buy credits →
           </a>
           <button
             onClick={onClose}
@@ -1400,7 +1400,7 @@ function GapAnalysisSkeleton() {
   );
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Loading Skeleton ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Loading Skeleton âââââââââââââââââââââââââââââââââââââââââââ
 function LoadingSkeleton({ tool }: { tool: ToolConfig }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -1419,26 +1419,26 @@ function LoadingSkeleton({ tool }: { tool: ToolConfig }) {
       ))}
       <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--clr-text-6)", fontSize: "0.8125rem", paddingTop: 8 }}>
         <div style={{ width: 16, height: 16, border: `2px solid ${tool.accentColor}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-        Running {tool.name}ÃÂ¢ÃÂÃÂ¦
+        Running {tool.name}â¦
       </div>
     </div>
   );
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Space Score Card ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Space Score Card âââââââââââââââââââââââââââââââââââââââââââ
 function deriveScoreLabel(pct: number): { emoji: string; label: string } {
-  if (pct >= 81) return { emoji: "ÃÂ°ÃÂÃÂÃÂ¥", label: "Explosive" };
-  if (pct >= 61) return { emoji: "ÃÂ°ÃÂÃÂÃÂ¢", label: "Growing" };
-  if (pct >= 41) return { emoji: "ÃÂ°ÃÂÃÂÃÂ¡", label: "Warming Up" };
-  if (pct >= 21) return { emoji: "ÃÂ°ÃÂÃÂÃÂ ", label: "Crowded" };
-  return { emoji: "ÃÂ°ÃÂÃÂÃÂ´", label: "Dead Zone" };
+  if (pct >= 81) return { emoji: "ð¥", label: "Explosive" };
+  if (pct >= 61) return { emoji: "ð¢", label: "Growing" };
+  if (pct >= 41) return { emoji: "ð¡", label: "Warming Up" };
+  if (pct >= 21) return { emoji: "ð ", label: "Crowded" };
+  return { emoji: "ð´", label: "Dead Zone" };
 }
 
 function SpaceScoreCard({ score, summary, label }: { score: number; summary: string; label?: string }) {
   const pct = Math.max(0, Math.min(100, score));
   const labelEmojiMap: Record<string, string> = {
-    "Dead Zone": "ÃÂ°ÃÂÃÂÃÂ´", "Uncharted": "ÃÂ°ÃÂÃÂÃÂ", "Fading": "ÃÂ°ÃÂÃÂÃÂ«ÃÂ¯ÃÂ¸ÃÂ", "Crowded": "ÃÂ°ÃÂÃÂÃÂ ",
-    "Warming Up": "ÃÂ°ÃÂÃÂÃÂ¡", "Growing": "ÃÂ°ÃÂÃÂÃÂ¢", "Explosive": "ÃÂ°ÃÂÃÂÃÂ¥",
+    "Dead Zone": "ð´", "Uncharted": "ð", "Fading": "ð«ï¸", "Crowded": "ð ",
+    "Warming Up": "ð¡", "Growing": "ð¢", "Explosive": "ð¥",
   };
   const tier = label && labelEmojiMap[label]
     ? { emoji: labelEmojiMap[label], label }
@@ -1497,7 +1497,7 @@ function SpaceScoreCard({ score, summary, label }: { score: number; summary: str
   );
 }
 
-/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Trend Feed Result ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
+/* ââ Trend Feed Result âââââââââââââââââââââââââââââââââââââââââââ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function TrendFeedResult({ data }: { data: any }) {
   const a = data?.analysis ?? {};
@@ -1543,7 +1543,7 @@ function TrendFeedResult({ data }: { data: any }) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "0.5rem" }}>
             {(a.risingSubcategories ?? []).map((sub: any, i: number) => {
               const dirColor = sub.direction === "rising" ? "#4ade80" : sub.direction === "falling" ? "#f87171" : "var(--clr-text-5)";
-              const dirIcon = sub.direction === "rising" ? "ÃÂ¢ÃÂÃÂ" : sub.direction === "falling" ? "ÃÂ¢ÃÂÃÂ" : "ÃÂ¢ÃÂÃÂ";
+              const dirIcon = sub.direction === "rising" ? "â" : sub.direction === "falling" ? "â" : "â";
               return (
                 <div key={i} style={{
                   padding: "0.875rem 1rem", borderRadius: 10,
@@ -1604,7 +1604,7 @@ function TrendFeedResult({ data }: { data: any }) {
                 </div>
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--clr-text)" }}>
-                    {"ÃÂ¢ÃÂÃÂ".repeat(Math.round(app.rating ?? 0))} {(app.rating ?? 0).toFixed(1)}
+                    {"â".repeat(Math.round(app.rating ?? 0))} {(app.rating ?? 0).toFixed(1)}
                   </div>
                   <div style={{ fontSize: "0.65rem", color: "var(--clr-text-5)" }}>
                     {(app.reviews ?? 0).toLocaleString()} reviews
@@ -1638,7 +1638,7 @@ function TrendFeedResult({ data }: { data: any }) {
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: "0.8rem", fontWeight: 800, color: "var(--clr-text-3)",
                 }}>
-                  ÃÂ¢ÃÂÃÂ² {ph.votes}
+                  â² {ph.votes}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--clr-text)" }}>{ph.name}</div>
@@ -1738,7 +1738,7 @@ function TrendFeedResult({ data }: { data: any }) {
   );
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Data Source Badges ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Data Source Badges ââââââââââââââââââââââââââââââââââââââââââ
 function DataSourceBadges({ sources, noMargin }: { sources: DataSource[]; noMargin?: boolean }) {
   return (
     <div style={{
@@ -1773,7 +1773,7 @@ function DataSourceBadges({ sources, noMargin }: { sources: DataSource[]; noMarg
   );
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Tool Selector Card ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Tool Selector Card âââââââââââââââââââââââââââââââââââââââââ
 function ToolSelectorCard({
   tool, isSelected, isOtherSelected, onClick,
 }: {
@@ -1887,7 +1887,7 @@ function ToolSelectorCard({
   );
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Input Section ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Input Section ââââââââââââââââââââââââââââââââââââââââââââââ
 function InputSection({
   tool, idea, setIdea, budget, setBudget, techLevel, setTechLevel, platform, setPlatform,
   onSubmit, loading, textareaRef, showSampleReport, setShowSampleReport,
@@ -1910,8 +1910,8 @@ function InputSection({
 
   const BUDGETS: { id: Budget; label: string; sub: string }[] = [
     { id: "bootstrap", label: "Bootstrapped", sub: "< $50/mo" },
-    { id: "growing",   label: "Growing",      sub: "$50Ã¢ÂÂ200/mo" },
-    { id: "funded",    label: "Funded",        sub: "$200Ã¢ÂÂ1k/mo" },
+    { id: "growing",   label: "Growing",      sub: "$50–200/mo" },
+    { id: "funded",    label: "Funded",        sub: "$200–1k/mo" },
     { id: "scale",     label: "Scale",         sub: "$1k+/mo" },
   ];
   const TECH_LEVELS: { id: TechLevel; label: string; sub: string }[] = [
@@ -1939,7 +1939,7 @@ function InputSection({
         boxShadow: `0 1px 2px rgba(0,0,0,0.1)`,
         overflow: "hidden",
       }}>
-        {/* Card header Ã¢ÂÂ only for non-Dig tools */}
+        {/* Card header — only for non-Dig tools */}
         {tool.id !== "gap-analysis" && tool.id !== "stack-advisor" && (
         <div style={{
           display: "flex", alignItems: "center", gap: 10,
@@ -2001,7 +2001,7 @@ function InputSection({
                 display: "inline-block", flexShrink: 0,
                 animation: "pulse-dot 1.8s ease-in-out infinite",
               }}/>
-              Claude Opus 4.6 ÃÂ· Extended Thinking
+              Claude Opus 4.6 · Extended Thinking
             </span>
           </div>
 
@@ -2016,8 +2016,8 @@ function InputSection({
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   {[
                     { id: "bootstrap" as Budget, label: "Bootstrapped", sub: "< $50/mo" },
-                    { id: "growing"   as Budget, label: "Growing",      sub: "$50Ã¢ÂÂ200/mo" },
-                    { id: "funded"    as Budget, label: "Funded",        sub: "$200Ã¢ÂÂ1k/mo" },
+                    { id: "growing"   as Budget, label: "Growing",      sub: "$50–200/mo" },
+                    { id: "funded"    as Budget, label: "Funded",        sub: "$200–1k/mo" },
                     { id: "scale"     as Budget, label: "Scale",         sub: "$1k+/mo" },
                   ].map((opt) => (
                     <button
@@ -2125,10 +2125,10 @@ function InputSection({
                 onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(99,102,241,0.13)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = showSampleReport ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.07)"; }}
               >
-                {showSampleReport ? "Hide Sample Ã¢ÂÂ" : "Sample Report Ã¢ÂÂ"}
+                {showSampleReport ? "Hide Sample ↑" : "Sample Report ↓"}
               </button>
             ) : (
-              <span style={{ fontSize: "0.7rem", color: "var(--clr-text-8)" }}>Ã¢ÂÂÃ¢ÂÂµ to run</span>
+              <span style={{ fontSize: "0.7rem", color: "var(--clr-text-8)" }}>⌘↵ to run</span>
             )}
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               {/* Char counter on right */}
@@ -2143,7 +2143,7 @@ function InputSection({
                   </span>
                 ) : (
                   <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 600, animation: "fadeSlideIn 0.2s ease" }}>
-                    Ã¢ÂÂ ready
+                    ✓ ready
                   </span>
                 )
               )}
@@ -2166,7 +2166,7 @@ function InputSection({
                 {loading ? (
                   <>
                     <div style={{ width: 14, height: 14, border: "2px solid rgba(var(--clr-text-rgb),0.3)", borderTopColor: "var(--clr-text)", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
-                    RunningÃ¢ÂÂ¦
+                    Running…
                   </>
                 ) : (
                   <>
@@ -2186,7 +2186,7 @@ function InputSection({
   );
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ GitHub repo type ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ GitHub repo type ââââââââââââââââââââââââââââââââââââââââââââ
 interface GithubRepo {
   id: number;
   full_name: string;
@@ -2288,7 +2288,7 @@ interface ITunesApp {
   genres: string[];
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Dig structured types ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Dig structured types âââââââââââââââââââââââââââââ
 interface GapCompetitor {
   name: string;
   tagline: string;
@@ -2475,7 +2475,7 @@ function parseGapAnalysisJSON(raw: string): GapAnalysisData | null {
   }
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Stack structured types ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Stack structured types ââââââââââââââââââââââââââââ
 interface StackPhaseCosts {
   tools: { name: string; purpose: string; freeTier: boolean; monthlyCost: string }[];
   total: string;
@@ -2519,14 +2519,14 @@ function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
   }
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Stack Visual Result ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ââ Stack Visual Result ââââââââââââââââââââââââââââââ
 const PHASE_COLORS = ["var(--clr-text)", "var(--clr-text-2)", "var(--clr-text-3)", "var(--clr-text-5)", "var(--clr-text-6)"];
 const PHASE_BGS = ["rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)"];
 
 function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVideos?: YouTubeVideo[] }) {
   const [mob, setMob] = useState(false);
   useEffect(() => { const mq = window.matchMedia("(max-width: 768px)"); const chk = () => setMob(mq.matches); chk(); mq.addEventListener("change", chk); return () => mq.removeEventListener("change", chk); }, []);
-  // Build a lookup: tool name (lowercased) ÃÂ¢ÃÂÃÂ best matching YouTube video
+  // Build a lookup: tool name (lowercased) â best matching YouTube video
   const ytToolMap = new Map<string, YouTubeVideo>();
   if (ytVideos && ytVideos.length > 0) {
     for (const v of ytVideos) {
@@ -2555,11 +2555,11 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
   const isPhaseZero = (name: string) => /phase\s*0/i.test(name) || /validate/i.test(name);
   const [stackTab, setStackTab] = useState(0);
   const stackTabs = [
-    { label: "Overview", icon: "Ã¢ÂÂ" },
+    { label: "Overview", icon: "●" },
     ...data.phases.map((p, i) => ({ label: p.name.replace(/^Phase \d+:\s*/i, ''), icon: isPhaseZero(p.name) ? "0" : String(i) })),
-    ...(data.buildOrder.length > 0 ? [{ label: "Build Order", icon: "Ã¢ÂÂ" }] : []),
-    ...(data.mistakes.length > 0 ? [{ label: "Avoid These", icon: "Ã¢ÂÂ" }] : []),
-    ...((data.scalability.length > 0 || data.upgrades.length > 0) ? [{ label: "Scale Up", icon: "Ã¢ÂÂ" }] : []),
+    ...(data.buildOrder.length > 0 ? [{ label: "Build Order", icon: "→" }] : []),
+    ...(data.mistakes.length > 0 ? [{ label: "Avoid These", icon: "✗" }] : []),
+    ...((data.scalability.length > 0 || data.upgrades.length > 0) ? [{ label: "Scale Up", icon: "↑" }] : []),
   ];
   const totalCost = data.phases.reduce((sum, p) => {
     const t = p.costs?.total ?? "";
@@ -2614,7 +2614,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                 {/* Right: cost + tools count */}
                 <div style={{ textAlign: "right" as const, flexShrink: 0 }}>
                   {phase.costs?.total && <div style={{ fontSize: 11, fontWeight: 700, color: c, marginBottom: 2 }}>{phase.costs.total.split("(")[0].trim()}</div>}
-                  <div style={{ fontSize: 10, color: "#9ca3af" }}>{phase.tools.length} tools Ã¢ÂÂ</div>
+                  <div style={{ fontSize: 10, color: "#9ca3af" }}>{phase.tools.length} tools →</div>
                 </div>
               </button>
             );
@@ -2636,7 +2636,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
             <div>
               <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: c, marginBottom: 3 }}>
-                {isP0 ? "Ã¢ÂÂ Do This First" : `Ã¢ÂÂ Phase ${phaseIdx}`}
+                {isP0 ? "● Do This First" : `● Phase ${phaseIdx}`}
               </div>
               <div style={{ fontSize: 16, fontWeight: 700, color: "#111827" }}>{phase.name.replace(/^Phase \d+:\s*/i, '')}</div>
               {phase.subtitle && <div style={{ fontSize: 13, color: "#6b7280", marginTop: 2 }}>{phase.subtitle}</div>}
@@ -2679,7 +2679,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                   {ytVid && (
                     <a href={`https://youtube.com/watch?v=${ytVid.videoId}`} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 8, padding: "5px 8px", borderRadius: 6, background: "#fef2f2", border: "1px solid #fecaca", textDecoration: "none" }}>
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="#dc2626"><path d="M23 7s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.2 2.8 12 2.8 12 2.8s-4.2 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.3v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.6 12 21.6 12 21.6s4.2 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zm-13.5 8.6V8.4l8.1 3.6-8.1 3.6z"/></svg>
-                      <span style={{ fontSize: 10, color: "#dc2626", fontWeight: 600 }}>{ytVid.title.substring(0, 45)}Ã¢ÂÂ¦</span>
+                      <span style={{ fontSize: 10, color: "#dc2626", fontWeight: 600 }}>{ytVid.title.substring(0, 45)}…</span>
                     </a>
                   )}
                 </div>
@@ -2713,7 +2713,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
           {(phase as any).vibeGuide && (phase as any).vibeGuide.length > 0 && (
             <div style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #f0f9ff 100%)", border: "1px solid #d1fae5", borderRadius: 10, padding: "14px 16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
-                <span style={{ fontSize: 14 }}>Ã°ÂÂÂ</span>
+                <span style={{ fontSize: 14 }}>🚀</span>
                 <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#0d9488" }}>How to actually do this</span>
               </div>
               <div style={{ display: "flex", flexDirection: "column" as const, gap: 10 }}>
@@ -2721,7 +2721,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                   <div key={si} style={{ background: "white", borderRadius: 8, padding: "12px 14px", border: "1px solid #d1fae5" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                       <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#0d9488", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.65rem", fontWeight: 700, flexShrink: 0 }}>{si + 1}</div>
-                      <a href={step.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, color: "#0d9488", textDecoration: "none" }}>Open {step.tool} Ã¢ÂÂ</a>
+                      <a href={step.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, color: "#0d9488", textDecoration: "none" }}>Open {step.tool} →</a>
                     </div>
                     <div style={{ background: "#f0fdfa", borderRadius: 6, padding: "8px 10px", marginBottom: step.tip ? 8 : 0 }}>
                       <div style={{ fontSize: 9, fontWeight: 700, color: "#0d9488", textTransform: "uppercase" as const, letterSpacing: "0.05em", marginBottom: 4 }}>Type this:</div>
@@ -2729,7 +2729,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                     </div>
                     {step.tip && (
                       <div style={{ display: "flex", alignItems: "flex-start", gap: 6, marginTop: 8 }}>
-                        <span style={{ fontSize: 12 }}>Ã°ÂÂÂ¡</span>
+                        <span style={{ fontSize: 12 }}>💡</span>
                         <p style={{ fontSize: 12, color: "#6b7280", margin: 0, lineHeight: 1.5 }}>{step.tip}</p>
                       </div>
                     )}
@@ -2784,7 +2784,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {data.mistakes.map((m, i) => (
           <div key={i} style={{ borderLeft: "4px solid #ef4444", paddingLeft: 14, background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 10, padding: "12px 14px" }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 5 }}>Ã¢ÂÂ  {m.title}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 5 }}>⚠ {m.title}</div>
             <p style={{ fontSize: 12, color: "#6b7280", margin: 0, lineHeight: 1.6 }}>{m.description}</p>
           </div>
         ))}
@@ -2805,8 +2805,8 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
                     <div style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{s.trigger}</div>
                     <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 4, background: `${sevColor}18`, color: sevColor, flexShrink: 0, marginLeft: 8 }}>{s.severity.toUpperCase()}</span>
                   </div>
-                  <p style={{ fontSize: 12, color: "#6b7280", margin: "0 0 6px 0" }}>Ã°ÂÂÂ´ {s.whatBreaks}</p>
-                  <p style={{ fontSize: 12, color: "#10b981", margin: 0 }}>Ã¢ÂÂ Upgrade to: {s.upgradeTo}</p>
+                  <p style={{ fontSize: 12, color: "#6b7280", margin: "0 0 6px 0" }}>🔴 {s.whatBreaks}</p>
+                  <p style={{ fontSize: 12, color: "#10b981", margin: 0 }}>→ Upgrade to: {s.upgradeTo}</p>
                 </div>
               );
             })}
@@ -2819,7 +2819,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 14px", background: "#fafafa", border: "1px solid #e5e7eb", borderRadius: 8, marginBottom: 6 }}>
                 <span style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>{u.tool}</span>
                 <span style={{ fontSize: 11, color: "#9ca3af" }}>{u.trigger}</span>
-                <span style={{ fontSize: 11, color: "#6366f1", marginLeft: "auto", fontWeight: 600 }}>Ã¢ÂÂ {u.migrateTo}</span>
+                <span style={{ fontSize: 11, color: "#6366f1", marginLeft: "auto", fontWeight: 600 }}>→ {u.migrateTo}</span>
               </div>
             ))}
           </div>
@@ -2848,7 +2848,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
           return (
             <button key={ti} onClick={() => { setStackTab(ti); document.getElementById('stack-tab-content')?.scrollTo({top:0}); }}
               style={{ display: "flex", alignItems: "flex-start", width: "100%", padding: "8px 10px", borderRadius: 8, background: isActive ? "white" : "transparent", border: `1px solid ${isActive ? "#e5e7eb" : "transparent"}`, cursor: "pointer", textAlign: "left" as const, boxShadow: isActive ? "0 1px 2px rgba(0,0,0,0.05)" : "none", gap: 6 }}>
-              <span style={{ fontSize: 11, color: dotColor, flexShrink: 0, fontWeight: 700, marginTop: 1 }}>{isActive ? "Ã¢ÂÂ" : isPhase ? "Ã¢ÂÂ" : tab.icon}</span>
+              <span style={{ fontSize: 11, color: dotColor, flexShrink: 0, fontWeight: 700, marginTop: 1 }}>{isActive ? "●" : isPhase ? "✓" : tab.icon}</span>
               <span style={{ fontSize: 12, fontWeight: isActive ? 600 : 400, color: isActive ? "#111827" : "#374151", flex: 1, lineHeight: 1.35, wordBreak: "break-word" as const }}>{tab.label}</span>
               {isPhase && data.phases[ti-1].costs?.total && (
                 <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", flexShrink: 0, marginTop: 1 }}>{data.phases[ti-1].costs?.total?.split(' ')[0]}</span>
@@ -2866,8 +2866,8 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
   );
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Main ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
-// Ã¢ÂÂÃ¢ÂÂ AI Analysis block Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ââ Main âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── AI Analysis block ──────────────────────────────────────────────────────
 function AiBlock({ what, diff, gap }: { what:string|null; diff:string|null; gap:string|null }) {
   if (!what && !diff && !gap) return null;
   return (
@@ -2950,7 +2950,7 @@ function HomeInner() {
   const [showNoCreditsModal, setShowNoCreditsModal] = useState(false);
   const [hasResults, setHasResults] = useState(false);
 
-  // Ã¢ÂÂÃ¢ÂÂ Pulse inline state Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ── Pulse inline state ────────────────────────────────────────────────────
   const [pulseTab, setPulseTab] = useState<"ph"|"appstore">("appstore");
   const [showSampleReport, setShowSampleReport] = useState(false);
   // Reset sample report when tool changes
@@ -2968,7 +2968,7 @@ function HomeInner() {
   const PULSE_TOPIC_COLORS = ["#6366f1","#06b6d4","#f59e0b","#ec4899","#22c55e","#8b5cf6","#f97316","#14b8a6"];
   const PULSE_MOVE_COLORS: Record<string,string> = { rank_jump:"#22c55e",new_entry:"#3b82f6",review_spike:"#f59e0b",top_mover:"#8b5cf6",weekly_mover:"#06b6d4",monthly_mover:"#ec4899" };
   const pulseRelTime = (ts:string) => { const m=Math.floor((Date.now()-new Date(ts).getTime())/60000); if(m<1)return"just now"; if(m<60)return m+"m ago"; const h=Math.floor(m/60); if(h<24)return h+"h ago"; return Math.floor(h/24)+"d ago"; };
-  const pulseParseGap = (gap?:string) => { if(!gap)return null; const p=gap.split("Ã¢ÂÂ¦").map(s=>s.trim()); if(p.length<3)return null; return{what:p[0].replace(/^What:\s*/i,""),different:p[1].replace(/^Different:\s*/i,""),missing:p[2].replace(/^Missing:\s*/i,"")}; };
+  const pulseParseGap = (gap?:string) => { if(!gap)return null; const p=gap.split("✦").map(s=>s.trim()); if(p.length<3)return null; return{what:p[0].replace(/^What:\s*/i,""),different:p[1].replace(/^Different:\s*/i,""),missing:p[2].replace(/^Missing:\s*/i,"")}; };
   const pulseFmtDate = (d:string) => new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
   const fetchPulseSignals = useCallback(async()=>{ if(pulseSignals.length>0)return; setPulseLoading(true); try{const res=await fetch("/api/pulse");const data=await res.json();if(!res.ok)throw new Error(data.error||"Failed");setPulseSignals(data.signals??[]);setPulseError(null);}catch(e){setPulseError(e instanceof Error?e.message:"Error");}finally{setPulseLoading(false);} },[pulseSignals.length]);
   const fetchPulseAS = useCallback(async()=>{ if(pulseAsDays.length>0)return; setPulseAsLoading(true); try{const r=await fetch("/api/pulse/appstore");const d=await r.json();setPulseAsDays(d.days??[]);}catch{}finally{setPulseAsLoading(false);} },[pulseAsDays.length]);
@@ -3052,7 +3052,7 @@ function HomeInner() {
       sessionStorage.removeItem("unbuilt_stack_idea");
       setSelectedTool("stack-advisor");
       setIdea(ssIdea);
-      // Don't auto-submit Ã¢ÂÂ just fill the textarea
+      // Don't auto-submit — just fill the textarea
       window.history.replaceState({}, "", "/");
     } else if (tool && q && TOOLS.some(t => t.id === tool)) {
       setSelectedTool(tool);
@@ -3266,7 +3266,7 @@ function HomeInner() {
       if (res.ok) {
         const meta = await res.json();
         const fullQuery = meta.searchQuery || idea;
-        // Limit to first 3 words Ã¢ÂÂ long queries reduce API result quality
+        // Limit to first 3 words — long queries reduce API result quality
         const q = fullQuery.split(/\s+/).slice(0, 3).join(" ");
         console.log("[meta] searchQuery from Haiku:", meta.searchQuery, "| truncated to:", q, "| keywords:", meta.keywords);
         setDomainKeywords(meta.keywords ?? []);
@@ -3278,7 +3278,7 @@ function HomeInner() {
       }
     } catch (err) {
       const q = idea.split(/\s+/).slice(0, 3).join(" ");
-      console.log("[meta] fetch error:", err, "Ã¢ÂÂ falling back to truncated idea:", q);
+      console.log("[meta] fetch error:", err, "— falling back to truncated idea:", q);
       extraFetches?.(q);
     }
   };
@@ -3344,7 +3344,7 @@ function HomeInner() {
       return;
     }
 
-    // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Other tools: existing flow ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+    // ââ Other tools: existing flow ââ
      else {
       const steps = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3);
       scanTimersRef.current = Array.from({ length: steps - 1 }, (_, i) =>
@@ -3495,10 +3495,10 @@ function HomeInner() {
   };
 
   const allSections = streamedContent ? parseSections(streamedContent, loading) : [];
-  // Normalize variation selectors so "ÃÂ°ÃÂÃÂÃÂ¡ÃÂ¯ÃÂ¸ÃÂ" (with FE0F) and "ÃÂ°ÃÂÃÂÃÂ¡" (without) both match
+  // Normalize variation selectors so "ð¡ï¸" (with FE0F) and "ð¡" (without) both match
   const stripVS = (s: string) => s.replace(/\uFE0F/g, "");
-  const scoreSection = allSections.find((s) => stripVS(s.emoji) === stripVS("ÃÂ°ÃÂÃÂÃÂ¡ÃÂ¯ÃÂ¸ÃÂ"));
-  const sections = allSections.filter((s) => stripVS(s.emoji) !== stripVS("ÃÂ°ÃÂÃÂÃÂ¡ÃÂ¯ÃÂ¸ÃÂ"));
+  const scoreSection = allSections.find((s) => stripVS(s.emoji) === stripVS("ð¡ï¸"));
+  const sections = allSections.filter((s) => stripVS(s.emoji) !== stripVS("ð¡ï¸"));
   const scoreData = scoreSection ? parseScore(scoreSection.body) : null;
   const currentTool = TOOLS.find((t) => t.id === selectedTool);
 
@@ -3529,7 +3529,7 @@ function HomeInner() {
         {/* Main content */}
         <main style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto", overflowX: "hidden", padding: "0 16px", maxWidth: "100%" }}>
 
-          {/* Ã¢ÂÂÃ¢ÂÂ Scanning overlay Ã¢ÂÂÃ¢ÂÂ */}
+          {/* ── Scanning overlay ── */}
           {scanStep >= 0 ? (() => {
             const isStack = selectedTool === "stack-advisor";
             const accentColor = isStack ? "#0ea5e9" : "#6366f1";
@@ -3556,7 +3556,7 @@ function HomeInner() {
             const sources = isStack ? STACK_TOOLS : DIG_SOURCES;
             const moreLabel = isStack ? "+ 700 tools evaluated in total" : "+ 60 more sources in the background";
             const DIG_MSGS = ["Claude is reading 47 Reddit posts right now. You could not have done this yourself.", "Wish AI were faster? So do we. Worth the wait, we promise.", "Scanning App Store, YouTube, X, Reddit, LinkedIn... almost done.", "Your competitors skipped this research. You didn't.", "134 apps found so far. Most are terrible. We'll tell you which."];
-            const STACK_MSGS = ["Comparing 700+ tools so you don't have to. You're welcome.", "Lovable, Supabase, Stripe Ã¢ÂÂ matched to your exact budget and skill level.", "Wish AI were faster? So do we. Almost there.", "700+ tools evaluated. Most won't make the cut.", "The internet has opinions on tools. We filtered the good ones."];
+            const STACK_MSGS = ["Comparing 700+ tools so you don't have to. You're welcome.", "Lovable, Supabase, Stripe — matched to your exact budget and skill level.", "Wish AI were faster? So do we. Almost there.", "700+ tools evaluated. Most won't make the cut.", "The internet has opinions on tools. We filtered the good ones."];
             const msgs = isStack ? STACK_MSGS : DIG_MSGS;
             const crossHref = isStack ? "/?tool=gap-analysis" : "/?tool=stack-advisor";
             const crossTitle = isStack ? "Also try Dig" : "Also try Stack";
@@ -3586,7 +3586,7 @@ function HomeInner() {
                         <div key={i} style={{ display: "flex", alignItems: "center", gap: 7, padding: "5px 8px", borderRadius: 6, background: isActive ? `${accentColor}12` : "var(--clr-surface-2)", opacity: (!isDone && !isActive) ? 0.2 : isDone ? 0.45 : 1, transition: "opacity 0.3s" }}>
                           <div style={{ width: 18, height: 18, borderRadius: 4, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{s.svg}</div>
                           <span style={{ fontSize: "0.6875rem", fontWeight: 500, color: "var(--clr-text)", flex: 1 }}>{s.label}</span>
-                          {isDone && <span style={{ color: "#16a34a", fontSize: "0.7rem" }}>Ã¢ÂÂ</span>}
+                          {isDone && <span style={{ color: "#16a34a", fontSize: "0.7rem" }}>✓</span>}
                           {isActive && <div style={{ width: 9, height: 9, borderRadius: "50%", border: `1.5px solid ${accentColor}40`, borderTopColor: accentColor, animation: "spin 0.8s linear infinite", flexShrink: 0 }} />}
                         </div>
                       );
@@ -3607,7 +3607,7 @@ function HomeInner() {
                       <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text)", marginBottom: 1 }}>{crossTitle}</div>
                       <div style={{ fontSize: "0.6875rem", color: "var(--clr-text-4)" }}>{crossSub}</div>
                     </div>
-                    <a href={crossHref} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.6875rem", fontWeight: 500, padding: "3px 9px", borderRadius: 5, border: `1px solid ${crossColor}50`, color: crossColor, background: `${crossColor}10`, textDecoration: "none", whiteSpace: "nowrap" as const }}>Try Ã¢ÂÂ</a>
+                    <a href={crossHref} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.6875rem", fontWeight: 500, padding: "3px 9px", borderRadius: 5, border: `1px solid ${crossColor}50`, color: crossColor, background: `${crossColor}10`, textDecoration: "none", whiteSpace: "nowrap" as const }}>Try →</a>
                   </div>
                 </div>
               </div>
@@ -3615,10 +3615,10 @@ function HomeInner() {
           })() : (
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
 
-              {/* Ã¢ÂÂÃ¢ÂÂ Pulse Panel (default view) Ã¢ÂÂÃ¢ÂÂ */}
+              {/* ── Pulse Panel (default view) ── */}
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                  {/* Ã¢ÂÂÃ¢ÂÂ HERO Ã¢ÂÂÃ¢ÂÂ */}
+                  {/* ── HERO ── */}
                   <div style={{ padding: "1.75rem 1.5rem 1.5rem", margin: "12px 12px 0", flexShrink: 0, borderRadius: 14, border: "1px solid var(--clr-border)", background: "#f7f6f3" }}>
                     <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-4)", marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
                       <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
@@ -3632,7 +3632,7 @@ function HomeInner() {
                     </p>
                     <p style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", lineHeight: 1.6, margin: "0 0 18px", whiteSpace: "normal" as const }}>
                       <strong style={{ color: "var(--clr-text)", fontWeight: 700 }}>Don't build what already exists.</strong>
-                      {" "}We'll show you what doesn't Ã¢ÂÂ and exactly how to build it.
+                      {" "}We'll show you what doesn't — and exactly how to build it.
                     </p>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" as const }}>
                       <button
@@ -3642,7 +3642,7 @@ function HomeInner() {
                         onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
                       >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                        Dig my idea Ã¢ÂÂ
+                        Dig my idea →
                       </button>
                       <button
                         onClick={() => router.push("/?tool=stack-advisor")}
@@ -3650,9 +3650,9 @@ function HomeInner() {
                         onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
                       >
-                        Get my Stack Ã¢ÂÂ
+                        Get my Stack →
                       </button>
-                      <span style={{ fontSize: "0.7rem", color: "var(--clr-text-4)" }}>1 credit each ÃÂ· Free to browse</span>
+                      <span style={{ fontSize: "0.7rem", color: "var(--clr-text-4)" }}>1 credit each · Free to browse</span>
                     </div>
                   </div>
 
@@ -3672,7 +3672,7 @@ function HomeInner() {
                   {/* Feed */}
                   <div style={{ flex:1, overflowY:"auto", padding:"1.25rem 1.5rem" }}>
 
-                    {/* Ã¢ÂÂÃ¢ÂÂ PRODUCT HUNT Ã¢ÂÂÃ¢ÂÂ */}
+                    {/* ── PRODUCT HUNT ── */}
                     {pulseTab==="ph" && (
                       <div>
                         {/* Filters */}
@@ -3730,7 +3730,7 @@ function HomeInner() {
                                     <button
                                       onClick={e=>{e.preventDefault();handleSelectTool("gap-analysis");setTimeout(()=>setIdea(s.tagline||s.title||""),0);}}
                                       style={{ fontSize:"0.6875rem", fontWeight:600, color:"#534AB7", background:"rgba(99,102,241,0.08)", border:"0.5px solid rgba(99,102,241,0.25)", borderRadius:999, padding:"4px 12px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}
-                                    >Dig this niche Ã¢ÂÂ</button>
+                                    >Dig this niche →</button>
                                   </div>
                                 </div>
                               );
@@ -3740,7 +3740,7 @@ function HomeInner() {
                       </div>
                     )}
 
-                    {/* Ã¢ÂÂÃ¢ÂÂ APP STORE Ã¢ÂÂÃ¢ÂÂ */}
+                    {/* ── APP STORE ── */}
                     {pulseTab==="appstore" && (
                       <div>
                         <div style={{ display:"flex", gap:8, marginBottom:"1.25rem", flexWrap:"wrap" }}>
@@ -3765,7 +3765,7 @@ function HomeInner() {
                             <div style={{display:"flex",alignItems:"flex-start",gap:"1rem"}}>
                               {app.icon_url
                                 ? <img src={app.icon_url} alt="" width={64} height={64} style={{borderRadius:14,flexShrink:0,objectFit:"cover",border:"1px solid var(--clr-border)"}}/>
-                                : <div style={{width:64,height:64,borderRadius:14,background:"var(--clr-border)",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.75rem"}}>Ã°ÂÂÂ±</div>}
+                                : <div style={{width:64,height:64,borderRadius:14,background:"var(--clr-border)",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.75rem"}}>📱</div>}
                               <div style={{flex:1,minWidth:0}}>
                                 <div style={{display:"flex",alignItems:"center",gap:"0.5rem",marginBottom:"0.25rem",flexWrap:"wrap"}}>
                                   <span style={{fontSize:"1rem",fontWeight:650,color:"var(--clr-text)",letterSpacing:"-0.02em"}}>{app.app_name}</span>
@@ -3791,7 +3791,7 @@ function HomeInner() {
                             )}
                             {(app.claude_what||app.claude_difficulty||app.claude_competitors||app.claude_build_with)&&<div style={{marginTop:8}}>
 {app.claude_what&&<div style={{display:"grid",gridTemplateColumns:"80px 1fr",gap:"8px",alignItems:"center",padding:"10px 0",borderTop:"1px solid var(--clr-border)"}}><span style={{fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)"}}>What</span><p style={{fontSize:"0.8rem",color:"var(--clr-text)",margin:0,lineHeight:1.5}}>{app.claude_what}</p></div>}
-{app.claude_difficulty&&<div style={{display:"grid",gridTemplateColumns:"80px 1fr",gap:"8px",alignItems:"center",padding:"10px 0",borderTop:"1px solid var(--clr-border)"}}><span style={{fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)"}}>Difficulty</span><div style={{display:"flex",alignItems:"center",gap:5}}><span style={{width:7,height:7,borderRadius:"50%",background:app.claude_difficulty==="simple"?"#639922":app.claude_difficulty==="medium"?"#BA7517":"#A32D2D",flexShrink:0,display:"inline-block"}}/><span style={{fontSize:"0.8rem",fontWeight:600,color:app.claude_difficulty==="simple"?"#3B6D11":app.claude_difficulty==="medium"?"#854F0B":"#A32D2D",textTransform:"capitalize"}}>{app.claude_difficulty}</span>{app.claude_difficulty_note&&<span className="diff-note" style={{fontSize:"0.75rem",color:"var(--clr-text-3)"}}>{"Ã¢ÂÂ "}{app.claude_difficulty_note}</span>}</div></div>}
+{app.claude_difficulty&&<div style={{display:"grid",gridTemplateColumns:"80px 1fr",gap:"8px",alignItems:"center",padding:"10px 0",borderTop:"1px solid var(--clr-border)"}}><span style={{fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)"}}>Difficulty</span><div style={{display:"flex",alignItems:"center",gap:5}}><span style={{width:7,height:7,borderRadius:"50%",background:app.claude_difficulty==="simple"?"#639922":app.claude_difficulty==="medium"?"#BA7517":"#A32D2D",flexShrink:0,display:"inline-block"}}/><span style={{fontSize:"0.8rem",fontWeight:600,color:app.claude_difficulty==="simple"?"#3B6D11":app.claude_difficulty==="medium"?"#854F0B":"#A32D2D",textTransform:"capitalize"}}>{app.claude_difficulty}</span>{app.claude_difficulty_note&&<span className="diff-note" style={{fontSize:"0.75rem",color:"var(--clr-text-3)"}}>{"— "}{app.claude_difficulty_note}</span>}</div></div>}
 {app.claude_competitors&&app.claude_competitors.length>0&&<div style={{display:"grid",gridTemplateColumns:"80px 1fr",gap:"8px",alignItems:"center",padding:"10px 0",borderTop:"1px solid var(--clr-border)"}}><span style={{fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)"}}>Competitors</span><div style={{display:"flex",flexWrap:"wrap",gap:5}}>{app.claude_competitors.map((comp:string)=><a key={comp} href={"https://apps.apple.com/search?term="+encodeURIComponent(comp)} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{fontSize:"0.75rem",padding:"2px 9px",borderRadius:999,background:"var(--clr-surface)",border:"1px solid var(--clr-border)",color:"var(--clr-text)",textDecoration:"none",whiteSpace:"nowrap"}}>{comp}</a>)}</div></div>}
 {app.claude_build_with&&app.claude_build_with.length>0&&<div style={{display:"grid",gridTemplateColumns:"80px 1fr",gap:"8px",alignItems:"flex-start",padding:"8px 0 4px",borderTop:"1px solid var(--clr-border)"}}><span style={{fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--clr-text-4)",paddingTop:4}}>Build with</span><div style={{display:"flex",flexWrap:"wrap",gap:5}}>{app.claude_build_with.map((t:{name:string;role:string})=><div key={t.name} style={{display:"flex",flexDirection:"column",alignItems:"center",background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:7,padding:"3px 9px",gap:1}}><span style={{fontSize:"0.72rem",fontWeight:600,color:"var(--clr-text)"}}>{t.name}</span><span style={{fontSize:"0.6rem",color:"var(--clr-text-4)"}}>{t.role}</span></div>)}</div></div>}
 </div>}
@@ -3806,7 +3806,7 @@ function HomeInner() {
                                 <div style={{fontSize:"0.6875rem",fontWeight:600,color:"var(--clr-text)",marginBottom:1}}>Got a better idea?</div>
                                 <div style={{fontSize:"0.625rem",color:"var(--clr-text-3)"}}>Analyze competitors & gaps</div>
                               </div>
-                              <button onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"#534AB7",background:"rgba(99,102,241,0.08)",border:"0.5px solid rgba(99,102,241,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Dig my idea Ã¢ÂÂ</button>
+                              <button onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"#534AB7",background:"rgba(99,102,241,0.08)",border:"0.5px solid rgba(99,102,241,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Dig my idea →</button>
                             </div>
                             <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px"}}>
                               <div style={{flexShrink:0,width:30,height:30,borderRadius:8,background:"rgba(16,185,129,0.08)",display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -3816,7 +3816,7 @@ function HomeInner() {
                                 <div style={{fontSize:"0.6875rem",fontWeight:600,color:"var(--clr-text)",marginBottom:1}}>Want to build this yourself?</div>
                                 <div style={{fontSize:"0.625rem",color:"var(--clr-text-3)"}}>Get your personal tool stack</div>
                               </div>
-                              <button onClick={e=>{e.preventDefault();router.push("/?tool=stack-advisor");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"rgb(5,150,105)",background:"rgba(16,185,129,0.08)",border:"0.5px solid rgba(16,185,129,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Get my Stack Ã¢ÂÂ</button>
+                              <button onClick={e=>{e.preventDefault();router.push("/?tool=stack-advisor");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"rgb(5,150,105)",background:"rgba(16,185,129,0.08)",border:"0.5px solid rgba(16,185,129,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Get my Stack →</button>
                             </div>
                           </div>
                         </div>
@@ -3829,10 +3829,10 @@ function HomeInner() {
                 </div>
               )}
 
-              {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Input section ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+              {/* ââ Input section ââ */}
               {selectedTool && currentTool && !hasResults && !loading && (
                 <div ref={inputSectionRef}>
-                  {/* Dig hero Ã¢ÂÂ clean */}
+                  {/* Dig hero — clean */}
                   {selectedTool === "gap-analysis" && (
                     <div style={{ textAlign: "center" as const, padding: "20px 24px 10px" }}>
                       <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "0.6875rem", color: "var(--clr-text-3)", marginBottom: 14, letterSpacing: "0.03em" }}>
@@ -3858,7 +3858,7 @@ function HomeInner() {
                         Stop Googling<br/><em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>"best tools for vibecoding"</em>
                       </h1>
                       <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 440, margin: "0 auto" }}>
-                        Describe what you're building. We'll give you exact tools, real costs<br/>and a build order Ã¢ÂÂ matched to your budget and skill level.
+                        Describe what you're building. We'll give you exact tools, real costs<br/>and a build order — matched to your budget and skill level.
                       </p>
                     </div>
                   )}
@@ -3888,11 +3888,11 @@ function HomeInner() {
 
                 </div>
               )}
-              {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Results Ã¢ÂÂ inline below input ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+              {/* ââ Results — inline below input ââ */}
               {hasResults && (
               <div ref={resultsRef} style={{ paddingTop: "1rem", paddingBottom: "5rem", animation: "fadeSlideIn 0.3s ease" }}>
 
-              {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Compact query bar ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+              {/* ââ Compact query bar ââ */}
               {currentTool && (
                 <div style={{
                   display: "flex", alignItems: "center", gap: 12,
@@ -3923,8 +3923,8 @@ function HomeInner() {
                       <div style={{ display: "flex", gap: 5, marginTop: 5, flexWrap: "wrap" as const }}>
                         {[
                           { label: budget === "bootstrap" ? "Bootstrapped" : budget === "growing" ? "Growing" : budget === "funded" ? "Funded" : "Scale", icon: "$" },
-                          { label: techLevel === "nocode" ? "No-code" : techLevel === "lowcode" ? "Low-code" : "Developer", icon: "Ã¢ÂÂ" },
-                          { label: platform === "web" ? "Web" : platform === "mobile" ? "Mobile" : "Web + Mobile", icon: "Ã°ÂÂÂ¥" },
+                          { label: techLevel === "nocode" ? "No-code" : techLevel === "lowcode" ? "Low-code" : "Developer", icon: "⚙" },
+                          { label: platform === "web" ? "Web" : platform === "mobile" ? "Mobile" : "Web + Mobile", icon: "🖥" },
                         ].map((badge, i) => (
                           <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: "0.65rem", fontWeight: 600, padding: "2px 7px", borderRadius: 4, background: "var(--clr-surface-2)", border: "1px solid var(--clr-border)", color: "var(--clr-text-4)" }}>
                             {badge.label}
@@ -3965,14 +3965,14 @@ function HomeInner() {
                         const xposts = arr<{text:string;likes:string}>(p.xPosts);
                         if (reddit.length || xposts.length) {
                           let html = "<h2>Community Signals</h2>";
-                          if (reddit.length) { html += "<h3>Reddit</h3><ul>" + reddit.map(r=>`<li><strong>${esc(r.title)}</strong> Ã¢ÂÂ ${esc(r.votes)} votes</li>`).join("") + "</ul>"; }
+                          if (reddit.length) { html += "<h3>Reddit</h3><ul>" + reddit.map(r=>`<li><strong>${esc(r.title)}</strong> — ${esc(r.votes)} votes</li>`).join("") + "</ul>"; }
                           if (xposts.length) { html += "<h3>X / Twitter</h3><ul>" + xposts.map(x=>`<li>${esc(x.text)} <em>(${esc(x.likes)} likes)</em></li>`).join("") + "</ul>"; }
                           sections.push(html);
                         }
 
                         // Competitors
                         const comps = arr<{name:string;tagline:string;rating:string;reviews:string;platform:string}>(p.competitors);
-                        if (comps.length) sections.push(`<h2>Competitors</h2><ul>${comps.map(c=>`<li><strong>${esc(c.name)}</strong> Ã¢ÂÂ ${esc(c.tagline)}${c.rating ? ` (${esc(c.rating)}Ã¢ÂÂ, ${esc(c.reviews)} reviews)` : ""}</li>`).join("")}</ul>`);
+                        if (comps.length) sections.push(`<h2>Competitors</h2><ul>${comps.map(c=>`<li><strong>${esc(c.name)}</strong> — ${esc(c.tagline)}${c.rating ? ` (${esc(c.rating)}★, ${esc(c.reviews)} reviews)` : ""}</li>`).join("")}</ul>`);
 
                         // Market Gaps
                         const gaps = arr<{title:string;description:string;opportunity:string}>(p.marketGaps);
@@ -4007,7 +4007,7 @@ function HomeInner() {
                           sections.push(html);
                         }
 
-                        const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(toolLabel)} Ã¢ÂÂ ${esc(idea)}</title><style>
+                        const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(toolLabel)} — ${esc(idea)}</title><style>
 *{box-sizing:border-box}body{font-family:system-ui,-apple-system,sans-serif;color:#111;max-width:760px;margin:0 auto;padding:40px 32px;line-height:1.65;font-size:14px}
 .header{margin-bottom:28px;padding-bottom:20px;border-bottom:2px solid #e5e7eb}
 .badge{display:inline-block;background:#eff6ff;color:#1d4ed8;padding:2px 9px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
@@ -4024,7 +4024,7 @@ blockquote{background:#faf5ff;border-left:3px solid #7c6fff;margin:0 0 16px;padd
 </style></head><body>
 <div class="header"><div class="badge">${esc(toolLabel)}</div><h1>${esc(idea)}</h1><p class="meta">${dateStr}</p></div>
 ${sections.join("\n")}
-<div class="footer">Generated by Unbuilt.me ÃÂ· ${dateStr}</div>
+<div class="footer">Generated by Unbuilt.me · ${dateStr}</div>
 </body></html>`;
 
                         // Use shared generatePdf - same as My Reports
@@ -4084,9 +4084,9 @@ ${sections.join("\n")}
                 </div>
               )}
 
-              {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Data source badges + cache badge ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+              {/* ââ Data source badges + cache badge ââ */}
 
-              {/* Loading skeleton Ã¢ÂÂ only while nothing has streamed yet */}
+              {/* Loading skeleton — only while nothing has streamed yet */}
               {loading && (selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && <GapAnalysisSkeleton />}
               {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
 
@@ -4097,7 +4097,7 @@ ${sections.join("\n")}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,80,80,0.9)" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "rgba(255,80,80,0.9)" }}>Out of credits</span>
                   </div>
-                  <a href="/pricing" style={{ fontSize: "0.8rem", fontWeight: 700, color: "#fff", background: "rgba(255,80,80,0.85)", padding: "6px 14px", borderRadius: 7, textDecoration: "none" }}>Buy credits Ã¢ÂÂ</a>
+                  <a href="/pricing" style={{ fontSize: "0.8rem", fontWeight: 700, color: "#fff", background: "rgba(255,80,80,0.85)", padding: "6px 14px", borderRadius: 7, textDecoration: "none" }}>Buy credits →</a>
                 </div>
               )}
               {error && (
@@ -4121,7 +4121,7 @@ ${sections.join("\n")}
                       </div>
                       <div style={{ color: "var(--clr-text-3)", lineHeight: 1.5 }}>
                         {error.includes("Overloaded") || error.includes("overloaded")
-                          ? "The AI is under heavy load. Wait a few seconds and try again Ã¢ÂÂ it usually clears quickly."
+                          ? "The AI is under heavy load. Wait a few seconds and try again — it usually clears quickly."
                           : error.includes("timeout") || error.includes("Timeout")
                           ? "The analysis took too long. Try a shorter or more specific description."
                           : error}
@@ -4202,7 +4202,7 @@ ${sections.join("\n")}
                 ) : null
               ) : null}
 
-              {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ App Stores (Dig only) Ã¢ÂÂ unified merged list ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+              {/* ââ App Stores (Dig only) — unified merged list ââ */}
 
 
 
