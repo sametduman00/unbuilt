@@ -9,7 +9,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth, useUser, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
 
-// ââ Types ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ââ Types âââââââââââââââââââââââââââââââââââââââââââââââââââââ
 type ToolId = "gap-analysis" | "competitor-radar" | "trend-feed" | "stack-advisor";
 type Budget = "bootstrap" | "growing" | "funded" | "scale";
 type TechLevel = "nocode" | "lowcode" | "developer";
