@@ -9,6 +9,7 @@ import ConsentGate from "./components/ConsentGate";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+import ConversionTracker from "./components/ConversionTracker";
 
 export const viewport = {
   width: "device-width",
@@ -109,6 +110,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <MobileNav />
             <CookieConsent />
           </ConsentGate>
+                      <ConversionTracker />
         </ClerkThemeProvider>
       </body>
       <GoogleAnalytics gaId="G-QPCR0DP98G" />
