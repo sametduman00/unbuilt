@@ -3634,7 +3634,7 @@ function HomeInner() {
                       <strong style={{ color: "var(--clr-text)", fontWeight: 700 }}>Don't build what already exists.</strong>
                       {" "}We'll show you what doesn't — and exactly how to build it.
                     </p>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" as const }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "nowrap" as const }}>
                       <button
                         onClick={() => router.push("/?tool=gap-analysis")}
                         style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 18px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
@@ -3650,9 +3650,10 @@ function HomeInner() {
                         onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
                       >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
                         Get my Stack →
                       </button>
-                      <span style={{ fontSize: "0.7rem", color: "var(--clr-text-4)" }}>1 credit each · Free to browse</span>
+                      
                     </div>
                   </div>
 
