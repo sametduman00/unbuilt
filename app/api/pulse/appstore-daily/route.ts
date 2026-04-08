@@ -14,9 +14,9 @@ export async function GET(req: NextRequest) {
     const { data: prevRows } = await sb
       .from("appstore_daily_cache")
       .select("id, fetch_date, apps")
-      .neq("fetch_date", today)
+      .lte("fetch_date", today)
       .order("fetch_date", { ascending: false })
-      .limit(2); // only look back 2 days for screenshot backfill
+      .limit(7); // only look back 2 days for screenshot backfill
 
     if (prevRows && prevRows.length > 0) {
       for (const row of prevRows) {
