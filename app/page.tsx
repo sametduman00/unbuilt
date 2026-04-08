@@ -3619,7 +3619,7 @@ function HomeInner() {
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   {/* ── HERO ── */}
-                  <div style={{ padding: "1.75rem 1.5rem 1.5rem", margin: "12px 12px 0", flexShrink: 0, borderRadius: 14, border: "1px solid var(--clr-border)", background: "#f7f6f3" }}>
+                  <div style={{ padding: "1.25rem 1.5rem 1rem", margin: "12px 12px 0", flexShrink: 0, borderRadius: 14, border: "1px solid var(--clr-border)", background: "#f7f6f3" }}>
                     <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-4)", marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
                       <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
                       For vibe coders
@@ -3637,20 +3637,18 @@ function HomeInner() {
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "nowrap" as const }}>
                       <button
                         onClick={() => router.push("/?tool=gap-analysis")}
-                        style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 18px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
+                        style={{ display: "inline-flex", alignItems: "center", gap: 7, whiteSpace: "nowrap" as const, padding: "8px 18px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
                         onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"}
                         onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
                       >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                        Dig my idea →
+                                             Dig my idea →
                       </button>
                       <button
                         onClick={() => router.push("/?tool=stack-advisor")}
-                        style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "8px 18px", background: "rgba(16,185,129,0.1)", color: "rgb(5,150,105)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(16,185,129,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
+                        style={{ display: "inline-flex", alignItems: "center", gap: 7, whiteSpace: "nowrap" as const, padding: "8px 18px", background: "rgba(16,185,129,0.1)", color: "rgb(5,150,105)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(16,185,129,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
                         onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
                       >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
                         Get my Stack →
                       </button>
                       
