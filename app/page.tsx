@@ -3727,10 +3727,7 @@ function HomeInner() {
                       </div>
                     </div>
                   </div>
-                    </button>
                       
-                    </div>
-                  </div>
 
                   {/* Feed header */}
                   <div style={{ padding: "1rem 1.5rem 0", flexShrink: 0 }}>
