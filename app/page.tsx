@@ -3711,7 +3711,7 @@ function HomeInner() {
                       {/* Bottom row */}
                       <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <button
-                          onClick={() => { setShowSampleReport(true); setSelectedTool(activeHeroTab === "gap-analysis" ? TOOLS[0] : TOOLS[1]); }}
+                          onClick={() => { setSelectedTool(activeHeroTab === "gap-analysis" ? "gap-analysis" : "stack-advisor"); setShowSampleReport(true); }}
                           style={{ background: "transparent", border: "1px solid var(--clr-border)", borderRadius: 7, padding: "7px 14px", fontSize: "0.8125rem", color: "var(--clr-text-3)", cursor: "pointer" }}
                         >Sample Report ↓</button>
                         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
