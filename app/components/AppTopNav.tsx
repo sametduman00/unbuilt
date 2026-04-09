@@ -1,8 +1,7 @@
 "use client";
-import { useAuth, useUser, UserButton } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 const DOCS_ITEMS = [
   { label: "Terms of Service", href: "/legal/terms-of-service" },
@@ -24,7 +23,6 @@ const PRODUCT_ITEMS = [
 export default function AppTopNav() {
   const { isSignedIn } = useAuth();
   const { user } = useUser();
-  const router = useRouter();
   const [docsOpen, setDocsOpen] = useState(false);
   const [productOpen, setProductOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
@@ -43,101 +41,83 @@ export default function AppTopNav() {
   }, []);
 
   const credits = (user?.publicMetadata?.credits as number) ?? 0;
-  const initials = user ? ((user.firstName?.[0] ?? "") + (user.lastName?.[0] ?? "")).toUpperCase() || user.emailAddresses[0]?.emailAddress[0].toUpperCase() : "";
-  const firstName = user?.firstName || user?.emailAddresses[0]?.emailAddress.split("@")[0] || "";
-
-  const navStyle: React.CSSProperties = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 100,
-    height: 52,
-    background: "var(--clr-surface)",
-    borderBottom: "1px solid var(--clr-border)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "0 32px",
-  };
-
-  const linkStyle: React.CSSProperties = {
-    fontSize: "0.875rem",
-    color: "var(--clr-text-3)",
-    padding: "6px 12px",
-    borderRadius: 6,
-    cursor: "pointer",
-    textDecoration: "none",
-    whiteSpace: "nowrap",
-  };
-
-  const dropdownStyle: React.CSSProperties = {
-    position: "absolute",
-    top: 40,
-    left: 0,
-    background: "var(--clr-surface)",
-    border: "1px solid var(--clr-border)",
-    borderRadius: 10,
-    padding: 6,
-    minWidth: 200,
-    zIndex: 200,
-    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-  };
-
-  const dropItemStyle: React.CSSProperties = {
-    display: "block",
-    padding: "7px 10px",
-    fontSize: "0.8125rem",
-    color: "var(--clr-text-3)",
-    borderRadius: 6,
-    textDecoration: "none",
-    cursor: "pointer",
-  };
-
-  const dropSectionStyle: React.CSSProperties = {
-    fontSize: "0.625rem",
-    fontWeight: 600,
-    letterSpacing: "0.08em",
-    color: "var(--clr-text-4)",
-    padding: "6px 10px 4px",
-  };
+  const firstName = user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "";
+  const initials = user
+    ? ((user.firstName?.[0] ?? "") + (user.lastName?.[0] ?? "")).toUpperCase() ||
+      user.emailAddresses[0]?.emailAddress[0].toUpperCase()
+    : "";
 
   return (
-    <nav style={navStyle}>
-      {/* Logo */}
+    <nav style={{
+      position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+      height: 58,
+      background: "#ffffff",
+      borderBottom: "1px solid #e8e8e5",
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+      padding: "0 28px",
+      boxSizing: "border-box",
+    }}>
+      {/* Logo — unchanged */}
       <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", flexShrink: 0 }}>
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" style={{ color: "var(--clr-text)" }}>
-          <rect x="0" y="0" width="6" height="6" rx="1"/>
-          <rect x="8" y="0" width="6" height="6" rx="1"/>
-          <rect x="0" y="8" width="6" height="6" rx="1"/>
-          <rect x="8" y="8" width="6" height="6" rx="1"/>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style={{ color: "#1a1a1a" }}>
+          <rect x="0" y="0" width="6.5" height="6.5" rx="1.5"/>
+          <rect x="9.5" y="0" width="6.5" height="6.5" rx="1.5"/>
+          <rect x="0" y="9.5" width="6.5" height="6.5" rx="1.5"/>
+          <rect x="9.5" y="9.5" width="6.5" height="6.5" rx="1.5"/>
         </svg>
-        <span style={{ fontSize: "0.9375rem", fontWeight: 500, color: "var(--clr-text)" }}>unbuilt</span>
+        <span style={{ fontSize: "1rem", fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.01em" }}>unbuilt</span>
       </Link>
 
-      {/* Center nav */}
-      <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Link href="/use-cases" style={linkStyle}>Use Cases</Link>
-        <Link href="/how-it-works" style={linkStyle}>How it works</Link>
+      {/* Center nav — Clerk style: dark text, medium weight */}
+      <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
+        <Link href="/use-cases" style={{
+          fontSize: "0.9rem", fontWeight: 500, color: "#1a1a1a",
+          padding: "6px 14px", borderRadius: 8, textDecoration: "none",
+          transition: "background 0.15s",
+        }}
+          onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+          onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+        >Use Cases</Link>
+
+        <Link href="/how-it-works" style={{
+          fontSize: "0.9rem", fontWeight: 500, color: "#1a1a1a",
+          padding: "6px 14px", borderRadius: 8, textDecoration: "none",
+        }}
+          onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+          onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+        >How it works</Link>
 
         {/* Docs dropdown */}
         <div ref={docsRef} style={{ position: "relative" }}>
-          <div
-            onClick={() => { setDocsOpen(p => !p); setProductOpen(false); setUserOpen(false); }}
-            style={{ ...linkStyle, display: "flex", alignItems: "center", gap: 4, userSelect: "none",
-              background: docsOpen ? "var(--clr-surface-2)" : "transparent",
-              color: docsOpen ? "var(--clr-text)" : "var(--clr-text-3)" }}
-          >
+          <button onClick={() => { setDocsOpen(p => !p); setProductOpen(false); setUserOpen(false); }}
+            style={{
+              display: "flex", alignItems: "center", gap: 5,
+              fontSize: "0.9rem", fontWeight: 500,
+              color: docsOpen ? "#000" : "#1a1a1a",
+              background: docsOpen ? "#f5f5f3" : "transparent",
+              border: "none", borderRadius: 8, padding: "6px 14px", cursor: "pointer",
+            }}>
             Docs
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <polyline points={docsOpen ? "2 7 5 4 8 7" : "2 4 5 7 8 4"}/>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" style={{ transition: "transform 0.15s", transform: docsOpen ? "rotate(180deg)" : "none" }}>
+              <polyline points="2 4.5 6 8 10 4.5"/>
             </svg>
-          </div>
+          </button>
           {docsOpen && (
-            <div style={dropdownStyle}>
-              <div style={dropSectionStyle}>LEGAL & POLICIES</div>
+            <div style={{
+              position: "absolute", top: "calc(100% + 6px)", left: 0,
+              background: "#fff", border: "1px solid #e8e8e5",
+              borderRadius: 12, padding: 6, minWidth: 210, zIndex: 200,
+              boxShadow: "0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04)",
+            }}>
+              <div style={{ fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.09em", color: "#999", padding: "6px 10px 4px", textTransform: "uppercase" }}>
+                LEGAL & POLICIES
+              </div>
               {DOCS_ITEMS.map(item => (
-                <Link key={item.href} href={item.href} style={dropItemStyle} onClick={() => setDocsOpen(false)}>
+                <Link key={item.href} href={item.href}
+                  style={{ display: "block", padding: "7px 10px", fontSize: "0.875rem", color: "#1a1a1a", borderRadius: 8, textDecoration: "none", fontWeight: 450 }}
+                  onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+                  onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                  onClick={() => setDocsOpen(false)}>
                   {item.label}
                 </Link>
               ))}
@@ -147,22 +127,35 @@ export default function AppTopNav() {
 
         {/* Product dropdown */}
         <div ref={productRef} style={{ position: "relative" }}>
-          <div
-            onClick={() => { setProductOpen(p => !p); setDocsOpen(false); setUserOpen(false); }}
-            style={{ ...linkStyle, display: "flex", alignItems: "center", gap: 4, userSelect: "none",
-              background: productOpen ? "var(--clr-surface-2)" : "transparent",
-              color: productOpen ? "var(--clr-text)" : "var(--clr-text-3)" }}
-          >
+          <button onClick={() => { setProductOpen(p => !p); setDocsOpen(false); setUserOpen(false); }}
+            style={{
+              display: "flex", alignItems: "center", gap: 5,
+              fontSize: "0.9rem", fontWeight: 500,
+              color: productOpen ? "#000" : "#1a1a1a",
+              background: productOpen ? "#f5f5f3" : "transparent",
+              border: "none", borderRadius: 8, padding: "6px 14px", cursor: "pointer",
+            }}>
             Product
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <polyline points={productOpen ? "2 7 5 4 8 7" : "2 4 5 7 8 4"}/>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" style={{ transition: "transform 0.15s", transform: productOpen ? "rotate(180deg)" : "none" }}>
+              <polyline points="2 4.5 6 8 10 4.5"/>
             </svg>
-          </div>
+          </button>
           {productOpen && (
-            <div style={dropdownStyle}>
-              <div style={dropSectionStyle}>PRODUCT</div>
+            <div style={{
+              position: "absolute", top: "calc(100% + 6px)", left: 0,
+              background: "#fff", border: "1px solid #e8e8e5",
+              borderRadius: 12, padding: 6, minWidth: 160, zIndex: 200,
+              boxShadow: "0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04)",
+            }}>
+              <div style={{ fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.09em", color: "#999", padding: "6px 10px 4px", textTransform: "uppercase" }}>
+                PRODUCT
+              </div>
               {PRODUCT_ITEMS.map(item => (
-                <Link key={item.href} href={item.href} style={dropItemStyle} onClick={() => setProductOpen(false)}>
+                <Link key={item.href} href={item.href}
+                  style={{ display: "block", padding: "7px 10px", fontSize: "0.875rem", color: "#1a1a1a", borderRadius: 8, textDecoration: "none", fontWeight: 450 }}
+                  onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+                  onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                  onClick={() => setProductOpen(false)}>
                   {item.label}
                 </Link>
               ))}
@@ -175,69 +168,86 @@ export default function AppTopNav() {
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
         {isSignedIn ? (
           <div ref={userRef} style={{ position: "relative" }}>
-            <div
+            <button
               onClick={() => { setUserOpen(p => !p); setDocsOpen(false); setProductOpen(false); }}
               style={{
                 display: "flex", alignItems: "center", gap: 8,
-                padding: "4px 10px 4px 4px",
-                border: "1px solid var(--clr-border)",
+                padding: "5px 10px 5px 5px",
+                background: userOpen ? "#f5f5f3" : "transparent",
+                border: "1px solid #e8e8e5",
                 borderRadius: 999, cursor: "pointer",
-                background: userOpen ? "var(--clr-surface-2)" : "var(--clr-surface)",
-              }}
-            >
+                transition: "background 0.15s",
+              }}>
               <div style={{
                 width: 28, height: 28, borderRadius: "50%",
-                background: "var(--clr-accent)", color: "#fff",
+                background: "#6c47ff", color: "#fff",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: "0.75rem", fontWeight: 600, flexShrink: 0,
               }}>{initials}</div>
-              <span style={{ fontSize: "0.8125rem", fontWeight: 500, color: "var(--clr-text)" }}>{firstName}</span>
+              <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "#1a1a1a" }}>{firstName}</span>
               <span style={{
-                fontSize: "0.6875rem", color: "var(--clr-text-4)",
-                background: "var(--clr-surface-2)", borderRadius: 4, padding: "1px 6px",
+                fontSize: "0.75rem", color: "#666",
+                background: "#f0f0ee", borderRadius: 4, padding: "1px 7px", fontWeight: 500,
               }}>{credits} credits</span>
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "var(--clr-text-4)" }}>
-                <polyline points={userOpen ? "2 7 5 4 8 7" : "2 4 5 7 8 4"}/>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8"
+                style={{ color: "#888", transform: userOpen ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}>
+                <polyline points="2 4.5 6 8 10 4.5"/>
               </svg>
-            </div>
+            </button>
             {userOpen && (
-              <div style={{ ...dropdownStyle, left: "auto", right: 0, minWidth: 220 }}>
-                <div style={{ padding: "10px 10px 8px", borderBottom: "1px solid var(--clr-border)", marginBottom: 6 }}>
-                  <div style={{ fontSize: "0.8125rem", fontWeight: 500, color: "var(--clr-text)" }}>
+              <div style={{
+                position: "absolute", top: "calc(100% + 8px)", right: 0,
+                background: "#fff", border: "1px solid #e8e8e5",
+                borderRadius: 12, padding: 6, minWidth: 230, zIndex: 200,
+                boxShadow: "0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04)",
+              }}>
+                <div style={{ padding: "10px 12px 10px", borderBottom: "1px solid #f0f0ee", marginBottom: 6 }}>
+                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "#1a1a1a" }}>
                     {user?.firstName} {user?.lastName}
                   </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: 2 }}>
-                    {user?.emailAddresses[0]?.emailAddress}
+                  <div style={{ fontSize: "0.75rem", color: "#888", marginTop: 2 }}>
+                    {user?.emailAddresses?.[0]?.emailAddress}
                   </div>
                   <div style={{
                     display: "flex", alignItems: "center", justifyContent: "space-between",
-                    marginTop: 8, background: "var(--clr-surface-2)", borderRadius: 6, padding: "6px 10px",
+                    marginTop: 8, background: "#f5f5f3", borderRadius: 8, padding: "6px 10px",
                   }}>
-                    <span style={{ fontSize: "0.75rem", color: "var(--clr-text-3)" }}>Credits remaining</span>
-                    <span style={{ fontSize: "0.8125rem", fontWeight: 500, color: "var(--clr-text)" }}>{credits}</span>
+                    <span style={{ fontSize: "0.8rem", color: "#666", fontWeight: 500 }}>Credits remaining</span>
+                    <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "#1a1a1a" }}>{credits}</span>
                   </div>
                 </div>
-                <Link href="/reports" style={{ ...dropItemStyle, display: "flex", alignItems: "center", gap: 8 }} onClick={() => setUserOpen(false)}>
+                <Link href="/reports"
+                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", fontSize: "0.875rem", color: "#1a1a1a", borderRadius: 8, textDecoration: "none", fontWeight: 450 }}
+                  onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+                  onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                  onClick={() => setUserOpen(false)}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   My Reports
                 </Link>
-                <div style={{ borderTop: "1px solid var(--clr-border)", margin: "6px 0" }} />
-                <div
-                  style={{ ...dropItemStyle, display: "flex", alignItems: "center", gap: 8, color: "#dc2626" }}
-                  onClick={() => { setUserOpen(false); window.location.href = "/sign-in"; }}
-                >
+                <div style={{ borderTop: "1px solid #f0f0ee", margin: "6px 0" }}/>
+                <button
+                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", fontSize: "0.875rem", color: "#dc2626", borderRadius: 8, background: "transparent", border: "none", cursor: "pointer", width: "100%", fontWeight: 450 }}
+                  onMouseEnter={e => (e.currentTarget.style.background = "#fff5f5")}
+                  onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                  onClick={() => { setUserOpen(false); window.location.href = "/sign-in"; }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                   Sign out
-                </div>
+                </button>
               </div>
             )}
           </div>
         ) : (
           <Link href="/sign-in" style={{
-            fontSize: "0.875rem", color: "var(--clr-text)",
-            background: "transparent", border: "1px solid var(--clr-border)",
-            borderRadius: 7, padding: "6px 16px", textDecoration: "none",
-          }}>
+            fontSize: "0.875rem", fontWeight: 500,
+            color: "#fff",
+            background: "#1a1a1a",
+            borderRadius: 8, padding: "7px 18px",
+            textDecoration: "none",
+            transition: "background 0.15s",
+          }}
+            onMouseEnter={e => (e.currentTarget.style.background = "#333")}
+            onMouseLeave={e => (e.currentTarget.style.background = "#1a1a1a")}
+          >
             Sign in
           </Link>
         )}
