@@ -3731,6 +3731,8 @@ function HomeInner() {
                         </div>
                       </div>
                     </div>
+                    </>
+                  )}
                       {/* Bottom row */}
                       <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <button
