@@ -3739,7 +3739,7 @@ function HomeInner() {
                       
 
                   {showSampleReport && !selectedTool && (
-                    <div id="hero-sample-panel" style={{ width: "100%", maxWidth: 700, marginTop: "1.5rem" }}>
+                    <div id="hero-sample-panel" style={{ width: "100%", alignSelf: "stretch", marginTop: "1.5rem" }}>
                       {activeHeroTab === "gap-analysis" ? <DigSampleReport /> : <StackSampleReport />}
                     </div>
                   )}
