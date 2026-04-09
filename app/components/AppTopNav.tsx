@@ -1,5 +1,5 @@
 "use client";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useAuth, useUser, useClerk } from "@clerk/nextjs";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
@@ -66,6 +66,8 @@ export default function AppTopNav() {
   const { user } = useUser();
   const [docsOpen, setDocsOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
+  const [credits, setCredits] = useState<number | null>(null);
+  const { signOut } = useClerk();
   const docsRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
   const docsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -78,7 +80,14 @@ export default function AppTopNav() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const credits = (user?.publicMetadata?.credits as number) ?? 0;
+  useEffect(() => {
+    if (!isSignedIn) return;
+    fetch("/api/credits")
+      .then((r) => r.json())
+      .then((d) => setCredits(d.credits ?? 0))
+      .catch(() => {});
+  }, [isSignedIn]);
+
   const firstName = user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "";
   const initials = user
     ? ((user.firstName?.[0] ?? "") + (user.lastName?.[0] ?? "")).toUpperCase() ||
@@ -238,7 +247,7 @@ export default function AppTopNav() {
                     style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", fontSize: "0.875rem", color: "#dc2626", borderRadius: 8, background: "transparent", border: "none", cursor: "pointer", width: "100%", fontWeight: 450 }}
                     onMouseEnter={e => (e.currentTarget.style.background = "#fff5f5")}
                     onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-                    onClick={() => { setUserOpen(false); window.location.href = "/sign-in"; }}>
+                    onClick={() => { setUserOpen(false); signOut(); }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                       <polyline points="16 17 21 12 16 7"/>
