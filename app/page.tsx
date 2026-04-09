@@ -2956,7 +2956,7 @@ function HomeInner() {
   const [showSampleReport, setShowSampleReport] = useState(false);
   // Reset sample report when tool changes
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { setShowSampleReport(false); }, [selectedTool]);
+  useEffect(() => { setShowSampleReport(false); if (selectedTool && (window as any).__unbuiltAutoSubmit) { (window as any).__unbuiltAutoSubmit = false; setTimeout(() => handleSubmit(), 50); } }, [selectedTool]);
   const [pulseSignals, setPulseSignals] = useState<Array<{source:string;sourceLabel:string;emoji:string;title:string;subtitle:string;signal:string;url:string;timestamp:string;movementType?:string;imageUrl?:string;topics?:string[];tagline?:string;externalUrl?:string;claudeGap?:string;}>>([]);
   const [pulseLoading, setPulseLoading] = useState(false);
   const [pulseError, setPulseError] = useState<string|null>(null);
@@ -3663,7 +3663,7 @@ function HomeInner() {
                       <textarea
                         value={idea}
                         onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
-                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) router.push("/?tool=" + activeHeroTab); } }}
+                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { (window as any).__unbuiltAutoSubmit = true; router.push("/?tool=" + activeHeroTab); } } }}
                         placeholder={activeHeroTab === "gap-analysis" ? 'e.g. "Project management for freelancers" or "AI writing tool for marketers"' : 'e.g. "A marketplace for local freelancers with payments and messaging"'}
                         style={{ width: "100%", minHeight: 76, resize: "none", background: "#fafaf8", border: "1.5px solid #d0cfc9", borderRadius: 10, padding: "16px 18px", fontSize: "0.96875rem", color: "#1a1a1a", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
                       />
@@ -3721,7 +3721,7 @@ function HomeInner() {
                             <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)" }}>{40 - idea.trim().length} more chars to unlock</span>
                           )}
                           <button
-                            onClick={() => { if (idea.trim().length >= 40) router.push("/?tool=" + activeHeroTab); }}
+                            onClick={() => { if (idea.trim().length >= 40) { (window as any).__unbuiltAutoSubmit = true; router.push("/?tool=" + activeHeroTab); } }}
                             disabled={idea.trim().length < 40}
                             style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-accent)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 9, padding: "10px 26px", fontSize: "0.875rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
