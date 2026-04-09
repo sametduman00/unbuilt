@@ -103,7 +103,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ClerkThemeProvider>
           <ConsentGate>
               <AppTopNav />
-            <div className="app-content-wrapper" style={{ }}>
+            <div className="app-content-wrapper" style={{ paddingTop: "72px" }}>
               {children}
             </div>
             
