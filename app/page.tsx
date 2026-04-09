@@ -1260,8 +1260,8 @@ function DigSampleReport() {
   return (
     <div style={{ padding: "20px 0 40px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-4)" }}>Sample Dig Report</span>
-        <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>« sleep tracking app for shift workers and nurses »</span>
+        <span style={{ fontSize: 14, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-2)" }}>Sample Dig Report</span>
+        <span style={{ fontSize: 14, fontStyle: "italic" as const, color: "var(--clr-text)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 6, padding: "5px 12px", fontWeight: 500 }}>« sleep tracking app for shift workers and nurses »</span>
       </div>
       <div style={{ padding: "0 16px 16px 12px" }}>
         <GapAnalysisResult data={data} itunesApps={(data as any).itunesApps ?? []} gplayApps={(data as any).gplayApps ?? []} />
@@ -1280,8 +1280,8 @@ function StackSampleReport() {
   return (
     <div style={{ padding: "20px 0 40px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-4)" }}>Sample Stack Report</span>
-        <span style={{ fontSize: 11, fontStyle: "italic" as const, color: "var(--clr-text-3)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 5, padding: "2px 8px" }}>« Handmade jewelry marketplace with payments & reviews »</span>
+        <span style={{ fontSize: 14, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "var(--clr-text-2)" }}>Sample Stack Report</span>
+        <span style={{ fontSize: 14, fontStyle: "italic" as const, color: "var(--clr-text)", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 6, padding: "5px 12px", fontWeight: 500 }}>« Handmade jewelry marketplace with payments & reviews »</span>
       </div>
       <StackAdvisorResult data={data} />
     </div>
