@@ -3620,7 +3620,7 @@ function HomeInner() {
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   {/* ── HERO ── */}
-                  <div style={{ paddingTop: "4.5rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+                  <div style={{ paddingTop: "2rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
                     {/* live data dot */}
                     <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.75rem", color: "var(--clr-text-4)", marginBottom: "1rem" }}>
                       <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
