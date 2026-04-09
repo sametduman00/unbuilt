@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import ClerkThemeProvider from "./components/ClerkThemeProvider";
-import AppSidebar from "./components/AppSidebar";
 import CookieConsent from "./components/CookieConsent";
-import MobileNav from "./components/MobileNav";
+import AppTopNav from "./components/AppTopNav";
 import ConsentGate from "./components/ConsentGate";
 import "./globals.css";
 
@@ -103,11 +102,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ClerkThemeProvider>
           <ConsentGate>
-            <AppSidebar />
-            <div className="app-content-wrapper" style={{ marginLeft: 220 }}>
+              <AppTopNav />
+            <div className="app-content-wrapper" style={{ }}>
               {children}
             </div>
-            <MobileNav />
+            
             <CookieConsent />
           </ConsentGate>
                       <ConversionTracker />
