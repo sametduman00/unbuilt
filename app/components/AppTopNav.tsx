@@ -122,9 +122,7 @@ export default function AppTopNav() {
   };
 
   return (
-    <>
-      <div style={{ height: 70 }} />
-      <nav style={{
+    <nav style={{
         position: "fixed", top: 10, left: "50%",
         transform: "translateX(-50%)",
         width: "calc(100% - 48px)", maxWidth: 1200,
@@ -270,6 +268,5 @@ export default function AppTopNav() {
           )}
         </div>
       </nav>
-    </>
   );
 }
