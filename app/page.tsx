@@ -3620,7 +3620,7 @@ function HomeInner() {
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   {/* ── HERO ── */}
-                  <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+                  <div style={{ paddingTop: "2rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
                     {/* live data dot */}
                                         {/* Title */}
                     {activeHeroTab === "gap-analysis" ? (
@@ -3635,7 +3635,7 @@ function HomeInner() {
                       </div>
                     )}
                     {/* Subtitle */}
-                    <div style={{ fontSize: "1.0625rem", color: "#555", marginBottom: "2.5rem", lineHeight: 1.5, whiteSpace: "nowrap" as const, maxWidth: "none" }}>
+                    <div style={{ fontSize: "1.0625rem", color: "#555", marginBottom: "1.25rem", lineHeight: 1.5, whiteSpace: "nowrap" as const, maxWidth: "none" }}>
                       {activeHeroTab === "gap-analysis"
                         ? "Describe your idea. We'll scan 70+ live sources and tell you exactly where the gap is."
                         : "Describe what you're building. We'll give you exact tools, real costs and a build order — matched to your budget and skill level."}
@@ -3665,7 +3665,7 @@ function HomeInner() {
                         onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
                         onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) router.push("/?tool=" + activeHeroTab); } }}
                         placeholder={activeHeroTab === "gap-analysis" ? 'e.g. "Project management for freelancers" or "AI writing tool for marketers"' : 'e.g. "A marketplace for local freelancers with payments and messaging"'}
-                        style={{ width: "100%", minHeight: 108, resize: "none", background: "#fafaf8", border: "1.5px solid #d0cfc9", borderRadius: 10, padding: "16px 18px", fontSize: "0.96875rem", color: "var(--clr-text)", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
+                        style={{ width: "100%", minHeight: 76, resize: "none", background: "#fafaf8", border: "1.5px solid #d0cfc9", borderRadius: 10, padding: "16px 18px", fontSize: "0.96875rem", color: "var(--clr-text)", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
                       />
                       {/* AI badge */}
                       <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 5, fontSize: "0.6875rem", color: "#bbb", margin: "10px 24px 18px" }}>
