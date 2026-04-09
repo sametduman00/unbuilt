@@ -2940,6 +2940,7 @@ function HomeInner() {
     setSelectedTool(newTool);
   }, [searchParams]);
   const [idea, setIdea] = useState("");
+  const [activeHeroTab, setActiveHeroTab] = useState<"gap-analysis" | "stack-advisor">("gap-analysis");
   const [budget, setBudget] = useState<Budget>("bootstrap");
   const [techLevel, setTechLevel] = useState<TechLevel>("nocode");
   const [platform, setPlatform] = useState<Platform>("web");
@@ -3619,38 +3620,113 @@ function HomeInner() {
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   {/* ── HERO ── */}
-                  <div style={{ padding: "1.25rem 1.5rem 1rem", margin: "12px 12px 0", flexShrink: 0, borderRadius: 14, border: "1px solid var(--clr-border)", background: "#f7f6f3" }}>
-                    <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--clr-text-4)", marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
-                      <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
-                      For vibe coders
+                  <div style={{ paddingTop: "4rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+                    {/* live data dot */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.75rem", color: "var(--clr-text-4)", marginBottom: "1rem" }}>
+                      <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
+                      {activeHeroTab === "gap-analysis" ? "live data, updated every hour" : "Updated weekly for new tools"}
                     </div>
-                    <h1 style={{ fontSize: "1.6rem", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1, color: "var(--clr-text)", margin: 0 }}>
-                      Hello, Vibecoder!
-                    </h1>
-                    <p style={{ fontSize: "1.62rem", fontWeight: 400, color: "var(--clr-text-3)", fontStyle: "italic", margin: "0 0 14px", letterSpacing: "-0.02em", lineHeight: 1 }}>
-                      Another idea dropped?
-                    </p>
-                    <p style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", lineHeight: 1.6, margin: "0 0 18px", whiteSpace: "normal" as const }}>
-                      <strong style={{ color: "var(--clr-text)", fontWeight: 700 }}>Don't build what already exists.</strong>
-                      {" "}We'll show you what doesn't — and exactly how to build it.
-                    </p>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "nowrap" as const }}>
+                    {/* Title */}
+                    {activeHeroTab === "gap-analysis" ? (
+                      <div style={{ fontSize: "clamp(2rem, 5vw, 2.75rem)", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.15, marginBottom: "0.5rem" }}>
+                        Don&apos;t build what<br />
+                        <span style={{ fontStyle: "italic", color: "var(--clr-text-3)" }}>already exists.</span>
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: "clamp(2rem, 5vw, 2.75rem)", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.15, marginBottom: "0.5rem" }}>
+                        Stop Googling<br />
+                        <span style={{ fontStyle: "italic", color: "var(--clr-text-3)" }}>&quot;best tools for vibecoding&quot;</span>
+                      </div>
+                    )}
+                    {/* Subtitle */}
+                    <div style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", marginBottom: "1.75rem", lineHeight: 1.6, maxWidth: 460 }}>
+                      {activeHeroTab === "gap-analysis"
+                        ? "Describe your idea. We'll scan 70+ live sources and tell you exactly where the gap is."
+                        : "Describe what you're building. We'll give you exact tools, real costs and a build order — matched to your budget and skill level."}
+                    </div>
+                    {/* Tab switcher */}
+                    <div style={{ display: "flex", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: 3, gap: 2, marginBottom: "1.25rem" }}>
                       <button
-                        onClick={() => router.push("/?tool=gap-analysis")}
-                        style={{ display: "inline-flex", alignItems: "center", gap: 7, whiteSpace: "nowrap" as const, padding: "8px 18px", background: "rgba(99,102,241,0.1)", color: "rgb(79,82,221)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(99,102,241,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
-                        onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"}
-                        onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = "1"}
-                      >
-                                             Dig my idea →
-                      </button>
+                        onClick={() => setActiveHeroTab("gap-analysis")}
+                        style={{ padding: "7px 28px", borderRadius: 8, fontSize: "0.8125rem", fontWeight: 500, border: "none", cursor: "pointer",
+                          background: activeHeroTab === "gap-analysis" ? "var(--clr-accent)" : "transparent",
+                          color: activeHeroTab === "gap-analysis" ? "#fff" : "var(--clr-text-3)" }}
+                      >Dig my idea</button>
                       <button
-                        onClick={() => router.push("/?tool=stack-advisor")}
-                        style={{ display: "inline-flex", alignItems: "center", gap: 7, whiteSpace: "nowrap" as const, padding: "8px 18px", background: "rgba(16,185,129,0.1)", color: "rgb(5,150,105)", borderRadius: 999, fontSize: "0.8rem", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", border: "1px solid rgba(16,185,129,0.25)", letterSpacing: "0em", transition: "opacity 0.12s" }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
-                      >
-                        Get my Stack →
-                      </button>
+                        onClick={() => setActiveHeroTab("stack-advisor")}
+                        style={{ padding: "7px 28px", borderRadius: 8, fontSize: "0.8125rem", fontWeight: 500, border: "none", cursor: "pointer",
+                          background: activeHeroTab === "stack-advisor" ? "#0f766e" : "transparent",
+                          color: activeHeroTab === "stack-advisor" ? "#fff" : "var(--clr-text-3)" }}
+                      >Get my Stack</button>
+                    </div>
+                    {/* Input card */}
+                    <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "1.25rem 1.375rem", width: "100%", maxWidth: 660 }}>
+                      <label style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", display: "block", marginBottom: 10, textTransform: "uppercase" as const }}>
+                        {activeHeroTab === "gap-analysis" ? "Describe your niche or app idea" : "Describe what you want to build"}
+                      </label>
+                      <textarea
+                        value={idea}
+                        onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
+                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) router.push("/?tool=" + activeHeroTab); } }}
+                        placeholder={activeHeroTab === "gap-analysis" ? 'e.g. "Project management for freelancers" or "AI writing tool for marketers"' : 'e.g. "A marketplace for local freelancers with payments and messaging"'}
+                        style={{ width: "100%", minHeight: 88, resize: "none", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 8, padding: "12px 14px", fontSize: "0.875rem", color: "var(--clr-text)", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
+                      />
+                      {/* AI badge */}
+                      <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 5, fontSize: "0.6875rem", color: "var(--clr-text-4)", margin: "8px 0 14px" }}>
+                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#0f766e", display: "inline-block" }} />
+                        Claude Opus 4.6 · Extended Thinking
+                      </div>
+                      {/* Stack selectors */}
+                      {activeHeroTab === "stack-advisor" && (
+                        <>
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 14 }}>
+                            <div>
+                              <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", marginBottom: 8, textTransform: "uppercase" as const }}>Monthly Budget</div>
+                              {([{ id: "bootstrap" as Budget, label: "Bootstrapped", sub: "< $50/mo" }, { id: "growing" as Budget, label: "Growing", sub: "$50–200/mo" }, { id: "funded" as Budget, label: "Funded", sub: "$200–1k/mo" }, { id: "scale" as Budget, label: "Scale", sub: "$1k+/mo" }]).map(opt => (
+                                <div key={opt.id} onClick={() => setBudget(opt.id)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid var(--clr-border)", borderRadius: 6, padding: "7px 12px", fontSize: "0.8125rem", marginBottom: 4, cursor: "pointer", background: budget === opt.id ? "var(--clr-surface-2)" : "transparent", color: budget === opt.id ? "var(--clr-text)" : "var(--clr-text-3)" }}>
+                                  <span>{opt.label}</span><span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>{opt.sub}</span>
+                                </div>
+                              ))}
+                            </div>
+                            <div>
+                              <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", marginBottom: 8, textTransform: "uppercase" as const }}>Technical Level</div>
+                              {([{ id: "nocode" as TechLevel, label: "No-code", sub: "Notion, Webflow, Zapier" }, { id: "lowcode" as TechLevel, label: "Low-code", sub: "HTML/CSS, APIs, tutorials" }, { id: "developer" as TechLevel, label: "Developer", sub: "Code, CLIs, deployment" }]).map(opt => (
+                                <div key={opt.id} onClick={() => setTechLevel(opt.id)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid var(--clr-border)", borderRadius: 6, padding: "7px 12px", fontSize: "0.8125rem", marginBottom: 4, cursor: "pointer", background: techLevel === opt.id ? "var(--clr-surface-2)" : "transparent", color: techLevel === opt.id ? "var(--clr-text)" : "var(--clr-text-3)" }}>
+                                  <span>{opt.label}</span><span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>{opt.sub}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", marginBottom: 8, textTransform: "uppercase" as const }}>Target Platform</div>
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, marginBottom: 14 }}>
+                            {([{ id: "web" as Platform, label: "Web", sub: "Browser / SaaS" }, { id: "mobile" as Platform, label: "Mobile", sub: "iOS / Android" }, { id: "both" as Platform, label: "Both", sub: "Web + Mobile" }]).map(opt => (
+                              <div key={opt.id} onClick={() => setPlatform(opt.id)} style={{ border: "1px solid var(--clr-border)", borderRadius: 6, padding: 8, textAlign: "center" as const, cursor: "pointer", background: platform === opt.id ? "var(--clr-surface-2)" : "transparent" }}>
+                                <div style={{ fontSize: "0.8125rem", color: platform === opt.id ? "var(--clr-text)" : "var(--clr-text-3)" }}>{opt.label}</div>
+                                <div style={{ fontSize: "0.6875rem", color: "var(--clr-text-4)", marginTop: 2 }}>{opt.sub}</div>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                      {/* Bottom row */}
+                      <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <button
+                          onClick={() => { setShowSampleReport(true); setSelectedTool(activeHeroTab === "gap-analysis" ? TOOLS[0] : TOOLS[1]); }}
+                          style={{ background: "transparent", border: "1px solid var(--clr-border)", borderRadius: 7, padding: "7px 14px", fontSize: "0.8125rem", color: "var(--clr-text-3)", cursor: "pointer" }}
+                        >Sample Report ↓</button>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          {idea.trim().length < 40 && (
+                            <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)" }}>{40 - idea.trim().length} more chars to unlock</span>
+                          )}
+                          <button
+                            onClick={() => { if (idea.trim().length >= 40) router.push("/?tool=" + activeHeroTab); }}
+                            disabled={idea.trim().length < 40}
+                            style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-accent)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 8, padding: "8px 20px", fontSize: "0.8125rem", fontWeight: 500, cursor: idea.trim().length >= 40 ? "pointer" : "default" }}
+                          >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>                    </button>
                       
                     </div>
                   </div>
