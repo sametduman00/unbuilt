@@ -3712,15 +3712,13 @@ function HomeInner() {
                       <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <button
                           onClick={() => {
-                          const toolId = activeHeroTab === "gap-analysis" ? "gap-analysis" : "stack-advisor";
-                          const tool = TOOLS.find(t => t.id === toolId);
-                          if (tool) {
-                            setSelectedTool(toolId);
-                            setShowSampleReport(true);
+                          const next = !showSampleReport;
+                          setShowSampleReport(next);
+                          if (next) {
                             setTimeout(() => {
-                              const el = document.getElementById("sample-report-panel");
+                              const el = document.getElementById("hero-sample-panel");
                               if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                            }, 100);
+                            }, 50);
                           }
                         }}
                           style={{ background: "transparent", border: "1px solid var(--clr-border)", borderRadius: 7, padding: "7px 14px", fontSize: "0.8125rem", color: "var(--clr-text-3)", cursor: "pointer" }}
@@ -3740,6 +3738,11 @@ function HomeInner() {
                   </div>
                       
 
+                  {showSampleReport && !selectedTool && (
+                    <div id="hero-sample-panel" style={{ width: "100%", maxWidth: 700, marginTop: "1.5rem" }}>
+                      {activeHeroTab === "gap-analysis" ? <DigSampleReport /> : <StackSampleReport />}
+                    </div>
+                  )}
                   {/* Feed header */}
                   <div style={{ padding: "1rem 1.5rem 0", flexShrink: 0 }}>
                     <h2 style={{ fontSize: "1.26rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--clr-text)", margin: 0 }}>What Launched Today</h2>
