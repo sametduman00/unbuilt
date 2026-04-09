@@ -141,8 +141,8 @@ export default function AppTopNav() {
 
         {/* Logo — inline SVG, transparent bg */}
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", flexShrink: 0 }}>
-          <UnbuiltIcon size={30} />
-          <span style={{ fontSize: "1.35rem", fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.02em" }}>
+          <UnbuiltIcon size={26} />
+          <span style={{ fontSize: "1.15rem", fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.02em" }}>
             unbuilt
           </span>
         </Link>
