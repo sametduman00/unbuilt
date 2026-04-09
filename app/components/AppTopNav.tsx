@@ -247,7 +247,7 @@ export default function AppTopNav() {
                     style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", fontSize: "0.875rem", color: "#dc2626", borderRadius: 8, background: "transparent", border: "none", cursor: "pointer", width: "100%", fontWeight: 450 }}
                     onMouseEnter={e => (e.currentTarget.style.background = "#fff5f5")}
                     onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-                    onClick={() => { setUserOpen(false); signOut(); }}>
+                    onClick={() => { setUserOpen(false); signOut({ redirectUrl: "/" }); }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                       <polyline points="16 17 21 12 16 7"/>
