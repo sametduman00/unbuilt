@@ -3620,7 +3620,7 @@ function HomeInner() {
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   {/* ── HERO ── */}
-                  <div style={{ paddingTop: "4rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+                  <div style={{ paddingTop: "4.5rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
                     {/* live data dot */}
                     <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.75rem", color: "var(--clr-text-4)", marginBottom: "1rem" }}>
                       <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
@@ -3628,7 +3628,7 @@ function HomeInner() {
                     </div>
                     {/* Title */}
                     {activeHeroTab === "gap-analysis" ? (
-                      <div style={{ fontSize: "clamp(2rem, 5vw, 2.75rem)", fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.15, marginBottom: "0.5rem" }}>
+                      <div style={{ fontSize: "clamp(2.5rem, 5vw, 3.25rem)", fontWeight: 800, color: "var(--clr-text)", lineHeight: 1.06, letterSpacing: "-0.04em", marginBottom: "0.5rem" }}>
                         Don&apos;t build what<br />
                         <span style={{ fontStyle: "italic", color: "var(--clr-text-3)" }}>already exists.</span>
                       </div>
@@ -3639,7 +3639,7 @@ function HomeInner() {
                       </div>
                     )}
                     {/* Subtitle */}
-                    <div style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", marginBottom: "1.75rem", lineHeight: 1.6, maxWidth: 460 }}>
+                    <div style={{ fontSize: "1.0625rem", color: "#555", marginBottom: "2.5rem", lineHeight: 1.5, whiteSpace: "nowrap" as const, maxWidth: "none" }}>
                       {activeHeroTab === "gap-analysis"
                         ? "Describe your idea. We'll scan 70+ live sources and tell you exactly where the gap is."
                         : "Describe what you're building. We'll give you exact tools, real costs and a build order — matched to your budget and skill level."}
@@ -3648,20 +3648,20 @@ function HomeInner() {
                     <div style={{ display: "flex", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: 3, gap: 2, marginBottom: "1.25rem" }}>
                       <button
                         onClick={() => setActiveHeroTab("gap-analysis")}
-                        style={{ padding: "7px 28px", borderRadius: 8, fontSize: "0.8125rem", fontWeight: 500, border: "none", cursor: "pointer",
+                        style={{ padding: "10px 36px", borderRadius: 9, fontSize: "0.875rem", fontWeight: 500, border: "none", cursor: "pointer",
                           background: activeHeroTab === "gap-analysis" ? "var(--clr-accent)" : "transparent",
                           color: activeHeroTab === "gap-analysis" ? "#fff" : "var(--clr-text-3)" }}
                       >Dig my idea</button>
                       <button
                         onClick={() => setActiveHeroTab("stack-advisor")}
-                        style={{ padding: "7px 28px", borderRadius: 8, fontSize: "0.8125rem", fontWeight: 500, border: "none", cursor: "pointer",
+                        style={{ padding: "10px 36px", borderRadius: 9, fontSize: "0.875rem", fontWeight: 500, border: "none", cursor: "pointer",
                           background: activeHeroTab === "stack-advisor" ? "#0f766e" : "transparent",
                           color: activeHeroTab === "stack-advisor" ? "#fff" : "var(--clr-text-3)" }}
                       >Get my Stack</button>
                     </div>
                     {/* Input card */}
                     <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "1.25rem 1.375rem", width: "100%", maxWidth: 660 }}>
-                      <label style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", display: "block", marginBottom: 10, textTransform: "uppercase" as const }}>
+                      <label style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.1em", color: "#aaa", display: "block", marginBottom: 10, textTransform: "uppercase" as const, padding: "24px 24px 0" }}>
                         {activeHeroTab === "gap-analysis" ? "Describe your niche or app idea" : "Describe what you want to build"}
                       </label>
                       <textarea
@@ -3669,10 +3669,10 @@ function HomeInner() {
                         onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
                         onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) router.push("/?tool=" + activeHeroTab); } }}
                         placeholder={activeHeroTab === "gap-analysis" ? 'e.g. "Project management for freelancers" or "AI writing tool for marketers"' : 'e.g. "A marketplace for local freelancers with payments and messaging"'}
-                        style={{ width: "100%", minHeight: 88, resize: "none", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 8, padding: "12px 14px", fontSize: "0.875rem", color: "var(--clr-text)", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
+                        style={{ width: "100%", minHeight: 108, resize: "none", background: "#fafaf8", border: "1.5px solid #d0cfc9", borderRadius: 10, padding: "16px 18px", fontSize: "0.96875rem", color: "var(--clr-text)", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
                       />
                       {/* AI badge */}
-                      <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 5, fontSize: "0.6875rem", color: "var(--clr-text-4)", margin: "8px 0 14px" }}>
+                      <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 5, fontSize: "0.6875rem", color: "#bbb", margin: "10px 24px 18px" }}>
                         <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#0f766e", display: "inline-block" }} />
                         Claude Opus 4.6 · Extended Thinking
                       </div>
@@ -3721,7 +3721,7 @@ function HomeInner() {
                           <button
                             onClick={() => { if (idea.trim().length >= 40) router.push("/?tool=" + activeHeroTab); }}
                             disabled={idea.trim().length < 40}
-                            style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-accent)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 8, padding: "8px 20px", fontSize: "0.8125rem", fontWeight: 500, cursor: idea.trim().length >= 40 ? "pointer" : "default" }}
+                            style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-accent)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 9, padding: "10px 26px", fontSize: "0.875rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
                         </div>
                       </div>
