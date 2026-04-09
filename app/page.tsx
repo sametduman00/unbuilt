@@ -3712,16 +3712,16 @@ function HomeInner() {
                       <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <button
                           onClick={() => {
-                          setShowSampleReport(v => {
-                            const next = !v;
-                            if (next) {
-                              setTimeout(() => {
-                                const el = document.getElementById("sample-report-panel");
-                                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                              }, 50);
-                            }
-                            return next;
-                          });
+                          const toolId = activeHeroTab === "gap-analysis" ? "gap-analysis" : "stack-advisor";
+                          const tool = TOOLS.find(t => t.id === toolId);
+                          if (tool) {
+                            setSelectedTool(toolId);
+                            setShowSampleReport(true);
+                            setTimeout(() => {
+                              const el = document.getElementById("sample-report-panel");
+                              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                            }, 100);
+                          }
                         }}
                           style={{ background: "transparent", border: "1px solid var(--clr-border)", borderRadius: 7, padding: "7px 14px", fontSize: "0.8125rem", color: "var(--clr-text-3)", cursor: "pointer" }}
                         >Sample Report ↓</button>
