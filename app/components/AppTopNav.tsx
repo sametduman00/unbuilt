@@ -150,6 +150,10 @@ export default function AppTopNav() {
             onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
           >How it works</Link>
 
+          <Link href="/pricing" style={linkBtn}
+            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+          >Pricing</Link>
           {/* Docs — hover */}
           <div ref={docsRef} style={{ position: "relative" }}
             onMouseEnter={() => { if (docsTimer.current) clearTimeout(docsTimer.current); setDocsOpen(true); }}
@@ -175,11 +179,6 @@ export default function AppTopNav() {
               </div>
             )}
           </div>
-
-          <Link href="/pricing" style={linkBtn}
-            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
-            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-          >Pricing</Link>
         </div>
 
         {/* Right */}
