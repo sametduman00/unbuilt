@@ -3621,6 +3621,7 @@ function HomeInner() {
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   {/* ── HERO ── */}
                   <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+                    {/* live data dot */}
                                         {/* Title */}
                     {activeHeroTab === "gap-analysis" ? (
                       <div style={{ fontSize: "clamp(2.5rem, 5vw, 3.25rem)", fontWeight: 800, color: "var(--clr-text)", lineHeight: 1.06, letterSpacing: "-0.04em", marginBottom: "0.5rem" }}>
@@ -3674,65 +3675,35 @@ function HomeInner() {
                       {/* Stack selectors */}
                       {activeHeroTab === "stack-advisor" && (
                         <>
-                                              <div style={{ padding: "10px 16px 0" }}>
-                      {/* Budget chips */}
-                      <div style={{ marginBottom: 8 }}>
-                        <div style={{ fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 6 }}>Budget</div>
-                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" as const }}>
-                          {([
-                            { id: "bootstrap", label: "Bootstrap", sub: "<$50/mo" },
-                            { id: "growing", label: "Growing", sub: "$50–200" },
-                            { id: "funded", label: "Funded", sub: "$200–1k" },
-                            { id: "scale", label: "Scale", sub: "$1k+" },
-                          ] as { id: BudgetLevel; label: string; sub: string }[]).map(opt => (
-                            <button key={opt.id} onClick={() => setBudget(opt.id)} style={{
-                              padding: "4px 12px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid",
-                              background: budget === opt.id ? "var(--clr-accent)" : "transparent",
-                              borderColor: budget === opt.id ? "var(--clr-accent)" : "var(--clr-border)",
-                              color: budget === opt.id ? "#fff" : "var(--clr-text-3)",
-                            }}>{opt.label}</button>
-                          ))}
-                        </div>
-                      </div>
-                      {/* Tech Level chips */}
-                      <div style={{ marginBottom: 8 }}>
-                        <div style={{ fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 6 }}>Tech level</div>
-                        <div style={{ display: "flex", gap: 6 }}>
-                          {([
-                            { id: "nocode", label: "No-code" },
-                            { id: "lowcode", label: "Low-code" },
-                            { id: "developer", label: "Developer" },
-                          ] as { id: TechLevel; label: string }[]).map(opt => (
-                            <button key={opt.id} onClick={() => setTechLevel(opt.id)} style={{
-                              padding: "4px 12px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid",
-                              background: techLevel === opt.id ? "var(--clr-accent)" : "transparent",
-                              borderColor: techLevel === opt.id ? "var(--clr-accent)" : "var(--clr-border)",
-                              color: techLevel === opt.id ? "#fff" : "var(--clr-text-3)",
-                            }}>{opt.label}</button>
-                          ))}
-                        </div>
-                      </div>
-                      {/* Platform chips */}
-                      <div style={{ marginBottom: 10 }}>
-                        <div style={{ fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 6 }}>Platform</div>
-                        <div style={{ display: "flex", gap: 6 }}>
-                          {([
-                            { id: "web", label: "Web" },
-                            { id: "mobile", label: "Mobile" },
-                            { id: "both", label: "Both" },
-                          ] as { id: Platform; label: string }[]).map(opt => (
-                            <button key={opt.id} onClick={() => setPlatform(opt.id)} style={{
-                              padding: "4px 12px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid",
-                              background: platform === opt.id ? "var(--clr-accent)" : "transparent",
-                              borderColor: platform === opt.id ? "var(--clr-accent)" : "var(--clr-border)",
-                              color: platform === opt.id ? "#fff" : "var(--clr-text-3)",
-                            }}>{opt.label}</button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    </>
-                  )}
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 14 }}>
+                            <div>
+                              <div style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", marginBottom: 4, textTransform: "uppercase" as const }}>Monthly Budget</div>
+                              {([{ id: "bootstrap" as Budget, label: "Bootstrapped", sub: "< $50/mo" }, { id: "growing" as Budget, label: "Growing", sub: "$50–200/mo" }, { id: "funded" as Budget, label: "Funded", sub: "$200–1k/mo" }, { id: "scale" as Budget, label: "Scale", sub: "$1k+/mo" }]).map(opt => (
+                                <div key={opt.id} onClick={() => setBudget(opt.id)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid var(--clr-border)", borderRadius: 6, padding: "4px 10px", fontSize: "0.75rem", marginBottom: 3, cursor: "pointer", background: budget === opt.id ? "var(--clr-surface-2)" : "transparent", color: budget === opt.id ? "var(--clr-text)" : "var(--clr-text-3)" }}>
+                                  <span>{opt.label}</span><span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>{opt.sub}</span>
+                                </div>
+                              ))}
+                            </div>
+                            <div>
+                              <div style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", marginBottom: 4, textTransform: "uppercase" as const }}>Technical Level</div>
+                              {([{ id: "nocode" as TechLevel, label: "No-code", sub: "Notion, Webflow, Zapier" }, { id: "lowcode" as TechLevel, label: "Low-code", sub: "HTML/CSS, APIs, tutorials" }, { id: "developer" as TechLevel, label: "Developer", sub: "Code, CLIs, deployment" }]).map(opt => (
+                                <div key={opt.id} onClick={() => setTechLevel(opt.id)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid var(--clr-border)", borderRadius: 6, padding: "4px 10px", fontSize: "0.75rem", marginBottom: 3, cursor: "pointer", background: techLevel === opt.id ? "var(--clr-surface-2)" : "transparent", color: techLevel === opt.id ? "var(--clr-text)" : "var(--clr-text-3)" }}>
+                                  <span>{opt.label}</span><span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>{opt.sub}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", marginBottom: 8, textTransform: "uppercase" as const }}>Target Platform</div>
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, marginBottom: 14 }}>
+                            {([{ id: "web" as Platform, label: "Web", sub: "Browser / SaaS" }, { id: "mobile" as Platform, label: "Mobile", sub: "iOS / Android" }, { id: "both" as Platform, label: "Both", sub: "Web + Mobile" }]).map(opt => (
+                              <div key={opt.id} onClick={() => setPlatform(opt.id)} style={{ border: "1px solid var(--clr-border)", borderRadius: 6, padding: 8, textAlign: "center" as const, cursor: "pointer", background: platform === opt.id ? "var(--clr-surface-2)" : "transparent" }}>
+                                <div style={{ fontSize: "0.8125rem", color: platform === opt.id ? "var(--clr-text)" : "var(--clr-text-3)" }}>{opt.label}</div>
+                                <div style={{ fontSize: "0.6875rem", color: "var(--clr-text-4)", marginTop: 2 }}>{opt.sub}</div>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
                       {/* Bottom row */}
                       <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <button
@@ -3759,6 +3730,7 @@ function HomeInner() {
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
                         </div>
                       </div>
+                    </div>
                   </div>
                       
 
