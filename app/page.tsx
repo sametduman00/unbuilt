@@ -2909,8 +2909,7 @@ function HomeInner() {
       sessionStorage.removeItem("unbuilt_pending_idea");
       sessionStorage.removeItem("unbuilt_pending_tool");
       if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") {
-        setSelectedTool(pendingTool as ToolId);
-        setIdea(pendingIdea);
+        setIdea(pendingIdea); if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") setActiveHeroTab(pendingTool as "gap-analysis" | "stack-advisor");
         // Update URL too
         window.history.replaceState({}, "", `/?tool=${pendingTool}`);
       } else if (pendingIdea && selectedTool) {
