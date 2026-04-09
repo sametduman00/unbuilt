@@ -3678,7 +3678,7 @@ function HomeInner() {
                     <div style={{ marginBottom: 6 }}>
                       <div style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Budget</div>
                       <div style={{ display: "flex", gap: 5, flexWrap: "wrap" as const }}>
-                        {([{ id: "bootstrap" as BudgetLevel, label: "Bootstrap", sub: "<$50" }, { id: "growing" as BudgetLevel, label: "Growing", sub: "$50–200" }, { id: "funded" as BudgetLevel, label: "Funded", sub: "$200–1k" }, { id: "scale" as BudgetLevel, label: "Scale", sub: "$1k+" }]).map(opt => (
+                        {([{ id: "bootstrap" as Budget, label: "Bootstrap", sub: "<$50" }, { id: "growing" as Budget, label: "Growing", sub: "$50–200" }, { id: "funded" as Budget, label: "Funded", sub: "$200–1k" }, { id: "scale" as Budget, label: "Scale", sub: "$1k+" }]).map(opt => (
                           <button key={opt.id} onClick={() => setBudget(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: budget === opt.id ? "var(--clr-accent)" : "transparent", borderColor: budget === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: budget === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
                       </div>
