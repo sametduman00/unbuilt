@@ -2,7 +2,6 @@
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 const DOCS_ITEMS = [
   { label: "Terms of Service", href: "/legal/terms-of-service" },
@@ -20,6 +19,51 @@ const PRODUCT_ITEMS = [
   { label: "Help", href: "/help" },
   { label: "Careers", href: "/careers" },
 ];
+
+function UnbuiltIcon({ size = 30 }: { size?: number }) {
+  // 3x3 grid, top-right empty. cell=8, gap=4 → viewBox 32x32
+  const cell = 8;
+  const gap = 4;
+  const r = 2.2;
+  const step = cell + gap;
+  const dark = "#1c1c1c";
+  const gray = "#888888";
+  const lgray = "#aaaaaa";
+
+  const squares = [
+    { col: 0, row: 0, fill: dark  },
+    { col: 1, row: 0, fill: gray  },
+    // col 2 row 0 intentionally empty
+    { col: 0, row: 1, fill: gray  },
+    { col: 1, row: 1, fill: gray  },
+    { col: 2, row: 1, fill: lgray },
+    { col: 0, row: 2, fill: dark  },
+    { col: 1, row: 2, fill: gray  },
+    { col: 2, row: 2, fill: dark  },
+  ];
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {squares.map(({ col, row, fill }) => (
+        <rect
+          key={col + "-" + row}
+          x={col * step}
+          y={row * step}
+          width={cell}
+          height={cell}
+          rx={r}
+          fill={fill}
+        />
+      ))}
+    </svg>
+  );
+}
 
 export default function AppTopNav() {
   const { isSignedIn } = useAuth();
@@ -77,13 +121,12 @@ export default function AppTopNav() {
 
   return (
     <>
-      {/* Spacer so content doesn't hide behind fixed nav */}
       <div style={{ height: 70 }} />
       <nav style={{
         position: "fixed", top: 10, left: "50%",
         transform: "translateX(-50%)",
         width: "calc(100% - 48px)", maxWidth: 1200,
-        zIndex: 100, height: 52,
+        zIndex: 100, height: 54,
         background: "rgba(255,255,255,0.97)",
         backdropFilter: "blur(12px)",
         border: "1px solid #e8e8e5",
@@ -93,10 +136,13 @@ export default function AppTopNav() {
         boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
         boxSizing: "border-box",
       }}>
-        {/* Logo — using actual brand icon */}
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none", flexShrink: 0 }}>
-          <Image src="/unbuilt-icon.png" alt="unbuilt" width={22} height={22} style={{ objectFit: "contain" }} />
-          <span style={{ fontSize: "1rem", fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.01em" }}>unbuilt</span>
+
+        {/* Logo — inline SVG, transparent bg */}
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", flexShrink: 0 }}>
+          <UnbuiltIcon size={30} />
+          <span style={{ fontSize: "1.0625rem", fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.015em" }}>
+            unbuilt
+          </span>
         </Link>
 
         {/* Center nav */}
@@ -111,10 +157,10 @@ export default function AppTopNav() {
             onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
           >How it works</Link>
 
-          {/* Docs — hover to open */}
+          {/* Docs — hover */}
           <div ref={docsRef} style={{ position: "relative" }}
             onMouseEnter={() => { if (docsTimer.current) clearTimeout(docsTimer.current); setDocsOpen(true); setProductOpen(false); }}
-            onMouseLeave={() => { docsTimer.current = setTimeout(() => setDocsOpen(false), 120); }}>
+            onMouseLeave={() => { docsTimer.current = setTimeout(() => setDocsOpen(false), 150); }}>
             <button style={{ ...linkBtn, background: docsOpen ? "#f5f5f3" : "transparent" }}>
               Docs
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8"
@@ -137,10 +183,10 @@ export default function AppTopNav() {
             )}
           </div>
 
-          {/* Product — hover to open */}
+          {/* Product — hover */}
           <div ref={productRef} style={{ position: "relative" }}
             onMouseEnter={() => { if (productTimer.current) clearTimeout(productTimer.current); setProductOpen(true); setDocsOpen(false); }}
-            onMouseLeave={() => { productTimer.current = setTimeout(() => setProductOpen(false), 120); }}>
+            onMouseLeave={() => { productTimer.current = setTimeout(() => setProductOpen(false), 150); }}>
             <button style={{ ...linkBtn, background: productOpen ? "#f5f5f3" : "transparent" }}>
               Product
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8"
@@ -164,7 +210,7 @@ export default function AppTopNav() {
           </div>
         </div>
 
-        {/* Right side */}
+        {/* Right */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
           {isSignedIn ? (
             <div ref={userRef} style={{ position: "relative" }}>
