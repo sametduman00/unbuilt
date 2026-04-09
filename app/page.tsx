@@ -3757,7 +3757,6 @@ function HomeInner() {
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
                         </div>
                       </div>
-                    </div>
                   </div>
                       
 
