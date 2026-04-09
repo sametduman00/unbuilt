@@ -12,10 +12,6 @@ const DOCS_ITEMS = [
   { label: "AI Transparency", href: "/legal/ai-transparency" },
   { label: "Disclaimer", href: "/legal/disclaimer" },
   { label: "Do Not Sell My Info", href: "/legal/do-not-sell" },
-];
-
-const PRODUCT_ITEMS = [
-  { label: "Pricing", href: "/pricing" },
   { label: "Help", href: "/help" },
   { label: "Careers", href: "/careers" },
 ];
@@ -69,13 +65,10 @@ export default function AppTopNav() {
   const { isSignedIn } = useAuth();
   const { user } = useUser();
   const [docsOpen, setDocsOpen] = useState(false);
-  const [productOpen, setProductOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const docsRef = useRef<HTMLDivElement>(null);
-  const productRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
   const docsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const productTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -159,7 +152,7 @@ export default function AppTopNav() {
 
           {/* Docs — hover */}
           <div ref={docsRef} style={{ position: "relative" }}
-            onMouseEnter={() => { if (docsTimer.current) clearTimeout(docsTimer.current); setDocsOpen(true); setProductOpen(false); }}
+            onMouseEnter={() => { if (docsTimer.current) clearTimeout(docsTimer.current); setDocsOpen(true); }}
             onMouseLeave={() => { docsTimer.current = setTimeout(() => setDocsOpen(false), 150); }}>
             <button style={{ ...linkBtn, background: docsOpen ? "#f5f5f3" : "transparent" }}>
               Docs
@@ -183,31 +176,10 @@ export default function AppTopNav() {
             )}
           </div>
 
-          {/* Product — hover */}
-          <div ref={productRef} style={{ position: "relative" }}
-            onMouseEnter={() => { if (productTimer.current) clearTimeout(productTimer.current); setProductOpen(true); setDocsOpen(false); }}
-            onMouseLeave={() => { productTimer.current = setTimeout(() => setProductOpen(false), 150); }}>
-            <button style={{ ...linkBtn, background: productOpen ? "#f5f5f3" : "transparent" }}>
-              Product
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8"
-                style={{ transition: "transform 0.15s", transform: productOpen ? "rotate(180deg)" : "none" }}>
-                <polyline points="2 4.5 6 8 10 4.5"/>
-              </svg>
-            </button>
-            {productOpen && (
-              <div style={{ ...dropStyle, minWidth: 160 }}>
-                <div style={dropSectionStyle}>PRODUCT</div>
-                {PRODUCT_ITEMS.map(item => (
-                  <Link key={item.href} href={item.href} style={dropItemStyle}
-                    onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-                    onClick={() => setProductOpen(false)}>
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+          <Link href="/pricing" style={linkBtn}
+            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+          >Pricing</Link>
         </div>
 
         {/* Right */}
