@@ -2910,7 +2910,7 @@ function HomeInner() {
       sessionStorage.removeItem("unbuilt_pending_tool");
       if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") {
         setSelectedTool(pendingTool as ToolId);
-        setIdea(pendingIdea); if (pendingTool) { (window as any).__unbuiltAutoSubmit = true; router.push("/?tool=" + pendingTool); }
+        setIdea(pendingIdea);
         // Update URL too
         window.history.replaceState({}, "", `/?tool=${pendingTool}`);
       } else if (pendingIdea && selectedTool) {
