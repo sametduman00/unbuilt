@@ -3657,7 +3657,7 @@ function HomeInner() {
                     </div>
                     {/* Input card */}
                     <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "1.25rem 1.375rem", width: "100%", maxWidth: 660 }}>
-                      <label style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.1em", color: "#aaa", display: "block", marginBottom: 10, textTransform: "uppercase" as const, padding: "24px 24px 0" }}>
+                      <label style={{ fontSize: "0.75rem", fontWeight: 800, letterSpacing: "0.08em", color: "#888", display: "block", marginBottom: 10, textTransform: "uppercase" as const, padding: "24px 24px 0" }}>
                         {activeHeroTab === "gap-analysis" ? "Describe your niche or app idea" : "Describe what you want to build"}
                       </label>
                       <textarea
@@ -3665,7 +3665,7 @@ function HomeInner() {
                         onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
                         onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) router.push("/?tool=" + activeHeroTab); } }}
                         placeholder={activeHeroTab === "gap-analysis" ? 'e.g. "Project management for freelancers" or "AI writing tool for marketers"' : 'e.g. "A marketplace for local freelancers with payments and messaging"'}
-                        style={{ width: "100%", minHeight: 76, resize: "none", background: "#fafaf8", border: "1.5px solid #d0cfc9", borderRadius: 10, padding: "16px 18px", fontSize: "0.96875rem", color: "var(--clr-text)", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
+                        style={{ width: "100%", minHeight: 76, resize: "none", background: "#fafaf8", border: "1.5px solid #d0cfc9", borderRadius: 10, padding: "16px 18px", fontSize: "0.96875rem", color: "#1a1a1a", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
                       />
                       {/* AI badge */}
                       <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 5, fontSize: "0.6875rem", color: "#bbb", margin: "10px 24px 18px" }}>
@@ -3677,7 +3677,7 @@ function HomeInner() {
                   <div style={{ padding: "8px 0 0" }}>
                     <div style={{ marginBottom: 6 }}>
                       <div style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Budget</div>
-                      <div style={{ display: "flex", gap: 5, flexWrap: "wrap" as const }}>
+                      <div style={{ display: "flex", gap: 5, flexWrap: "wrap" as const, justifyContent: "center" }}>
                         {([{ id: "bootstrap" as Budget, label: "Bootstrap", sub: "<$50" }, { id: "growing" as Budget, label: "Growing", sub: "$50–200" }, { id: "funded" as Budget, label: "Funded", sub: "$200–1k" }, { id: "scale" as Budget, label: "Scale", sub: "$1k+" }]).map(opt => (
                           <button key={opt.id} onClick={() => setBudget(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: budget === opt.id ? "var(--clr-accent)" : "transparent", borderColor: budget === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: budget === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
@@ -3685,7 +3685,7 @@ function HomeInner() {
                     </div>
                     <div style={{ marginBottom: 6 }}>
                       <div style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Tech level</div>
-                      <div style={{ display: "flex", gap: 5 }}>
+                      <div style={{ display: "flex", gap: 5, justifyContent: "center" }}>
                         {([{ id: "nocode" as TechLevel, label: "No-code" }, { id: "lowcode" as TechLevel, label: "Low-code" }, { id: "developer" as TechLevel, label: "Developer" }]).map(opt => (
                           <button key={opt.id} onClick={() => setTechLevel(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: techLevel === opt.id ? "var(--clr-accent)" : "transparent", borderColor: techLevel === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: techLevel === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
@@ -3693,7 +3693,7 @@ function HomeInner() {
                     </div>
                     <div style={{ marginBottom: 8 }}>
                       <div style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Platform</div>
-                      <div style={{ display: "flex", gap: 5 }}>
+                      <div style={{ display: "flex", gap: 5, justifyContent: "center" }}>
                         {([{ id: "web" as Platform, label: "Web" }, { id: "mobile" as Platform, label: "Mobile" }, { id: "both" as Platform, label: "Both" }]).map(opt => (
                           <button key={opt.id} onClick={() => setPlatform(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: platform === opt.id ? "var(--clr-accent)" : "transparent", borderColor: platform === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: platform === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
