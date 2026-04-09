@@ -3711,7 +3711,18 @@ function HomeInner() {
                       {/* Bottom row */}
                       <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <button
-                          onClick={() => { setSelectedTool(activeHeroTab === "gap-analysis" ? "gap-analysis" : "stack-advisor"); setShowSampleReport(true); }}
+                          onClick={() => {
+                          setShowSampleReport(v => {
+                            const next = !v;
+                            if (next) {
+                              setTimeout(() => {
+                                const el = document.getElementById("sample-report-panel");
+                                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                              }, 50);
+                            }
+                            return next;
+                          });
+                        }}
                           style={{ background: "transparent", border: "1px solid var(--clr-border)", borderRadius: 7, padding: "7px 14px", fontSize: "0.8125rem", color: "var(--clr-text-3)", cursor: "pointer" }}
                         >Sample Report ↓</button>
                         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -3954,7 +3965,7 @@ function HomeInner() {
                   {/* Inline sample report toggle */}
                   {(selectedTool === "gap-analysis" || selectedTool === "stack-advisor") && showSampleReport && (
                     <div id="sample-report-panel" style={{ animation: "fadeSlideIn 0.25s ease", marginTop: 8 }}>
-                      {selectedTool === "gap-analysis" ? <DigSampleReport /> : <StackSampleReport />}
+                      {(selectedTool === "gap-analysis" || (!selectedTool && activeHeroTab === "gap-analysis")) ? <DigSampleReport /> : <StackSampleReport />}
                     </div>
                   )}
 
