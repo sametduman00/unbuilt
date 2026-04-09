@@ -123,14 +123,19 @@ export default function AppTopNav() {
 
   return (
     <>
+      <div style={{ height: 70 }} />
       <nav style={{
-        position: "fixed", top: 0, left: 0, right: 0,
+        position: "fixed", top: 10, left: "50%",
+        transform: "translateX(-50%)",
+        width: "calc(100% - 48px)", maxWidth: 1200,
         zIndex: 100, height: 54,
         background: "rgba(255,255,255,0.97)",
         backdropFilter: "blur(12px)",
-        borderBottom: "1px solid #e8e8e5",
+        border: "1px solid #e8e8e5",
+        borderRadius: 14,
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 32px",
+        padding: "0 20px",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
         boxSizing: "border-box",
       }}>
 
