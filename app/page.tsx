@@ -3676,24 +3676,24 @@ function HomeInner() {
                       {activeHeroTab === "stack-advisor" && (
                   <div style={{ padding: "8px 0 0" }}>
                     <div style={{ marginBottom: 6 }}>
-                      <div style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Budget</div>
-                      <div style={{ display: "flex", gap: 5, flexWrap: "wrap" as const, justifyContent: "center" }}>
+                      <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em", color: "var(--clr-text-2)", textTransform: "uppercase" as const, marginBottom: 6, textAlign: "left" as const }}>Budget</div>
+                      <div style={{ display: "flex", gap: 5, flexWrap: "wrap" as const, justifyContent: "flex-start" }}>
                         {([{ id: "bootstrap" as Budget, label: "Bootstrap", sub: "<$50" }, { id: "growing" as Budget, label: "Growing", sub: "$50–200" }, { id: "funded" as Budget, label: "Funded", sub: "$200–1k" }, { id: "scale" as Budget, label: "Scale", sub: "$1k+" }]).map(opt => (
                           <button key={opt.id} onClick={() => setBudget(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: budget === opt.id ? "var(--clr-accent)" : "transparent", borderColor: budget === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: budget === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
                       </div>
                     </div>
-                    <div style={{ marginBottom: 6 }}>
-                      <div style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Tech level</div>
-                      <div style={{ display: "flex", gap: 5, justifyContent: "center" }}>
+                    <div style={{ marginBottom: 6, paddingTop: 8, borderTop: "1px solid var(--clr-border-secondary)" }}>
+                      <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em", color: "var(--clr-text-2)", textTransform: "uppercase" as const, marginBottom: 6, textAlign: "left" as const }}>Tech level</div>
+                      <div style={{ display: "flex", gap: 5, justifyContent: "flex-start" }}>
                         {([{ id: "nocode" as TechLevel, label: "No-code" }, { id: "lowcode" as TechLevel, label: "Low-code" }, { id: "developer" as TechLevel, label: "Developer" }]).map(opt => (
                           <button key={opt.id} onClick={() => setTechLevel(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: techLevel === opt.id ? "var(--clr-accent)" : "transparent", borderColor: techLevel === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: techLevel === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
                       </div>
                     </div>
-                    <div style={{ marginBottom: 8 }}>
-                      <div style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Platform</div>
-                      <div style={{ display: "flex", gap: 5, justifyContent: "center" }}>
+                    <div style={{ marginBottom: 4, paddingTop: 8, borderTop: "1px solid var(--clr-border-secondary)" }}>
+                      <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em", color: "var(--clr-text-2)", textTransform: "uppercase" as const, marginBottom: 6, textAlign: "left" as const }}>Platform</div>
+                      <div style={{ display: "flex", gap: 5, justifyContent: "flex-start" }}>
                         {([{ id: "web" as Platform, label: "Web" }, { id: "mobile" as Platform, label: "Mobile" }, { id: "both" as Platform, label: "Both" }]).map(opt => (
                           <button key={opt.id} onClick={() => setPlatform(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: platform === opt.id ? "var(--clr-accent)" : "transparent", borderColor: platform === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: platform === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
