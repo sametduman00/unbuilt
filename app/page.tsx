@@ -2910,7 +2910,7 @@ function HomeInner() {
       sessionStorage.removeItem("unbuilt_pending_tool");
       if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") {
         setSelectedTool(pendingTool as ToolId);
-        setIdea(pendingIdea);
+        setIdea(pendingIdea); if (pendingTool) { (window as any).__unbuiltAutoSubmit = true; router.push("/?tool=" + pendingTool); }
         // Update URL too
         window.history.replaceState({}, "", `/?tool=${pendingTool}`);
       } else if (pendingIdea && selectedTool) {
@@ -3285,7 +3285,7 @@ function HomeInner() {
   };
 
   const handleSubmit = async () => {
-    if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", selectedTool ?? ""); openSignIn({ afterSignInUrl: "/" }); return; }
+    if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", selectedTool ?? ""); openSignIn(); return; }
     if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); return; }
     if (!selectedTool || idea.trim().length < 3) return;
     const tool = TOOLS.find((t) => t.id === selectedTool)!;
@@ -3663,7 +3663,7 @@ function HomeInner() {
                       <textarea
                         value={idea}
                         onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
-                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn({ afterSignInUrl: "/" }); } else { (window as any).__unbuiltAutoSubmit = true; router.push("/?tool=" + activeHeroTab); } } } }}
+                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { (window as any).__unbuiltAutoSubmit = true; router.push("/?tool=" + activeHeroTab); } } } }}
                         placeholder={activeHeroTab === "gap-analysis" ? 'e.g. "Project management for freelancers" or "AI writing tool for marketers"' : 'e.g. "A marketplace for local freelancers with payments and messaging"'}
                         style={{ width: "100%", minHeight: 76, resize: "none", background: "#fafaf8", border: "1.5px solid #d0cfc9", borderRadius: 10, padding: "16px 18px", fontSize: "0.96875rem", color: "#1a1a1a", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
                       />
@@ -3721,7 +3721,7 @@ function HomeInner() {
                             <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)" }}>{40 - idea.trim().length} more chars to unlock</span>
                           )}
                           <button
-                            onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn({ afterSignInUrl: "/" }); } else { (window as any).__unbuiltAutoSubmit = true; router.push("/?tool=" + activeHeroTab); } } }}
+                            onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { (window as any).__unbuiltAutoSubmit = true; router.push("/?tool=" + activeHeroTab); } } }}
                             disabled={idea.trim().length < 40}
                             style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-accent)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 9, padding: "10px 26px", fontSize: "0.875rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
