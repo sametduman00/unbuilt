@@ -2921,6 +2921,12 @@ function HomeInner() {
   const { openSignIn } = useClerk();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
   const router = useRouter();
+  // Redirect to /reports when analysis is complete
+  useEffect(() => {
+    if (hasResults) {
+      router.push("/reports");
+    }
+  }, [hasResults, router]);
   const [idea, setIdea] = useState("");
   const [activeHeroTab, setActiveHeroTab] = useState<"gap-analysis" | "stack-advisor">("gap-analysis");
   const [budget, setBudget] = useState<Budget>("bootstrap");
@@ -3004,7 +3010,7 @@ function HomeInner() {
   // Advance scan to "done" once last step is active AND Claude has finished
   useEffect(() => {
     if (scanStep === 4) {
-      const t = setTimeout(() => { setScanStep(-1); router.push("/reports"); }, 750);
+      const t = setTimeout(() => { setScanStep(-1); setHasResults(true); }, 750);
       return () => clearTimeout(t);
     }
     if (scanStep >= maxScanStep && !loading) {
