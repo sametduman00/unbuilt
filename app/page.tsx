@@ -3655,35 +3655,53 @@ function HomeInner() {
                         Claude Opus 4.6 · Extended Thinking
                       </div>
                       {/* Stack selectors */}
-                      {activeHeroTab === "stack-advisor" && (
-                  <div style={{ padding: "8px 0 0" }}>
-                    <div style={{ marginBottom: 6 }}>
-                      <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em", color: "var(--clr-text-2)", textTransform: "uppercase" as const, marginBottom: 6, textAlign: "left" as const }}>Budget</div>
-                      <div style={{ display: "flex", gap: 5, flexWrap: "wrap" as const, justifyContent: "flex-start" }}>
-                        {([{ id: "bootstrap" as Budget, label: "Bootstrap", sub: "<$50" }, { id: "growing" as Budget, label: "Growing", sub: "$50–200" }, { id: "funded" as Budget, label: "Funded", sub: "$200–1k" }, { id: "scale" as Budget, label: "Scale", sub: "$1k+" }]).map(opt => (
-                          <button key={opt.id} onClick={() => setBudget(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: budget === opt.id ? "var(--clr-accent)" : "transparent", borderColor: budget === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: budget === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
-                        ))}
-                      </div>
-                    </div>
-                    <div style={{ marginBottom: 6, paddingTop: 8, borderTop: "1px solid var(--clr-border-secondary)" }}>
-                      <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em", color: "var(--clr-text-2)", textTransform: "uppercase" as const, marginBottom: 6, textAlign: "left" as const }}>Tech level</div>
-                      <div style={{ display: "flex", gap: 5, justifyContent: "flex-start" }}>
-                        {([{ id: "nocode" as TechLevel, label: "No-code" }, { id: "lowcode" as TechLevel, label: "Low-code" }, { id: "developer" as TechLevel, label: "Developer" }]).map(opt => (
-                          <button key={opt.id} onClick={() => setTechLevel(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: techLevel === opt.id ? "var(--clr-accent)" : "transparent", borderColor: techLevel === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: techLevel === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
-                        ))}
-                      </div>
-                    </div>
-                    <div style={{ marginBottom: 4, paddingTop: 8, borderTop: "1px solid var(--clr-border-secondary)" }}>
-                      <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em", color: "var(--clr-text-2)", textTransform: "uppercase" as const, marginBottom: 6, textAlign: "left" as const }}>Platform</div>
-                      <div style={{ display: "flex", gap: 5, justifyContent: "flex-start" }}>
-                        {([{ id: "web" as Platform, label: "Web" }, { id: "mobile" as Platform, label: "Mobile" }, { id: "both" as Platform, label: "Both" }]).map(opt => (
-                          <button key={opt.id} onClick={() => setPlatform(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: platform === opt.id ? "var(--clr-accent)" : "transparent", borderColor: platform === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: platform === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-                      {/* Bottom row */}
+{/* Stack selectors */}
+          {activeHeroTab === "stack-advisor" && (
+            <div style={{ padding: "8px 0 0" }}>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                {/* Budget */}
+                <div style={{ flex: 1, minWidth: 140 }}>
+                  <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--clr-text-3)", marginBottom: 5, textTransform: "uppercase" }}>Budget</div>
+                  <select
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value as Budget)}
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.875rem", color: "var(--clr-text)", outline: "none", cursor: "pointer", appearance: "auto" }}
+                  >
+                    <option value="bootstrap">Bootstrap (&lt;$50)</option>
+                    <option value="growing">Growing ($50–200/mo)</option>
+                    <option value="funded">Funded ($200–1k/mo)</option>
+                    <option value="scale">Scale ($1k+/mo)</option>
+                  </select>
+                </div>
+                {/* Tech Level */}
+                <div style={{ flex: 1, minWidth: 140 }}>
+                  <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--clr-text-3)", marginBottom: 5, textTransform: "uppercase" }}>Tech Level</div>
+                  <select
+                    value={techLevel}
+                    onChange={(e) => setTechLevel(e.target.value as TechLevel)}
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.875rem", color: "var(--clr-text)", outline: "none", cursor: "pointer", appearance: "auto" }}
+                  >
+                    <option value="nocode">No-code</option>
+                    <option value="lowcode">Low-code</option>
+                    <option value="developer">Developer</option>
+                  </select>
+                </div>
+                {/* Platform */}
+                <div style={{ flex: 1, minWidth: 140 }}>
+                  <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--clr-text-3)", marginBottom: 5, textTransform: "uppercase" }}>Platform</div>
+                  <select
+                    value={platform}
+                    onChange={(e) => setPlatform(e.target.value as Platform)}
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.875rem", color: "var(--clr-text)", outline: "none", cursor: "pointer", appearance: "auto" }}
+                  >
+                    <option value="web">Web</option>
+                    <option value="mobile">Mobile</option>
+                    <option value="both">Both</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}                      {/* Bottom row */}
                       <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <button
                           onClick={() => {
