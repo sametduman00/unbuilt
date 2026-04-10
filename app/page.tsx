@@ -2921,7 +2921,6 @@ function HomeInner() {
   const { openSignIn } = useClerk();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
   const router = useRouter();
-  c
   const [idea, setIdea] = useState("");
   const [activeHeroTab, setActiveHeroTab] = useState<"gap-analysis" | "stack-advisor">("gap-analysis");
   const [budget, setBudget] = useState<Budget>("bootstrap");
