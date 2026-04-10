@@ -3577,76 +3577,76 @@ function HomeInner() {
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   {/* ── HERO ── */}
-                  <div style={{ paddingTop: "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+                  <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
                     {/* Title */}
                     {activeHeroTab === "gap-analysis" ? (
-                      <div style={{ fontSize: "clamp(2.25rem, 4.5vw, 2.75rem)", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.1, letterSpacing: "-0.035em", marginBottom: "0.625rem" }}>
+                      <div style={{ fontSize: "clamp(2.75rem, 5.5vw, 3.5rem)", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.1, letterSpacing: "-0.035em", marginBottom: "0.75rem" }}>
                         Don&apos;t build what<br />
                         <em style={{ fontStyle: "italic", fontWeight: 600 }}>already exists.</em>
                       </div>
                     ) : (
-                      <div style={{ fontSize: "clamp(2.25rem, 4.5vw, 2.75rem)", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.1, letterSpacing: "-0.035em", marginBottom: "0.625rem" }}>
+                      <div style={{ fontSize: "clamp(2.75rem, 5.5vw, 3.5rem)", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.1, letterSpacing: "-0.035em", marginBottom: "0.75rem" }}>
                         Stop Googling<br />
                         <em style={{ fontStyle: "italic", fontWeight: 600 }}>&quot;best tools for vibecoding&quot;</em>
                       </div>
                     )}
                     {/* Subtitle — single line */}
-                    <div style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", marginBottom: "1.25rem", lineHeight: 1.5, whiteSpace: "nowrap" as const }}>
+                    <div style={{ fontSize: "1.125rem", color: "var(--clr-text-3)", marginBottom: "1.5rem", lineHeight: 1.5, whiteSpace: "nowrap" as const }}>
                       {activeHeroTab === "gap-analysis"
                         ? "Describe your idea. We'll scan 70+ live sources and tell you exactly where the gap is."
                         : "Describe what you're building. We'll give you exact tools, real costs and a build order."}
                     </div>
                     {/* Metric pills */}
-                    <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: "1.75rem" }}>
+                    <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: "2rem" }}>
                       {activeHeroTab === "gap-analysis" ? (
                         <>
-                          <div style={{ padding: "5px 14px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.6875rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>70+</span> sources</div>
-                          <div style={{ padding: "5px 14px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.6875rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>~2 min</span> report</div>
-                          <div style={{ padding: "5px 14px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.6875rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>1.2k+</span> validated</div>
+                          <div style={{ padding: "6px 18px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.8125rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>70+</span> sources</div>
+                          <div style={{ padding: "6px 18px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.8125rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>~2 min</span> report</div>
+                          <div style={{ padding: "6px 18px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.8125rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>1.2k+</span> validated</div>
                         </>
                       ) : (
                         <>
-                          <div style={{ padding: "5px 14px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.6875rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>700+</span> tools</div>
-                          <div style={{ padding: "5px 14px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.6875rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>3 levels</span> no-code → dev</div>
-                          <div style={{ padding: "5px 14px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.6875rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>Budget</span> matched</div>
+                          <div style={{ padding: "6px 18px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.8125rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>700+</span> tools</div>
+                          <div style={{ padding: "6px 18px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.8125rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>3 levels</span> no-code → dev</div>
+                          <div style={{ padding: "6px 18px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.8125rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>Budget</span> matched</div>
                         </>
                       )}
                     </div>
                     {/* Input card */}
-                    <div style={{ background: "var(--clr-surface)", border: activeHeroTab === "gap-analysis" ? "1.5px solid var(--clr-text)" : "1.5px solid #0f766e", borderRadius: 16, padding: "0", width: "100%", maxWidth: 540, overflow: "hidden" }}>
+                    <div style={{ background: "var(--clr-surface)", border: activeHeroTab === "gap-analysis" ? "1.5px solid var(--clr-text)" : "1.5px solid #0f766e", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
                       {/* Tab switcher — inside card */}
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px 10px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 12px" }}>
                         <div style={{ display: "flex", gap: 6 }}>
                           <button
                             onClick={() => setActiveHeroTab("gap-analysis")}
-                            style={{ padding: "6px 16px", borderRadius: 8, fontSize: "0.8125rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
+                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
                               background: activeHeroTab === "gap-analysis" ? "var(--clr-text)" : "var(--clr-surface-2)",
                               color: activeHeroTab === "gap-analysis" ? "#fff" : "var(--clr-text-3)" }}
                           >Dig my idea</button>
                           <button
                             onClick={() => setActiveHeroTab("stack-advisor")}
-                            style={{ padding: "6px 16px", borderRadius: 8, fontSize: "0.8125rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
+                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
                               background: activeHeroTab === "stack-advisor" ? "#0f766e" : "var(--clr-surface-2)",
                               color: activeHeroTab === "stack-advisor" ? "#fff" : "var(--clr-text-3)" }}
                           >Get my stack</button>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
-                          <span style={{ fontSize: "0.625rem", color: "var(--clr-text-4)" }}>Opus 4.6</span>
+                          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
+                          <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Opus 4.6</span>
                         </div>
                       </div>
-                      <div style={{ padding: "0 18px 10px" }}>
+                      <div style={{ padding: "0 24px 12px" }}>
                       <textarea
                         value={idea}
                         onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
                         onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); } } } }}
                         placeholder={activeHeroTab === "gap-analysis" ? 'e.g. "Project management for freelancers"' : 'e.g. "A marketplace for local freelancers with payments"'}
-                        style={{ width: "100%", minHeight: 68, resize: "none", background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "14px 16px", fontSize: "0.9375rem", color: "var(--clr-text)", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
+                        style={{ width: "100%", minHeight: 88, resize: "none", background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "16px 18px", fontSize: "1.0625rem", color: "var(--clr-text)", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
                       />
                       </div>
                       {/* Stack selectors */}
                       {activeHeroTab === "stack-advisor" && (
-                  <div style={{ padding: "4px 18px 8px" }}>
+                  <div style={{ padding: "4px 24px 10px" }}>
                     <div style={{ marginBottom: 6 }}>
                       <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em", color: "var(--clr-text-2)", textTransform: "uppercase" as const, marginBottom: 6, textAlign: "left" as const }}>Budget</div>
                       <div style={{ display: "flex", gap: 5, flexWrap: "wrap" as const, justifyContent: "flex-start" }}>
@@ -3674,7 +3674,7 @@ function HomeInner() {
                   </div>
                 )}
                       {/* Bottom row */}
-                      <div style={{ borderTop: "1px solid var(--clr-border)", padding: "10px 18px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div style={{ borderTop: "1px solid var(--clr-border)", padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <button
                           onClick={() => {
                           const next = !showSampleReport;
@@ -3686,16 +3686,16 @@ function HomeInner() {
                             }, 50);
                           }
                         }}
-                          style={{ background: "transparent", border: "none", padding: 0, fontSize: "0.6875rem", color: "var(--clr-text-4)", cursor: "pointer", textDecoration: "underline", fontFamily: "inherit" }}
+                          style={{ background: "transparent", border: "none", padding: 0, fontSize: "0.8125rem", color: "var(--clr-text-4)", cursor: "pointer", textDecoration: "underline", fontFamily: "inherit" }}
                         >↓ Sample report</button>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                           {idea.trim().length < 40 && (
-                            <span style={{ fontSize: "0.6875rem", color: "var(--clr-text-4)" }}>{40 - idea.trim().length} more chars</span>
+                            <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)" }}>{40 - idea.trim().length} more chars</span>
                           )}
                           <button
                             onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); } } }}
                             disabled={idea.trim().length < 40}
-                            style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-text)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 10, padding: "8px 22px", fontSize: "0.8125rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
+                            style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-text)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
                         </div>
                       </div>
