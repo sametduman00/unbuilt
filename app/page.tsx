@@ -2909,7 +2909,7 @@ function HomeInner() {
       sessionStorage.removeItem("unbuilt_pending_idea");
       sessionStorage.removeItem("unbuilt_pending_tool");
       if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") {
-        setIdea(pendingIdea); if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") setActiveHeroTab(pendingTool as "gap-analysis" | "stack-advisor"); setSelectedTool(null); router.replace("/");
+        setIdea(pendingIdea); if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") setActiveHeroTab(pendingTool as "gap-analysis" | "stack-advisor");
         // Update URL too
         window.history.replaceState({}, "", `/?tool=${pendingTool}`);
       } else if (pendingIdea && selectedTool) {
@@ -3267,7 +3267,7 @@ function HomeInner() {
   };
 
   const handleSubmit = async () => {
-    if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", selectedTool ?? ""); openSignIn(); return; }
+    if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", selectedTool ?? activeHeroTab); window.history.replaceState({}, "", "/"); openSignIn(); return; }
     if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); return; }
     if (!selectedTool || idea.trim().length < 3) return;
     const tool = TOOLS.find((t) => t.id === selectedTool)!;
