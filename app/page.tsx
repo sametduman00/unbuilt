@@ -3657,48 +3657,55 @@ function HomeInner() {
                       {/* Stack selectors */}
 {/* Stack selectors */}
           {activeHeroTab === "stack-advisor" && (
-            <div style={{ padding: "8px 0 0" }}>
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                {/* Budget */}
-                <div style={{ flex: 1, minWidth: 140 }}>
-                  <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--clr-text-3)", marginBottom: 5, textTransform: "uppercase" }}>Budget</div>
-                  <select
-                    value={budget}
-                    onChange={(e) => setBudget(e.target.value as Budget)}
-                    style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.875rem", color: "var(--clr-text)", outline: "none", cursor: "pointer", appearance: "auto" }}
-                  >
-                    <option value="bootstrap">Bootstrap (&lt;$50)</option>
-                    <option value="growing">Growing ($50–200/mo)</option>
-                    <option value="funded">Funded ($200–1k/mo)</option>
-                    <option value="scale">Scale ($1k+/mo)</option>
-                  </select>
-                </div>
-                {/* Tech Level */}
-                <div style={{ flex: 1, minWidth: 140 }}>
-                  <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--clr-text-3)", marginBottom: 5, textTransform: "uppercase" }}>Tech Level</div>
-                  <select
-                    value={techLevel}
-                    onChange={(e) => setTechLevel(e.target.value as TechLevel)}
-                    style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.875rem", color: "var(--clr-text)", outline: "none", cursor: "pointer", appearance: "auto" }}
-                  >
-                    <option value="nocode">No-code</option>
-                    <option value="lowcode">Low-code</option>
-                    <option value="developer">Developer</option>
-                  </select>
-                </div>
-                {/* Platform */}
-                <div style={{ flex: 1, minWidth: 140 }}>
-                  <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--clr-text-3)", marginBottom: 5, textTransform: "uppercase" }}>Platform</div>
-                  <select
-                    value={platform}
-                    onChange={(e) => setPlatform(e.target.value as Platform)}
-                    style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.875rem", color: "var(--clr-text)", outline: "none", cursor: "pointer", appearance: "auto" }}
-                  >
-                    <option value="web">Web</option>
-                    <option value="mobile">Mobile</option>
-                    <option value="both">Both</option>
-                  </select>
-                </div>
+            <div style={{
+              marginTop: 12,
+              padding: "14px 16px",
+              background: "var(--clr-bg, #f5f5f0)",
+              border: "1px solid var(--clr-border)",
+              borderRadius: 12,
+              display: "flex",
+              gap: 16,
+              flexWrap: "wrap",
+            }}>
+              {/* Budget */}
+              <div style={{ flex: 1, minWidth: 130 }}>
+                <label style={{ display: "block", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--clr-text-3)", marginBottom: 6, textTransform: "uppercase" }}>Budget</label>
+                <select
+                  value={budget}
+                  onChange={(e) => setBudget(e.target.value as Budget)}
+                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.8125rem", color: "var(--clr-text)", outline: "none", cursor: "pointer" }}
+                >
+                  <option value="bootstrap">Bootstrap (&lt;$50)</option>
+                  <option value="growing">Growing ($50–200/mo)</option>
+                  <option value="funded">Funded ($200–1k/mo)</option>
+                  <option value="scale">Scale ($1k+/mo)</option>
+                </select>
+              </div>
+              {/* Tech Level */}
+              <div style={{ flex: 1, minWidth: 130 }}>
+                <label style={{ display: "block", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--clr-text-3)", marginBottom: 6, textTransform: "uppercase" }}>Tech Level</label>
+                <select
+                  value={techLevel}
+                  onChange={(e) => setTechLevel(e.target.value as TechLevel)}
+                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.8125rem", color: "var(--clr-text)", outline: "none", cursor: "pointer" }}
+                >
+                  <option value="nocode">No-code</option>
+                  <option value="lowcode">Low-code</option>
+                  <option value="developer">Developer</option>
+                </select>
+              </div>
+              {/* Platform */}
+              <div style={{ flex: 1, minWidth: 130 }}>
+                <label style={{ display: "block", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--clr-text-3)", marginBottom: 6, textTransform: "uppercase" }}>Platform</label>
+                <select
+                  value={platform}
+                  onChange={(e) => setPlatform(e.target.value as Platform)}
+                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.8125rem", color: "var(--clr-text)", outline: "none", cursor: "pointer" }}
+                >
+                  <option value="web">Web</option>
+                  <option value="mobile">Mobile</option>
+                  <option value="both">Both</option>
+                </select>
               </div>
             </div>
           )}                      {/* Bottom row */}
