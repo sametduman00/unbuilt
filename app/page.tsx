@@ -3669,11 +3669,11 @@ function HomeInner() {
             }}>
               {/* Budget */}
               <div style={{ flex: 1, minWidth: 130 }}>
-                <label style={{ display: "block", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--clr-text-3)", marginBottom: 6, textTransform: "uppercase" }}>Budget</label>
+                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.03em", color: "var(--clr-text-2, #666)", marginBottom: 6, textTransform: "uppercase" }}>Budget</label>
                 <select
                   value={budget}
                   onChange={(e) => setBudget(e.target.value as Budget)}
-                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.8125rem", color: "var(--clr-text)", outline: "none", cursor: "pointer" }}
+                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.875rem", fontWeight: 500, color: "var(--clr-text)", outline: "none", cursor: "pointer" }}
                 >
                   <option value="bootstrap">Bootstrap (&lt;$50)</option>
                   <option value="growing">Growing ($50–200/mo)</option>
@@ -3683,11 +3683,11 @@ function HomeInner() {
               </div>
               {/* Tech Level */}
               <div style={{ flex: 1, minWidth: 130 }}>
-                <label style={{ display: "block", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--clr-text-3)", marginBottom: 6, textTransform: "uppercase" }}>Tech Level</label>
+                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.03em", color: "var(--clr-text-2, #666)", marginBottom: 6, textTransform: "uppercase" }}>Tech Level</label>
                 <select
                   value={techLevel}
                   onChange={(e) => setTechLevel(e.target.value as TechLevel)}
-                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.8125rem", color: "var(--clr-text)", outline: "none", cursor: "pointer" }}
+                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.875rem", fontWeight: 500, color: "var(--clr-text)", outline: "none", cursor: "pointer" }}
                 >
                   <option value="nocode">No-code</option>
                   <option value="lowcode">Low-code</option>
@@ -3696,11 +3696,11 @@ function HomeInner() {
               </div>
               {/* Platform */}
               <div style={{ flex: 1, minWidth: 130 }}>
-                <label style={{ display: "block", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--clr-text-3)", marginBottom: 6, textTransform: "uppercase" }}>Platform</label>
+                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.03em", color: "var(--clr-text-2, #666)", marginBottom: 6, textTransform: "uppercase" }}>Platform</label>
                 <select
                   value={platform}
                   onChange={(e) => setPlatform(e.target.value as Platform)}
-                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.8125rem", color: "var(--clr-text)", outline: "none", cursor: "pointer" }}
+                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.875rem", fontWeight: 500, color: "var(--clr-text)", outline: "none", cursor: "pointer" }}
                 >
                   <option value="web">Web</option>
                   <option value="mobile">Mobile</option>
