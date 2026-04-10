@@ -3276,7 +3276,8 @@ function HomeInner() {
     if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", selectedTool ?? activeHeroTab); window.history.replaceState({}, "", "/"); openSignIn(); return; }
     if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); setSelectedTool(null); window.history.replaceState({}, "", "/"); return; }
     if (!activeHeroTab || idea.trim().length < 3) return;
-    const tool = TOOLS.find((t) => t.id === (selectedTool || activeHeroTab))!;
+    setSelectedTool(activeHeroTab as ToolId);
+    const tool = TOOLS.find((t) => t.id === activeHeroTab)!;
 
     setLoading(true);
     setHasResults(false);
@@ -3651,7 +3652,7 @@ function HomeInner() {
                       <textarea
                         value={idea}
                         onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
-                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { handleSubmit(); } } } }}
+                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); handleSubmit(); } } } }}
                         placeholder={activeHeroTab === "gap-analysis" ? 'e.g. "Project management for freelancers" or "AI writing tool for marketers"' : 'e.g. "A marketplace for local freelancers with payments and messaging"'}
                         style={{ width: "100%", minHeight: 76, resize: "none", background: "#fafaf8", border: "1.5px solid #d0cfc9", borderRadius: 10, padding: "16px 18px", fontSize: "0.96875rem", color: "#1a1a1a", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
                       />
@@ -3734,7 +3735,7 @@ function HomeInner() {
                             <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)" }}>{40 - idea.trim().length} more chars to unlock</span>
                           )}
                           <button
-                            onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { handleSubmit(); } } }}
+                            onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); handleSubmit(); } } }}
                             disabled={idea.trim().length < 40}
                             style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-accent)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 9, padding: "10px 26px", fontSize: "0.875rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
