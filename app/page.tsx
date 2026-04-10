@@ -4236,57 +4236,24 @@ ${sections.join("\n")}
                   </button>
                 </div>
               )}
-              {/* Trend Feed: structured result */}
-              {selectedTool === "trend-feed" && !loading && trendFeedData && (
-                <TrendFeedResult data={trendFeedData} />
+              {selectedTool && !loading && (streamedContent || trendFeedData) && (
+                <div style={{ marginTop: 8 }}>
+                  {selectedTool === "trend-feed" && trendFeedData && (
+                    <TrendFeedResult data={trendFeedData} />
+                  )}
+                  {selectedTool === "gap-analysis" && streamedContent && (() => {
+                    const gapData = parseGapAnalysisJSON(streamedContent);
+                    return gapData ? (
+                      <div style={{ padding: "0 16px 16px 12px" }}>
+                        <GapAnalysisResult data={gapData} itunesApps={(data as any).itunesApps ?? []} gplayApps={(data as any).gplayApps ?? []} idea={idea} onSwitchToStack={() => handleSelectTool("stack-advisor")} />
+                      </div>
+                    ) : null;
+                  })()}
+                  {selectedTool === "stack-advisor" && streamedContent && (() => {
+                    const stackData = parseStackAdvisorJSON(streamedContent);
+                    return stackData ? <StackAdvisorResult data={stackData} ytVideos={ytVideos} /> : null;
+                  })()}
+                </div>
               )}
 
-              {/* Dig: structured visual report */}
-              {selectedTool === "gap-analysis" && !loading && streamedContent ? (
-                (() => {
-                  const gapData = parseGapAnalysisJSON(streamedContent);
-                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={(data as any).itunesApps ?? []} gplayApps={(data as any).gplayApps ?? []} idea={idea} onSwitchToStack={() => handleSelectTool("stack-advisor")} /></div>;
-                  return sections.length > 0 ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      {sections.map((s, i) => (<SectionCard key={i} section={s} showCursor={false} />))}
-                    </div>
-                  ) : (<div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem" }}>No analysis data found for this niche</div>);
-                })()
-              ) : selectedTool === "stack-advisor" && !loading && streamedContent ? (
-                (() => {
-                  const stackData = parseStackAdvisorJSON(streamedContent);
-                  if (stackData) return <StackAdvisorResult data={stackData} ytVideos={ytVideos} />;
-                  return sections.length > 0 ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      {sections.map((s, i) => (<SectionCard key={i} section={s} showCursor={false} />))}
-                    </div>
-                  ) : (<div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem" }}>No stack recommendation found</div>);
-                })()
-              ) : null}
-
-              {/* ââ App Stores (Dig only) — unified merged list ââ */}
-
-
-
-
-              </div>
-              )}
-            </div>
-          )}
-        </main>
-
-      </div>
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" strategy="lazyOnload" />
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" strategy="lazyOnload" />
-      {showNoCreditsModal && <NoCreditsModal idea={idea} onClose={() => setShowNoCreditsModal(false)} />}
-    </>
-  );
-}
-
-export default function Home() {
-  return (
-    <Suspense>
-      <HomeInner />
-    </Suspense>
-  );
-}
+              
