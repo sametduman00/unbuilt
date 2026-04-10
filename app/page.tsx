@@ -2932,12 +2932,6 @@ function HomeInner() {
   const [outOfCredits, setOutOfCredits] = useState(false);
   const [showNoCreditsModal, setShowNoCreditsModal] = useState(false);
   const [hasResults, setHasResults] = useState(false);
-  // Redirect to /reports when analysis is complete
-  useEffect(() => {
-    if (hasResults) {
-      router.push("/reports");
-    }
-  }, [hasResults, router]);
 
   // ── Pulse inline state ────────────────────────────────────────────────────
   const [pulseTab, setPulseTab] = useState<"ph"|"appstore">("appstore");
@@ -4242,6 +4236,34 @@ ${sections.join("\n")}
                   </button>
                 </div>
               )}
+              {/* Trend Feed: structured result */}
+              {selectedTool === "trend-feed" && !loading && trendFeedData && (
+                <TrendFeedResult data={trendFeedData} />
+              )}
+
+              {/* Dig: structured visual report */}
+              {selectedTool === "gap-analysis" && !loading && streamedContent ? (
+                (() => {
+                  const gapData = parseGapAnalysisJSON(streamedContent);
+                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={(data as any).itunesApps ?? []} gplayApps={(data as any).gplayApps ?? []} idea={idea} onSwitchToStack={() => handleSelectTool("stack-advisor")} /></div>;
+                  return sections.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                      {sections.map((s, i) => (<SectionCard key={i} section={s} showCursor={false} />))}
+                    </div>
+                  ) : (<div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem" }}>No analysis data found for this niche</div>);
+                })()
+              ) : selectedTool === "stack-advisor" && !loading && streamedContent ? (
+                (() => {
+                  const stackData = parseStackAdvisorJSON(streamedContent);
+                  if (stackData) return <StackAdvisorResult data={stackData} ytVideos={ytVideos} />;
+                  return sections.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                      {sections.map((s, i) => (<SectionCard key={i} section={s} showCursor={false} />))}
+                    </div>
+                  ) : (<div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem" }}>No stack recommendation found</div>);
+                })()
+              ) : null}
+
               {/* ââ App Stores (Dig only) — unified merged list ââ */}
 
 
