@@ -3551,15 +3551,15 @@ function HomeInner() {
               : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>;
             return (
               <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem 0" }}>
-                <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "1.75rem", width: "100%", maxWidth: 400, animation: "scanCardIn 0.35s cubic-bezier(0.16,1,0.3,1)" }}>
+                <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "2.625rem", width: "100%", maxWidth: 600, animation: "scanCardIn 0.35s cubic-bezier(0.16,1,0.3,1)" }}>
                   <div style={{ textAlign: "center", marginBottom: "1.25rem" }}>
-                    <div style={{ width: 44, height: 44, borderRadius: 10, margin: "0 auto 10px", background: accentBg, border: `1px solid ${accentBorder}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: 66, height: 66, borderRadius: 14, margin: "0 auto 14px", background: accentBg, border: `1px solid ${accentBorder}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {currentTool && TOOL_ICONS[currentTool.id](accentColor)}
                     </div>
-                    <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--clr-text)", letterSpacing: "-0.02em", marginBottom: 4 }}>
+                    <div style={{ fontSize: "1.375rem", fontWeight: 700, color: "var(--clr-text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
                       {isStack ? "Building your stack..." : "Scanning live sources..."}
                     </div>
-                    <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", fontStyle: "italic", lineHeight: 1.4 }}>{idea}</div>
+                    <div style={{ fontSize: "1.1rem", color: "var(--clr-text-4)", fontStyle: "italic", lineHeight: 1.4 }}>{idea}</div>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5, marginBottom: 6 }}>
                     {sources.map((s, i) => {
