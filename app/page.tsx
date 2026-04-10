@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from "rea
 import Script from "next/script";
 import { generatePdf } from "@/app/lib/generatePdf";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth, useUser, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
@@ -2909,7 +2909,7 @@ function HomeInner() {
       sessionStorage.removeItem("unbuilt_pending_idea");
       sessionStorage.removeItem("unbuilt_pending_tool");
       if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") {
-        setIdea(pendingIdea); if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") setActiveHeroTab(pendingTool as "gap-analysis" | "stack-advisor"); router.replace("/");
+        setIdea(pendingIdea); if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") setActiveHeroTab(pendingTool as "gap-analysis" | "stack-advisor");
         // Update URL too
         window.history.replaceState({}, "", `/?tool=${pendingTool}`);
       } else if (pendingIdea && selectedTool) {
@@ -2921,23 +2921,7 @@ function HomeInner() {
   const { openSignIn } = useClerk();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  useEffect(() => {
-    const tool = searchParams.get("tool");
-    const newTool = (tool === "gap-analysis" || tool === "stack-advisor") ? tool as ToolId : null;
-    // Full reset when URL tool changes (sidebar navigation)
-    if (abortControllerRef.current) { abortControllerRef.current.abort(); abortControllerRef.current = null; }
-    scanTimersRef.current.forEach(clearTimeout);
-    setScanStep(-1);
-    setHasResults(false);
-    setStreamedContent("");
-    setIdea("");
-    setLoading(false);
-    setError("");
-    setOutOfCredits(false);
-    setResultCached(null);
-    setSelectedTool(newTool);
-  }, [searchParams]);
+  c
   const [idea, setIdea] = useState("");
   const [activeHeroTab, setActiveHeroTab] = useState<"gap-analysis" | "stack-advisor">("gap-analysis");
   const [budget, setBudget] = useState<Budget>("bootstrap");
@@ -2955,7 +2939,7 @@ function HomeInner() {
   const [showSampleReport, setShowSampleReport] = useState(false);
   // Reset sample report when tool changes
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { setShowSampleReport(false); if (selectedTool && (window as any).__unbuiltAutoSubmit) { (window as any).__unbuiltAutoSubmit = false; setTimeout(() => handleSubmit(), 50); } }, [selectedTool]);
+  useEffect(() => { setShowSampleReport(false); if (selectedTool) { setTimeout(() => handleSubmit(), 50); } }, [selectedTool]);
   const [pulseSignals, setPulseSignals] = useState<Array<{source:string;sourceLabel:string;emoji:string;title:string;subtitle:string;signal:string;url:string;timestamp:string;movementType?:string;imageUrl?:string;topics?:string[];tagline?:string;externalUrl?:string;claudeGap?:string;}>>([]);
   const [pulseLoading, setPulseLoading] = useState(false);
   const [pulseError, setPulseError] = useState<string|null>(null);
@@ -3662,7 +3646,7 @@ function HomeInner() {
                       <textarea
                         value={idea}
                         onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
-                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { (window as any).__unbuiltAutoSubmit = true; router.push("/?tool=" + activeHeroTab); } } } }}
+                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); } } } }}
                         placeholder={activeHeroTab === "gap-analysis" ? 'e.g. "Project management for freelancers" or "AI writing tool for marketers"' : 'e.g. "A marketplace for local freelancers with payments and messaging"'}
                         style={{ width: "100%", minHeight: 76, resize: "none", background: "#fafaf8", border: "1.5px solid #d0cfc9", borderRadius: 10, padding: "16px 18px", fontSize: "0.96875rem", color: "#1a1a1a", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
                       />
@@ -3720,7 +3704,7 @@ function HomeInner() {
                             <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)" }}>{40 - idea.trim().length} more chars to unlock</span>
                           )}
                           <button
-                            onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { (window as any).__unbuiltAutoSubmit = true; router.push("/?tool=" + activeHeroTab); } } }}
+                            onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); } } }}
                             disabled={idea.trim().length < 40}
                             style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-accent)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 9, padding: "10px 26px", fontSize: "0.875rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
@@ -3885,7 +3869,7 @@ function HomeInner() {
                                 <div style={{fontSize:"0.6875rem",fontWeight:600,color:"var(--clr-text)",marginBottom:1}}>Got a better idea?</div>
                                 <div style={{fontSize:"0.625rem",color:"var(--clr-text-3)"}}>Analyze competitors & gaps</div>
                               </div>
-                              <button onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"#534AB7",background:"rgba(99,102,241,0.08)",border:"0.5px solid rgba(99,102,241,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Dig my idea →</button>
+                              <button onClick={e=>{e.preventDefault();window.scrollTo({top:0,behavior:'smooth'});setActiveHeroTab('gap-analysis' as any);}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"#534AB7",background:"rgba(99,102,241,0.08)",border:"0.5px solid rgba(99,102,241,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Dig my idea →</button>
                             </div>
                             <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px"}}>
                               <div style={{flexShrink:0,width:30,height:30,borderRadius:8,background:"rgba(16,185,129,0.08)",display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -3895,7 +3879,7 @@ function HomeInner() {
                                 <div style={{fontSize:"0.6875rem",fontWeight:600,color:"var(--clr-text)",marginBottom:1}}>Want to build this yourself?</div>
                                 <div style={{fontSize:"0.625rem",color:"var(--clr-text-3)"}}>Get your personal tool stack</div>
                               </div>
-                              <button onClick={e=>{e.preventDefault();router.push("/?tool=stack-advisor");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"rgb(5,150,105)",background:"rgba(16,185,129,0.08)",border:"0.5px solid rgba(16,185,129,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Get my Stack →</button>
+                              <button onClick={e=>{e.preventDefault();window.scrollTo({top:0,behavior:'smooth'});setActiveHeroTab('stack-advisor' as any);}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"rgb(5,150,105)",background:"rgba(16,185,129,0.08)",border:"0.5px solid rgba(16,185,129,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Get my Stack →</button>
                             </div>
                           </div>
                         </div>
