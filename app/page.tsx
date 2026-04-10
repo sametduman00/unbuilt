@@ -3004,7 +3004,7 @@ function HomeInner() {
   // Advance scan to "done" once last step is active AND Claude has finished
   useEffect(() => {
     if (scanStep === 4) {
-      const t = setTimeout(() => { setHasResults(true); setScanStep(-1); }, 750);
+      const t = setTimeout(() => { setScanStep(-1); router.push("/reports"); }, 750);
       return () => clearTimeout(t);
     }
     if (scanStep >= maxScanStep && !loading) {
@@ -4210,60 +4210,6 @@ ${sections.join("\n")}
                   </button>
                 </div>
               )}
-
-              {/* Trend Feed: structured result */}
-              {selectedTool === "trend-feed" && !loading && trendFeedData && (
-                <TrendFeedResult data={trendFeedData} />
-              )}
-
-              {/* Dig: structured visual report */}
-              {selectedTool === "gap-analysis" && !loading && streamedContent ? (
-                (() => {
-                  const gapData = parseGapAnalysisJSON(streamedContent);
-                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { handleSelectTool("stack-advisor"); setTimeout(() => setIdea(i), 50); }} /></div>;
-                  return sections.length > 0 ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      {sections.map((s, i) => (
-                        <SectionCard key={i} section={s} showCursor={false} />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem", padding: "1.5rem" }}>
-                      No analysis data found for this niche
-                    </div>
-                  );
-                })()
-              ) : selectedTool === "stack-advisor" && !loading && streamedContent ? (
-                (() => {
-                  const stackData = parseStackAdvisorJSON(streamedContent);
-                  if (stackData) return <StackAdvisorResult data={stackData} ytVideos={ytVideos} />;
-                  return sections.length > 0 ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      {sections.map((s, i) => (
-                        <SectionCard key={i} section={s} showCursor={false} />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem", padding: "1.5rem" }}>
-                      No stack recommendation found
-                    </div>
-                  );
-                })()
-              ) : selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" ? (
-                /* All other tools: markdown section cards */
-                sections.length > 0 ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    {sections.map((s, i) => (
-                      <SectionCard key={i} section={s} showCursor={s.isLast && loading} />
-                    ))}
-                  </div>
-                ) : !loading && streamedContent ? (
-                  <div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem", padding: "1.5rem" }}>
-                    No analysis sections found for this niche
-                  </div>
-                ) : null
-              ) : null}
-
               {/* ââ App Stores (Dig only) — unified merged list ââ */}
 
 
