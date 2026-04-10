@@ -3269,8 +3269,8 @@ function HomeInner() {
   const handleSubmit = async () => {
     if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", selectedTool ?? activeHeroTab); window.history.replaceState({}, "", "/"); openSignIn(); return; }
     if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); setSelectedTool(null); window.history.replaceState({}, "", "/"); return; }
-    if (!selectedTool || idea.trim().length < 3) return;
-    const tool = TOOLS.find((t) => t.id === selectedTool)!;
+    if (!activeHeroTab || idea.trim().length < 3) return;
+    const tool = TOOLS.find((t) => t.id === (selectedTool || activeHeroTab))!;
 
     setLoading(true);
     setHasResults(false);
