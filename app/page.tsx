@@ -3689,7 +3689,7 @@ function HomeInner() {
                       {activeHeroTab === "gap-analysis" ? <DigSampleReport /> : <StackSampleReport />}
                     </div>
                   )}
-                  {/* Feed header */}
+                </div>
               )}
 
               {/* ââ Input section ââ */}
