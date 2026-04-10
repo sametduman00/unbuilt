@@ -153,6 +153,33 @@ export default function AppTopNav() {
 
         {/* Center nav */}
         <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
+          <Link href="/launches" style={{
+            display: "flex", alignItems: "center", gap: 6,
+            fontSize: "0.85rem", fontWeight: 500, color: "#1a1a1a",
+            padding: "5px 14px",
+            border: "1.5px solid #1a1a1a",
+            borderRadius: 999,
+            textDecoration: "none",
+            transition: "background 0.12s",
+            marginRight: 4,
+          }}
+            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+          >
+            Launches
+            <span style={{
+              padding: "1px 6px",
+              background: "#e84d1c",
+              color: "#fff",
+              borderRadius: 4,
+              fontSize: "0.6rem",
+              fontWeight: 600,
+              letterSpacing: "0.5px",
+              textTransform: "uppercase" as const,
+              lineHeight: "1.4",
+            }}>live</span>
+          </Link>
+
           <Link href="/use-cases" style={linkBtn}
             onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
             onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
