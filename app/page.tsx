@@ -2923,6 +2923,10 @@ function HomeInner() {
   const router = useRouter();
   const [idea, setIdea] = useState("");
   const [activeHeroTab, setActiveHeroTab] = useState<"gap-analysis" | "stack-advisor">("gap-analysis");
+  const [showSampleReport, setShowSampleReport] = useState(false);
+  // Reset sample report when tool changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { setShowSampleReport(false); if (selectedTool) { setTimeout(() => handleSubmit(), 50); } }, [selectedTool]);
   const [budget, setBudget] = useState<Budget>("bootstrap");
   const [techLevel, setTechLevel] = useState<TechLevel>("nocode");
   const [platform, setPlatform] = useState<Platform>("web");
