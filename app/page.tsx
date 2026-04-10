@@ -2921,12 +2921,6 @@ function HomeInner() {
   const { openSignIn } = useClerk();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
   const router = useRouter();
-  // Redirect to /reports when analysis is complete
-  useEffect(() => {
-    if (hasResults) {
-      router.push("/reports");
-    }
-  }, [hasResults, router]);
   const [idea, setIdea] = useState("");
   const [activeHeroTab, setActiveHeroTab] = useState<"gap-analysis" | "stack-advisor">("gap-analysis");
   const [budget, setBudget] = useState<Budget>("bootstrap");
@@ -2938,6 +2932,12 @@ function HomeInner() {
   const [outOfCredits, setOutOfCredits] = useState(false);
   const [showNoCreditsModal, setShowNoCreditsModal] = useState(false);
   const [hasResults, setHasResults] = useState(false);
+  // Redirect to /reports when analysis is complete
+  useEffect(() => {
+    if (hasResults) {
+      router.push("/reports");
+    }
+  }, [hasResults, router]);
 
   // ── Pulse inline state ────────────────────────────────────────────────────
   const [pulseTab, setPulseTab] = useState<"ph"|"appstore">("appstore");
