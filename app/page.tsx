@@ -2999,12 +2999,12 @@ function HomeInner() {
   
   // Number of scan steps for the current tool (used for timer logic)
   const scanStepCounts: Record<string, number> = { "trend-feed": 5, "gap-analysis": 8, "stack-advisor": 8, "competitor-radar": 1 };
-  const maxScanStep = (scanStepCounts[selectedTool || activeHeroTab || "gap-analysis"] ?? 8) - 1;
+  const maxScanStep = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3) - 1;
 
   // Advance scan to "done" once last step is active AND Claude has finished
   useEffect(() => {
     if (scanStep === 4) {
-      const t = setTimeout(() => { setScanStep(-1); setHasResults(true); }, 750);
+      const t = setTimeout(() => { setHasResults(true); setScanStep(-1); }, 750);
       return () => clearTimeout(t);
     }
     if (scanStep >= maxScanStep && !loading) {
@@ -3269,9 +3269,8 @@ function HomeInner() {
   const handleSubmit = async () => {
     if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", selectedTool ?? activeHeroTab); window.history.replaceState({}, "", "/"); openSignIn(); return; }
     if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); setSelectedTool(null); window.history.replaceState({}, "", "/"); return; }
-    if (!activeHeroTab || idea.trim().length < 3) return;
-    setSelectedTool(activeHeroTab as ToolId);
-    const tool = TOOLS.find((t) => t.id === activeHeroTab)!;
+    if (!selectedTool || idea.trim().length < 3) return;
+    const tool = TOOLS.find((t) => t.id === selectedTool)!;
 
     setLoading(true);
     setHasResults(false);
@@ -3552,15 +3551,15 @@ function HomeInner() {
               : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>;
             return (
               <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem 0" }}>
-                <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "2.625rem", width: "100%", maxWidth: 600, animation: "scanCardIn 0.35s cubic-bezier(0.16,1,0.3,1)" }}>
+                <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "1.75rem", width: "100%", maxWidth: 400, animation: "scanCardIn 0.35s cubic-bezier(0.16,1,0.3,1)" }}>
                   <div style={{ textAlign: "center", marginBottom: "1.25rem" }}>
-                    <div style={{ width: 66, height: 66, borderRadius: 14, margin: "0 auto 14px", background: accentBg, border: `1px solid ${accentBorder}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: 44, height: 44, borderRadius: 10, margin: "0 auto 10px", background: accentBg, border: `1px solid ${accentBorder}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {currentTool && TOOL_ICONS[currentTool.id](accentColor)}
                     </div>
-                    <div style={{ fontSize: "1.375rem", fontWeight: 700, color: "var(--clr-text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
+                    <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--clr-text)", letterSpacing: "-0.02em", marginBottom: 4 }}>
                       {isStack ? "Building your stack..." : "Scanning live sources..."}
                     </div>
-                    <div style={{ fontSize: "1.1rem", color: "var(--clr-text-4)", fontStyle: "italic", lineHeight: 1.4 }}>{idea}</div>
+                    <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", fontStyle: "italic", lineHeight: 1.4 }}>{idea}</div>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5, marginBottom: 6 }}>
                     {sources.map((s, i) => {
@@ -3646,7 +3645,7 @@ function HomeInner() {
                       <textarea
                         value={idea}
                         onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
-                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); handleSubmit(); } } } }}
+                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); } } } }}
                         placeholder={activeHeroTab === "gap-analysis" ? 'e.g. "Project management for freelancers" or "AI writing tool for marketers"' : 'e.g. "A marketplace for local freelancers with payments and messaging"'}
                         style={{ width: "100%", minHeight: 76, resize: "none", background: "#fafaf8", border: "1.5px solid #d0cfc9", borderRadius: 10, padding: "16px 18px", fontSize: "0.96875rem", color: "#1a1a1a", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
                       />
@@ -3656,60 +3655,35 @@ function HomeInner() {
                         Claude Opus 4.6 · Extended Thinking
                       </div>
                       {/* Stack selectors */}
-{/* Stack selectors */}
-          {activeHeroTab === "stack-advisor" && (
-            <div style={{
-              marginTop: 12,
-              padding: "14px 16px",
-              background: "var(--clr-bg, #f5f5f0)",
-              border: "1px solid var(--clr-border)",
-              borderRadius: 12,
-              display: "flex",
-              gap: 16,
-              flexWrap: "wrap",
-            }}>
-              {/* Budget */}
-              <div style={{ flex: 1, minWidth: 130 }}>
-                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.03em", color: "var(--clr-text-2, #666)", marginBottom: 6, textTransform: "uppercase" }}>Budget</label>
-                <select
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value as Budget)}
-                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.875rem", fontWeight: 500, color: "var(--clr-text)", outline: "none", cursor: "pointer" }}
-                >
-                  <option value="bootstrap">Bootstrap (&lt;$50)</option>
-                  <option value="growing">Growing ($50–200/mo)</option>
-                  <option value="funded">Funded ($200–1k/mo)</option>
-                  <option value="scale">Scale ($1k+/mo)</option>
-                </select>
-              </div>
-              {/* Tech Level */}
-              <div style={{ flex: 1, minWidth: 130 }}>
-                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.03em", color: "var(--clr-text-2, #666)", marginBottom: 6, textTransform: "uppercase" }}>Tech Level</label>
-                <select
-                  value={techLevel}
-                  onChange={(e) => setTechLevel(e.target.value as TechLevel)}
-                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.875rem", fontWeight: 500, color: "var(--clr-text)", outline: "none", cursor: "pointer" }}
-                >
-                  <option value="nocode">No-code</option>
-                  <option value="lowcode">Low-code</option>
-                  <option value="developer">Developer</option>
-                </select>
-              </div>
-              {/* Platform */}
-              <div style={{ flex: 1, minWidth: 130 }}>
-                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.03em", color: "var(--clr-text-2, #666)", marginBottom: 6, textTransform: "uppercase" }}>Platform</label>
-                <select
-                  value={platform}
-                  onChange={(e) => setPlatform(e.target.value as Platform)}
-                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", fontSize: "0.875rem", fontWeight: 500, color: "var(--clr-text)", outline: "none", cursor: "pointer" }}
-                >
-                  <option value="web">Web</option>
-                  <option value="mobile">Mobile</option>
-                  <option value="both">Both</option>
-                </select>
-              </div>
-            </div>
-          )}                      {/* Bottom row */}
+                      {activeHeroTab === "stack-advisor" && (
+                  <div style={{ padding: "8px 0 0" }}>
+                    <div style={{ marginBottom: 6 }}>
+                      <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em", color: "var(--clr-text-2)", textTransform: "uppercase" as const, marginBottom: 6, textAlign: "left" as const }}>Budget</div>
+                      <div style={{ display: "flex", gap: 5, flexWrap: "wrap" as const, justifyContent: "flex-start" }}>
+                        {([{ id: "bootstrap" as Budget, label: "Bootstrap", sub: "<$50" }, { id: "growing" as Budget, label: "Growing", sub: "$50–200" }, { id: "funded" as Budget, label: "Funded", sub: "$200–1k" }, { id: "scale" as Budget, label: "Scale", sub: "$1k+" }]).map(opt => (
+                          <button key={opt.id} onClick={() => setBudget(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: budget === opt.id ? "var(--clr-accent)" : "transparent", borderColor: budget === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: budget === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{ marginBottom: 6, paddingTop: 8, borderTop: "1px solid var(--clr-border-secondary)" }}>
+                      <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em", color: "var(--clr-text-2)", textTransform: "uppercase" as const, marginBottom: 6, textAlign: "left" as const }}>Tech level</div>
+                      <div style={{ display: "flex", gap: 5, justifyContent: "flex-start" }}>
+                        {([{ id: "nocode" as TechLevel, label: "No-code" }, { id: "lowcode" as TechLevel, label: "Low-code" }, { id: "developer" as TechLevel, label: "Developer" }]).map(opt => (
+                          <button key={opt.id} onClick={() => setTechLevel(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: techLevel === opt.id ? "var(--clr-accent)" : "transparent", borderColor: techLevel === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: techLevel === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{ marginBottom: 4, paddingTop: 8, borderTop: "1px solid var(--clr-border-secondary)" }}>
+                      <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em", color: "var(--clr-text-2)", textTransform: "uppercase" as const, marginBottom: 6, textAlign: "left" as const }}>Platform</div>
+                      <div style={{ display: "flex", gap: 5, justifyContent: "flex-start" }}>
+                        {([{ id: "web" as Platform, label: "Web" }, { id: "mobile" as Platform, label: "Mobile" }, { id: "both" as Platform, label: "Both" }]).map(opt => (
+                          <button key={opt.id} onClick={() => setPlatform(opt.id)} style={{ padding: "3px 11px", borderRadius: 20, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer", border: "1px solid", background: platform === opt.id ? "var(--clr-accent)" : "transparent", borderColor: platform === opt.id ? "var(--clr-accent)" : "var(--clr-border)", color: platform === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                      {/* Bottom row */}
                       <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <button
                           onClick={() => {
@@ -3729,7 +3703,7 @@ function HomeInner() {
                             <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)" }}>{40 - idea.trim().length} more chars to unlock</span>
                           )}
                           <button
-                            onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); handleSubmit(); } } }}
+                            onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); } } }}
                             disabled={idea.trim().length < 40}
                             style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-accent)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 9, padding: "10px 26px", fontSize: "0.875rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
@@ -4236,24 +4210,83 @@ ${sections.join("\n")}
                   </button>
                 </div>
               )}
-              {selectedTool && !loading && (streamedContent || trendFeedData) && (
-                <div style={{ marginTop: 8 }}>
-                  {selectedTool === "trend-feed" && trendFeedData && (
-                    <TrendFeedResult data={trendFeedData} />
-                  )}
-                  {selectedTool === "gap-analysis" && streamedContent && (() => {
-                    const gapData = parseGapAnalysisJSON(streamedContent);
-                    return gapData ? (
-                      <div style={{ padding: "0 16px 16px 12px" }}>
-                        <GapAnalysisResult data={gapData} itunesApps={(data as any).itunesApps ?? []} gplayApps={(data as any).gplayApps ?? []} idea={idea} onSwitchToStack={() => handleSelectTool("stack-advisor")} />
-                      </div>
-                    ) : null;
-                  })()}
-                  {selectedTool === "stack-advisor" && streamedContent && (() => {
-                    const stackData = parseStackAdvisorJSON(streamedContent);
-                    return stackData ? <StackAdvisorResult data={stackData} ytVideos={ytVideos} /> : null;
-                  })()}
-                </div>
+
+              {/* Trend Feed: structured result */}
+              {selectedTool === "trend-feed" && !loading && trendFeedData && (
+                <TrendFeedResult data={trendFeedData} />
               )}
 
-              
+              {/* Dig: structured visual report */}
+              {selectedTool === "gap-analysis" && !loading && streamedContent ? (
+                (() => {
+                  const gapData = parseGapAnalysisJSON(streamedContent);
+                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { handleSelectTool("stack-advisor"); setTimeout(() => setIdea(i), 50); }} /></div>;
+                  return sections.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                      {sections.map((s, i) => (
+                        <SectionCard key={i} section={s} showCursor={false} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem", padding: "1.5rem" }}>
+                      No analysis data found for this niche
+                    </div>
+                  );
+                })()
+              ) : selectedTool === "stack-advisor" && !loading && streamedContent ? (
+                (() => {
+                  const stackData = parseStackAdvisorJSON(streamedContent);
+                  if (stackData) return <StackAdvisorResult data={stackData} ytVideos={ytVideos} />;
+                  return sections.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                      {sections.map((s, i) => (
+                        <SectionCard key={i} section={s} showCursor={false} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem", padding: "1.5rem" }}>
+                      No stack recommendation found
+                    </div>
+                  );
+                })()
+              ) : selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" ? (
+                /* All other tools: markdown section cards */
+                sections.length > 0 ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                    {sections.map((s, i) => (
+                      <SectionCard key={i} section={s} showCursor={s.isLast && loading} />
+                    ))}
+                  </div>
+                ) : !loading && streamedContent ? (
+                  <div className="section-card" style={{ textAlign: "center", color: "var(--clr-text-6)", fontSize: "0.875rem", padding: "1.5rem" }}>
+                    No analysis sections found for this niche
+                  </div>
+                ) : null
+              ) : null}
+
+              {/* ââ App Stores (Dig only) — unified merged list ââ */}
+
+
+
+
+              </div>
+              )}
+            </div>
+          )}
+        </main>
+
+      </div>
+      <Script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" strategy="lazyOnload" />
+      <Script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" strategy="lazyOnload" />
+      {showNoCreditsModal && <NoCreditsModal idea={idea} onClose={() => setShowNoCreditsModal(false)} />}
+    </>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <HomeInner />
+    </Suspense>
+  );
+}
