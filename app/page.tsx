@@ -2909,7 +2909,7 @@ function HomeInner() {
       sessionStorage.removeItem("unbuilt_pending_idea");
       sessionStorage.removeItem("unbuilt_pending_tool");
       if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") {
-        setIdea(pendingIdea); if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") setActiveHeroTab(pendingTool as "gap-analysis" | "stack-advisor");
+        setIdea(pendingIdea); if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") setActiveHeroTab(pendingTool as "gap-analysis" | "stack-advisor"); setSelectedTool(null); router.replace("/");
         // Update URL too
         window.history.replaceState({}, "", `/?tool=${pendingTool}`);
       } else if (pendingIdea && selectedTool) {
