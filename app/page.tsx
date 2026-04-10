@@ -1289,6 +1289,19 @@ function StackSampleReport() {
 }
 
 
+function LandingReportPreview() {
+  const [tab, setTab] = useState<"dig"|"stack">("dig");
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: "1.5rem" }}>
+        <button onClick={() => setTab("dig")} style={{ padding: "7px 18px", borderRadius: 8, fontSize: "0.8125rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit", background: tab === "dig" ? "var(--clr-text)" : "var(--clr-surface-2)", color: tab === "dig" ? "#fff" : "var(--clr-text-3)" }}>Dig report</button>
+        <button onClick={() => setTab("stack")} style={{ padding: "7px 18px", borderRadius: 8, fontSize: "0.8125rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit", background: tab === "stack" ? "#0f766e" : "var(--clr-surface-2)", color: tab === "stack" ? "#fff" : "var(--clr-text-3)" }}>Stack report</button>
+      </div>
+      {tab === "dig" ? <DigSampleReport /> : <StackSampleReport />}
+    </div>
+  );
+}
+
 function NoCreditsModal({ idea, onClose }: { idea: string; onClose: () => void }) {
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}
@@ -3575,7 +3588,7 @@ function HomeInner() {
 
               {/* ── Pulse Panel (default view) ── */}
               {!selectedTool && !hasResults && (
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                   {/* ── HERO ── */}
                   <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
                     {/* Title */}
@@ -3708,6 +3721,169 @@ function HomeInner() {
                       {activeHeroTab === "gap-analysis" ? <DigSampleReport /> : <StackSampleReport />}
                     </div>
                   )}
+
+                  {/* ── LANDING SECTIONS ── */}
+                  {/* Social proof bar */}
+                  <div style={{ borderTop: "1px solid var(--clr-border)", padding: "16px 0", display: "flex", justifyContent: "center", alignItems: "center", gap: 20, flexWrap: "wrap" as const, marginTop: "1rem" }}>
+                    <div style={{ display: "flex" }}>
+                      {["#dbeafe","#fce7f3","#d1fae5","#fef3c7","#ede9fe"].map((bg,i) => (
+                        <div key={i} style={{ width: 22, height: 22, borderRadius: "50%", background: bg, border: "2px solid var(--clr-bg)", marginLeft: i > 0 ? -5 : 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.5rem", fontWeight: 600, color: "#666" }}>
+                          {["JK","SR","AM","DL","TP"][i]}
+                        </div>
+                      ))}
+                    </div>
+                    <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)" }}><span style={{ fontWeight: 600, color: "var(--clr-text)" }}>1,247</span> ideas validated</span>
+                    <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)" }}>|</span>
+                    <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>Powered by <span style={{ fontWeight: 600, color: "var(--clr-text)" }}>Claude Opus 4.6</span></span>
+                  </div>
+
+                  {/* Dig + Stack intro */}
+                  <div style={{ padding: "3rem 1.5rem", textAlign: "center" as const }}>
+                    <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>Two tools. One session. Build the right thing.</h2>
+                    <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", marginBottom: "2rem" }}>Dig finds where the gap is. Stack tells you exactly how to build it.</p>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, maxWidth: 640, margin: "0 auto" }}>
+                      <div style={{ background: "var(--clr-surface)", border: "1.5px solid var(--clr-text)", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                          <span style={{ fontSize: "0.9375rem", fontWeight: 600 }}>Dig</span>
+                        </div>
+                        <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: 14 }}>Scans 70+ live sources. Maps competitors with funding data. Finds the whitespace nobody is filling.</p>
+                        <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
+                          {["App Store","Product Hunt","Reddit","G2","+66 more"].map(s => (
+                            <span key={s} style={{ padding: "3px 8px", background: "var(--clr-surface-2)", borderRadius: 5, fontSize: "0.625rem", color: "var(--clr-text-4)" }}>{s}</span>
+                          ))}
+                        </div>
+                      </div>
+                      <div style={{ background: "var(--clr-surface)", border: "1.5px solid #0f766e", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f766e" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+                          <span style={{ fontSize: "0.9375rem", fontWeight: 600 }}>Stack</span>
+                        </div>
+                        <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: 14 }}>Recommends exact tools, real monthly costs, and a phased build order — matched to your budget and skill level.</p>
+                        <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
+                          {["No-code","Low-code","Developer","700+ tools"].map(s => (
+                            <span key={s} style={{ padding: "3px 8px", background: "rgba(15,118,110,0.08)", borderRadius: 5, fontSize: "0.625rem", color: "#0f766e" }}>{s}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 47 hours vs 2 minutes */}
+                  <div style={{ padding: "3rem 1.5rem", background: "var(--clr-surface)" }}>
+                    <div style={{ textAlign: "center" as const, marginBottom: "2rem" }}>
+                      <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>47 hours of research. Or 2 minutes.</h2>
+                      <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)" }}>The average founder spends weeks on market research. Here's what Unbuilt does in one scan.</p>
+                    </div>
+                    <div style={{ maxWidth: 580, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 0 }}>
+                      <div style={{ padding: 20, textAlign: "center" as const }}>
+                        <div style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--clr-text-4)", textTransform: "uppercase" as const, letterSpacing: "0.06em", marginBottom: 14 }}>Manual research</div>
+                        <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)", lineHeight: 2.2, textAlign: "left" as const, paddingLeft: 12 }}>
+                          <div>Search App Store manually</div>
+                          <div>Browse Product Hunt for hours</div>
+                          <div>Dig through Reddit threads</div>
+                          <div>Check Crunchbase one by one</div>
+                          <div>Read G2 reviews</div>
+                          <div>Make a spreadsheet</div>
+                          <div>Guess if there's a gap</div>
+                        </div>
+                        <div style={{ marginTop: 14, paddingTop: 10, borderTop: "1px solid var(--clr-border)", fontSize: "1.25rem", fontWeight: 600, color: "#e24b4a" }}>~47 hours</div>
+                      </div>
+                      <div style={{ width: 1, background: "var(--clr-border)", margin: "0 6px" }} />
+                      <div style={{ padding: 20, textAlign: "center" as const }}>
+                        <div style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--clr-text-4)", textTransform: "uppercase" as const, letterSpacing: "0.06em", marginBottom: 14 }}>Unbuilt</div>
+                        <div style={{ fontSize: "0.8125rem", color: "var(--clr-text)", lineHeight: 2.2, textAlign: "left" as const, paddingLeft: 12, fontWeight: 500 }}>
+                          <div>12 competitors with funding data</div>
+                          <div>Gaps nobody is filling</div>
+                          <div>Reddit pain points extracted</div>
+                          <div>App Store new releases scanned</div>
+                          <div>Verdict: build, pivot, or skip</div>
+                          <div>Stack recommendation</div>
+                          <div>Phased build plan with costs</div>
+                        </div>
+                        <div style={{ marginTop: 14, paddingTop: 10, borderTop: "1px solid var(--clr-border)", fontSize: "1.25rem", fontWeight: 600, color: "#16a34a" }}>~2 minutes</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Stats — 92% had competitors */}
+                  <div style={{ padding: "3rem 1.5rem", textAlign: "center" as const }}>
+                    <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>Most ideas have competitors. The question is where they're weak.</h2>
+                    <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", marginBottom: "2rem" }}>Out of 1,247 ideas scanned, here's what we found.</p>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 12, maxWidth: 540, margin: "0 auto 1.5rem" }}>
+                      <div style={{ background: "var(--clr-surface)", borderRadius: 12, padding: "18px 14px" }}>
+                        <div style={{ fontSize: "1.75rem", fontWeight: 600 }}>92%</div>
+                        <div style={{ fontSize: "0.6875rem", color: "var(--clr-text-4)", marginTop: 3 }}>had existing competitors</div>
+                      </div>
+                      <div style={{ background: "var(--clr-surface)", borderRadius: 12, padding: "18px 14px" }}>
+                        <div style={{ fontSize: "1.75rem", fontWeight: 600 }}>78%</div>
+                        <div style={{ fontSize: "0.6875rem", color: "var(--clr-text-4)", marginTop: 3 }}>had an exploitable gap</div>
+                      </div>
+                      <div style={{ background: "var(--clr-surface)", borderRadius: 12, padding: "18px 14px" }}>
+                        <div style={{ fontSize: "1.75rem", fontWeight: 600 }}>14%</div>
+                        <div style={{ fontSize: "0.6875rem", color: "var(--clr-text-4)", marginTop: 3 }}>were truly original</div>
+                      </div>
+                    </div>
+                    <div style={{ maxWidth: 500, margin: "0 auto", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: 20 }}>
+                      <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.7, textAlign: "left" as const }}>
+                        The point isn't having no competition — it's knowing exactly <span style={{ color: "var(--clr-text)", fontWeight: 600 }}>where they're falling short</span>. 78% of ideas we scanned had at least one gap competitors weren't filling. That's your entry point. Unbuilt doesn't tell you "great idea!" — it shows you the blind spot you can own.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Real reports section */}
+                  <div style={{ padding: "3rem 1.5rem", background: "var(--clr-surface)" }}>
+                    <div style={{ textAlign: "center" as const, marginBottom: "1.5rem" }}>
+                      <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>What a report actually looks like.</h2>
+                      <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)" }}>Real output from a real scan. Not a marketing mockup.</p>
+                    </div>
+                    <LandingReportPreview />
+                  </div>
+
+                  {/* Success stories */}
+                  <div style={{ padding: "3rem 1.5rem" }}>
+                    <div style={{ textAlign: "center" as const, marginBottom: "2rem" }}>
+                      <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>Validated here. Then shipped.</h2>
+                      <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)" }}>Some ideas that used Unbuilt to find their entry point.</p>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 12, maxWidth: 680, margin: "0 auto" }}>
+                      {[
+                        { initials: "NR", bg: "#ede9fe", color: "#6d28d9", name: "NoteReach", desc: "AI meeting notes for sales teams", gap: "No CRM-native transcription existed", badge: "Pre-seed $420K", badgeBg: "#d1fae5", badgeColor: "#065f46" },
+                        { initials: "FL", bg: "#fce7f3", color: "#9d174d", name: "Flowlance", desc: "Freelancer invoicing + tax prep", gap: "Nobody combined invoicing + tax filing", badge: "$12K MRR", badgeBg: "#dbeafe", badgeColor: "#1e40af" },
+                        { initials: "SQ", bg: "#fef3c7", color: "#92400e", name: "SquadHire", desc: "Team hiring for agencies", gap: "No tool for hiring entire squads at once", badge: "Angel $310K", badgeBg: "#d1fae5", badgeColor: "#065f46" },
+                      ].map(s => (
+                        <div key={s.name} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: 18 }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+                            <div style={{ width: 32, height: 32, borderRadius: 9, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6875rem", fontWeight: 600, color: s.color }}>{s.initials}</div>
+                            <span style={{ padding: "2px 8px", background: s.badgeBg, borderRadius: 999, fontSize: "0.5625rem", fontWeight: 600, color: s.badgeColor }}>{s.badge}</span>
+                          </div>
+                          <div style={{ fontSize: "0.875rem", fontWeight: 600, marginBottom: 3 }}>{s.name}</div>
+                          <div style={{ fontSize: "0.6875rem", color: "var(--clr-text-3)", lineHeight: 1.5, marginBottom: 8 }}>{s.desc}</div>
+                          <div style={{ fontSize: "0.625rem", color: "var(--clr-text-4)", paddingTop: 8, borderTop: "1px solid var(--clr-border)" }}>Gap found: {s.gap}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Built with */}
+                  <div style={{ padding: "1.5rem 1.5rem", textAlign: "center" as const, borderTop: "1px solid var(--clr-border)", borderBottom: "1px solid var(--clr-border)" }}>
+                    <div style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--clr-text-4)", letterSpacing: "0.08em", textTransform: "uppercase" as const, marginBottom: 12 }}>Built with</div>
+                    <div style={{ display: "flex", justifyContent: "center", gap: 24, alignItems: "center" }}>
+                      {["Next.js","Vercel","Supabase","Clerk","Claude API","Stripe"].map(t => (
+                        <span key={t} style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--clr-text-4)" }}>{t}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Final CTA */}
+                  <div style={{ padding: "3.5rem 1.5rem", textAlign: "center" as const, background: "var(--clr-text)", borderRadius: 16, margin: "1.25rem" }}>
+                    <h2 style={{ fontSize: "1.75rem", fontWeight: 600, color: "#fff", letterSpacing: "-0.03em", marginBottom: 6 }}>Stop guessing. Start digging.</h2>
+                    <p style={{ fontSize: "0.9375rem", color: "#666", marginBottom: "1.5rem" }}>Find the gap in your idea. Get the stack to build it. One session.</p>
+                    <div style={{ display: "inline-flex", gap: 10 }}>
+                      <button onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("gap-analysis"); }} style={{ padding: "10px 24px", background: "#fff", color: "#111", borderRadius: 10, fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Dig my idea</button>
+                      <button onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("stack-advisor"); }} style={{ padding: "10px 24px", background: "#0f766e", color: "#fff", borderRadius: 10, fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Get my stack</button>
+                    </div>
+                  </div>
                 </div>
               )}
 
