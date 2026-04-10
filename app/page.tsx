@@ -3005,7 +3005,7 @@ function HomeInner() {
   
   // Number of scan steps for the current tool (used for timer logic)
   const scanStepCounts: Record<string, number> = { "trend-feed": 5, "gap-analysis": 8, "stack-advisor": 8, "competitor-radar": 1 };
-  const maxScanStep = (scanStepCounts[selectedTool ?? "trend-feed"] ?? 3) - 1;
+  const maxScanStep = (scanStepCounts[selectedTool || activeHeroTab || "gap-analysis"] ?? 8) - 1;
 
   // Advance scan to "done" once last step is active AND Claude has finished
   useEffect(() => {
