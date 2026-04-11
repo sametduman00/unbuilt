@@ -4,6 +4,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import ClerkThemeProvider from "./components/ClerkThemeProvider";
 import CookieConsent from "./components/CookieConsent";
 import AppTopNav from "./components/AppTopNav";
+import MobileNav from "./components/MobileNav";
 import ConsentGate from "./components/ConsentGate";
 import "./globals.css";
 
@@ -103,6 +104,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ClerkThemeProvider>
           <ConsentGate>
               <AppTopNav />
+              <MobileNav />
             <div className="app-content-wrapper" style={{ paddingTop: "72px" }}>
               {children}
             </div>
