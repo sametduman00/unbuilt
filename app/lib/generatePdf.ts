@@ -333,8 +333,28 @@ export function generatePdf(report: ReportData, jsPDF: any) {
 
   let p: Record<string, unknown> = {};
   try {
-    const m = report.json_content.match(/```json\s*([\s\S]*?)```/);
-    p = JSON.parse(m ? m[1] : report.json_content);
+    let fenceMatch = report.json_content.match(/```json\s*([\s\S]*?)```/);
+    if (!fenceMatch) {
+      const openMatch = report.json_content.match(/```json\s*([\s\S]*)/);
+      if (openMatch) fenceMatch = openMatch;
+    }
+    let jsonStr = fenceMatch ? fenceMatch[1].trim() : report.json_content;
+    // Find first { if not starting with one
+    if (!jsonStr.startsWith('{')) {
+      const idx = jsonStr.indexOf('{');
+      if (idx >= 0) jsonStr = jsonStr.substring(idx);
+    }
+    try { JSON.parse(jsonStr); } catch {
+      jsonStr = jsonStr.replace(/,\s*$/, '');
+      let opens = 0, opensArr = 0;
+      for (const ch of jsonStr) {
+        if (ch === '{') opens++; else if (ch === '}') opens--;
+        else if (ch === '[') opensArr++; else if (ch === ']') opensArr--;
+      }
+      for (let i = 0; i < opensArr; i++) jsonStr += ']';
+      for (let i = 0; i < opens; i++) jsonStr += '}';
+    }
+    p = JSON.parse(jsonStr);
   } catch { /* ignore */ }
 
   const toolLabel = report.tool === "gap-analysis" ? "Dig" : "Stack";
@@ -357,9 +377,26 @@ export function generatePdf(report: ReportData, jsPDF: any) {
     doc.setFontSize(14); doc.setTextColor(150, 150, 150); doc.text("/100", M + 24, y + 10);
     doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(80, 80, 80);
     if (p.marketScoreLabel) doc.text(str(p.marketScoreLabel).toUpperCase(), M, y + 16);
+    // Confidence badge
+    const ev = o(p._evidence);
+    if (ev.level) {
+      const confC: [number, number, number] = ev.level === "high" ? [22, 163, 74] : ev.level === "moderate" ? [234, 88, 12] : [220, 38, 38];
+      doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...confC);
+      doc.text(str(ev.level).toUpperCase() + " CONFIDENCE", M + 50, y + 16);
+    }
     y += 20;
   }
+  // Verdict
+  if (p.verdict) t(str(p.verdict), 10, true, [17, 24, 39]);
   if (p.marketScoreSummary) t(str(p.marketScoreSummary), 10, false, [60, 60, 60]);
+
+  // Recommended action badge
+  const synAct = o(p.synthesis);
+  if (synAct.recommendedAction) {
+    const actC: [number, number, number] = synAct.recommendedAction === "kill" ? [220, 38, 38] : synAct.recommendedAction === "move_fast" ? [22, 163, 74] : synAct.recommendedAction === "build_mvp" ? [37, 99, 235] : synAct.recommendedAction === "reposition" ? [234, 88, 12] : [55, 65, 81];
+    t("Recommended: " + str(synAct.recommendedAction).replace(/_/g, " "), 10, true, actC);
+  }
+
   if (p.oneLiner) { y += 2; t("One-Liner: " + str(p.oneLiner), 10, false, [80, 40, 160]); }
 
   // Key numbers
@@ -368,6 +405,38 @@ export function generatePdf(report: ReportData, jsPDF: any) {
   const comp0 = arr<{ name: string }>(p.competitors)[0]; if (comp0) kn.push("Top threat: " + str(comp0.name));
   const gap0 = arr<{ title: string }>(p.marketGaps)[0]; if (gap0) kn.push("Best gap: " + str(gap0.title));
   if (kn.length) { y += 2; t(kn.join("   |   "), 9, false, [80, 80, 80]); }
+
+  // Fatal flaw + upside condition cards
+  const synFF = o(p.synthesis);
+  if (synFF.fatalFlaw || synFF.upsideCondition) {
+    y += 3;
+    if (synFF.fatalFlaw) {
+      doc.setFillColor(254, 242, 242); doc.roundedRect(M, y - 2, CW / 2 - 2, 20, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(220, 38, 38);
+      doc.text("FATAL FLAW", M + 3, y + 3);
+      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(127, 29, 29);
+      const ffLines = doc.splitTextToSize(e(synFF.fatalFlaw), CW / 2 - 10);
+      doc.text(ffLines, M + 3, y + 7);
+      const ffH = Math.max(20, ffLines.length * 3.5 + 10);
+      doc.setFillColor(254, 242, 242); doc.roundedRect(M, y - 2, CW / 2 - 2, ffH, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(220, 38, 38); doc.text("FATAL FLAW", M + 3, y + 3);
+      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(127, 29, 29); doc.text(ffLines, M + 3, y + 7);
+    }
+    if (synFF.upsideCondition) {
+      const ux = M + CW / 2 + 2;
+      doc.setFillColor(240, 253, 244); doc.roundedRect(ux, y - 2, CW / 2 - 2, 20, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(22, 163, 74);
+      doc.text("UPSIDE CONDITION", ux + 3, y + 3);
+      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(20, 83, 45);
+      const ucLines = doc.splitTextToSize(e(synFF.upsideCondition), CW / 2 - 10);
+      doc.text(ucLines, ux + 3, y + 7);
+      const ucH = Math.max(20, ucLines.length * 3.5 + 10);
+      doc.setFillColor(240, 253, 244); doc.roundedRect(ux, y - 2, CW / 2 - 2, ucH, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(22, 163, 74); doc.text("UPSIDE CONDITION", ux + 3, y + 3);
+      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(20, 83, 45); doc.text(ucLines, ux + 3, y + 7);
+    }
+    y += 24;
+  }
 
   // 3 cards
   const fg = arr<{ title: string; description: string }>(p.marketGaps)[0];
@@ -380,6 +449,40 @@ export function generatePdf(report: ReportData, jsPDF: any) {
     { label: "BIGGEST RISK", title: str(ft), body: str(ft2), lc: [234, 88, 12], bg: [255, 247, 237] },
     { label: "FIRST MOVE", title: str(fm?.action), body: str(fm?.detail), lc: [37, 99, 235], bg: [239, 246, 255] },
   ]);
+
+  // D1-D5 Score Breakdown
+  const scoring = o(p._scoring);
+  if (Object.keys(scoring).length) {
+    y += 4;
+    t("SCORE BREAKDOWN", 9, true, [60, 60, 120]);
+    const dims = [
+      { key: "D1_demand", label: "Demand signals (30%)", color: [99, 102, 241] as [number, number, number] },
+      { key: "D2_competition", label: "Competitive density (20%)", color: [245, 158, 11] as [number, number, number] },
+      { key: "D3_gaps", label: "Gap quality (25%)", color: [16, 185, 129] as [number, number, number] },
+      { key: "D4_timing", label: "Market timing (15%)", color: [236, 72, 153] as [number, number, number] },
+      { key: "D5_entry", label: "Entry feasibility (10%)", color: [139, 92, 246] as [number, number, number] },
+    ];
+    dims.forEach(dim => {
+      const d = o(scoring[dim.key]);
+      const sc = Number(d.score ?? 0);
+      chk(8);
+      doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(55, 65, 81);
+      doc.text(dim.label, M, y + 2);
+      // Progress bar
+      const barX = M + 55, barW = CW - 70;
+      doc.setFillColor(243, 244, 246); doc.roundedRect(barX, y - 1, barW, 4, 1, 1, "F");
+      doc.setFillColor(...dim.color); doc.roundedRect(barX, y - 1, barW * sc / 100, 4, 1, 1, "F");
+      doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(17, 24, 39);
+      doc.text(str(sc), M + CW - 4, y + 2, { align: "right" });
+      y += 7;
+    });
+    if (scoring.fatal_floor_applied) {
+      doc.setFillColor(254, 242, 242); doc.roundedRect(M, y, CW, 7, 2, 2, "F");
+      doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(220, 38, 38);
+      doc.text("Fatal floor applied — score capped due to low demand or gap quality.", M + 3, y + 4.5);
+      y += 10;
+    }
+  }
 
   // Synthesis paragraph (also shown in overview)
   const syn0 = o(p.synthesis);
@@ -406,13 +509,14 @@ export function generatePdf(report: ReportData, jsPDF: any) {
 
   // ── TAB 3: COMMUNITY SIGNALS ─────────────────────────────────
   sec("COMMUNITY SIGNALS");
-  const painPts = arr<{ quote: string; source?: string; severity?: string }>(p.painPoints);
+  const painPts = arr<{ quote: string; source?: string; severity?: string; demandSignal?: string }>(p.painPoints);
   if (painPts.length) {
     t("Pain Points", 10, true, [60, 60, 120]);
     painPts.forEach(pp => {
       const sc: [number, number, number] = pp.severity === "high" ? [239, 68, 68] : pp.severity === "medium" ? [245, 158, 11] : [16, 185, 129];
       doc.setFillColor(...sc); doc.rect(M, y - 1, 2, 5, "F");
       bul((pp.severity ? "[" + str(pp.severity).toUpperCase() + "] " : "") + '"' + str(pp.quote) + '"' + (pp.source ? "  — " + str(pp.source) : ""), 6);
+      if (pp.demandSignal) t("Signal: " + str(pp.demandSignal), 8.5, false, [139, 92, 246], 10);
     });
   }
   const comSigs = arr<{ quote: string; source?: string; sentiment?: string; subredditOrHandle?: string }>(p.communitySignals);
@@ -437,12 +541,16 @@ export function generatePdf(report: ReportData, jsPDF: any) {
 
   // ── TAB 4: COMPETITORS ───────────────────────────────────────
   sec("COMPETITORS");
-  arr<{ name: string; tagline: string; threatLevel?: number; strengths?: string[]; weaknesses?: string[] }>(p.competitors).forEach(c => {
+  arr<{ name: string; tagline: string; threatLevel?: number; funding?: string; userCount?: string; strengths?: string[]; weaknesses?: string[] }>(p.competitors).forEach(c => {
     chk(20);
     const tl = c.threatLevel ?? 0;
     const tlc: [number, number, number] = tl >= 8 ? [220, 38, 38] : tl >= 5 ? [234, 88, 12] : [22, 163, 74];
     t(str(c.name) + "  " + (tl > 0 ? "Threat: " + tl + "/10" : ""), 11, true, tlc);
     t(str(c.tagline), 9, false, [107, 114, 128], 4);
+    const meta: string[] = [];
+    if (c.funding) meta.push("Funding: " + str(c.funding));
+    if (c.userCount) meta.push("Users: " + str(c.userCount));
+    if (meta.length) t(meta.join("  |  "), 8.5, false, [150, 150, 150], 4);
     const str2 = arr<string>(c.strengths); const wks = arr<string>(c.weaknesses);
     if (str2.length) { t("Strengths:", 9, true, [16, 185, 129], 4); str2.forEach(s => bul(str(s), 8)); }
     if (wks.length) { t("Weaknesses:", 9, true, [239, 68, 68], 4); wks.forEach(w => bul(str(w), 8)); }
@@ -465,10 +573,12 @@ export function generatePdf(report: ReportData, jsPDF: any) {
 
   // ── TAB 5: MARKET GAPS ───────────────────────────────────────
   sec("MARKET GAPS");
-  arr<{ title: string; description: string; opportunityScore?: number; status?: string }>(p.marketGaps).forEach(g => {
+  arr<{ title: string; description: string; evidence?: string; opportunityScore?: number; status?: string }>(p.marketGaps).forEach(g => {
     const sc: [number, number, number] = g.status === "untapped" ? [22, 101, 52] : g.status === "emerging" ? [30, 64, 175] : [133, 77, 14];
     t(str(g.title) + (g.status ? "  [" + g.status.toUpperCase() + "]" : "") + (g.opportunityScore != null ? "  Score: " + g.opportunityScore + "/10" : ""), 10, true, sc);
-    t(str(g.description), 9.5, false, [60, 60, 60], 4); y += 2;
+    t(str(g.description), 9.5, false, [60, 60, 60], 4);
+    if (g.evidence) t("Evidence: " + str(g.evidence), 8.5, false, [150, 150, 150], 4);
+    y += 2;
   });
 
   // SWOT
@@ -639,12 +749,60 @@ export function generatePdf(report: ReportData, jsPDF: any) {
   // ── TAB 10: SYNTHESIS ────────────────────────────────────────
   sec("SYNTHESIS");
   const syn = o(p.synthesis);
+  // Verdict
+  if (p.verdict) t(str(p.verdict), 10, true, [17, 24, 39]);
   if (syn.oneParagraph) t(str(syn.oneParagraph), 10, false, [55, 65, 81]);
+
+  // Recommended action
+  if (syn.recommendedAction) {
+    const actColor: [number, number, number] = syn.recommendedAction === "kill" ? [220, 38, 38] : syn.recommendedAction === "move_fast" ? [22, 163, 74] : syn.recommendedAction === "build_mvp" ? [37, 99, 235] : syn.recommendedAction === "reposition" ? [234, 88, 12] : [55, 65, 81];
+    y += 2; t("Recommended: " + str(syn.recommendedAction).replace(/_/g, " "), 11, true, actColor);
+  }
+
+  // Fatal flaw + upside condition
+  if (syn.fatalFlaw) {
+    y += 3;
+    doc.setFillColor(254, 242, 242); doc.roundedRect(M, y - 2, CW, 14, 2, 2, "F");
+    doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(220, 38, 38);
+    doc.text("FATAL FLAW", M + 3, y + 2);
+    const ffL = doc.splitTextToSize(e(syn.fatalFlaw), CW - 8);
+    doc.setFontSize(9); doc.setFont("helvetica", "normal"); doc.setTextColor(127, 29, 29);
+    doc.text(ffL, M + 3, y + 6);
+    y += Math.max(14, ffL.length * 3.8 + 8);
+  }
+  if (syn.upsideCondition) {
+    doc.setFillColor(240, 253, 244); doc.roundedRect(M, y - 2, CW, 14, 2, 2, "F");
+    doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(22, 163, 74);
+    doc.text("UPSIDE CONDITION", M + 3, y + 2);
+    const ucL = doc.splitTextToSize(e(syn.upsideCondition), CW - 8);
+    doc.setFontSize(9); doc.setFont("helvetica", "normal"); doc.setTextColor(20, 83, 45);
+    doc.text(ucL, M + 3, y + 6);
+    y += Math.max(14, ucL.length * 3.8 + 8);
+  }
+
+  // One-liner
   if (p.oneLiner) { y += 3; doc.setFillColor(245, 243, 255); doc.roundedRect(M, y - 2, CW, 14, 2, 2, "F"); doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(124, 58, 237); doc.text("YOUR ONE-LINER", M + 4, y + 2); const olLines = doc.splitTextToSize('"' + e(p.oneLiner) + '"', CW - 8); doc.setFontSize(9.5); doc.setFont("helvetica", "italic"); doc.setTextColor(30, 27, 75); doc.text(olLines, M + 4, y + 7); y += olLines.length * 4 + 9; }
+
+  // Defensibility
+  const def = o(syn.defensibility);
+  if (Object.keys(def).length) {
+    y += 3; t("DEFENSIBILITY", 9, true, [60, 60, 120]);
+    if (def.level) {
+      const defC: [number, number, number] = def.level === "high" ? [22, 163, 74] : def.level === "medium" ? [234, 88, 12] : [220, 38, 38];
+      t(str(def.level).toUpperCase() + " defensibility", 10, true, defC, 4);
+    }
+    if (def.moat) t("Moat: " + str(def.moat), 9.5, false, [55, 65, 81], 4);
+    if (def.copyTimeframe) t("Copy timeframe: " + str(def.copyTimeframe), 9.5, false, [55, 65, 81], 4);
+  }
+
+  // Working for you / Watch out
   const wfy = arr<string>(syn.workingForYou);
   const wof = arr<string>(syn.watchOutFor);
   if (wfy.length) { y += 2; t("Working For You", 10, true, [16, 185, 129]); wfy.forEach(x => bul("● " + str(x), 4)); }
   if (wof.length) { y += 2; t("Watch Out For", 10, true, [245, 158, 11]); wof.forEach(x => bul("● " + str(x), 4)); }
+
+  // Confidence note
+  if (syn.confidenceNote) { y += 3; t(str(syn.confidenceNote), 9, false, [150, 150, 150]); }
 
   // ── PAGE FOOTERS ─────────────────────────────────────────────
   const total = doc.getNumberOfPages();
