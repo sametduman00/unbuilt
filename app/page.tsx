@@ -3604,7 +3604,7 @@ function HomeInner() {
                       </div>
                     )}
                     {/* Subtitle — single line */}
-                    <div style={{ fontSize: "1.125rem", color: "var(--clr-text-3)", marginBottom: "1.5rem", lineHeight: 1.5, whiteSpace: "nowrap" as const }}>
+                    <div style={{ fontSize: "1.125rem", color: "var(--clr-text-3)", marginBottom: "1.5rem", lineHeight: 1.5 }}>
                       {activeHeroTab === "gap-analysis"
                         ? "Describe your idea. We'll scan 70+ live sources and tell you exactly where the gap is."
                         : "Describe what you're building. We'll give you exact tools, real costs and a build order."}
@@ -3741,7 +3741,7 @@ function HomeInner() {
                   <div style={{ padding: "3rem 1.5rem", textAlign: "center" as const }}>
                     <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>Two tools. One session. Build the right thing.</h2>
                     <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", marginBottom: "2rem" }}>Dig finds where the gap is. Stack tells you exactly how to build it.</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, maxWidth: 640, margin: "0 auto" }}>
+                    <div className="landing-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, maxWidth: 640, margin: "0 auto" }}>
                       <div style={{ background: "var(--clr-surface)", border: "1.5px solid var(--clr-text)", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -3775,7 +3775,7 @@ function HomeInner() {
                       <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>47 hours of research. Or 2 minutes.</h2>
                       <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)" }}>The average founder spends weeks on market research. Here's what Unbuilt does in one scan.</p>
                     </div>
-                    <div style={{ maxWidth: 580, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 0 }}>
+                    <div className="landing-compare" style={{ maxWidth: 580, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 0 }}>
                       <div style={{ padding: 20, textAlign: "center" as const }}>
                         <div style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--clr-text-4)", textTransform: "uppercase" as const, letterSpacing: "0.06em", marginBottom: 14 }}>Manual research</div>
                         <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)", lineHeight: 2.2, textAlign: "left" as const, paddingLeft: 12 }}>
@@ -3810,7 +3810,7 @@ function HomeInner() {
                   <div style={{ padding: "3rem 1.5rem", textAlign: "center" as const }}>
                     <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>Most ideas have competitors. The question is where they're weak.</h2>
                     <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", marginBottom: "2rem" }}>Out of 1,247 ideas scanned, here's what we found.</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 12, maxWidth: 540, margin: "0 auto 1.5rem" }}>
+                    <div className="landing-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 12, maxWidth: 540, margin: "0 auto 1.5rem" }}>
                       <div style={{ background: "var(--clr-surface)", borderRadius: 12, padding: "18px 14px" }}>
                         <div style={{ fontSize: "1.75rem", fontWeight: 600 }}>92%</div>
                         <div style={{ fontSize: "0.6875rem", color: "var(--clr-text-4)", marginTop: 3 }}>had existing competitors</div>
@@ -3846,7 +3846,7 @@ function HomeInner() {
                       <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>Validated here. Then shipped.</h2>
                       <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)" }}>Some ideas that used Unbuilt to find their entry point.</p>
                     </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 12, maxWidth: 680, margin: "0 auto" }}>
+                    <div className="landing-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 12, maxWidth: 680, margin: "0 auto" }}>
                       {[
                         { initials: "NR", bg: "#ede9fe", color: "#6d28d9", name: "NoteReach", desc: "AI meeting notes for sales teams", gap: "No CRM-native transcription existed", badge: "Pre-seed $420K", badgeBg: "#d1fae5", badgeColor: "#065f46" },
                         { initials: "FL", bg: "#fce7f3", color: "#9d174d", name: "Flowlance", desc: "Freelancer invoicing + tax prep", gap: "Nobody combined invoicing + tax filing", badge: "$12K MRR", badgeBg: "#dbeafe", badgeColor: "#1e40af" },

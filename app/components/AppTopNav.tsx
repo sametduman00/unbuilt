@@ -122,7 +122,7 @@ export default function AppTopNav() {
   };
 
   return (
-    <nav style={{
+    <nav className="app-desktop-nav" style={{
       position: "fixed",
       top: 10,
       left: "50%",

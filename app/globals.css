@@ -191,6 +191,14 @@ body, p, span, button, input, textarea, select, label, a {
   .app-mobile-nav { display: none !important; }
   .app-mobile-header { display: none !important; }
 }
+@media (max-width: 768px) {
+  .app-desktop-nav { display: none !important; }
+  .landing-grid-2 { grid-template-columns: 1fr !important; }
+  .landing-grid-3 { grid-template-columns: 1fr !important; }
+  .landing-grid-4 { grid-template-columns: 1fr 1fr !important; }
+  .landing-compare { grid-template-columns: 1fr !important; }
+  .landing-compare > div:nth-child(2) { display: none; }
+}
 
 /* ââ Mobile layout fixes ââ */
 @media (max-width: 768px) {
