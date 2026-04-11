@@ -725,9 +725,27 @@ export async function POST(req: NextRequest) {
           try {
             let jsonToSave = full;
             try {
-              const fenceMatch = full.match(/```json\s*([\s\S]*?)```/);
+              // Try with closing fence first
+              let fenceMatch = full.match(/```json\s*([\s\S]*?)```/);
+              // If no closing fence (truncated), grab everything after opening fence
+              if (!fenceMatch) {
+                const openMatch = full.match(/```json\s*([\s\S]*)/);
+                if (openMatch) fenceMatch = openMatch;
+              }
               if (fenceMatch) {
-                const parsed = JSON.parse(fenceMatch[1]);
+                let jsonContent = fenceMatch[1].trim();
+                // Try to repair truncated JSON
+                try { JSON.parse(jsonContent); } catch {
+                  jsonContent = jsonContent.replace(/,\s*$/, '');
+                  let opens = 0, opensArr = 0;
+                  for (const ch of jsonContent) {
+                    if (ch === '{') opens++; else if (ch === '}') opens--;
+                    else if (ch === '[') opensArr++; else if (ch === ']') opensArr--;
+                  }
+                  for (let i = 0; i < opensArr; i++) jsonContent += ']';
+                  for (let i = 0; i < opens; i++) jsonContent += '}';
+                }
+                const parsed = JSON.parse(jsonContent);
                 const [itunesRaw] = await Promise.allSettled([
                   fetch(`https://itunes.apple.com/search?${new URLSearchParams({ term: idea, entity: "software", limit: "8", country: "us" })}`, { signal: AbortSignal.timeout(5000) }).then(r => r.json()).then(d => d.results ?? []).catch(() => []),
                 ]);
