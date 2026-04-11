@@ -707,7 +707,7 @@ export async function POST(req: NextRequest) {
         const socialContext = [redditContext, twitterContext].filter(Boolean).join("");
         let full = "";
         const anthropicStream = client.messages.stream({
-          model: "claude-opus-4-6", max_tokens: 24000,
+          model: "claude-opus-4-6", max_tokens: 50000,
           thinking: { type: "enabled", budget_tokens: 25000 },
           system: SYSTEM_PROMPT,
           messages: [{ role: "user", content: USER_PROMPT(sanitizeIdea(idea), youtubeContext, combinedAppContext, serperContext, trendsContext, segmentsContext, customerContext, gtmContext, reviewsContext, financialContext, fundabilityContext, socialContext) }],
