@@ -674,21 +674,33 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
     switch (activeTab) {
       case "overview": return (
         <div>
-          <Card title="TL;DR - Executive Summary" sub={"Market score: "+sc+"/100"} right={<Pill text={data.marketScoreLabel??"Opportunity"} color={sc>=70?"green":sc>=50?"orange":"red"} />}>
+          <Card title="TL;DR - Executive Summary" sub={"Market score: "+sc+"/100"} right={
+            <div style={{ display:"flex", gap:6, alignItems:"center" }}>
+              {data._evidence?.level && <Pill text={data._evidence.level+" confidence"} color={data._evidence.level==="high"?"green":data._evidence.level==="moderate"?"orange":"red"} />}
+              <Pill text={data.marketScoreLabel??"Opportunity"} color={sc>=70?"green":sc>=50?"orange":"red"} />
+            </div>
+          }>
             <div style={{ display:"flex", flexDirection:(typeof window!=="undefined"&&window.innerWidth<768)?"column":"row" as const, alignItems:(typeof window!=="undefined"&&window.innerWidth<768)?"center":"flex-start" as const, gap:20, marginBottom:20 }}>
               <div style={{ display:"flex", flexDirection:"column" as const, alignItems:"center", gap:8, flexShrink:0 }}>
                 <ScoreCircle size={90} />
-
               </div>
               <div style={{ flex:1, minWidth:0 }}>
-                <p style={{ fontSize:14, lineHeight:1.7, color:"#374151", margin:"0 0 12px 0" }}>{data.marketScoreSummary}</p>
+                {data.verdict && <p style={{ fontSize:14, lineHeight:1.7, color:"#111827", fontWeight:500, margin:"0 0 8px 0" }}>{data.verdict}</p>}
+                <p style={{ fontSize:13, lineHeight:1.7, color:"#6b7280", margin:"0 0 12px 0" }}>{data.marketScoreSummary}</p>
+                {data.synthesis?.recommendedAction && (
+                  <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"5px 12px", borderRadius:8, fontSize:12, fontWeight:600, marginBottom:12,
+                    background: data.synthesis.recommendedAction==="kill"?"#fee2e2" : data.synthesis.recommendedAction==="move_fast"?"#dcfce7" : data.synthesis.recommendedAction==="build_mvp"?"#dbeafe" : data.synthesis.recommendedAction==="reposition"?"#fff7ed" : "#f3f4f6",
+                    color: data.synthesis.recommendedAction==="kill"?"#dc2626" : data.synthesis.recommendedAction==="move_fast"?"#16a34a" : data.synthesis.recommendedAction==="build_mvp"?"#2563eb" : data.synthesis.recommendedAction==="reposition"?"#ea580c" : "#374151",
+                  }}>
+                    Recommended: {data.synthesis.recommendedAction.replace(/_/g," ")}
+                  </div>
+                )}
                 {data.oneLiner && (
-                  <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:8, padding:"10px 14px", marginBottom:0 }}>
+                  <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:8, padding:"10px 14px" }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#7c3aed", marginBottom:3, letterSpacing:"0.07em" }}>Your One-Liner</div>
                     <div style={{ fontSize:13, fontStyle:"italic" as const, color:"#1e1b4b" }}>"{data.oneLiner}"</div>
                   </div>
                 )}
-                {/* Key numbers row */}
                 <div style={{ display:"flex", gap:12, marginTop:12, flexWrap:"wrap" as const }}>
                   {data.marketSize?.tam && <div style={{ fontSize:12, color:"#374151" }}>📈 <strong>TAM:</strong> {parseMarketVal(data.marketSize.tam).num}</div>}
                   {data.competitors?.[0] && <div style={{ fontSize:12, color:"#374151" }}>⚔ <strong>Top threat:</strong> {data.competitors[0].name}</div>}
@@ -696,6 +708,23 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                 </div>
               </div>
             </div>
+            {/* Fatal flaw + upside condition */}
+            {(data.synthesis?.fatalFlaw || data.synthesis?.upsideCondition) && (
+              <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:10, marginBottom:16 }}>
+                {data.synthesis?.fatalFlaw && (
+                  <div style={{ background:"#fef2f2", border:"1px solid #fecaca", borderRadius:10, padding:14 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#dc2626", marginBottom:6, letterSpacing:"0.07em" }}>Fatal flaw</div>
+                    <div style={{ fontSize:13, color:"#7f1d1d", lineHeight:1.5 }}>{data.synthesis.fatalFlaw}</div>
+                  </div>
+                )}
+                {data.synthesis?.upsideCondition && (
+                  <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#16a34a", marginBottom:6, letterSpacing:"0.07em" }}>Upside condition</div>
+                    <div style={{ fontSize:13, color:"#14532d", lineHeight:1.5 }}>{data.synthesis.upsideCondition}</div>
+                  </div>
+                )}
+              </div>
+            )}
             <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr 1fr", gap:10 }}>
               <div style={{ background:"#f0fdfb", border:"1px solid #ccfbf1", borderRadius:10, padding:14 }}>
                 <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#0d9488", marginBottom:6, letterSpacing:"0.07em" }}>Biggest Opportunity</div>
@@ -714,6 +743,43 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
               </div>
             </div>
           </Card>
+          {/* D1-D5 Score Breakdown */}
+          {data._scoring && (
+            <Card title="Score Breakdown" sub="How the market score was calculated">
+              <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+                {[
+                  { key:"D1_demand", label:"Demand signals", weight:"30%", color:"#6366f1" },
+                  { key:"D2_competition", label:"Competitive density", weight:"20%", color:"#f59e0b" },
+                  { key:"D3_gaps", label:"Gap quality", weight:"25%", color:"#10b981" },
+                  { key:"D4_timing", label:"Market timing", weight:"15%", color:"#ec4899" },
+                  { key:"D5_entry", label:"Entry feasibility", weight:"10%", color:"#8b5cf6" },
+                ].map(dim => {
+                  const d = data._scoring?.[dim.key];
+                  if (!d) return null;
+                  const s = d.score ?? 0;
+                  return (
+                    <div key={dim.key} style={{ display:"flex", alignItems:"center", gap:12 }}>
+                      <div style={{ width:110, fontSize:11, fontWeight:600, color:"#374151", flexShrink:0 }}>{dim.label} <span style={{ color:"#9ca3af", fontWeight:400 }}>({dim.weight})</span></div>
+                      <div style={{ flex:1, height:8, background:"#f3f4f6", borderRadius:4, overflow:"hidden" }}>
+                        <div style={{ width:s+"%", height:"100%", background:dim.color, borderRadius:4, transition:"width 0.5s" }} />
+                      </div>
+                      <div style={{ width:28, fontSize:13, fontWeight:700, color:"#111827", textAlign:"right" as const }}>{s}</div>
+                    </div>
+                  );
+                })}
+              </div>
+              {data._scoring?.fatal_floor_applied && (
+                <div style={{ marginTop:12, padding:"8px 12px", background:"#fef2f2", border:"1px solid #fecaca", borderRadius:8, fontSize:12, color:"#dc2626" }}>
+                  ⚠ Fatal floor applied — {data._scoring.D1_demand?.score < 25 ? "demand" : "gap quality"} score too low, final capped.
+                </div>
+              )}
+              {data._evidence?.level && data._evidence.level !== "high" && (
+                <div style={{ marginTop:8, padding:"8px 12px", background:"#fffbeb", border:"1px solid #fde68a", borderRadius:8, fontSize:12, color:"#92400e" }}>
+                  ℹ {data._evidence.activeSources} of {data._evidence.totalSources} data sources returned results. Confidence: {data._evidence.level}.
+                </div>
+              )}
+            </Card>
+          )}
           {data.synthesis && (
             <Card title="Synthesis" sub="Your idea at a glance">
               <p style={{ fontSize:14, lineHeight:1.7, color:"#374151", margin:0 }}>{data.synthesis.oneParagraph}</p>
@@ -861,6 +927,12 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                         <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3.5 1H11M11 1V8.5M11 1L4 8M1 4.5V11H7.5" stroke="#2563eb" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                       </a>
                       <div style={{ fontSize:12, color:"#6b7280", marginTop:2 }}>{c.tagline}</div>
+                      {(c.funding || c.userCount) && (
+                        <div style={{ display:"flex", gap:6, marginTop:4, flexWrap:"wrap" as const }}>
+                          {c.funding && <span style={{ fontSize:10, padding:"1px 6px", borderRadius:4, background:"#f3f4f6", color:"#374151" }}>{c.funding}</span>}
+                          {c.userCount && <span style={{ fontSize:10, padding:"1px 6px", borderRadius:4, background:"#f3f4f6", color:"#374151" }}>{c.userCount} users</span>}
+                        </div>
+                      )}
                     </div>
                     <Pill text={c.threatLevel>=8?"HIGH":c.threatLevel>=5?"MEDIUM":"LOW"} color={c.threatLevel>=8?"red":c.threatLevel>=5?"orange":"green"} />
                   </div>
@@ -1180,8 +1252,37 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
           <Card title="Synthesis" sub="Your idea, the full picture">
             <div style={{ display:"flex", gap:20, marginBottom:18 }}>
               <ScoreCircle size={80} />
-              <p style={{ fontSize:14, lineHeight:1.7, color:"#374151", margin:0, flex:1 }}>{data.synthesis?.oneParagraph}</p>
+              <div style={{ flex:1, minWidth:0 }}>
+                {data.verdict && <p style={{ fontSize:14, lineHeight:1.7, color:"#111827", fontWeight:500, margin:"0 0 8px 0" }}>{data.verdict}</p>}
+                <p style={{ fontSize:13, lineHeight:1.7, color:"#6b7280", margin:0 }}>{data.synthesis?.oneParagraph}</p>
+              </div>
             </div>
+            {/* Recommended Action badge */}
+            {data.synthesis?.recommendedAction && (
+              <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"6px 14px", borderRadius:8, fontSize:13, fontWeight:600, marginBottom:16,
+                background: data.synthesis.recommendedAction==="kill"?"#fee2e2" : data.synthesis.recommendedAction==="move_fast"?"#dcfce7" : data.synthesis.recommendedAction==="build_mvp"?"#dbeafe" : data.synthesis.recommendedAction==="reposition"?"#fff7ed" : "#f3f4f6",
+                color: data.synthesis.recommendedAction==="kill"?"#dc2626" : data.synthesis.recommendedAction==="move_fast"?"#16a34a" : data.synthesis.recommendedAction==="build_mvp"?"#2563eb" : data.synthesis.recommendedAction==="reposition"?"#ea580c" : "#374151",
+              }}>
+                → Recommended: {data.synthesis.recommendedAction.replace(/_/g," ")}
+              </div>
+            )}
+            {/* Fatal flaw + upside condition */}
+            {(data.synthesis?.fatalFlaw || data.synthesis?.upsideCondition) && (
+              <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:10, marginBottom:16 }}>
+                {data.synthesis?.fatalFlaw && (
+                  <div style={{ background:"#fef2f2", border:"1px solid #fecaca", borderRadius:10, padding:14 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#dc2626", marginBottom:6, letterSpacing:"0.07em" }}>Fatal flaw</div>
+                    <div style={{ fontSize:13, color:"#7f1d1d", lineHeight:1.5 }}>{data.synthesis.fatalFlaw}</div>
+                  </div>
+                )}
+                {data.synthesis?.upsideCondition && (
+                  <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#16a34a", marginBottom:6, letterSpacing:"0.07em" }}>Upside condition</div>
+                    <div style={{ fontSize:13, color:"#14532d", lineHeight:1.5 }}>{data.synthesis.upsideCondition}</div>
+                  </div>
+                )}
+              </div>
+            )}
             {data.oneLiner && (
               <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:10, padding:14, display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
                 <div style={{ flex:1, minWidth:0 }}>
@@ -1192,8 +1293,33 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
               </div>
             )}
           </Card>
+          {/* Defensibility */}
+          {data.synthesis?.defensibility && (
+            <Card title="Defensibility" sub="How protected is this position?">
+              <div style={{ display:"flex", gap:12, alignItems:"center", marginBottom:14 }}>
+                <div style={{ display:"inline-flex", padding:"4px 12px", borderRadius:8, fontSize:12, fontWeight:600,
+                  background: data.synthesis.defensibility.level==="high"?"#dcfce7" : data.synthesis.defensibility.level==="medium"?"#fff7ed" : "#fee2e2",
+                  color: data.synthesis.defensibility.level==="high"?"#16a34a" : data.synthesis.defensibility.level==="medium"?"#ea580c" : "#dc2626",
+                }}>
+                  {(data.synthesis.defensibility.level??"unknown").toUpperCase()} defensibility
+                </div>
+              </div>
+              {data.synthesis.defensibility.moat && (
+                <div style={{ marginBottom:12 }}>
+                  <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:4, letterSpacing:"0.07em" }}>Moat</div>
+                  <p style={{ fontSize:13, color:"#6b7280", margin:0, lineHeight:1.6 }}>{data.synthesis.defensibility.moat}</p>
+                </div>
+              )}
+              {data.synthesis.defensibility.copyTimeframe && (
+                <div>
+                  <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:4, letterSpacing:"0.07em" }}>Copy timeframe</div>
+                  <p style={{ fontSize:13, color:"#6b7280", margin:0, lineHeight:1.6 }}>{data.synthesis.defensibility.copyTimeframe}</p>
+                </div>
+              )}
+            </Card>
+          )}
           {data.synthesis && (
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+            <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:12 }}>
               <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14 }}>
                 <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:10, letterSpacing:"0.07em" }}>Working For You</div>
                 {data.synthesis.workingForYou.map((item,i) => (
@@ -1212,6 +1338,12 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+          {/* Confidence note */}
+          {data.synthesis?.confidenceNote && (
+            <div style={{ marginTop:12, padding:"10px 14px", background:"#f9fafb", border:"1px solid #e5e7eb", borderRadius:8, fontSize:12, color:"#6b7280", lineHeight:1.6 }}>
+              ℹ {data.synthesis.confidenceNote}
             </div>
           )}
         </div>
@@ -2306,6 +2438,8 @@ interface GapCompetitor {
   name: string;
   tagline: string;
   threatLevel: number;
+  funding?: string;
+  userCount?: string;
   strengths: string[];
   weaknesses: string[];
 }
@@ -2313,10 +2447,12 @@ interface GapPainPoint {
   quote: string;
   source?: string;
   severity: "high" | "medium" | "low";
+  demandSignal?: string;
 }
 interface GapMarketGap {
   title: string;
   description: string;
+  evidence?: string;
   opportunityScore: number;
   status: "untapped" | "emerging" | "contested";
 }
@@ -2371,8 +2507,13 @@ interface GapMarketSize {
 }
 interface GapSynthesis {
   oneParagraph: string;
+  fatalFlaw?: string;
+  recommendedAction?: "kill" | "reposition" | "validate_niche" | "build_mvp" | "move_fast";
+  upsideCondition?: string;
+  defensibility?: { level?: string; moat?: string; copyTimeframe?: string };
   workingForYou: string[];
   watchOutFor: string[];
+  confidenceNote?: string;
 }
 interface GapTargetCustomerDeep {
   whoTheyAre: string;
@@ -2445,6 +2586,7 @@ interface GapAnalysisData {
   marketScore: number;
   marketScoreLabel: string;
   marketScoreSummary: string;
+  verdict?: string;
   competitors: GapCompetitor[];
   painPoints: GapPainPoint[];
   marketGaps: GapMarketGap[];
@@ -2465,6 +2607,10 @@ interface GapAnalysisData {
   marketSize?: GapMarketSize;
   validationChecklist?: GapValidationItem[];
   synthesis?: GapSynthesis;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  _scoring?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  _evidence?: any;
 }
 
 function parseGapAnalysisJSON(raw: string): GapAnalysisData | null {
