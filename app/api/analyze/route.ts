@@ -5,7 +5,7 @@ import gplay from "google-play-scraper";
 import { getCached, setCached, TTL_MS } from "../_cache";
 import { normalizeQuery } from "../_normalize";
 import { auth } from "@clerk/nextjs/server";
-import { deductCredit } from "@/app/lib/credits";
+import { deductCredit, addCredits } from "@/app/lib/credits";
 import { saveReport } from "@/app/lib/reports";
 import { validateAnalyzeBody, checkPayloadSize, errorResponse, MAX_PAYLOAD_BYTES } from "@/app/lib/validate";
 import { checkDailyCreditQuota, incrementDailyCredits } from "@/app/lib/abuse";
@@ -720,6 +720,11 @@ export async function POST(req: NextRequest) {
         }
         if (full) {
           setCached(normalizedKey, full);
+        } else {
+          // Empty response — refund credit
+          console.error("[Analyze] Empty response from AI — refunding credit for", userId);
+          await addCredits(userId, 1);
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis produced no output. Your credit has been refunded. Please try again." })}\n\n`));
         }
         if (full && userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
           try {
@@ -761,7 +766,12 @@ export async function POST(req: NextRequest) {
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
       } catch (err) {
         incrementAlert("ai_error", 300).catch(() => {});
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis failed. Please try again." })}\n\n`));
+        // Refund credit on API failure
+        if (userId) {
+          await addCredits(userId, 1).catch(() => {});
+          console.error("[Analyze] AI error — refunded credit for", userId, err);
+        }
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis failed. Your credit has been refunded. Please try again." })}\n\n`));
       } finally {
         await releaseIdempotencyLock(lockKey);
         controller.close();
