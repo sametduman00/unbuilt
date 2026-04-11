@@ -688,14 +688,21 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                 {data.verdict && <p style={{ fontSize:14, lineHeight:1.7, color:"#111827", fontWeight:500, margin:"0 0 8px 0" }}>{data.verdict}</p>}
                 <p style={{ fontSize:13, lineHeight:1.7, color:"#6b7280", margin:"0 0 12px 0" }}>{data.marketScoreSummary}</p>
                 {data.synthesis?.recommendedAction && (
-                  <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"5px 12px", borderRadius:8, fontSize:12, fontWeight:600, marginBottom:12,
-                    background: data.synthesis.recommendedAction==="kill"?"#fee2e2" : data.synthesis.recommendedAction==="move_fast"?"#dcfce7" : data.synthesis.recommendedAction==="build_mvp"?"#dbeafe" : data.synthesis.recommendedAction==="reposition"?"#fff7ed" : "#f3f4f6",
-                    color: data.synthesis.recommendedAction==="kill"?"#dc2626" : data.synthesis.recommendedAction==="move_fast"?"#16a34a" : data.synthesis.recommendedAction==="build_mvp"?"#2563eb" : data.synthesis.recommendedAction==="reposition"?"#ea580c" : "#374151",
-                  }}>
-                    Recommended: {data.synthesis.recommendedAction.replace(/_/g," ")}
+                  <div style={{ marginBottom:12 }}>
+                    <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"5px 12px", borderRadius:8, fontSize:12, fontWeight:600,
+                      background: data.synthesis.recommendedAction==="kill"?"#fee2e2" : data.synthesis.recommendedAction==="move_fast"?"#dcfce7" : data.synthesis.recommendedAction==="build_mvp"?"#dbeafe" : data.synthesis.recommendedAction==="reposition"?"#fff7ed" : "#f3f4f6",
+                      color: data.synthesis.recommendedAction==="kill"?"#dc2626" : data.synthesis.recommendedAction==="move_fast"?"#16a34a" : data.synthesis.recommendedAction==="build_mvp"?"#2563eb" : data.synthesis.recommendedAction==="reposition"?"#ea580c" : "#374151",
+                    }}>
+                      Recommended: {data.synthesis.recommendedAction.replace(/_/g," ")}
+                    </div>
+                    {data._scoring?.action_override && (
+                      <div style={{ fontSize:11, color:"#6b7280", marginTop:4, lineHeight:1.5 }}>
+                        {data._scoring.action_override_reason}
+                      </div>
+                    )}
                   </div>
                 )}
-                {data.oneLiner && (
+                {data.oneLiner && sc >= 30 && (
                   <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:8, padding:"10px 14px" }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#7c3aed", marginBottom:3, letterSpacing:"0.07em" }}>Your One-Liner</div>
                     <div style={{ fontSize:13, fontStyle:"italic" as const, color:"#1e1b4b" }}>"{data.oneLiner}"</div>
@@ -758,19 +765,22 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                   if (!d) return null;
                   const s = d.score ?? 0;
                   return (
-                    <div key={dim.key} style={{ display:"flex", alignItems:"center", gap:12 }}>
-                      <div style={{ width:110, fontSize:11, fontWeight:600, color:"#374151", flexShrink:0 }}>{dim.label} <span style={{ color:"#9ca3af", fontWeight:400 }}>({dim.weight})</span></div>
-                      <div style={{ flex:1, height:8, background:"#f3f4f6", borderRadius:4, overflow:"hidden" }}>
-                        <div style={{ width:s+"%", height:"100%", background:dim.color, borderRadius:4, transition:"width 0.5s" }} />
+                    <div key={dim.key} style={{ marginBottom:6 }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                        <div style={{ width:110, fontSize:11, fontWeight:600, color:"#374151", flexShrink:0 }}>{dim.label} <span style={{ color:"#9ca3af", fontWeight:400 }}>({dim.weight})</span></div>
+                        <div style={{ flex:1, height:8, background:"#f3f4f6", borderRadius:4, overflow:"hidden" }}>
+                          <div style={{ width:s+"%", height:"100%", background:dim.color, borderRadius:4, transition:"width 0.5s" }} />
+                        </div>
+                        <div style={{ width:28, fontSize:13, fontWeight:700, color:"#111827", textAlign:"right" as const }}>{s}</div>
                       </div>
-                      <div style={{ width:28, fontSize:13, fontWeight:700, color:"#111827", textAlign:"right" as const }}>{s}</div>
+                      {d.key_signal && <div style={{ fontSize:10, color:"#9ca3af", marginLeft:122, marginTop:2, lineHeight:1.4 }}>{d.key_signal}</div>}
                     </div>
                   );
                 })}
               </div>
               {data._scoring?.fatal_floor_applied && (
                 <div style={{ marginTop:12, padding:"8px 12px", background:"#fef2f2", border:"1px solid #fecaca", borderRadius:8, fontSize:12, color:"#dc2626" }}>
-                  ⚠ Fatal floor applied — {data._scoring.D1_demand?.score < 25 ? "demand" : "gap quality"} score too low, final capped.
+                  ⚠ One of the core dimensions (demand or gap quality) scored very low, which limits how high the final score can go — even if other dimensions are strong.
                 </div>
               )}
               {data._evidence?.level && data._evidence.level !== "high" && (
@@ -1257,33 +1267,24 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
                 <p style={{ fontSize:13, lineHeight:1.7, color:"#6b7280", margin:0 }}>{data.synthesis?.oneParagraph}</p>
               </div>
             </div>
-            {/* Recommended Action badge */}
+            {/* Recommended Action badge + override explanation */}
             {data.synthesis?.recommendedAction && (
-              <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"6px 14px", borderRadius:8, fontSize:13, fontWeight:600, marginBottom:16,
-                background: data.synthesis.recommendedAction==="kill"?"#fee2e2" : data.synthesis.recommendedAction==="move_fast"?"#dcfce7" : data.synthesis.recommendedAction==="build_mvp"?"#dbeafe" : data.synthesis.recommendedAction==="reposition"?"#fff7ed" : "#f3f4f6",
-                color: data.synthesis.recommendedAction==="kill"?"#dc2626" : data.synthesis.recommendedAction==="move_fast"?"#16a34a" : data.synthesis.recommendedAction==="build_mvp"?"#2563eb" : data.synthesis.recommendedAction==="reposition"?"#ea580c" : "#374151",
-              }}>
-                → Recommended: {data.synthesis.recommendedAction.replace(/_/g," ")}
-              </div>
-            )}
-            {/* Fatal flaw + upside condition */}
-            {(data.synthesis?.fatalFlaw || data.synthesis?.upsideCondition) && (
-              <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:10, marginBottom:16 }}>
-                {data.synthesis?.fatalFlaw && (
-                  <div style={{ background:"#fef2f2", border:"1px solid #fecaca", borderRadius:10, padding:14 }}>
-                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#dc2626", marginBottom:6, letterSpacing:"0.07em" }}>Fatal flaw</div>
-                    <div style={{ fontSize:13, color:"#7f1d1d", lineHeight:1.5 }}>{data.synthesis.fatalFlaw}</div>
-                  </div>
-                )}
-                {data.synthesis?.upsideCondition && (
-                  <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14 }}>
-                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#16a34a", marginBottom:6, letterSpacing:"0.07em" }}>Upside condition</div>
-                    <div style={{ fontSize:13, color:"#14532d", lineHeight:1.5 }}>{data.synthesis.upsideCondition}</div>
+              <div style={{ marginBottom:16 }}>
+                <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"6px 14px", borderRadius:8, fontSize:13, fontWeight:600,
+                  background: data.synthesis.recommendedAction==="kill"?"#fee2e2" : data.synthesis.recommendedAction==="move_fast"?"#dcfce7" : data.synthesis.recommendedAction==="build_mvp"?"#dbeafe" : data.synthesis.recommendedAction==="reposition"?"#fff7ed" : "#f3f4f6",
+                  color: data.synthesis.recommendedAction==="kill"?"#dc2626" : data.synthesis.recommendedAction==="move_fast"?"#16a34a" : data.synthesis.recommendedAction==="build_mvp"?"#2563eb" : data.synthesis.recommendedAction==="reposition"?"#ea580c" : "#374151",
+                }}>
+                  → Recommended: {data.synthesis.recommendedAction.replace(/_/g," ")}
+                </div>
+                {data._scoring?.action_override && (
+                  <div style={{ fontSize:12, color:"#6b7280", marginTop:6, lineHeight:1.5 }}>
+                    {data._scoring.action_override_reason}
                   </div>
                 )}
               </div>
             )}
-            {data.oneLiner && (
+            {/* One-liner — only show if score >= 30 */}
+            {data.oneLiner && sc >= 30 && (
               <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:10, padding:14, display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#7c3aed", marginBottom:4, letterSpacing:"0.07em" }}>Your One-Liner</div>

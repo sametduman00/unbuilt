@@ -551,6 +551,45 @@ Respond with ONLY a JSON code block:
 }
 \`\`\`
 
+REPORT QUALITY RULES — follow strictly:
+
+ANTI-REPETITION:
+- verdict, marketScoreSummary, and synthesis.oneParagraph must each say something DIFFERENT
+- verdict = one-line judgment (what should the founder do?)
+- marketScoreSummary = why that judgment was reached (what did the data show?)
+- synthesis.oneParagraph = deeper integrated reasoning (what does it all mean together?)
+- If you catch yourself restating the same conclusion, stop and add new information instead
+
+FATAL FLAW vs BIGGEST RISK — these are NOT the same thing:
+- synthesis.fatalFlaw = the present structural weakness that kills the idea TODAY
+- swot.threats[0] (biggest risk) = what could get WORSE tomorrow, an external threat
+- These must be different ideas. If they overlap, rethink one of them.
+
+OPPORTUNITY HONESTY:
+- If demand evidence (D1) is weak (below 40) or gap evidence (D3) is weak (below 40), label the opportunity as SPECULATIVE
+- Do NOT present hypothetical pivots as clearly validated opportunities
+- Write "Speculative — not validated by live data" when the evidence is thin
+- It is okay to have NO strong opportunity. Saying "no clear gap found" is honest.
+
+TONE:
+- Be direct, candid, and brutally honest
+- But avoid dramatic metaphors, roast language, or performative phrases
+- No "knife fight in a phone booth", "commercial suicide", "worst possible idea"
+- Prioritize clarity over style. Sound like a sharp analyst, not a Twitter roast.
+
+VERDICT-ACTION EXPLANATION:
+- If recommendedAction was changed by an override rule (action_override is not null), explain WHY in the verdict
+- Example: "Score is moderate overall, but a regulatory deadline creates urgency — move fast."
+- The user must never see a confusing score/action combination without explanation.
+
+MARKET SIZE HONESTY:
+- Every TAM/SAM/SOM figure must include a source qualifier:
+  - "estimated from [source name] industry report"
+  - "inferred from adjacent market data"
+  - "directional estimate — insufficient direct segment data"
+- If direct evidence is weak, use round numbers and say "estimated" — do NOT give false precision like "$7.18B"
+- It is better to say "$5-8B (estimated, based on adjacent market)" than "$7.18B" with no source
+
 FIELD RULES:
 - "competitors": 4-8 real companies. "threatLevel" 1-5. Each strength/weakness: 2-3 complete sentences with evidence.
 - "painPoints": 4-6 from live data. Include actual quotes. "severity": "high"|"medium"|"low".
@@ -565,7 +604,7 @@ FIELD RULES:
 - "communitySignals": 4-6 from live Reddit/Twitter. "sentiment": "pain"|"need"|"positive".
 - "redditPosts": 3-5 posts. Not empty if Reddit data exists.
 - "xPosts": 3-5 posts. Not empty if Twitter data exists.
-- "synthesis.fatalFlaw": One sentence. The #1 reason this could fail.
+- "synthesis.fatalFlaw": One sentence. Present structural weakness killing the idea TODAY. Not a future risk.
 - "synthesis.recommendedAction": kill|reposition|validate_niche|build_mvp|move_fast
 - "synthesis.defensibility": level + moat + copyTimeframe.
 - "synthesis.confidenceNote": Source count, confidence level, what's missing.
