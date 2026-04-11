@@ -19,7 +19,7 @@ export const viewport = {
 
 export const metadata: Metadata = {
   title: "Unbuilt — for vibecoders",
-  description: "Unbuilt is the home base for vibe coders. Pulse tracks what's launching daily. Dig analyzes any app idea against 70+ live sources in 5 minutes. Stack recommends the exact tools to build it from 700+ options.",
+  description: "Unbuilt is the home base for vibe coders. Launches tracks what's launching daily. Dig analyzes any app idea against 70+ live sources in 5 minutes. Stack recommends the exact tools to build it from 700+ options.",
   keywords: [
     "vibe coding",
     "vibecoder",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Unbuilt — for vibecoders",
-    description: "The home base for vibe coders. Pulse, Dig, Stack — find the gap, validate the idea, ship the right thing.",
+    description: "The home base for vibe coders. Launches, Dig, Stack — find the gap, validate the idea, ship the right thing.",
     site: "@Unbuilt_me",
   },
   alternates: {
@@ -60,13 +60,13 @@ const jsonLd = {
   "@type": "SoftwareApplication",
   "name": "Unbuilt",
   "url": "https://unbuilt.me",
-  "description": "Unbuilt helps vibe coders find what to build before they waste months on the wrong idea. Pulse tracks what's launching daily (free). Dig analyzes any app idea against 70+ live sources in 5 minutes. Stack recommends the exact tools to build it from 700+ options.",
+  "description": "Unbuilt helps vibe coders find what to build before they waste months on the wrong idea. Launches tracks what's launching daily (free). Dig analyzes any app idea against 70+ live sources in 5 minutes. Stack recommends the exact tools to build it from 700+ options.",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
   "offers": [
     {
       "@type": "Offer",
-      "name": "Pulse",
+      "name": "Launches",
       "price": "0",
       "priceCurrency": "USD",
       "description": "Free daily feed of what's launching and what's missing in every product."

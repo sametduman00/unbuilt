@@ -26,7 +26,7 @@ function AppSidebarInner() {
   const isToolActive = (tool: string) => activeTool === tool;
 
   const handleToolClick = (tool: string) => {
-    if (tool === "pulse") router.push("/");
+    if (tool === "pulse") router.push("/launches");
     else router.push(`/?tool=${tool}`);
   };
 
@@ -165,7 +165,7 @@ function AppSidebarInner() {
 
       <div style={{ padding: "8px 10px 4px" }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.07em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, padding: "6px 8px 3px" }}>Explore</div>
-        <ToolItem tool="pulse" label="Pulse" dot="#ef4444" badge="FREE" />
+        <ToolItem tool="pulse" label="Launches" dot="#ef4444" badge="FREE" />
       </div>
 
       <div style={{ padding: "0 10px 4px" }}>

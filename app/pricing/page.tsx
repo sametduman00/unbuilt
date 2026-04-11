@@ -115,7 +115,7 @@ export default function PricingPage() {
       <div style={{ textAlign: "center", marginBottom: 28 }}>
         <p style={{ ...s.label, color: "var(--clr-text-4)", marginBottom: 14 }}>Pricing</p>
         <h1 style={{ fontSize: "1.625rem", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.15, margin: "0 0 14px" }}>
-          Pulse is free.<br />
+          Launches is free.<br />
           <span style={{ color: "var(--clr-text-3)", fontWeight: 400, fontStyle: "italic" }}>Dig and Stack cost 1 credit each.</span>
         </h1>
         <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text-2)", margin: "0 auto", whiteSpace: "normal" as const }}>
@@ -217,7 +217,7 @@ export default function PricingPage() {
         <p style={{ ...s.label, textAlign: "center", marginBottom: 20 }}>What 1 credit gets you</p>
         <div className="pricing-credits-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
           {[
-            { name: "Pulse", badge: "FREE", badgeColor: "#ef4444", iconColor: "#ef4444", iconPath: "pulse",
+            { name: "Launches", badge: "FREE", badgeColor: "#ef4444", iconColor: "#ef4444", iconPath: "pulse",
               desc: "Live feed of today's launches with AI analysis of what each product is missing.",
               items: ["WHAT · DIFF · MISS per product","Product Hunt + App Store","Topic filters","'Dig my angle' shortcut","Updated daily"] },
             { name: "Dig", badge: "1 CREDIT", badgeColor: "#7c6fff", iconColor: "#7c6fff", iconPath: "dig",

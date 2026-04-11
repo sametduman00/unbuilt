@@ -5,7 +5,7 @@ import Link from "next/link";
 const FAQS = [
   {
     q: "How do credits work?",
-    a: "Each Dig or Stack report costs 1 credit. Pulse is always free — no credits needed. Credits never expire, so you can buy a pack and use them whenever you want.",
+    a: "Each Dig or Stack report costs 1 credit. Launches is always free — no credits needed. Credits never expire, so you can buy a pack and use them whenever you want.",
   },
   {
     q: "What's the difference between Dig and Stack?",

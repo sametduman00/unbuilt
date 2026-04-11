@@ -3,15 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 
-type TabId = "pulse" | "dig" | "stack";
+type TabId = "launches" | "dig" | "stack";
 
 const ACCENT = {
-  pulse: { color: "#ef4444", bg: "rgba(239,68,68,0.1)", border: "rgba(239,68,68,0.2)" },
+  launches: { color: "#ef4444", bg: "rgba(239,68,68,0.1)", border: "rgba(239,68,68,0.2)" },
   dig:   { color: "#7c6fff", bg: "rgba(124,111,255,0.1)", border: "rgba(124,111,255,0.2)" },
   stack: { color: "#38bdf8", bg: "rgba(56,189,248,0.1)", border: "rgba(56,189,248,0.2)" },
 }
 
-function PulseIcon() {
+function LaunchesIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
@@ -34,7 +34,7 @@ function StackIcon() {
 }
 
 export default function HowItWorksPage() {
-  const [tab, setTab] = useState<TabId>("pulse");
+  const [tab, setTab] = useState<TabId>("launches");
   const a = ACCENT[tab];
 
   return (
@@ -54,7 +54,7 @@ export default function HowItWorksPage() {
 
         {/* Tab switcher */}
         <div style={{ display: "flex", gap: 6, marginBottom: "2.5rem", background: "var(--clr-surface)", padding: 5, borderRadius: 12, border: "1px solid var(--clr-border)" }}>
-          {(["pulse", "dig", "stack"] as TabId[]).map(t => {
+          {(["launches", "dig", "stack"] as TabId[]).map(t => {
             const ac = ACCENT[t];
             const active = tab === t;
             return (
@@ -68,27 +68,27 @@ export default function HowItWorksPage() {
                 boxShadow: active ? `inset 0 0 0 1px ${ac.border}` : "none",
               }}>
                 <span style={{ color: active ? ac.color : "var(--clr-text-5)" }}>
-                  {t === "pulse" ? <PulseIcon /> : t === "dig" ? <DigIcon /> : <StackIcon />}
+                  {t === "launches" ? <LaunchesIcon /> : t === "dig" ? <DigIcon /> : <StackIcon />}
                 </span>
-                {t === "pulse" ? "Pulse" : t === "dig" ? "Dig" : "Stack"}
-                {t === "pulse" && <span style={{ fontSize: 9, fontWeight: 800, padding: "1px 5px", borderRadius: 4, background: active ? ac.color : "var(--clr-text-5)", color: "#fff" }}>FREE</span>}
+                {t === "launches" ? "Launches" : t === "dig" ? "Dig" : "Stack"}
+                {t === "launches" && <span style={{ fontSize: 9, fontWeight: 800, padding: "1px 5px", borderRadius: 4, background: active ? ac.color : "var(--clr-text-5)", color: "#fff" }}>FREE</span>}
               </button>
             );
           })}
         </div>
 
         {/* Content */}
-        {tab === "pulse" && <PulseTab />}
+        {tab === "launches" && <LaunchesTab />}
         {tab === "dig"   && <DigTab />}
         {tab === "stack" && <StackTab />}
 
         {/* CTA */}
-        {tab === "pulse" && (
+        {tab === "launches" && (
           <div style={{ marginTop: "3rem", padding: "2rem", borderRadius: 16, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.05)", textAlign: "center" }}>
             <p style={{ fontSize: "0.9375rem", fontWeight: 700, margin: "0 0 6px" }}>Ready to explore the market?</p>
-            <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Pulse is completely free — no credits needed.</p>
+            <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Launches is completely free — no credits needed.</p>
             <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "#ef4444", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
-              Open Pulse →
+              Open Launches →
             </Link>
           </div>
         )}
@@ -160,18 +160,18 @@ function OutputRow({ emoji, label, desc }: { emoji: string; label: string; desc:
   );
 }
 
-/* ── PULSE ── */
-function PulseTab() {
+/* ── LAUNCHES ── */
+function LaunchesTab() {
   const c = "#ef4444";
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
 
       <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
         <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: 10, flexShrink: 0 }}>
-          <PulseIcon />
+          <LaunchesIcon />
         </div>
         <div>
-          <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.025em" }}>Pulse <span style={{ fontSize: "0.7rem", fontWeight: 800, padding: "2px 7px", borderRadius: 5, background: "rgba(239,68,68,0.12)", color: "#ef4444", verticalAlign: "middle" }}>FREE</span></h2>
+          <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.025em" }}>Launches <span style={{ fontSize: "0.7rem", fontWeight: 800, padding: "2px 7px", borderRadius: 5, background: "rgba(239,68,68,0.12)", color: "#ef4444", verticalAlign: "middle" }}>FREE</span></h2>
           <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", margin: 0, lineHeight: 1.6 }}>
             A live feed of what's launching today — with AI analysis of what each product is missing. Your daily dose of market intelligence, zero cost.
           </p>
@@ -181,7 +181,7 @@ function PulseTab() {
       <Card>
         <SectionLabel>How it works</SectionLabel>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <Step n={1} color={c} title="Open Pulse" desc="No query needed. The feed is already live and populated with today's launches from Product Hunt and the App Store." />
+          <Step n={1} color={c} title="Open Launches" desc="No query needed. The feed is already live and populated with today's launches from Product Hunt and the App Store." />
           <Step n={2} color={c} title="Choose your feed" desc="Switch between Product Hunt (today's launches across all categories) and App Store (new iOS apps submitted today). Both update automatically." />
           <Step n={3} color={c} title="Filter and search" desc="Narrow by topic — AI, Productivity, SaaS, Games, and more. Search by keyword to find what's relevant to your market." />
           <Step n={4} color={c} title="Spot the gap" desc="Each card shows what the product does, how hard it is to build a competitor, who the main competitors are, and 3 recommended tools to build it with. Hit 'Dig my idea' for a full market analysis, or 'Get my Stack' for a tool plan." />

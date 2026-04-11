@@ -36,7 +36,7 @@ const roles = [
     location: "Remote",
     type: "Full-time",
     tag: null,
-    description: "AI output is only useful if people understand it. You'll shape how founders read a Gap Analysis report, how they explore Stack Advisor recommendations, and how the Pulse feed feels as a daily habit. This is dense information design — the challenge is making structured data feel like a conversation. You'll work in Figma but ship directly into code with the eng team.",
+    description: "AI output is only useful if people understand it. You'll shape how founders read a Gap Analysis report, how they explore Stack Advisor recommendations, and how the Launches feed feels as a daily habit. This is dense information design — the challenge is making structured data feel like a conversation. You'll work in Figma but ship directly into code with the eng team.",
     stack: "Figma · React · design systems · information design",
   },
   {

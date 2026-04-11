@@ -19,11 +19,11 @@ const CASES = [
   {
     q: "I want to build something but I don't know what.",
     who: "Vibe coders looking for their next project",
-    tool: "Pulse",
+    tool: "Launches",
     toolColor: "#ef4444",
-    answer: "Pulse is a live feed of what's launching today on Product Hunt and the App Store — with AI analysis of what each product is missing. Scroll it daily. The gaps are right there.",
+    answer: "Launches is a live feed of what's launching today on Product Hunt and the App Store — with AI analysis of what each product is missing. Scroll it daily. The gaps are right there.",
     href: "/",
-    cta: "Open Pulse",
+    cta: "Open Launches",
   },
   {
     q: "Is my SaaS idea worth building or should I pivot?",
@@ -55,9 +55,9 @@ const CASES = [
   {
     q: "I want to track what's being built in my market.",
     who: "Founders doing ongoing market research",
-    tool: "Pulse",
+    tool: "Launches",
     toolColor: "#ef4444",
-    answer: "Pulse updates daily. Filter by category — AI, Productivity, SaaS, Games, and more. Search by keyword. Every new launch shows what it does, how hard it is to compete with, and what it's missing. Free, forever.",
+    answer: "Launches updates daily. Filter by category — AI, Productivity, SaaS, Games, and more. Search by keyword. Every new launch shows what it does, how hard it is to compete with, and what it's missing. Free, forever.",
     href: "/",
     cta: "Track my market",
   },
@@ -135,7 +135,7 @@ export default function UseCasesPage() {
             Not sure where to start?
           </p>
           <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>
-            Pulse is free. Open it, scroll today's launches, and you'll find something worth digging into.
+            Launches is free. Open it, scroll today's launches, and you'll find something worth digging into.
           </p>
           <Link href="/" style={{
             display: "inline-flex",
@@ -150,7 +150,7 @@ export default function UseCasesPage() {
             fontWeight: 700,
             letterSpacing: "-0.01em",
           }}>
-            Open Pulse — free →
+            Open Launches — free →
           </Link>
         </div>
       </main>
