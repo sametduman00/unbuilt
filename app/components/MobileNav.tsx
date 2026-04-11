@@ -150,7 +150,22 @@ export default function MobileNav() {
               <span style={{ color:"#7c6fff", fontWeight:600 }}>Buy Credits</span>
             </Link>
             {DIV}
-                        {/* Product accordion */}
+
+            {/* Launches */}
+            <Link href="/launches" onClick={close} style={ROW}>
+              <span style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Launches
+              </span>
+              <span style={{ padding:"1px 6px", background:"#16a34a", color:"#fff", borderRadius:4, fontSize:9, fontWeight:600, letterSpacing:"0.5px", marginLeft:4 }}>LIVE</span>
+            </Link>
+            <Link href="/use-cases" onClick={close} style={ROW}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+              Use Cases
+            </Link>
+            {DIV}
+
+            {/* Product accordion */}
             <button onClick={() => toggle("product")} style={{ ...ROW, width:"100%", background:"none", border:"none", cursor:"pointer", fontFamily:"inherit", justifyContent:"space-between" } as React.CSSProperties}>
               <span style={{ display:"flex", alignItems:"center", gap:12 }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -194,9 +209,9 @@ export default function MobileNav() {
 
       {/* Bottom nav */}
       <nav className="app-mobile-nav">
-        <a href="/">
+        <a href="/launches">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          <span>Pulse</span>
+          <span>Launches</span>
         </a>
         <a href="/?tool=gap-analysis">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>

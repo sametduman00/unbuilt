@@ -3659,7 +3659,7 @@ function HomeInner() {
                       </div>
                       {/* Stack selectors */}
                       {activeHeroTab === "stack-advisor" && (
-                  <div style={{ padding: "4px 24px 12px", display: "flex", gap: 16 }}>
+                  <div className="landing-grid-3" style={{ padding: "4px 24px 12px", display: "flex", gap: 16, flexWrap: "wrap" as const }}>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Budget</div>
                       <div style={{ display: "flex", gap: 4 }}>
