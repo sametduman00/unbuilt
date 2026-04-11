@@ -2614,20 +2614,47 @@ interface GapAnalysisData {
 }
 
 function parseGapAnalysisJSON(raw: string): GapAnalysisData | null {
-  // Strip anything before ```json (emojis, whitespace, etc.)
-  const stripped = raw.replace(/^[\s\S]*?```json\s*/m, '').replace(/```[\s\S]*$/, '').trim();
+  // Strip thinking artifacts, emojis, and anything before ```json
+  let cleaned = raw.replace(/^[\s\S]*?```json\s*/m, '').replace(/```[\s\S]*$/, '').trim();
   // Also try direct JSON if no fences
-  const rawTrimmed = raw.trim();
-  const jsonStr = stripped.startsWith('{') ? stripped : (rawTrimmed.startsWith('{') ? rawTrimmed : null);
-  if (!jsonStr) return null;
+  if (!cleaned.startsWith('{')) {
+    const rawTrimmed = raw.trim();
+    // Try to find the first { in the raw string
+    const firstBrace = rawTrimmed.indexOf('{');
+    if (firstBrace >= 0) cleaned = rawTrimmed.substring(firstBrace);
+    else return null;
+  }
+  // Attempt to repair truncated JSON by closing open braces/brackets
+  let jsonStr = cleaned;
+  try {
+    JSON.parse(jsonStr);
+  } catch {
+    // Try closing unclosed braces/brackets
+    let opens = 0, opensArr = 0;
+    for (const ch of jsonStr) {
+      if (ch === '{') opens++;
+      else if (ch === '}') opens--;
+      else if (ch === '[') opensArr++;
+      else if (ch === ']') opensArr--;
+    }
+    // Remove trailing comma if present
+    jsonStr = jsonStr.replace(/,\s*$/, '');
+    // Close arrays then objects
+    for (let i = 0; i < opensArr; i++) jsonStr += ']';
+    for (let i = 0; i < opens; i++) jsonStr += '}';
+  }
   try {
     const data = JSON.parse(jsonStr);
-    if (!data.competitors || !data.painPoints || !data.marketGaps ||
-        !data.swot || !data.opportunity || !data.targetCustomer) return null;
-    // Default marketScore fields if missing
+    // Only require the absolute essentials — v2.2 may omit some legacy fields
+    if (!data.competitors || !data.marketGaps) return null;
+    // Default fields if missing
     data.marketScore = data.marketScore ?? 50;
     data.marketScoreLabel = data.marketScoreLabel ?? "";
     data.marketScoreSummary = data.marketScoreSummary ?? "";
+    data.painPoints = data.painPoints ?? [];
+    data.swot = data.swot ?? { strengths: [], weaknesses: [], opportunities: [], threats: [] };
+    data.opportunity = data.opportunity ?? { headline: "", urgency: "medium", actionItems: [] };
+    data.targetCustomer = data.targetCustomer ?? { persona: "", jobTitle: "", demographics: "", painPoints: [], currentTools: [], willingnessToPay: "" };
     return data as GapAnalysisData;
   } catch {
     return null;
