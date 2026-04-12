@@ -57,7 +57,7 @@ export interface AnalyzeBody { idea: string; tool?: ToolType }
 export function validateAnalyzeBody(raw: unknown): ValidationResult<AnalyzeBody> {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return validationError("Body must be a JSON object.");
   const body = raw as Record<string,unknown>;
-  const uf = unknownFields(body, ["idea","tool"]); if (uf) return uf;
+  const uf = unknownFields(body, ["idea","tool","nocache"]); if (uf) return uf;
   const idea = reqString(body.idea,"idea",3,500); if (!idea.ok) return idea;
   let tool: ToolType|undefined;
   if (body.tool !== undefined) { const t=reqEnum(body.tool,"tool",ALLOWED_TOOLS); if(!t.ok) return t; tool=t.data; }
