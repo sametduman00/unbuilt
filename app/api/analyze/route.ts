@@ -747,7 +747,7 @@ export async function POST(req: NextRequest) {
         let full = "";
         let stopReason = "";
         const anthropicStream = client.messages.stream({
-          model: "claude-opus-4-6", max_tokens: 128000,
+          model: "claude-opus-4-6", max_tokens: 64000,
           thinking: { type: "enabled", budget_tokens: 25000 },
           system: SYSTEM_PROMPT,
           messages: [{ role: "user", content: USER_PROMPT(sanitizeIdea(idea), youtubeContext, combinedAppContext, serperContext, trendsContext, segmentsContext, customerContext, gtmContext, reviewsContext, financialContext, fundabilityContext, socialContext) }],
