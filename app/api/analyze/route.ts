@@ -745,7 +745,6 @@ export async function POST(req: NextRequest) {
         const combinedAppContext = [appStoreContext, gplayContext].filter(Boolean).join("");
         const socialContext = [redditContext, twitterContext].filter(Boolean).join("");
         let full = "";
-        let stopReason = "";
         const anthropicStream = client.messages.stream({
           model: "claude-opus-4-6", max_tokens: 64000,
           thinking: { type: "enabled", budget_tokens: 25000 },
@@ -757,25 +756,34 @@ export async function POST(req: NextRequest) {
             full += event.delta.text;
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`));
           }
-          if (event.type === "message_delta" && (event.delta as any).stop_reason) {
-            stopReason = (event.delta as any).stop_reason;
-          }
         }
-        // Check for truncation: stop_reason "max_tokens" means response was cut off
-        const wasTruncated = stopReason === "max_tokens";
-        if (wasTruncated) {
-          console.error("[Analyze] Response truncated (max_tokens) — refunding credit for", userId);
-          await addCredits(userId, 1);
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis was too long and got cut off. Your credit has been refunded. Please try again." })}\n\n`));
-        } else if (full) {
+        // Check if response contains valid complete JSON
+        let isCompleteJSON = false;
+        if (full) {
+          try {
+            const fenceMatch = full.match(/```json\s*([\s\S]*?)```/);
+            if (fenceMatch) { JSON.parse(fenceMatch[1]); isCompleteJSON = true; }
+            else {
+              const idx = full.indexOf('{');
+              if (idx >= 0) { JSON.parse(full.substring(idx)); isCompleteJSON = true; }
+            }
+          } catch { isCompleteJSON = false; }
+        }
+
+        if (full && isCompleteJSON) {
           setCached(normalizedKey, full);
+        } else if (full && !isCompleteJSON) {
+          // Truncated/incomplete JSON — refund
+          console.error("[Analyze] Incomplete JSON — refunding credit for", userId);
+          await addCredits(userId, 1);
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis was incomplete. Your credit has been refunded. Please try again." })}\n\n`));
         } else {
-          // Empty response — refund credit
-          console.error("[Analyze] Empty response from AI — refunding credit for", userId);
+          // Empty response — refund
+          console.error("[Analyze] Empty response — refunding credit for", userId);
           await addCredits(userId, 1);
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis produced no output. Your credit has been refunded. Please try again." })}\n\n`));
         }
-        if (full && !wasTruncated && userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
+        if (full && isCompleteJSON && userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
           try {
             let jsonToSave = full;
             try {
