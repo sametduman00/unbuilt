@@ -698,10 +698,13 @@ export async function POST(req: NextRequest) {
   const parsed = validateAnalyzeBody(rawBody);
   if (!parsed.ok) return errorResponse(parsed);
   const { idea, tool: toolType } = parsed.data;
+  // Allow cache bypass for calibration testing via request body
+  const nocache = (rawBody as Record<string, unknown>)?.nocache === true;
 
   const normalizedKey = await normalizeQuery(idea);
   const resultKey = `result:analyze:${userId}:${normalizedKey}`;
 
+  if (!nocache) {
   const cached = getCached(normalizedKey, TTL_MS.analyze);
   if (cached) {
     const enc = new TextEncoder();
@@ -725,6 +728,7 @@ export async function POST(req: NextRequest) {
       c.enqueue(enc.encode("data: [DONE]\n\n")); c.close();
     }}), { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
   }
+  } // end nocache bypass
 
   const lockKey = `idem:analyze:${userId}:${normalizedKey}`;
   const locked = await acquireIdempotencyLock(lockKey, 600);

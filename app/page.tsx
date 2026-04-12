@@ -3505,7 +3505,11 @@ function HomeInner() {
       });
     }
 
-    const body: Record<string, string> = { idea, tool: selectedTool ?? "" };
+    const body: Record<string, string | boolean> = { idea, tool: selectedTool ?? "" };
+    // Allow cache bypass via URL param ?nocache=true (for calibration testing)
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("nocache") === "true") {
+      body.nocache = true;
+    }
     if (selectedTool === "stack-advisor") {
       body.budget = budget;
       body.techLevel = techLevel;
