@@ -338,40 +338,49 @@ Confidence does NOT cap the score. It adjusts verdict tone only.
 
 STEP 2: SCORE EACH DIMENSION (0-100)
 Each score MUST cite specific evidence from the data above.
+SCALE USAGE: Sub-20 and 70+ scores are normal and expected. A D1 of 8 is correct when nobody wants this product. A D3 of 75 is correct when a clear structural gap exists. Do NOT compress all scores into 30-55 out of caution — use the full 0-100 scale.
 
 D1 — DEMAND SIGNAL STRENGTH (weight: 30%) — FATAL DIMENSION
-Look for: real people asking for this, complaining, paying for workarounds.
-Twitter/X is a weak demand signal — only count tweets with 50+ engagement. Reddit and G2 are strong demand signals.
-  0-20: 0-2 pain signals, generic mentions only
-  21-40: 3-5 weak signals, low engagement
-  41-65: 3-5 strong signals with 50+ upvotes/likes
-  66-85: 6+ strong signals + workaround spending evidence
-  86-100: Viral complaints + clear willingness to pay
+CRITICAL: D1 scores demand for THIS EXACT PRODUCT, not the category.
+Category demand is context, not score. If the category is huge but 10+ free tools already satisfy all demand, D1 is LOW even if the market is worth billions.
+Ask yourself: "Are real users actively searching for something that doesn't exist yet?"
+Reddit complaints about existing tools, unmet feature requests, workaround spending = high D1.
+Generic category growth, large TAM, people using existing tools happily = low D1.
+Twitter/X is a weak demand signal — only count tweets with 50+ engagement.
+  0-15: Demand fully satisfied by existing tools. Nobody searching for an alternative. Category may be huge but THIS product has no incremental demand.
+  16-30: Weak signals. A few people comparing tools but not expressing unmet needs. Category demand exists but existing solutions cover it.
+  31-50: Moderate signals. Some users express frustration with existing tools OR a niche segment has unmet needs. But evidence is thin.
+  51-70: Strong signals. Multiple users (50+ upvotes/likes) actively requesting something existing tools don't provide. Clear workaround behavior.
+  71-85: Very strong. Widespread complaints + workaround spending + willingness to pay for something better.
+  86-100: Viral demand. Clear evidence people want THIS and cannot get it anywhere.
 
 D2 — COMPETITIVE DENSITY (weight: 20%) — PENALIZING, NOT FATAL
 INVERTED: more competition = lower score.
 IMPORTANT: Product Hunt launches and VC funding activity are CROWDING signals — they make D2 LOWER, not D4 higher.
-  85-100: 0-1 direct competitors
-  55-84: 2-4 competitors, unfunded
-  30-54: 5-8 competitors, some funded ($5M-$50M)
-  10-29: 8+ competitors, $10M+ funded incumbents
-  0-9: FAANG/BigTech dominated
+Distinguish between these levels — they are NOT the same:
+  0-15: CLONE of well-funded incumbent. The exact product already exists at scale with $10M+ funding. You are describing what a specific company already does.
+  16-30: Brutally saturated. 10+ funded direct competitors. Multiple well-known brands. Free tiers available.
+  31-50: Crowded but wedges exist. 5-8 competitors, some gaps visible. A differentiated entrant could find space.
+  51-70: Moderate competition. 2-4 direct competitors, clear openings for new approaches.
+  71-85: Light competition. 1-2 competitors, none dominant. Real room for a new entrant.
+  86-100: Open field. No direct competitor found.
 
 D3 — GAP QUALITY (weight: 25%) — FATAL DIMENSION
-  0-15: No gaps — competitors cover the space, users satisfied
-  16-40: Cosmetic gaps (UX, pricing, onboarding friction)
-  41-65: Functional gaps (missing features users actively request)
-  66-85: Structural gaps (wrong architecture, wrong segment served)
-  86-100: Category-defining gap (nobody does X, and people need X)
+Three distinct levels — score accordingly:
+  0-25: COSMETIC gap only. Positioning tweak, UX polish, minor feature additions. Incumbents could close this gap in a single sprint. "Better design" or "simpler UX" without structural differentiation = cosmetic.
+  30-55: PLAUSIBLE STRUCTURAL gap, unvalidated. A real wedge is identified — named competitors don't serve a specific segment or use case. But no direct demand validation exists yet. If the report identifies a specific underserved segment with named evidence of competitors not covering it, this deserves 40-55 even without direct user demand proof. Reserve sub-30 for gaps that are purely cosmetic.
+  60-80: EVIDENCED STRUCTURAL gap. A clear wedge exists AND demand signals support it. Users are actively requesting or working around the missing solution. Incumbents are architecturally unable to serve this need easily.
+  81-100: Category-defining gap. Nobody does X, and strong evidence shows people need X urgently.
 
 D4 — MARKET TIMING (weight: 15%) — SUPPORTING
 Rewards ONLY structural shifts. NOT activity volume.
 "Lots of launches" and "VC money pouring in" = D2 (crowding), NOT D4.
-  0-20: Declining or post-hype. No structural shift.
-  21-40: Minor tech improvement. Incremental, not disruptive.
-  41-60: Steady growth (5-15% CAGR) confirmed by data.
-  61-80: Structural shift NOW — regulatory, platform, or behavioral.
-  81-100: Once-in-a-decade category creation. Score 81+ cautiously.
+CRITICAL: "Growing market" alone is NOT a timing signal — most markets grow. D4 above 50 requires a NAMED catalyst.
+  0-25: No structural shift. Stable or declining market. "Growing at X% CAGR" with no specific catalyst = 25-35, not higher.
+  26-45: Market growing but no specific catalyst enables THIS idea now. Generic growth without a timing advantage.
+  46-65: Clear timing catalyst exists — new regulation taking effect, platform shift creating new surface, technology cost breakthrough, behavioral change. Must be specific and named.
+  66-80: Strong structural shift NOW — regulatory deadline, platform API change, technology enabler that directly creates the opportunity for THIS idea.
+  81-100: Once-in-a-decade category creation. Score 81+ extremely rarely.
 
 D5 — ENTRY FEASIBILITY (weight: 10%) — SUPPORTING
 INVERTED: harder entry = lower score.
@@ -381,6 +390,15 @@ Measures "can you get in?" NOT "can you defend once inside?" Defensibility goes 
   41-60: 6+ month engineering build required
   61-80: Small team, 2-4 months buildable
   81-100: Solo-buildable with no-code/low-code in weeks
+
+VERDICT-TO-SCORE RECONCILIATION (mandatory final check):
+Before finalizing your D1-D5 scores, re-read your verdict and analysis. Your scores MUST be consistent with your written judgment:
+- If your verdict says "this exact idea already exists and is fully served" → D1 must be below 25, D3 must be below 25
+- If your verdict says "clone of a funded incumbent" → D2 must be below 15
+- If your verdict says "plausible wedge worth validating" → D3 must be above 40
+- If your verdict says "no one is searching for this" → D1 must be below 20
+- If your analysis identifies a real structural gap with named evidence → D3 must be above 45
+Your analysis is more trustworthy than a cautious numeric instinct. Adjust scores to match your reasoning.
 
 STEP 3: CALCULATE FINAL SCORE
   raw = (D1 × 0.30) + (D2 × 0.20) + (D3 × 0.25) + (D4 × 0.15) + (D5 × 0.10)
