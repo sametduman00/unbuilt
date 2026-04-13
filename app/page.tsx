@@ -3828,22 +3828,30 @@ function HomeInner() {
                       )}
                     </div>
                     {/* Input card */}
-                    <div style={{ background: "var(--clr-surface)", border: activeHeroTab === "gap-analysis" ? "1.5px solid var(--clr-text)" : "1.5px solid #0f766e", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
+                    <div style={{ background: "var(--clr-surface)", border: activeHeroTab === "gap-analysis" ? "1.5px solid #d8cef0" : "1.5px solid #b8e0cc", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
                       {/* Tab switcher — inside card */}
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 12px" }}>
-                        <div style={{ display: "flex", gap: 6 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px 12px" }}>
+                        <div style={{ display: "flex", gap: 8, flex: 1 }}>
                           <button
                             onClick={() => setActiveHeroTab("gap-analysis")}
-                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
-                              background: activeHeroTab === "gap-analysis" ? "var(--clr-text)" : "var(--clr-surface-2)",
-                              color: activeHeroTab === "gap-analysis" ? "#fff" : "var(--clr-text-3)" }}
-                          >Dig my idea</button>
+                            style={{ flex: 1, padding: "12px 14px", borderRadius: 12, cursor: "pointer", fontFamily: "inherit", textAlign: "left" as const, border: activeHeroTab === "gap-analysis" ? "2px solid #7a6aaa" : "1.5px solid #d8cef0", background: activeHeroTab === "gap-analysis" ? "#ebe4f5" : "#f5f0ff" }}
+                          >
+                            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 3 }}>
+                              <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke={activeHeroTab === "gap-analysis" ? "#4a3a78" : "#7a6aaa"} strokeWidth="1.8"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="12.5" y1="12.5" x2="17" y2="17"/></svg>
+                              <span style={{ fontWeight: 500, fontSize: "0.875rem", color: activeHeroTab === "gap-analysis" ? "#4a3a78" : "#5a4a88" }}>Dig my idea</span>
+                            </div>
+                            <div style={{ fontSize: "0.6875rem", color: activeHeroTab === "gap-analysis" ? "#6a5a98" : "#7a6aaa", paddingLeft: 22 }}>Find the gap in your market</div>
+                          </button>
                           <button
                             onClick={() => setActiveHeroTab("stack-advisor")}
-                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
-                              background: activeHeroTab === "stack-advisor" ? "#0f766e" : "var(--clr-surface-2)",
-                              color: activeHeroTab === "stack-advisor" ? "#fff" : "var(--clr-text-3)" }}
-                          >Get my stack</button>
+                            style={{ flex: 1, padding: "12px 14px", borderRadius: 12, cursor: "pointer", fontFamily: "inherit", textAlign: "left" as const, border: activeHeroTab === "stack-advisor" ? "2px solid #2a7a55" : "1.5px solid #b8e0cc", background: activeHeroTab === "stack-advisor" ? "#d0f0e0" : "#edf8f2" }}
+                          >
+                            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 3 }}>
+                              <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke={activeHeroTab === "stack-advisor" ? "#105038" : "#2a7a55"} strokeWidth="1.8"><rect x="3" y="3" width="6" height="6" rx="1.5"/><rect x="11" y="3" width="6" height="6" rx="1.5"/><rect x="3" y="11" width="6" height="6" rx="1.5"/><rect x="11" y="11" width="6" height="6" rx="1.5"/></svg>
+                              <span style={{ fontWeight: 500, fontSize: "0.875rem", color: activeHeroTab === "stack-advisor" ? "#105038" : "#1a5a3c" }}>Get my stack</span>
+                            </div>
+                            <div style={{ fontSize: "0.6875rem", color: activeHeroTab === "stack-advisor" ? "#1a5a3c" : "#2a7a55", paddingLeft: 22 }}>Best tools to build it</div>
+                          </button>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                           <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
@@ -3866,7 +3874,7 @@ function HomeInner() {
                       <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Budget</div>
                       <div style={{ display: "flex", gap: 4 }}>
                         {([{ id: "bootstrap" as Budget, label: "Free" }, { id: "growing" as Budget, label: "$50/mo" }, { id: "funded" as Budget, label: "$200+" }]).map(opt => (
-                          <button key={opt.id} onClick={() => setBudget(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: budget === opt.id ? "#0f766e" : "var(--clr-surface-2)", color: budget === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
+                          <button key={opt.id} onClick={() => setBudget(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: budget === opt.id ? "#2a7a55" : "var(--clr-surface-2)", color: budget === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
                       </div>
                     </div>
@@ -3874,7 +3882,7 @@ function HomeInner() {
                       <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Tech level</div>
                       <div style={{ display: "flex", gap: 4 }}>
                         {([{ id: "nocode" as TechLevel, label: "No-code" }, { id: "lowcode" as TechLevel, label: "Low-code" }, { id: "developer" as TechLevel, label: "Dev" }]).map(opt => (
-                          <button key={opt.id} onClick={() => setTechLevel(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: techLevel === opt.id ? "#0f766e" : "var(--clr-surface-2)", color: techLevel === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
+                          <button key={opt.id} onClick={() => setTechLevel(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: techLevel === opt.id ? "#2a7a55" : "var(--clr-surface-2)", color: techLevel === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
                       </div>
                     </div>
@@ -3882,7 +3890,7 @@ function HomeInner() {
                       <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Platform</div>
                       <div style={{ display: "flex", gap: 4 }}>
                         {([{ id: "web" as Platform, label: "Web" }, { id: "mobile" as Platform, label: "Mobile" }, { id: "both" as Platform, label: "Both" }]).map(opt => (
-                          <button key={opt.id} onClick={() => setPlatform(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: platform === opt.id ? "#0f766e" : "var(--clr-surface-2)", color: platform === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
+                          <button key={opt.id} onClick={() => setPlatform(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: platform === opt.id ? "#2a7a55" : "var(--clr-surface-2)", color: platform === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
                       </div>
                     </div>
@@ -3901,7 +3909,7 @@ function HomeInner() {
                             }, 50);
                           }
                         }}
-                          style={{ background: "transparent", border: "none", padding: 0, fontSize: "0.8125rem", color: "var(--clr-text-4)", cursor: "pointer", textDecoration: "underline", fontFamily: "inherit" }}
+                          style={{ background: "transparent", border: "none", padding: 0, fontSize: "0.8125rem", color: activeHeroTab === "gap-analysis" ? "#7a6aaa" : "#2a7a55", cursor: "pointer", textDecoration: "underline", fontFamily: "inherit" }}
                         >↓ Sample report</button>
                         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                           {idea.trim().length < 40 && (
@@ -3910,7 +3918,7 @@ function HomeInner() {
                           <button
                             onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); } else { setSelectedTool(activeHeroTab as ToolId); } } }}
                             disabled={idea.trim().length < 40}
-                            style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-text)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
+                            style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "#7a6aaa" : "#2a7a55") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
                         </div>
                       </div>
@@ -3944,9 +3952,9 @@ function HomeInner() {
                     <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>Two tools. One session. Build the right thing.</h2>
                     <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", marginBottom: "2rem" }}>Dig finds where the gap is. Stack tells you exactly how to build it.</p>
                     <div className="landing-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, maxWidth: 640, margin: "0 auto" }}>
-                      <div style={{ background: "var(--clr-surface)", border: "1.5px solid var(--clr-text)", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
+                      <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderLeft: "3px solid #7a6aaa", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7a6aaa" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                           <span style={{ fontSize: "0.9375rem", fontWeight: 600 }}>Dig</span>
                         </div>
                         <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: 14 }}>Scans 70+ live sources. Maps competitors with funding data. Finds the whitespace nobody is filling.</p>
@@ -3956,15 +3964,15 @@ function HomeInner() {
                           ))}
                         </div>
                       </div>
-                      <div style={{ background: "var(--clr-surface)", border: "1.5px solid #0f766e", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
+                      <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderLeft: "3px solid #2a7a55", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f766e" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2a7a55" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
                           <span style={{ fontSize: "0.9375rem", fontWeight: 600 }}>Stack</span>
                         </div>
                         <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: 14 }}>Recommends exact tools, real monthly costs, and a phased build order — matched to your budget and skill level.</p>
                         <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
                           {["No-code","Low-code","Developer","700+ tools"].map(s => (
-                            <span key={s} style={{ padding: "3px 8px", background: "rgba(15,118,110,0.08)", borderRadius: 5, fontSize: "0.625rem", color: "#0f766e" }}>{s}</span>
+                            <span key={s} style={{ padding: "3px 8px", background: "rgba(42,122,85,0.08)", borderRadius: 5, fontSize: "0.625rem", color: "#2a7a55" }}>{s}</span>
                           ))}
                         </div>
                       </div>
@@ -4082,8 +4090,8 @@ function HomeInner() {
                     <h2 style={{ fontSize: "1.75rem", fontWeight: 600, color: "#fff", letterSpacing: "-0.03em", marginBottom: 6 }}>Stop guessing. Start digging.</h2>
                     <p style={{ fontSize: "0.9375rem", color: "#666", marginBottom: "1.5rem" }}>Find the gap in your idea. Get the stack to build it. One session.</p>
                     <div style={{ display: "inline-flex", gap: 10 }}>
-                      <button onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("gap-analysis"); }} style={{ padding: "10px 24px", background: "#fff", color: "#111", borderRadius: 10, fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Dig my idea</button>
-                      <button onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("stack-advisor"); }} style={{ padding: "10px 24px", background: "#0f766e", color: "#fff", borderRadius: 10, fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Get my stack</button>
+                      <button onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("gap-analysis"); }} style={{ padding: "10px 24px", background: "#fff", color: "#4a3a78", borderRadius: 10, fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Dig my idea</button>
+                      <button onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("stack-advisor"); }} style={{ padding: "10px 24px", background: "#2a7a55", color: "#fff", borderRadius: 10, fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Get my stack</button>
                     </div>
                   </div>
                 </div>
