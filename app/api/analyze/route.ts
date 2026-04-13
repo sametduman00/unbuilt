@@ -408,6 +408,15 @@ When evaluating competitors, distinguish between established incumbents and expl
 Do not treat an early-stage, low-traction entrant as equivalent to an established incumbent when judging market saturation or unmet demand.
 Similarly: an adjacent generic platform (e.g., Clio for legal, Procore for construction) existing does NOT prove that a specific workflow within that domain is solved. Only count a competitor as "serving this exact workflow" if there is evidence they actually do — not just that they operate in the same industry.
 
+ADOPTION GAP = POSITIVE SIGNAL (reasoning correction):
+If tools exist but the target segment still relies on manual workflows (spreadsheets, WhatsApp, email, paper forms, phone calls), treat this as evidence of UNRESOLVED DEMAND — not just "market exists." When you observe this pattern, it should LIFT D1 and D3, not suppress them. A market where tools exist but are not adopted by the target segment is often MORE attractive than an empty market, because pain is validated and willingness to change is the only remaining question.
+
+SUITE FEATURE ≠ WORKFLOW RESOLUTION (reasoning correction):
+A feature buried inside a $100+/month multi-feature platform (e.g., ServiceTitan, Procore, Buildium, Clio) is NOT the same as a dedicated, well-adopted solution for the target segment. Only count a workflow as "served" if there is evidence of actual adoption by the DESCRIBED SEGMENT — not just that a platform technically offers the capability. Small operators refusing to adopt expensive suites is itself a demand signal for focused, affordable alternatives.
+
+SCORING RANGE GUIDANCE (reasoning correction):
+The 50-65 range SHOULD be available for markets with: real recurring pain + incumbent weakness or misfit + visible adoption gaps + a credible wedge — even when competitors exist. This range means "real opportunity that needs validation." It is NOT reserved for blue-ocean zero-competition cases. If your analysis identifies genuine adoption gaps, broken incumbent experiences, or segment-level workflow mismatch, do NOT compress the score into the 30s just because tools technically exist. Conversely, 65+ should still require strong direct demand evidence.
+
 VERDICT-TO-SCORE RECONCILIATION (mandatory final check):
 Before finalizing your D1-D5 scores, re-read your verdict and analysis. Your scores MUST be consistent with your written judgment:
 - If your verdict says "this exact idea already exists and is fully served" → D1 must be below 25, D3 must be below 25
@@ -415,6 +424,8 @@ Before finalizing your D1-D5 scores, re-read your verdict and analysis. Your sco
 - If your verdict says "plausible wedge worth validating" → D3 must be above 40
 - If your verdict says "no one is searching for this" → D1 must be below 20
 - If your analysis identifies a real structural gap with named evidence → D3 must be above 45
+- If your analysis says "tools exist but the target segment still uses manual workflows" → D1 must be above 30 (adoption gap is demand evidence)
+- If your analysis says "the problem is adoption and fit, not product availability" → final score should be 40+ not 30s
 Your analysis is more trustworthy than a cautious numeric instinct. Adjust scores to match your reasoning.
 
 STEP 3: CALCULATE FINAL SCORE
