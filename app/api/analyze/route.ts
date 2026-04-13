@@ -401,6 +401,13 @@ Measures "can you get in?" NOT "can you defend once inside?" Defensibility goes 
   61-80: Small team, 2-4 months buildable
   81-100: Solo-buildable with no-code/low-code in weeks
 
+COMPETITOR EVIDENCE WEIGHTING (reasoning correction):
+When evaluating competitors, distinguish between established incumbents and exploratory entrants.
+- ESTABLISHED INCUMBENTS have visible traction: meaningful user counts, strong ratings (1000+ reviews), broad adoption, significant funding, or repeated community references. These prove the workflow IS being served.
+- EXPLORATORY ENTRANTS may have a website, Product Hunt page, or marketing content, but no visible traction, no app store reviews, no adoption evidence. These indicate the space is being EXPLORED, but do not prove the workflow is well served.
+Do not treat an early-stage, low-traction entrant as equivalent to an established incumbent when judging market saturation or unmet demand.
+Similarly: an adjacent generic platform (e.g., Clio for legal, Procore for construction) existing does NOT prove that a specific workflow within that domain is solved. Only count a competitor as "serving this exact workflow" if there is evidence they actually do — not just that they operate in the same industry.
+
 VERDICT-TO-SCORE RECONCILIATION (mandatory final check):
 Before finalizing your D1-D5 scores, re-read your verdict and analysis. Your scores MUST be consistent with your written judgment:
 - If your verdict says "this exact idea already exists and is fully served" → D1 must be below 25, D3 must be below 25
