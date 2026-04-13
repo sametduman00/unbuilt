@@ -347,12 +347,22 @@ Ask yourself: "Are real users actively searching for something that doesn't exis
 Reddit complaints about existing tools, unmet feature requests, workaround spending = high D1.
 Generic category growth, large TAM, people using existing tools happily = low D1.
 Twitter/X is a weak demand signal — only count tweets with 50+ engagement.
-  0-15: Demand fully satisfied by existing tools. Nobody searching for an alternative. Category may be huge but THIS product has no incremental demand.
-  16-30: Weak signals. A few people comparing tools but not expressing unmet needs. Category demand exists but existing solutions cover it.
-  31-50: Moderate signals. Some users express frustration with existing tools OR a niche segment has unmet needs. But evidence is thin.
-  51-70: Strong signals. Multiple users (50+ upvotes/likes) actively requesting something existing tools don't provide. Clear workaround behavior.
-  71-85: Very strong. Widespread complaints + workaround spending + willingness to pay for something better.
-  86-100: Viral demand. Clear evidence people want THIS and cannot get it anywhere.
+IMPORTANT — distinguish three levels of demand:
+  (a) Generic category demand: people want the category but existing tools serve them fine → D1 stays LOW (0-15)
+  (b) Niche-specific pain: the generic product is fully served, BUT a specific underserved segment has credible pain signals (research-validated gaps, documented workflow failures, identifiable population not served by incumbents) → D1 can reach 25-40 even when generic demand is weak
+  (c) Direct unmet demand: people are actively searching for THIS product and can't find it → D1 goes HIGH (50+)
+Niche-demand qualifying criteria (all must apply for 25-40 band):
+  - the niche segment is specifically named (not "some users" but "elderly living alone" or "Brazilian HR-tech developers")
+  - pain evidence exists beyond speculation (research studies, documented incumbent failures, specific user complaints)
+  - incumbents demonstrably do NOT serve this niche's specific workflow or adoption needs
+  - this is NOT just a positioning tweak — there is a real structural mismatch between what exists and what the niche needs
+Scoring bands:
+  0-15: Demand fully satisfied by existing tools. Nobody searching for an alternative. Category may be huge but THIS product has no incremental demand. Clones of existing products belong here.
+  16-24: Weak generic signals. People comparing tools but not expressing unmet needs. No identifiable niche pain.
+  25-40: NICHE DEMAND — generic product is fully served, but a specific named segment has evidence-backed pain that incumbents fail to address. The demand is real but narrow and unvalidated at scale.
+  41-60: Moderate-to-strong signals. Multiple users actively requesting something existing tools don't provide. Workaround behavior visible. Demand extends beyond a single niche.
+  61-80: Strong. Widespread complaints + workaround spending + willingness to pay for something better across multiple segments.
+  81-100: Viral demand. Clear evidence people want THIS and cannot get it anywhere.
 
 D2 — COMPETITIVE DENSITY (weight: 20%) — PENALIZING, NOT FATAL
 INVERTED: more competition = lower score.
