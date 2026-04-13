@@ -2630,15 +2630,37 @@ function parseGapAnalysisJSON(raw: string): GapAnalysisData | null {
   try {
     JSON.parse(jsonStr);
   } catch {
-    // Try closing unclosed braces/brackets
-    let opens = 0, opensArr = 0;
-    for (const ch of jsonStr) {
-      if (ch === '{') opens++;
-      else if (ch === '}') opens--;
-      else if (ch === '[') opensArr++;
-      else if (ch === ']') opensArr--;
+    // Step 1: Handle unclosed strings by checking if we have an odd number of unescaped quotes
+    let inString = false;
+    let lastQuoteIdx = -1;
+    for (let i = 0; i < jsonStr.length; i++) {
+      if (jsonStr[i] === '\\' && inString) { i++; continue; } // skip escaped chars
+      if (jsonStr[i] === '"') { inString = !inString; lastQuoteIdx = i; }
     }
-    // Remove trailing comma if present
+    // If we're inside an unclosed string, close it and truncate any trailing partial value
+    if (inString && lastQuoteIdx >= 0) {
+      jsonStr = jsonStr.substring(0, lastQuoteIdx + 1) + '"';
+    }
+    
+    // Step 2: Remove any trailing partial tokens (incomplete key-value pairs)
+    // Remove trailing text after the last complete structure delimiter
+    jsonStr = jsonStr.replace(/,\s*"[^"]*"?\s*:?\s*"?[^"{}[\]]*$/, '');
+    // Remove trailing comma
+    jsonStr = jsonStr.replace(/,\s*$/, '');
+    
+    // Step 3: Count and close unclosed braces/brackets
+    let opens = 0, opensArr = 0;
+    inString = false;
+    for (let i = 0; i < jsonStr.length; i++) {
+      if (jsonStr[i] === '\\' && inString) { i++; continue; }
+      if (jsonStr[i] === '"') { inString = !inString; continue; }
+      if (inString) continue;
+      if (jsonStr[i] === '{') opens++;
+      else if (jsonStr[i] === '}') opens--;
+      else if (jsonStr[i] === '[') opensArr++;
+      else if (jsonStr[i] === ']') opensArr--;
+    }
+    // Remove trailing comma again after truncation
     jsonStr = jsonStr.replace(/,\s*$/, '');
     // Close arrays then objects
     for (let i = 0; i < opensArr; i++) jsonStr += ']';
@@ -3551,6 +3573,8 @@ function HomeInner() {
             const parsed = JSON.parse(data);
             if (parsed.meta !== undefined) {
               if (!abortCtrl.signal.aborted) setResultCached(parsed.meta.cached);
+            } else if (parsed.error) {
+              if (!abortCtrl.signal.aborted) setError(parsed.error);
             } else if (parsed.text) {
               fullContent += parsed.text;
               if (!abortCtrl.signal.aborted) setStreamedContent((p) => p + parsed.text);
@@ -4395,6 +4419,24 @@ ${sections.join("\n")}
                 (() => {
                   const gapData = parseGapAnalysisJSON(streamedContent);
                   if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { handleSelectTool("stack-advisor"); setTimeout(() => setIdea(i), 50); }} /></div>;
+                  // If content looks like JSON but failed to parse, show retry message instead of raw JSON
+                  const trimmed = streamedContent.trim();
+                  const looksLikeJSON = trimmed.startsWith('{') || trimmed.startsWith('```json') || trimmed.includes('"marketScore"');
+                  if (looksLikeJSON) return (
+                    <div className="section-card" style={{ textAlign: "center", padding: "2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
+                      <div style={{ fontSize: "2rem" }}>⚠️</div>
+                      <div style={{ color: "var(--clr-text-6)", fontSize: "0.95rem", maxWidth: 400 }}>
+                        The analysis was generated but couldn{"'"}t be fully rendered. This usually happens when the report is very long. Your credit has been refunded.
+                      </div>
+                      <button onClick={handleSubmit} style={{ padding: "8px 20px", borderRadius: 8, border: "1px solid #d1d5db", background: "white", cursor: "pointer", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: 6 }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M1 4v6h6M23 20v-6h-6" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Try again
+                      </button>
+                    </div>
+                  );
                   return sections.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       {sections.map((s, i) => (
@@ -4411,6 +4453,24 @@ ${sections.join("\n")}
                 (() => {
                   const stackData = parseStackAdvisorJSON(streamedContent);
                   if (stackData) return <StackAdvisorResult data={stackData} ytVideos={ytVideos} />;
+                  // If content looks like JSON but failed to parse, show retry message
+                  const trimmedStack = streamedContent.trim();
+                  const looksLikeStackJSON = trimmedStack.startsWith('{') || trimmedStack.startsWith('```json') || trimmedStack.includes('"phases"');
+                  if (looksLikeStackJSON) return (
+                    <div className="section-card" style={{ textAlign: "center", padding: "2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
+                      <div style={{ fontSize: "2rem" }}>⚠️</div>
+                      <div style={{ color: "var(--clr-text-6)", fontSize: "0.95rem", maxWidth: 400 }}>
+                        The stack recommendation was generated but couldn{"'"}t be fully rendered. Your credit has been refunded.
+                      </div>
+                      <button onClick={handleSubmit} style={{ padding: "8px 20px", borderRadius: 8, border: "1px solid #d1d5db", background: "white", cursor: "pointer", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: 6 }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M1 4v6h6M23 20v-6h-6" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Try again
+                      </button>
+                    </div>
+                  );
                   return sections.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       {sections.map((s, i) => (
