@@ -3829,29 +3829,21 @@ function HomeInner() {
                     </div>
                     {/* Input card */}
                     <div style={{ background: "var(--clr-surface)", border: activeHeroTab === "gap-analysis" ? "1.5px solid #bfb3d4" : "1.5px solid #0f766e", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
-                      {/* Tab switcher — card style */}
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px 12px" }}>
-                        <div style={{ display: "flex", gap: 8, flex: 1 }}>
+                      {/* Tab switcher — inside card */}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 12px" }}>
+                        <div style={{ display: "flex", gap: 6 }}>
                           <button
                             onClick={() => setActiveHeroTab("gap-analysis")}
-                            style={{ flex: 1, padding: "12px 14px", borderRadius: 12, cursor: "pointer", fontFamily: "inherit", textAlign: "left" as const, border: activeHeroTab === "gap-analysis" ? "2px solid #8b7aad" : "1.5px solid #d8d0e8", background: activeHeroTab === "gap-analysis" ? "#e8e0f2" : "#f3eff8" }}
-                          >
-                            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 3 }}>
-                              <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke={activeHeroTab === "gap-analysis" ? "#5a4d80" : "#8b7aad"} strokeWidth="1.8"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="12.5" y1="12.5" x2="17" y2="17"/></svg>
-                              <span style={{ fontWeight: 500, fontSize: "0.875rem", color: activeHeroTab === "gap-analysis" ? "#5a4d80" : "#6b5ea0" }}>Dig my idea</span>
-                            </div>
-                            <div style={{ fontSize: "0.6875rem", color: activeHeroTab === "gap-analysis" ? "#7a6c9a" : "#8b7aad", paddingLeft: 22 }}>Find the gap in your market</div>
-                          </button>
+                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
+                              background: activeHeroTab === "gap-analysis" ? "#8b7aad" : "var(--clr-surface-2)",
+                              color: activeHeroTab === "gap-analysis" ? "#fff" : "var(--clr-text-3)" }}
+                          >Dig my idea</button>
                           <button
                             onClick={() => setActiveHeroTab("stack-advisor")}
-                            style={{ flex: 1, padding: "12px 14px", borderRadius: 12, cursor: "pointer", fontFamily: "inherit", textAlign: "left" as const, border: activeHeroTab === "stack-advisor" ? "2px solid #0f766e" : "1.5px solid #b8e0cc", background: activeHeroTab === "stack-advisor" ? "#d0f0e0" : "#edf8f2" }}
-                          >
-                            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 3 }}>
-                              <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke={activeHeroTab === "stack-advisor" ? "#085040" : "#2a7a55"} strokeWidth="1.8"><rect x="3" y="3" width="6" height="6" rx="1.5"/><rect x="11" y="3" width="6" height="6" rx="1.5"/><rect x="3" y="11" width="6" height="6" rx="1.5"/><rect x="11" y="11" width="6" height="6" rx="1.5"/></svg>
-                              <span style={{ fontWeight: 500, fontSize: "0.875rem", color: activeHeroTab === "stack-advisor" ? "#085040" : "#1a5a3c" }}>Get my stack</span>
-                            </div>
-                            <div style={{ fontSize: "0.6875rem", color: activeHeroTab === "stack-advisor" ? "#1a6a48" : "#2a7a55", paddingLeft: 22 }}>Best tools to build it</div>
-                          </button>
+                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
+                              background: activeHeroTab === "stack-advisor" ? "#0f766e" : "var(--clr-surface-2)",
+                              color: activeHeroTab === "stack-advisor" ? "#fff" : "var(--clr-text-3)" }}
+                          >Get my stack</button>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                           <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
