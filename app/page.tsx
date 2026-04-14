@@ -3828,14 +3828,14 @@ function HomeInner() {
                       )}
                     </div>
                     {/* Input card */}
-                    <div style={{ background: "var(--clr-surface)", border: activeHeroTab === "gap-analysis" ? "1.5px solid #c4b8e0" : "1.5px solid #0f766e", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
+                    <div style={{ background: "var(--clr-surface)", border: activeHeroTab === "gap-analysis" ? "1.5px solid var(--clr-text)" : "1.5px solid #0f766e", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
                       {/* Tab switcher — inside card */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 12px" }}>
                         <div style={{ display: "flex", gap: 6 }}>
                           <button
                             onClick={() => setActiveHeroTab("gap-analysis")}
                             style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
-                              background: activeHeroTab === "gap-analysis" ? "#9b8ec2" : "var(--clr-surface-2)",
+                              background: activeHeroTab === "gap-analysis" ? "var(--clr-text)" : "var(--clr-surface-2)",
                               color: activeHeroTab === "gap-analysis" ? "#fff" : "var(--clr-text-3)" }}
                           >Dig my idea</button>
                           <button
@@ -3910,7 +3910,7 @@ function HomeInner() {
                           <button
                             onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); } else { setSelectedTool(activeHeroTab as ToolId); } } }}
                             disabled={idea.trim().length < 40}
-                            style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "#9b8ec2" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
+                            style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-text)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
                         </div>
                       </div>
@@ -3944,9 +3944,9 @@ function HomeInner() {
                     <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>Two tools. One session. Build the right thing.</h2>
                     <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", marginBottom: "2rem" }}>Dig finds where the gap is. Stack tells you exactly how to build it.</p>
                     <div className="landing-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, maxWidth: 640, margin: "0 auto" }}>
-                      <div style={{ background: "var(--clr-surface)", border: "1.5px solid #c4b8e0", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
+                      <div style={{ background: "var(--clr-surface)", border: "1.5px solid var(--clr-text)", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9b8ec2" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                           <span style={{ fontSize: "0.9375rem", fontWeight: 600 }}>Dig</span>
                         </div>
                         <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: 14 }}>Scans 70+ live sources. Maps competitors with funding data. Finds the whitespace nobody is filling.</p>
@@ -4336,7 +4336,7 @@ function HomeInner() {
                     <h2 style={{ fontSize: "1.75rem", fontWeight: 600, color: "#fff", letterSpacing: "-0.03em", marginBottom: 6 }}>Stop guessing. Start digging.</h2>
                     <p style={{ fontSize: "0.9375rem", color: "#666", marginBottom: "1.5rem" }}>Find the gap in your idea. Get the stack to build it. One session.</p>
                     <div style={{ display: "inline-flex", gap: 10 }}>
-                      <button onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("gap-analysis"); }} style={{ padding: "10px 24px", background: "#fff", color: "#6b5ea0", borderRadius: 10, fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Dig my idea</button>
+                      <button onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("gap-analysis"); }} style={{ padding: "10px 24px", background: "#fff", color: "#111", borderRadius: 10, fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Dig my idea</button>
                       <button onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("stack-advisor"); }} style={{ padding: "10px 24px", background: "#0f766e", color: "#fff", borderRadius: 10, fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Get my stack</button>
                     </div>
                   </div>
