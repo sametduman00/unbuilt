@@ -1428,7 +1428,7 @@ function LandingReportPreview() {
     <div>
       <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: "1.5rem" }}>
         <button onClick={() => setTab("dig")} style={{ padding: "7px 18px", borderRadius: 8, fontSize: "0.8125rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit", background: tab === "dig" ? "var(--clr-text)" : "var(--clr-surface-2)", color: tab === "dig" ? "#fff" : "var(--clr-text-3)" }}>Dig report</button>
-        <button onClick={() => setTab("stack")} style={{ padding: "7px 18px", borderRadius: 8, fontSize: "0.8125rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit", background: tab === "stack" ? "#0f766e" : "var(--clr-surface-2)", color: tab === "stack" ? "#fff" : "var(--clr-text-3)" }}>Stack report</button>
+        <button onClick={() => setTab("stack")} style={{ padding: "7px 18px", borderRadius: 8, fontSize: "0.8125rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit", background: tab === "stack" ? "#2a9a80" : "var(--clr-surface-2)", color: tab === "stack" ? "#fff" : "var(--clr-text-3)" }}>Stack report</button>
       </div>
       {tab === "dig" ? <DigSampleReport /> : <StackSampleReport />}
     </div>
@@ -3828,7 +3828,7 @@ function HomeInner() {
                       )}
                     </div>
                     {/* Input card */}
-                    <div style={{ background: "var(--clr-surface)", border: activeHeroTab === "gap-analysis" ? "1.5px solid var(--clr-text)" : "1.5px solid #0f766e", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
+                    <div style={{ background: "var(--clr-surface)", border: activeHeroTab === "gap-analysis" ? "1.5px solid var(--clr-text)" : "1.5px solid #2a9a80", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
                       {/* Tab switcher — inside card */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 12px" }}>
                         <div style={{ display: "flex", gap: 6 }}>
@@ -3841,7 +3841,7 @@ function HomeInner() {
                           <button
                             onClick={() => setActiveHeroTab("stack-advisor")}
                             style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
-                              background: activeHeroTab === "stack-advisor" ? "#0f766e" : "var(--clr-surface-2)",
+                              background: activeHeroTab === "stack-advisor" ? "#2a9a80" : "var(--clr-surface-2)",
                               color: activeHeroTab === "stack-advisor" ? "#fff" : "var(--clr-text-3)" }}
                           >Get my stack</button>
                         </div>
@@ -3866,7 +3866,7 @@ function HomeInner() {
                       <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Budget</div>
                       <div style={{ display: "flex", gap: 4 }}>
                         {([{ id: "bootstrap" as Budget, label: "Free" }, { id: "growing" as Budget, label: "$50/mo" }, { id: "funded" as Budget, label: "$200+" }]).map(opt => (
-                          <button key={opt.id} onClick={() => setBudget(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: budget === opt.id ? "#0f766e" : "var(--clr-surface-2)", color: budget === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
+                          <button key={opt.id} onClick={() => setBudget(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: budget === opt.id ? "#2a9a80" : "var(--clr-surface-2)", color: budget === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
                       </div>
                     </div>
@@ -3874,7 +3874,7 @@ function HomeInner() {
                       <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Tech level</div>
                       <div style={{ display: "flex", gap: 4 }}>
                         {([{ id: "nocode" as TechLevel, label: "No-code" }, { id: "lowcode" as TechLevel, label: "Low-code" }, { id: "developer" as TechLevel, label: "Dev" }]).map(opt => (
-                          <button key={opt.id} onClick={() => setTechLevel(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: techLevel === opt.id ? "#0f766e" : "var(--clr-surface-2)", color: techLevel === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
+                          <button key={opt.id} onClick={() => setTechLevel(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: techLevel === opt.id ? "#2a9a80" : "var(--clr-surface-2)", color: techLevel === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
                       </div>
                     </div>
@@ -3882,7 +3882,7 @@ function HomeInner() {
                       <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Platform</div>
                       <div style={{ display: "flex", gap: 4 }}>
                         {([{ id: "web" as Platform, label: "Web" }, { id: "mobile" as Platform, label: "Mobile" }, { id: "both" as Platform, label: "Both" }]).map(opt => (
-                          <button key={opt.id} onClick={() => setPlatform(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: platform === opt.id ? "#0f766e" : "var(--clr-surface-2)", color: platform === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
+                          <button key={opt.id} onClick={() => setPlatform(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: platform === opt.id ? "#2a9a80" : "var(--clr-surface-2)", color: platform === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
                       </div>
                     </div>
@@ -3910,7 +3910,7 @@ function HomeInner() {
                           <button
                             onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); } else { setSelectedTool(activeHeroTab as ToolId); } } }}
                             disabled={idea.trim().length < 40}
-                            style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-text)" : "#0f766e") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
+                            style={{ background: idea.trim().length >= 40 ? (activeHeroTab === "gap-analysis" ? "var(--clr-text)" : "#2a9a80") : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
                         </div>
                       </div>
@@ -3956,15 +3956,15 @@ function HomeInner() {
                           ))}
                         </div>
                       </div>
-                      <div style={{ background: "var(--clr-surface)", border: "1.5px solid #0f766e", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
+                      <div style={{ background: "var(--clr-surface)", border: "1.5px solid #2a9a80", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f766e" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2a9a80" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
                           <span style={{ fontSize: "0.9375rem", fontWeight: 600 }}>Stack</span>
                         </div>
                         <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: 14 }}>Recommends exact tools, real monthly costs, and a phased build order — matched to your budget and skill level.</p>
                         <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
                           {["No-code","Low-code","Developer","700+ tools"].map(s => (
-                            <span key={s} style={{ padding: "3px 8px", background: "rgba(15,118,110,0.08)", borderRadius: 5, fontSize: "0.625rem", color: "#0f766e" }}>{s}</span>
+                            <span key={s} style={{ padding: "3px 8px", background: "rgba(42,154,128,0.08)", borderRadius: 5, fontSize: "0.625rem", color: "#2a9a80" }}>{s}</span>
                           ))}
                         </div>
                       </div>
@@ -4337,7 +4337,7 @@ function HomeInner() {
                     <p style={{ fontSize: "0.9375rem", color: "#666", marginBottom: "1.5rem" }}>Find the gap in your idea. Get the stack to build it. One session.</p>
                     <div style={{ display: "inline-flex", gap: 10 }}>
                       <button onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("gap-analysis"); }} style={{ padding: "10px 24px", background: "#fff", color: "#111", borderRadius: 10, fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Dig my idea</button>
-                      <button onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("stack-advisor"); }} style={{ padding: "10px 24px", background: "#0f766e", color: "#fff", borderRadius: 10, fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Get my stack</button>
+                      <button onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("stack-advisor"); }} style={{ padding: "10px 24px", background: "#2a9a80", color: "#fff", borderRadius: 10, fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Get my stack</button>
                     </div>
                   </div>
                 </div>
