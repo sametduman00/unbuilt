@@ -3796,7 +3796,7 @@ function HomeInner() {
                     {/* Title */}
                     {activeHeroTab === "gap-analysis" ? (
                       <div style={{ fontSize: "clamp(2.75rem, 5.5vw, 3.5rem)", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.1, letterSpacing: "-0.035em", marginBottom: "0.75rem" }}>
-                        Don&apos;t build what<br />
+                        <em style={{ fontStyle: "italic" }}>Don&apos;t build what</em><br />
                         <em style={{ fontStyle: "italic", fontWeight: 600 }}>already exists.</em>
                       </div>
                     ) : (
