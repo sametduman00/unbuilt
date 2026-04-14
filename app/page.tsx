@@ -3835,8 +3835,8 @@ function HomeInner() {
                           <button
                             onClick={() => setActiveHeroTab("gap-analysis")}
                             style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
-                              background: activeHeroTab === "gap-analysis" ? "#2a9a80" : "var(--clr-surface-2)",
-                              color: activeHeroTab === "gap-analysis" ? "#fff" : "var(--clr-text-3)" }}
+                              background: activeHeroTab === "gap-analysis" ? "var(--clr-surface-2)" : "var(--clr-surface-2)",
+                              color: activeHeroTab === "gap-analysis" ? "var(--clr-text-3)" : "var(--clr-text-3)" }}
                           >Dig my idea</button>
                           <button
                             onClick={() => setActiveHeroTab("stack-advisor")}
