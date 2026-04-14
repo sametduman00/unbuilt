@@ -3834,13 +3834,13 @@ function HomeInner() {
                         <div style={{ display: "flex", gap: 6 }}>
                           <button
                             onClick={() => setActiveHeroTab("gap-analysis")}
-                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
+                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "1.5px solid #bfb3d4", cursor: "pointer", fontFamily: "inherit",
                               background: activeHeroTab === "gap-analysis" ? "var(--clr-surface-2)" : "var(--clr-surface-2)",
                               color: activeHeroTab === "gap-analysis" ? "var(--clr-text-3)" : "var(--clr-text-3)" }}
                           >Dig my idea</button>
                           <button
                             onClick={() => setActiveHeroTab("stack-advisor")}
-                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
+                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "1.5px solid #bfb3d4", cursor: "pointer", fontFamily: "inherit",
                               background: activeHeroTab === "stack-advisor" ? "#2a9a80" : "var(--clr-surface-2)",
                               color: activeHeroTab === "stack-advisor" ? "#fff" : "var(--clr-text-3)" }}
                           >Get my stack</button>
