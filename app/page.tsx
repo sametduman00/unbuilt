@@ -3845,8 +3845,8 @@ function HomeInner() {
                           <button
                             onClick={() => setActiveHeroTab("stack-advisor")}
                             style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "2px solid #bfb3d4", cursor: "pointer", fontFamily: "inherit",
-                              background: activeHeroTab === "stack-advisor" ? "#2a9a80" : "var(--clr-surface-2)",
-                              color: activeHeroTab === "stack-advisor" ? "#fff" : "var(--clr-text-3)" }}
+                              background: activeHeroTab === "stack-advisor" ? "var(--clr-surface-2)" : "var(--clr-surface-2)",
+                              color: activeHeroTab === "stack-advisor" ? "var(--clr-text-3)" : "var(--clr-text-3)" }}
                           >Get my stack</button>
                         </div>
                         <div className="hide-on-mobile" style={{ display: "flex", alignItems: "center", gap: 5 }}>
@@ -3870,7 +3870,7 @@ function HomeInner() {
                       <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Budget</div>
                       <div style={{ display: "flex", gap: 4 }}>
                         {([{ id: "bootstrap" as Budget, label: "Free" }, { id: "growing" as Budget, label: "$50/mo" }, { id: "funded" as Budget, label: "$200+" }]).map(opt => (
-                          <button key={opt.id} onClick={() => setBudget(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: budget === opt.id ? "#2a9a80" : "var(--clr-surface-2)", color: budget === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
+                          <button key={opt.id} onClick={() => setBudget(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: budget === opt.id ? "var(--clr-text)" : "var(--clr-surface-2)", color: budget === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
                       </div>
                     </div>
@@ -3878,7 +3878,7 @@ function HomeInner() {
                       <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Tech level</div>
                       <div style={{ display: "flex", gap: 4 }}>
                         {([{ id: "nocode" as TechLevel, label: "No-code" }, { id: "lowcode" as TechLevel, label: "Low-code" }, { id: "developer" as TechLevel, label: "Dev" }]).map(opt => (
-                          <button key={opt.id} onClick={() => setTechLevel(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: techLevel === opt.id ? "#2a9a80" : "var(--clr-surface-2)", color: techLevel === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
+                          <button key={opt.id} onClick={() => setTechLevel(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: techLevel === opt.id ? "var(--clr-text)" : "var(--clr-surface-2)", color: techLevel === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
                       </div>
                     </div>
@@ -3886,7 +3886,7 @@ function HomeInner() {
                       <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase" as const, marginBottom: 5 }}>Platform</div>
                       <div style={{ display: "flex", gap: 4 }}>
                         {([{ id: "web" as Platform, label: "Web" }, { id: "mobile" as Platform, label: "Mobile" }, { id: "both" as Platform, label: "Both" }]).map(opt => (
-                          <button key={opt.id} onClick={() => setPlatform(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: platform === opt.id ? "#2a9a80" : "var(--clr-surface-2)", color: platform === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
+                          <button key={opt.id} onClick={() => setPlatform(opt.id)} style={{ padding: "5px 10px", borderRadius: 7, fontSize: "0.75rem", fontWeight: 500, cursor: "pointer", border: "none", fontFamily: "inherit", background: platform === opt.id ? "var(--clr-text)" : "var(--clr-surface-2)", color: platform === opt.id ? "#fff" : "var(--clr-text-3)" }}>{opt.label}</button>
                         ))}
                       </div>
                     </div>
@@ -3914,7 +3914,7 @@ function HomeInner() {
                           <button
                             onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); } else { setSelectedTool(activeHeroTab as ToolId); } } }}
                             disabled={idea.trim().length < 40}
-                            style={{ background: idea.trim().length >= 40 ? "#2a9a80" : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
+                            style={{ background: idea.trim().length >= 40 ? "var(--clr-text)" : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
                         </div>
                       </div>
