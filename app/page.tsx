@@ -3144,6 +3144,13 @@ function HomeInner() {
   const [error, setError] = useState("");
   const [outOfCredits, setOutOfCredits] = useState(false);
   const [showNoCreditsModal, setShowNoCreditsModal] = useState(false);
+  const [showFreeCreditPopup, setShowFreeCreditPopup] = useState(false);
+  useEffect(() => {
+    if (!isSignedIn && !sessionStorage.getItem("free_popup_dismissed")) {
+      const t = setTimeout(() => setShowFreeCreditPopup(true), 2500);
+      return () => clearTimeout(t);
+    }
+  }, [isSignedIn]);
   const [hasResults, setHasResults] = useState(false);
 
   // ── Pulse inline state ────────────────────────────────────────────────────
@@ -4772,6 +4779,27 @@ ${sections.join("\n")}
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" strategy="lazyOnload" />
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" strategy="lazyOnload" />
       {showNoCreditsModal && <NoCreditsModal idea={idea} onClose={() => setShowNoCreditsModal(false)} />}
+      {showFreeCreditPopup && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}
+          onClick={e => { if (e.target === e.currentTarget) { setShowFreeCreditPopup(false); sessionStorage.setItem("free_popup_dismissed", "1"); } }}>
+          <div style={{ background: "var(--clr-bg)", borderRadius: 16, padding: "32px 28px", maxWidth: 360, width: "100%", position: "relative", boxShadow: "0 24px 64px rgba(0,0,0,0.2)" }}>
+            <button onClick={() => { setShowFreeCreditPopup(false); sessionStorage.setItem("free_popup_dismissed", "1"); }} style={{ position: "absolute", top: 14, right: 14, background: "none", border: "none", cursor: "pointer", color: "var(--clr-text-4)", padding: 4, lineHeight: 1 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(99,102,241,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <div style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 6 }}>Try it free</div>
+              <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.7, marginBottom: 24 }}>
+                Sign up and get 1 free credit.<br/>Use <strong>Dig</strong> to research your idea or <strong>Stack</strong> to find the right tools to build it.
+              </div>
+              <button onClick={() => { setShowFreeCreditPopup(false); sessionStorage.setItem("free_popup_dismissed", "1"); openSignIn(); }} style={{ width: "100%", padding: "11px 0", borderRadius: 10, background: "var(--clr-text)", color: "#fff", fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit", marginBottom: 10 }}>Sign up free →</button>
+              <div onClick={() => { setShowFreeCreditPopup(false); sessionStorage.setItem("free_popup_dismissed", "1"); }} style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", cursor: "pointer" }}>Maybe later</div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
