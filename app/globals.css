@@ -199,6 +199,8 @@ body, p, span, button, input, textarea, select, label, a {
   .landing-compare { grid-template-columns: 1fr !important; }
   .landing-compare > div:nth-child(2) { display: none; }
   .hide-on-mobile { display: none !important; }
+  .hero-tab-buttons { flex: 1 !important; }
+  .hero-tab-buttons button { flex: 1 !important; }
 }
 
 /* ââ Mobile layout fixes ââ */

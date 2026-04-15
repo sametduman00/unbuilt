@@ -3835,18 +3835,18 @@ function HomeInner() {
                     <div style={{ background: "var(--clr-surface)", border: "1.5px solid var(--clr-border)", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
                       {/* Tab switcher — inside card */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 12px" }}>
-                        <div style={{ display: "flex", gap: 6 }}>
+                        <div className="hero-tab-buttons" style={{ display: "flex", gap: 6 }}>
                           <button
                             onClick={() => setActiveHeroTab("gap-analysis")}
-                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "2px solid #bfb3d4", cursor: "pointer", fontFamily: "inherit",
-                              background: activeHeroTab === "gap-analysis" ? "var(--clr-surface-2)" : "var(--clr-surface-2)",
-                              color: activeHeroTab === "gap-analysis" ? "var(--clr-text-3)" : "var(--clr-text-3)" }}
+                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
+                              background: "var(--clr-text)",
+                              color: "#fff" }}
                           >Dig my idea</button>
                           <button
                             onClick={() => setActiveHeroTab("stack-advisor")}
-                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "2px solid #bfb3d4", cursor: "pointer", fontFamily: "inherit",
-                              background: activeHeroTab === "stack-advisor" ? "var(--clr-surface-2)" : "var(--clr-surface-2)",
-                              color: activeHeroTab === "stack-advisor" ? "var(--clr-text-3)" : "var(--clr-text-3)" }}
+                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
+                              background: "var(--clr-text)",
+                              color: "#fff" }}
                           >Get my stack</button>
                         </div>
                         <div className="hide-on-mobile" style={{ display: "flex", alignItems: "center", gap: 5 }}>
