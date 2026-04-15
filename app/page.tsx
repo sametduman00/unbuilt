@@ -4115,7 +4115,7 @@ function HomeInner() {
                         <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />
                         <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text-3)" }}>Engine v2.2 • Claude Opus 4.6</span>
                       </div>
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                      <div className="landing-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                         {[
                           { name: "Competitor DB", sources: "15 sources", color: "#6366f1" },
                           { name: "Market Research", sources: "12 sources", color: "#0ea5e9" },
@@ -4148,7 +4148,7 @@ function HomeInner() {
                   <div style={{ padding: "4rem 1.5rem", textAlign: "center" as const }}>
                     <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>Most AI tools validate everything. We don't.</h2>
                     <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", marginBottom: "2.5rem" }}>9 out of 10 ideas score below 50. If yours scores above, it earned it.</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 600, margin: "0 auto" }}>
+                    <div className="landing-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 600, margin: "0 auto" }}>
                       <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 16px" }}>
                         <div style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--clr-text-4)", textTransform: "uppercase" as const, letterSpacing: "0.06em", marginBottom: 16 }}>ChatGPT / generic AI</div>
                         <div style={{ display: "flex", flexDirection: "column" as const, gap: 4, marginBottom: 14 }}>
@@ -4205,7 +4205,7 @@ function HomeInner() {
                       <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>11 pages. Zero fluff.</h2>
                       <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)" }}>Every report includes these sections — backed by live data, not LLM imagination.</p>
                     </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 10, maxWidth: 600, margin: "0 auto" }}>
+                    <div className="landing-grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 10, maxWidth: 600, margin: "0 auto" }}>
                       {[
                         { title: "Executive Summary & Score", desc: "0-100 score with kill/validate/build verdict", tag: "D1-D5 breakdown" },
                         { title: "Competitor Deep Dive", desc: "6-12 competitors with threat level, strengths, weaknesses", tag: "Funding & user data" },
@@ -4236,7 +4236,7 @@ function HomeInner() {
                       <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>Founders who dug before they built.</h2>
                       <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)" }}>Real feedback from vibecoders and indie hackers.</p>
                     </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 12, maxWidth: 700, margin: "0 auto" }}>
+                    <div className="landing-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 12, maxWidth: 700, margin: "0 auto" }}>
                       {[
                         { name: "Alex R.", role: "Indie hacker", initials: "AR", bg: "#dbeafe", color: "#1e40af", quote: "Ran my SaaS idea through Unbuilt. Found 8 competitors I had no idea about. One was literally funded $4M last month. Saved me from building a dead product." },
                         { name: "Priya K.", role: "First-time founder", initials: "PK", bg: "#fce7f3", color: "#9d174d", quote: "The market gap analysis alone was worth it. Showed me my \"unique\" feature already exists in 3 tools — but none of them serve freelancers. That's my entry point now." },
