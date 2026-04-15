@@ -3842,6 +3842,7 @@ function HomeInner() {
                               background: "var(--clr-text)",
                               color: "#fff" }}
                           >Dig my idea</button>
+                          <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", alignSelf: "center" }}>or</span>
                           <button
                             onClick={() => setActiveHeroTab("stack-advisor")}
                             style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
