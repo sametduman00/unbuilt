@@ -3849,7 +3849,7 @@ function HomeInner() {
                               color: activeHeroTab === "stack-advisor" ? "#fff" : "var(--clr-text-3)" }}
                           >Get my stack</button>
                         </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <div className="hide-on-mobile" style={{ display: "flex", alignItems: "center", gap: 5 }}>
                           <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
                           <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Opus 4.6</span>
                         </div>
