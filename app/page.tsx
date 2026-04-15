@@ -3832,7 +3832,7 @@ function HomeInner() {
                       )}
                     </div>
                     {/* Input card */}
-                    <div style={{ background: "var(--clr-surface)", border: "1.5px solid #2a9a80", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
+                    <div style={{ background: "var(--clr-surface)", border: "1.5px solid var(--clr-border)", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
                       {/* Tab switcher — inside card */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 12px" }}>
                         <div style={{ display: "flex", gap: 6 }}>
@@ -3948,7 +3948,7 @@ function HomeInner() {
                     <h2 style={{ fontSize: "1.625rem", fontWeight: 600, letterSpacing: "-0.03em", marginBottom: 8 }}>Two tools. One session. Build the right thing.</h2>
                     <p style={{ fontSize: "0.9375rem", color: "var(--clr-text-3)", marginBottom: "2rem" }}>Dig finds where the gap is. Stack tells you exactly how to build it.</p>
                     <div className="landing-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, maxWidth: 640, margin: "0 auto" }}>
-                      <div style={{ background: "var(--clr-surface)", border: "1.5px solid #2a9a80", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
+                      <div style={{ background: "var(--clr-surface)", border: "1.5px solid var(--clr-border)", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2a9a80" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                           <span style={{ fontSize: "0.9375rem", fontWeight: 600 }}>Dig</span>
@@ -3960,7 +3960,7 @@ function HomeInner() {
                           ))}
                         </div>
                       </div>
-                      <div style={{ background: "var(--clr-surface)", border: "1.5px solid #2a9a80", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
+                      <div style={{ background: "var(--clr-surface)", border: "1.5px solid var(--clr-border)", borderRadius: 14, padding: "22px 20px", textAlign: "left" as const }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2a9a80" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
                           <span style={{ fontSize: "0.9375rem", fontWeight: 600 }}>Stack</span>
