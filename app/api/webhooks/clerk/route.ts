@@ -59,11 +59,25 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   const sb = getSupabase();
+
+  // Check if this IP already got a free credit in the last 24 hours
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { data: recentFree } = await sb
+    .from("user_credits")
+    .select("user_id")
+    .eq("signup_ip", ip)
+    .gt("created_at", oneDayAgo)
+    .gt("credits", 0)
+    .limit(1);
+
+  const grantFreeCredit = !recentFree || recentFree.length === 0;
+
   const { error } = await sb.from("user_credits").upsert(
-    { user_id: userId, credits: 0, created_at: new Date().toISOString() },
+    { user_id: userId, credits: grantFreeCredit ? 1 : 0, signup_ip: ip, created_at: new Date().toISOString() },
     { onConflict: "user_id" }
   );
   if (error) console.error("[Clerk webhook] Supabase upsert error:", error.message);
+  if (!grantFreeCredit) console.log(`[Clerk webhook] Free credit denied — IP ${ip} already used in last 24h`);
 
   return NextResponse.json({ ok: true });
 }
