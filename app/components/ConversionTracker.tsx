@@ -15,6 +15,10 @@ function ConversionTrackerInner() {
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'conversion_event_signup', {});
       }
+      // Meta Pixel: track CompleteRegistration
+      if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+        (window as any).fbq('track', 'CompleteRegistration');
+      }
     }
   }, [searchParams]);
   return null;

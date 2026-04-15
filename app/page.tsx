@@ -3458,6 +3458,10 @@ function HomeInner() {
 
     setLoading(true);
     setHasResults(false);
+    // Meta Pixel: track Lead event when user starts an analysis
+    if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
+      (window as any).fbq("track", "Lead", { content_name: selectedTool === "gap-analysis" ? "Dig" : "Stack" });
+    }
     setStreamedContent("");
     setError("")
     setOutOfCredits(false);;

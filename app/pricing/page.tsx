@@ -73,6 +73,11 @@ export default function PricingPage() {
       (window as any).Paddle.Initialize({
         token: "live_52661022360279de7c131bad447",
         eventCallback: (ev: any) => {
+          if (ev.name === "checkout.completed") {
+            if (typeof (window as any).fbq === "function") {
+              (window as any).fbq("track", "Purchase", { value: ev.data?.totals?.total ? parseFloat(ev.data.totals.total) : 0, currency: ev.data?.currencyCode || "USD" });
+            }
+          }
           if (ev.name === "checkout.closed" || ev.name === "checkout.completed") {
             document.body.style.overflow = "";
           }
@@ -95,6 +100,10 @@ export default function PricingPage() {
       items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
       customData: { user_id: user?.id ?? "", package_slug: pkg.slug },
     });
+    // Meta Pixel: track InitiateCheckout
+    if (typeof (window as any).fbq === "function") {
+      (window as any).fbq("track", "InitiateCheckout", { content_name: pkg.slug, value: pkg.paddlePriceId });
+    }
   };
 
   const copyAddr = (addr: string) => {
