@@ -3147,7 +3147,7 @@ function HomeInner() {
   const [showFreeCreditPopup, setShowFreeCreditPopup] = useState(false);
   useEffect(() => {
     if (!isSignedIn && !sessionStorage.getItem("free_popup_dismissed")) {
-      const t = setTimeout(() => setShowFreeCreditPopup(true), 2500);
+      const t = setTimeout(() => setShowFreeCreditPopup(true), 5000);
       return () => clearTimeout(t);
     }
   }, [isSignedIn]);
