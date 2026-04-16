@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
   const { data: credits, error: credErr } = await sb
       .from("user_credits")
-      .select("user_id, credits, updated_at");
+      .select("user_id, credits, updated_at, created_at, signup_ip");
 
   if (credErr) {
         return NextResponse.json({ error: credErr.message }, { status: 500 });
@@ -19,7 +19,8 @@ export async function GET(req: NextRequest) {
 
   const { data: reports } = await sb
       .from("user_reports")
-      .select("user_id, tool, created_at");
+      .select("user_id, tool, idea, created_at")
+      .order("created_at", { ascending: false });
 
   const { data: orders } = await sb
       .from("orders")
@@ -32,11 +33,15 @@ export async function GET(req: NextRequest) {
                 user_id: c.user_id,
                 credits: c.credits,
                 credits_updated: c.updated_at,
+                signed_up_at: c.created_at,
+                signup_ip: c.signup_ip,
                 dig_count: 0,
                 stack_count: 0,
                 total_reports: 0,
                 last_activity: null,
                 total_spent: 0,
+                purchase_count: 0,
+                recent_ideas: [] as { idea: string; tool: string; at: string }[],
         };
   }
 
@@ -46,25 +51,33 @@ export async function GET(req: NextRequest) {
                           user_id: r.user_id,
                           credits: 0,
                           credits_updated: null,
+                          signed_up_at: null,
+                          signup_ip: null,
                           dig_count: 0,
                           stack_count: 0,
                           total_reports: 0,
                           last_activity: null,
                           total_spent: 0,
+                          purchase_count: 0,
+                          recent_ideas: [],
                 };
         }
         const u = userMap[r.user_id];
         u.total_reports++;
-        if (r.tool === "dig") u.dig_count++;
-        if (r.tool === "stack") u.stack_count++;
+        if (r.tool === "gap-analysis" || r.tool === "dig") u.dig_count++;
+        if (r.tool === "stack-advisor" || r.tool === "stack") u.stack_count++;
         if (!u.last_activity || r.created_at > u.last_activity) {
                 u.last_activity = r.created_at;
+        }
+        if (u.recent_ideas.length < 5 && r.idea) {
+                u.recent_ideas.push({ idea: r.idea, tool: r.tool, at: r.created_at });
         }
   }
 
   for (const o of orders ?? []) {
         if (userMap[o.user_id]) {
                 userMap[o.user_id].total_spent += Number(o.amount_usd ?? 0);
+                userMap[o.user_id].purchase_count++;
         }
   }
 
@@ -99,8 +112,8 @@ export async function GET(req: NextRequest) {
   }
 
   const users = Object.values(userMap).sort((a: any, b: any) =>
-        (b.last_activity ?? b.credits_updated ?? "") >
-        (a.last_activity ?? a.credits_updated ?? "")
+        (b.signed_up_at ?? b.last_activity ?? b.credits_updated ?? "") >
+        (a.signed_up_at ?? a.last_activity ?? a.credits_updated ?? "")
                                                   ? 1
           : -1
                                               );
