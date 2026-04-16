@@ -113,23 +113,9 @@ export async function GET(req: NextRequest) {
     }
   } catch {}
 
-  // Also try the usage endpoint directly on the API
-  if (rapidApiData.remaining === null) {
-    try {
-      const r = await fetch("https://twitter241.p.rapidapi.com/search-v3?type=Top&count=1&query=test", {
-        method: "GET",
-        headers: { "x-rapidapi-key": process.env.RAPIDAPI_KEY ?? "", "x-rapidapi-host": "twitter241.p.rapidapi.com" },
-        signal: AbortSignal.timeout(5000),
-      });
-      // RapidAPI returns usage in response headers
-      const remaining = r.headers.get("x-ratelimit-requests-remaining") ?? r.headers.get("x-rapidapi-ratelimit-requests-remaining");
-      const limit = r.headers.get("x-ratelimit-requests-limit") ?? r.headers.get("x-rapidapi-ratelimit-requests-limit");
-      const reset = r.headers.get("x-ratelimit-requests-reset");
-      if (remaining !== null) {
-        rapidApiData = { ...rapidApiData, remaining: parseInt(remaining), limit: limit ? parseInt(limit) : null, resetInfo: reset ? `Resets ${new Date(parseInt(reset)*1000).toLocaleDateString()}` : "Monthly reset", error: false };
-      }
-    } catch {}
-  }
+  // NOTE: Previously had a fallback that made a REAL Twitter search API call
+  // just to read rate-limit headers. This was burning 1 credit per cockpit refresh (every 60s).
+  // Removed to prevent credit waste. Use RapidAPI dashboard to check limits manually.
 
   const manualApis = [
     { name: "YouTube Data API", subtitle: "Video search & metadata", icon: "▶️", limit: 10000, resetInfo: "Daily at midnight PT", dashboardUrl: "https://console.cloud.google.com/apis/api/youtube.googleapis.com/quotas", note: "Units/day", live: false },
