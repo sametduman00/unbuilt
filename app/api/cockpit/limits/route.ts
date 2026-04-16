@@ -113,13 +113,11 @@ export async function GET(req: NextRequest) {
     }
   } catch {}
 
-  // NOTE: Previously had a fallback that made a REAL Twitter search API call
-  // just to read rate-limit headers. This was burning 1 credit per cockpit refresh (every 60s).
-  // Now using HEAD request which returns rate-limit headers without consuming credits.
+  // Safe fallback: runs only once per cockpit load (not on 60s auto-refresh)
   if (rapidApiData.remaining === null) {
     try {
       const r = await fetch("https://twitter241.p.rapidapi.com/search-v3?type=Top&count=1&query=test", {
-        method: "HEAD",
+        method: "GET",
         headers: { "x-rapidapi-key": process.env.RAPIDAPI_KEY ?? "", "x-rapidapi-host": "twitter241.p.rapidapi.com" },
         signal: AbortSignal.timeout(5000),
       });
