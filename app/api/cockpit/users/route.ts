@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/app/lib/supabase";
 
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, OPTIONS",
+  "Access-Control-Allow-Headers": "x-cockpit-key, content-type",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { headers: CORS });
+}
+
 export async function GET(req: NextRequest) {
     const key = req.headers.get("x-cockpit-key");
     if (!key || key !== process.env.COCKPIT_API_KEY) {
-          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: CORS });
     }
 
   const sb = getSupabase();
@@ -118,5 +128,5 @@ export async function GET(req: NextRequest) {
           : -1
                                               );
 
-  return NextResponse.json({ users, total: users.length });
+  return NextResponse.json({ users, total: users.length }, { headers: CORS });
 }
