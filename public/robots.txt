@@ -48,12 +48,23 @@ Allow: /ideas/
 Allow: /llms.txt
 Disallow: /api/
 
+# Gemini (uses Google-Extended above + Googlebot)
+User-agent: GoogleOther
+Allow: /
+Allow: /ideas/
+Disallow: /api/
+
 User-agent: Bytespider
 Allow: /
 Allow: /ideas/
 Disallow: /api/
 
 User-agent: cohere-ai
+Allow: /
+Allow: /ideas/
+Disallow: /api/
+
+User-agent: Applebot-Extended
 Allow: /
 Allow: /ideas/
 Disallow: /api/
