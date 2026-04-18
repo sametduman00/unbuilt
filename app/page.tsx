@@ -1,5 +1,8 @@
 import ClientWrapper from "./components/ClientWrapper";
 
+/* Static generation — served from Vercel edge CDN, zero cold start */
+export const dynamic = "force-static";
+
 /*
  * ── Server Component — Zero JS for LCP ───────────────────────────────────────
  *
