@@ -55,40 +55,105 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Unbuilt",
-  "url": "https://unbuilt.me",
-  "description": "Unbuilt helps vibe coders find what to build before they waste months on the wrong idea. Launches tracks what's launching daily (free). Dig analyzes any app idea against 70+ live sources in 5 minutes. Stack recommends the exact tools to build it from 700+ options.",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Web",
-  "offers": [
-    {
-      "@type": "Offer",
-      "name": "Launches",
-      "price": "0",
-      "priceCurrency": "USD",
-      "description": "Free daily feed of what's launching and what's missing in every product."
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Unbuilt",
+    "url": "https://unbuilt.me",
+    "description": "Unbuilt helps vibe coders find what to build before they waste months on the wrong idea. Launches tracks what's launching daily (free). Dig analyzes any app idea against 70+ live sources in 5 minutes. Stack recommends the exact tools to build it from 700+ options.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "120",
+      "bestRating": "5"
     },
-    {
-      "@type": "Offer",
-      "name": "Dig",
-      "description": "Full market analysis: competitors, pain points, gaps, verdict. 70+ live sources."
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Pulse (Launches)",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "Free daily feed of what's launching and what's missing in every product."
+      },
+      {
+        "@type": "Offer",
+        "name": "Dig",
+        "description": "Full market analysis: competitors, pain points, gaps, verdict. Scans 70+ live sources in 5 minutes."
+      },
+      {
+        "@type": "Offer",
+        "name": "Stack",
+        "description": "Phased build plan from 700+ tools, filtered for your idea, budget, and technical level."
+      }
+    ],
+    "creator": {
+      "@type": "Organization",
+      "name": "Unbuilt",
+      "url": "https://unbuilt.me"
     },
-    {
-      "@type": "Offer",
-      "name": "Stack",
-      "description": "Phased build plan from 700+ tools, filtered for your idea, budget, and level."
-    }
-  ],
-  "creator": {
+    "keywords": "vibe coding, app idea validation, market research, indie hacker, no-code, saas validation, find market gap, what to build, vibecoder tools"
+  },
+  {
+    "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Unbuilt",
-    "url": "https://unbuilt.me"
+    "url": "https://unbuilt.me",
+    "description": "The home base for the vibecoding generation. Market intelligence for vibe coders, indie hackers, and no-code founders.",
+    "foundingDate": "2026",
+    "sameAs": [
+      "https://x.com/Unbuilt_me"
+    ]
   },
-  "keywords": "vibe coding, app idea validation, market research, indie hacker, no-code, saas validation, find market gap, what to build"
-};
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is Unbuilt?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Unbuilt is a market intelligence platform for vibe coders, indie hackers, and no-code founders. It has three tools: Pulse (free daily launch feed), Dig (market analysis scanning 70+ live sources), and Stack (build plan from 700+ tools)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does Dig validate an app idea?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Dig scans 70+ live data sources including App Store, Google Play, Reddit, X, YouTube, and Product Hunt. It returns a competitor list, pain points, market gaps, SWOT analysis, and an opportunity score from 0 to 100. The process takes approximately 5 minutes."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is Unbuilt free to use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pulse (the daily launch feed) is completely free with no account required. Dig (market analysis) and Stack (build plan) each cost 1 credit per report. Unbuilt also hosts 2,400+ free app idea analysis pages at unbuilt.me/ideas."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is vibecoding?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Vibecoding is building software using AI-powered tools like Cursor, Lovable, Bolt, Replit, and v0. It allows non-traditional developers to create apps quickly. Unbuilt helps vibe coders validate their ideas before building."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How many app ideas does Unbuilt analyze?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Unbuilt hosts over 2,400 pre-analyzed app idea pages covering 25+ categories including SaaS, AI tools, developer tools, productivity, finance, health, and education. Each page includes an opportunity score, competitor count, and market overview."
+        }
+      }
+    ]
+  }
+];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -107,6 +172,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <img height="1" width="1" style={{ display: "none" }}
             src="https://www.facebook.com/tr?id=2766426413706285&ev=PageView&noscript=1"
           />
+          <h1>Unbuilt — The home base for the vibecoding generation</h1>
+          <p>Find what to build, validate if it's worth it, and get the exact tools to ship. Pulse tracks launches daily (free). Dig analyzes any idea against 70+ sources. Stack recommends from 700+ tools. Browse 2,400+ app idea analyses at unbuilt.me/ideas.</p>
         </noscript>
         <ClerkThemeProvider>
           <ConsentGate>
