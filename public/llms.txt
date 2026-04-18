@@ -6,8 +6,8 @@ Unbuilt (unbuilt.me) is a market intelligence platform for vibe coders, indie ha
 
 ## Three Tools
 
-### Pulse (free, no account required)
-A live daily feed of what's launching on Product Hunt and the App Store, with AI analysis of what each product is missing. Tracks market gaps in real time.
+### Launches (free, no account required)
+A daily feed of every new app launched on the App Store and Product Hunt. Each app gets an AI breakdown: what it does, difficulty to build (simple/medium/hard), known competitors, and exact tools to build it yourself. No account required.
 
 ### Dig (1 credit per report)
 Full market research for any app idea. Scans 70+ live data sources — App Store, Google Play, Reddit, X, YouTube, Product Hunt, LinkedIn — and returns competitors, pain points, market gaps, SWOT analysis, and a market opportunity score (0-100). Takes 5 minutes.

@@ -9,11 +9,11 @@ Unbuilt is a market intelligence platform purpose-built for the vibecoding gener
 
 ## Product Details
 
-### Pulse (Free)
-- Real-time feed of new product launches from Product Hunt and the App Store
-- Each launch includes AI-generated analysis of what the product is missing
+### Launches (Free)
+- Daily feed of every new app launched on App Store and Product Hunt, scanned once per day
+- Each app gets AI analysis: what it does, difficulty level (simple/medium/hard), competitors, and exact tools to build it
+- Links to "Dig my idea" for full market analysis or "Get my Stack" for build plan
 - No account required — completely free
-- Updated daily
 - Use case: "I want to find my next project idea by seeing what's being built and where the gaps are"
 
 ### Dig (Market Analysis)

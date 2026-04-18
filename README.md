@@ -6,12 +6,16 @@
 
 Unbuilt has three tools that cover the full journey from idea to execution:
 
-### Pulse (Free)
-A live daily feed of what's launching on Product Hunt and the App Store, with AI analysis of what each product is missing. Use it to spot market gaps in real time.
+### Launches (Free)
+A daily feed of every new app launched on the App Store and Product Hunt. Scanned once per day. Every app gets an AI-generated breakdown:
 
-- Updated daily with fresh launches
-- AI-generated gap analysis for every product
-- No account required — completely free
+- **What** — what the app does, in plain language
+- **Difficulty** — how hard it is to build (simple, medium, hard) with reasoning
+- **Competitors** — known alternatives already in the market
+- **Build with** — exact tools to build it yourself (e.g. OpenAI, Supabase, Clerk, Paddle)
+- **CTA** — "Dig my idea" to run a full market analysis, or "Get my Stack" for a build plan
+
+No account required — completely free.
 
 ### Dig (Market Analysis)
 Describe any app idea in plain language. Dig scans **70+ live data sources** — App Store, Google Play, Reddit, X/Twitter, YouTube, Product Hunt, LinkedIn — and returns a full market report in 5 minutes.

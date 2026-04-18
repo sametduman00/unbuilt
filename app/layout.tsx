@@ -73,7 +73,7 @@ const jsonLd = [
     "offers": [
       {
         "@type": "Offer",
-        "name": "Pulse (Launches)",
+        "name": "Launches",
         "price": "0",
         "priceCurrency": "USD",
         "description": "Free daily feed of what's launching and what's missing in every product."
@@ -116,7 +116,7 @@ const jsonLd = [
         "name": "What is Unbuilt?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Unbuilt is a market intelligence platform for vibe coders, indie hackers, and no-code founders. It has three tools: Pulse (free daily launch feed), Dig (market analysis scanning 70+ live sources), and Stack (build plan from 700+ tools)."
+          "text": "Unbuilt is a market intelligence platform for vibe coders, indie hackers, and no-code founders. It has three tools: Launches (free daily feed of new apps with AI analysis), Dig (market analysis scanning 70+ live sources), and Stack (build plan from 700+ tools)."
         }
       },
       {
@@ -132,7 +132,7 @@ const jsonLd = [
         "name": "Is Unbuilt free to use?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Pulse (the daily launch feed) is completely free with no account required. Dig (market analysis) and Stack (build plan) each cost 1 credit per report. Unbuilt also hosts 2,400+ free app idea analysis pages at unbuilt.me/ideas."
+          "text": "Launches (the daily app feed) is completely free with no account required. Dig (market analysis) and Stack (build plan) each cost 1 credit per report. Unbuilt also hosts 2,400+ free app idea analysis pages at unbuilt.me/ideas."
         }
       },
       {
@@ -173,7 +173,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             src="https://www.facebook.com/tr?id=2766426413706285&ev=PageView&noscript=1"
           />
           <h1>Unbuilt — The home base for the vibecoding generation</h1>
-          <p>Find what to build, validate if it's worth it, and get the exact tools to ship. Pulse tracks launches daily (free). Dig analyzes any idea against 70+ sources. Stack recommends from 700+ tools. Browse 2,400+ app idea analyses at unbuilt.me/ideas.</p>
+          <p>Find what to build, validate if it's worth it, and get the exact tools to ship. Launches shows every new app daily with AI analysis (free). Dig analyzes any idea against 70+ sources. Stack recommends from 700+ tools. Browse 2,400+ app idea analyses at unbuilt.me/ideas.</p>
         </noscript>
         <ClerkThemeProvider>
           <ConsentGate>
