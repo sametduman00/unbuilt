@@ -23,18 +23,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/ideas`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
   ];
 
-  // Dynamic SEO pages from Supabase
+  // Dynamic SEO pages from Supabase (paginated to bypass 1000 row limit)
   const sb = getSb();
   if (!sb) return staticPages;
 
-  const { data } = await sb
-    .from("seo_pages")
-    .select("slug, updated_at")
-    .eq("status", "published")
-    .order("created_at", { ascending: true });
+  const allRows: { slug: string; updated_at: string }[] = [];
+  const PAGE_SIZE = 1000;
+  let offset = 0;
+  while (true) {
+    const { data } = await sb
+      .from("seo_pages")
+      .select("slug, updated_at")
+      .eq("status", "published")
+      .order("created_at", { ascending: true })
+      .range(offset, offset + PAGE_SIZE - 1);
+    if (!data || data.length === 0) break;
+    allRows.push(...data);
+    if (data.length < PAGE_SIZE) break;
+    offset += PAGE_SIZE;
+  }
 
-  const ideaPages: MetadataRoute.Sitemap = (data || []).map(
-    (row: { slug: string; updated_at: string }) => ({
+  const ideaPages: MetadataRoute.Sitemap = allRows.map(
+    (row) => ({
       url: `${base}/ideas/${row.slug}`,
       lastModified: new Date(row.updated_at),
       changeFrequency: "monthly" as const,
