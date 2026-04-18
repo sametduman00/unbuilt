@@ -131,25 +131,57 @@ export default async function IdeaPage({
   const { page, related } = result;
   const sc = scoreColor(page.opportunity_score);
 
-  // JSON-LD structured data
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: page.h1,
-    description: page.meta_description,
-    url: `https://unbuilt.me/ideas/${page.slug}`,
-    publisher: {
-      "@type": "Organization",
-      name: "Unbuilt",
-      url: "https://unbuilt.me",
+  // JSON-LD structured data — Article + FAQ for AI search citation
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: page.h1,
+      description: page.meta_description,
+      url: `https://unbuilt.me/ideas/${page.slug}`,
+      publisher: {
+        "@type": "Organization",
+        name: "Unbuilt",
+        url: "https://unbuilt.me",
+      },
+      dateModified: page.updated_at,
+      keywords: page.tags?.join(", ") || page.keyword,
+      about: {
+        "@type": "Thing",
+        name: page.keyword,
+      },
     },
-    dateModified: page.updated_at,
-    keywords: page.tags?.join(", ") || page.keyword,
-    about: {
-      "@type": "Thing",
-      name: page.keyword,
-    },
-  };
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: `What is the market opportunity for ${page.keyword}?`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `The market opportunity score for ${page.keyword} is ${page.opportunity_score}/100 with approximately ${page.competitor_count || 'unknown'} existing competitors. ${page.key_insight || ''}`
+          }
+        },
+        {
+          "@type": "Question",
+          name: `How many competitors exist for ${page.keyword}?`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `There are approximately ${page.competitor_count || 'several'} competitors in the ${page.keyword} space. ${page.market_summary?.split('.').slice(0, 2).join('.') || ''}.`
+          }
+        },
+        {
+          "@type": "Question",
+          name: `Is ${page.keyword} worth building?`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `With an opportunity score of ${page.opportunity_score}/100, ${page.opportunity_score >= 70 ? 'this is a high-opportunity space with clear gaps' : page.opportunity_score >= 40 ? 'this is a moderately competitive space with some opportunities' : 'this is a crowded space — differentiation is critical'}. For a full analysis, use Dig at unbuilt.me to scan 70+ live sources.`
+          }
+        }
+      ]
+    }
+  ];
 
   return (
     <>

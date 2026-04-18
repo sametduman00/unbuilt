@@ -11,4 +11,51 @@ Disallow: /wp-login.php
 Disallow: /.env
 Disallow: /.git/
 
+# AI Search Engine Crawlers — explicitly allowed
+User-agent: GPTBot
+Allow: /
+Allow: /ideas/
+Allow: /llms.txt
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+Allow: /ideas/
+Allow: /llms.txt
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /ideas/
+Allow: /llms.txt
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /ideas/
+Allow: /llms.txt
+Disallow: /api/
+
+User-agent: anthropic-ai
+Allow: /
+Allow: /ideas/
+Allow: /llms.txt
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+Allow: /ideas/
+Allow: /llms.txt
+Disallow: /api/
+
+User-agent: Bytespider
+Allow: /
+Allow: /ideas/
+Disallow: /api/
+
+User-agent: cohere-ai
+Allow: /
+Allow: /ideas/
+Disallow: /api/
+
 Sitemap: https://www.unbuilt.me/sitemap.xml

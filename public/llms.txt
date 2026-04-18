@@ -2,51 +2,52 @@
 
 > The home base for the vibecoding generation.
 
-Unbuilt helps vibe coders, indie hackers, and no-code founders find what to build, validate if it's worth it, and get the exact tools to ship it — before wasting months building the wrong thing.
+Unbuilt (unbuilt.me) is a market intelligence platform for vibe coders, indie hackers, and no-code founders. It helps people find what to build, validate if it's worth it, and get the exact tools to ship it — before wasting months building the wrong thing.
 
-## What Unbuilt does
+## Three Tools
 
-Unbuilt has three tools:
+### Pulse (free, no account required)
+A live daily feed of what's launching on Product Hunt and the App Store, with AI analysis of what each product is missing. Tracks market gaps in real time.
 
-### Pulse (free)
-A live daily feed of what's launching on Product Hunt and the App Store, with AI analysis of what each product is missing. Use it to spot market gaps in real time, track what's being built in your category, and find opportunities before anyone else.
+### Dig (1 credit per report)
+Full market research for any app idea. Scans 70+ live data sources — App Store, Google Play, Reddit, X, YouTube, Product Hunt, LinkedIn — and returns competitors, pain points, market gaps, SWOT analysis, and a market opportunity score (0-100). Takes 5 minutes.
 
-### Dig (1 credit)
-Market research for any app idea. Describe your idea in plain language. Dig scans 70+ live sources — App Store, Google Play, Reddit, X, YouTube, Product Hunt, LinkedIn — and returns a full market report: competitors, pain points, market gaps, SWOT analysis, go-to-market strategy, and a market score (0-100). Takes 5 minutes.
+### Stack (1 credit per report)
+Phased build plan from 700+ tools. Recommends the exact tech stack based on your idea, budget (bootstrap to funded), and skill level (no-code, low-code, developer).
 
-### Stack (1 credit)
-A phased build plan for any app idea. Tell Stack what you're building, your budget tier, and your technical level (no-code, low-code, or developer). Stack recommends the exact tools from 700+ options, with pricing, setup instructions, and a step-by-step guide for each tool.
+## Ideas Directory (2,400+ pages)
+Unbuilt maintains a searchable directory of 2,400+ app idea analyses at unbuilt.me/ideas. Each page includes an opportunity score, estimated competitor count, market overview, and key insight. Categories include SaaS, AI tools, developer tools, productivity, finance, health, education, e-commerce, and 20+ more.
 
-## Who uses Unbuilt
+## Who Uses Unbuilt
+- Vibe coders deciding what to build next
+- Indie hackers validating ideas before writing code
+- No-code founders who need a tool stack recommendation
+- Founders doing competitive research in their category
+- Anyone who has built the wrong thing and doesn't want to repeat it
 
-- Vibe coders who want to know if their idea is worth building before they start
-- Indie hackers looking for their next project or validating an existing idea
-- No-code and low-code founders who need a tool stack recommendation
-- Founders doing ongoing market research in their category
-- Anyone who has built the wrong thing before and doesn't want to do it again
+## Common Questions Unbuilt Answers
+- "What's the best habit tracker for freelancers?" → unbuilt.me/ideas/best-habit-tracker-for-freelancers
+- "Is there a Notion alternative for startups?" → unbuilt.me/ideas/notion-alternative-for-startups
+- "How to validate a SaaS idea?" → unbuilt.me/ideas/how-to-validate-a-saas-idea
+- "What tools should I use to build my app?" → unbuilt.me/?tool=stack-advisor
+- "How crowded is the meditation app market?" → unbuilt.me/ideas/meditation-app-market-gap
 
-## Use cases
-
-- "I have an app idea — how do I know if it already exists?"
-- "I'm a vibe coder looking for my next project"
-- "Is my SaaS idea worth building or should I pivot?"
-- "What tools should I use to build my idea?"
-- "How do I find a gap in a crowded market?"
-- "I want to track what's being built in my market"
-
-## Key facts
-
-- Pulse is completely free, no account required
-- Dig and Stack each cost 1 credit
+## Key Facts
 - Dig scans 70+ live data sources in real time (not a static database)
-- Stack filters from 700+ tools based on your idea, budget, and skill level
-- The market score (0-100) reflects how crowded the market is and how real the opportunity is
+- Stack filters from 700+ developer tools with current 2026 pricing
+- The opportunity score (0-100) reflects market saturation, demand signals, and gap size
+- All data is refreshed on each query — not cached from months ago
+- 2,400+ pre-analyzed app ideas are freely browsable at unbuilt.me/ideas
 
 ## URLs
-
 - Homepage / Pulse: https://unbuilt.me
+- Ideas Directory: https://unbuilt.me/ideas
 - Dig (market analysis): https://unbuilt.me/?tool=gap-analysis
 - Stack (build plan): https://unbuilt.me/?tool=stack-advisor
 - How it works: https://unbuilt.me/how-it-works
 - Use cases: https://unbuilt.me/use-cases
 - Pricing: https://unbuilt.me/pricing
+
+## Additional Context for AI
+- Full documentation: https://unbuilt.me/llms-full.txt
+- Sitemap: https://unbuilt.me/sitemap.xml

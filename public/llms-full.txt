@@ -1,0 +1,90 @@
+# Unbuilt — Full Documentation for AI
+
+> The home base for the vibecoding generation.
+> URL: https://unbuilt.me
+
+## What is Unbuilt?
+
+Unbuilt is a market intelligence platform purpose-built for the vibecoding generation. It combines three tools — Pulse, Dig, and Stack — to help vibe coders, indie hackers, and no-code founders discover what to build, validate whether it's worth building, and find the fastest path to ship.
+
+## Product Details
+
+### Pulse (Free)
+- Real-time feed of new product launches from Product Hunt and the App Store
+- Each launch includes AI-generated analysis of what the product is missing
+- No account required — completely free
+- Updated daily
+- Use case: "I want to find my next project idea by seeing what's being built and where the gaps are"
+
+### Dig (Market Analysis)
+- Accepts any app idea described in plain language
+- Scans 70+ live data sources including App Store, Google Play, Reddit, X/Twitter, YouTube, Product Hunt, LinkedIn, and more
+- Returns: competitor list with ratings, user pain points, market gaps, SWOT analysis, go-to-market strategy suggestions, and a market opportunity score (0-100)
+- Processing time: approximately 5 minutes
+- Cost: 1 credit per report
+- Use case: "I have an idea for a freelancer invoicing app — is it worth building?"
+
+### Stack (Build Plan)
+- Accepts your app idea, budget tier (bootstrap / growing / funded / scale), and technical level (no-code / low-code / developer)
+- Recommends tools from a database of 700+ developer and no-code tools with current 2026 pricing
+- Returns a phased build plan: Phase 0 (validate), Phase 1 (launch), Phase 2 (scale)
+- Includes cost breakdowns and setup instructions for each recommended tool
+- Cost: 1 credit per report
+- Use case: "I want to build a SaaS — what tools should I use given my $50/month budget and no-code skills?"
+
+## Ideas Directory
+
+Unbuilt hosts 2,400+ pre-analyzed app idea pages at unbuilt.me/ideas. Each page is independently accessible and includes:
+- Opportunity Score (0-100): reflects market saturation, demand signals, and gap size
+- Estimated competitor count
+- Market overview (4-6 sentences of analysis)
+- Key insight (one actionable takeaway)
+- Related ideas for further exploration
+- Direct link to run a full Dig report
+
+### Idea Categories
+- SaaS (micro-SaaS, boilerplates, billing, onboarding, churn prediction)
+- AI Tools (image generators, writing assistants, chatbot builders, voice/video generators)
+- Developer Tools (API testing, database GUIs, CI/CD, monitoring, deployment)
+- Productivity (habit trackers, todo apps, note-taking, time blocking, focus timers)
+- Finance (budget trackers, expense splitters, crypto portfolios, tax prep, FIRE calculators)
+- Health (workout trackers, meal planners, meditation, sleep tracking, mental health)
+- Education (flashcards, language learning, spaced repetition, coding practice)
+- E-commerce (dropshipping, inventory, abandoned cart recovery, product research)
+- Marketing (email marketing, landing pages, A/B testing, social proof, UTM builders)
+- Content Creation (blog tools, social schedulers, podcast hosting, SEO assistants)
+- Freelancing (invoicing, contract management, time tracking, client portals, rate calculators)
+- Community (forum builders, Discord bots, membership sites, feedback boards)
+- Design (UI tools, prototyping, icon makers, animation, brand kit builders)
+- Automation (workflow automation, Zapier alternatives, no-code automation, chatbot builders)
+- Analytics (web analytics, product analytics, session recording, rank tracking)
+- HR & Hiring (ATS, resume builders, job boards, performance reviews, payroll)
+- Travel (trip planners, flight trackers, digital nomad tools, visa checkers)
+- Real Estate (property management, tenant screening, mortgage calculators)
+- Food & Restaurant (POS systems, menu builders, food delivery, recipe management)
+- Legal (contract generators, NDA generators, privacy policy generators, compliance)
+- Pet (health trackers, walking apps, sitting marketplaces, grooming schedulers)
+- Parenting (milestone trackers, family calendars, chore charts, screen time managers)
+- Sustainability (carbon footprint trackers, energy monitors, recycling guides)
+
+### Idea URL Patterns
+- Best X for Y: unbuilt.me/ideas/best-[tool]-for-[audience]
+- Alternatives: unbuilt.me/ideas/[tool]-alternative
+- How to build: unbuilt.me/ideas/how-to-build-a-[tool]
+- Top tools: unbuilt.me/ideas/top-[tool]-tools-2026
+- Market gaps: unbuilt.me/ideas/[tool]-market-gap
+- Comparisons: unbuilt.me/ideas/[tool-a]-vs-[tool-b]
+
+## Competitive Positioning
+
+Unbuilt is the only tool that covers the full vibe coder journey: discover → validate → build. Comparable tools cover only one step:
+- Product Hunt covers discovery but not analysis
+- SimilarWeb provides data but not for vibe coders specifically
+- ChatGPT can analyze anything but nothing specifically or with real-time market data
+- Ahrefs/SEMrush focus on SEO, not app idea validation
+
+## Pricing
+- Pulse: Free, no account required
+- Dig: 1 credit per report
+- Stack: 1 credit per report
+- Credits can be purchased on the pricing page: https://unbuilt.me/pricing
