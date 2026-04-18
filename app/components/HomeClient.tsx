@@ -6,8 +6,9 @@ import Script from "next/script";
 const lazyGeneratePdf = () => import("@/app/lib/generatePdf").then(m => m.generatePdf);
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import dynamic from "next/dynamic";
+// react-markdown + remark-gfm moved to lazy-loaded chunk (~150KB savings)
+const LazyMarkdown = dynamic(() => import("./LazyMarkdown"), { ssr: false, loading: () => <div /> });
 import { useAuth, useUser, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
 
 // ââ Types âââââââââââââââââââââââââââââââââââââââââââââââââââââ
@@ -186,24 +187,6 @@ const SECTION_META: Record<string, { bg: string; color: string }> = {
   "ð¡ï¸":{ bg: "rgba(var(--clr-text-rgb),0.04)", color: "var(--clr-text)" },
 };
 
-// ââ Markdown component map âââââââââââââââââââââââââââââââââââââ
-const MD: Record<string, (props: any) => React.ReactElement> = {
-  table: ({ children }) => (
-    <div className="table-wrap"><table>{children}</table></div>
-  ),
-  strong: ({ children }) => <span>{children}</span>,
-  hr: () => <></>,
-  code: ({ className, children }) => {
-    if (className) {
-      return <pre><code className={className}>{children}</code></pre>;
-    }
-    return (
-      <code style={{ background: "rgba(var(--clr-text-rgb),0.12)", color: "var(--clr-text-3)", padding: "0.1em 0.35em", borderRadius: 4, fontSize: "0.85em" }}>
-        {children}
-      </code>
-    );
-  },
-};
 function parseSections(markdown: string, isStreaming: boolean): Section[] {
   return markdown
     .split(/\n(?=## )/)
@@ -253,9 +236,9 @@ function SectionCard({ section, showCursor }: { section: Section; showCursor: bo
         <h2 className="section-title" style={{ color: meta.color }}>{section.title}</h2>
       </div>
       <div className="card-prose">
-        <ReactMarkdown remarkPlugins={[remarkGfm]} components={MD}>
+        <LazyMarkdown>
           {section.body}
-        </ReactMarkdown>
+        </LazyMarkdown>
         {showCursor && (
           <span style={{ display: "inline-block", width: 2, height: "1em", background: "var(--clr-accent)", verticalAlign: "middle", borderRadius: 1, animation: "blink 1s step-end infinite", marginLeft: 2 }} />
         )}
@@ -551,9 +534,9 @@ function TrendGenericSection({ section, isStreaming, emoji }: {
           </div>
         ) : (
           <div className="card-prose" style={{ color: "var(--clr-text-2)" }}>
-            <ReactMarkdown remarkPlugins={[remarkGfm]} components={MD}>
+            <LazyMarkdown>
               {section.body}
-            </ReactMarkdown>
+            </LazyMarkdown>
           </div>
         )}
         {isStreaming && (
