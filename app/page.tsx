@@ -1,39 +1,28 @@
-"use client";
-
-import dynamic from "next/dynamic";
+import ClientWrapper from "./components/ClientWrapper";
 
 /*
- * ── LCP Performance Optimization ──────────────────────────────────────────────
+ * ── Server Component — Zero JS for LCP ───────────────────────────────────────
  *
- * Problem:  The original page.tsx was a 348KB "use client" monolith (4813 lines).
- *           Everything — result renderers, landing sections, react-markdown,
- *           PDF generation — was in one file. Browser had to download, parse,
- *           and execute ALL of it before rendering → LCP 5928ms.
+ * This is a SERVER component. The hero renders as pure static HTML.
+ * The browser paints it immediately from the HTML response — no JavaScript
+ * download, parse, or execution needed. This eliminates the "Element render
+ * delay" that was 740ms when page.tsx was "use client".
  *
- * Solution: This file is a ~2KB thin shell. It renders a static hero skeleton
- *           (the LCP element) and lazy-loads the full interactive HomeClient
- *           as a separate JS chunk via next/dynamic.
- *
- * How it works:
- *   1. Server SSR's this tiny component → hero skeleton HTML
- *   2. Browser paints hero immediately (fast FCP + LCP)
- *   3. HomeClient chunk downloads in background (separate bundle)
- *   4. Once loaded, full interactive page appears
- *
- * Bundle impact: Initial JS drops from ~348KB to ~2KB.
- *                HomeClient loads as a separate async chunk.
+ * ClientWrapper is a tiny "use client" component that dynamically imports
+ * HomeClient. When HomeClient loads, it replaces the static hero with
+ * the full interactive page.
  * ──────────────────────────────────────────────────────────────────────────────
  */
 
-/* Hero skeleton — matches the default landing state exactly to avoid CLS */
-function HeroFallback() {
+/* Static hero — server-rendered as HTML, zero JS cost */
+function StaticHero() {
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      <main style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto", overflowX: "hidden", padding: "0 16px", maxWidth: "100%" }}>
-        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-          <div className="hero-skeleton-center">
+    <div id="static-hero" style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+      <main style={{ flex: 1, display: "flex", flexDirection: "column" as const, overflowY: "auto" as const, overflowX: "hidden" as const, padding: "0 16px", maxWidth: "100%" }}>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" as const }}>
+          <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column" as const, alignItems: "center", textAlign: "center" as const }}>
 
-            {/* ── LCP element: hero headline ── */}
+            {/* LCP element — renders from HTML, no JS wait */}
             <div style={{
               fontSize: "clamp(2.75rem, 5.5vw, 3.5rem)",
               fontWeight: 600,
@@ -46,7 +35,6 @@ function HeroFallback() {
               <em style={{ fontStyle: "italic", fontWeight: 600 }}>already exists.</em>
             </div>
 
-            {/* Subtitle */}
             <div style={{
               fontSize: "1.125rem",
               color: "var(--clr-text-3)",
@@ -58,22 +46,15 @@ function HeroFallback() {
 
             {/* Metric pills */}
             <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: "2rem" }}>
-              {[
-                { bold: "70+", text: "sources" },
-                { bold: "~2 min", text: "report" },
-                { bold: "1.2k+", text: "validated" },
-              ].map(p => (
-                <div key={p.bold} style={{
-                  padding: "6px 18px",
-                  background: "var(--clr-surface)",
-                  border: "1px solid var(--clr-border)",
-                  borderRadius: 999,
-                  fontSize: "0.8125rem",
-                  color: "var(--clr-text-3)",
-                }}>
-                  <span style={{ fontWeight: 600, color: "var(--clr-text)" }}>{p.bold}</span> {p.text}
-                </div>
-              ))}
+              <span style={{ padding: "6px 18px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>
+                <span style={{ fontWeight: 600, color: "var(--clr-text)" }}>70+</span> sources
+              </span>
+              <span style={{ padding: "6px 18px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>
+                <span style={{ fontWeight: 600, color: "var(--clr-text)" }}>~2 min</span> report
+              </span>
+              <span style={{ padding: "6px 18px", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 999, fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>
+                <span style={{ fontWeight: 600, color: "var(--clr-text)" }}>1.2k+</span> validated
+              </span>
             </div>
 
             {/* Input card skeleton */}
@@ -85,38 +66,16 @@ function HeroFallback() {
               maxWidth: 700,
               overflow: "hidden",
             }}>
-              {/* Tab row */}
               <div style={{ display: "flex", alignItems: "center", padding: "18px 24px 12px", gap: 6 }}>
-                <div style={{
-                  padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem",
-                  fontWeight: 500, background: "var(--clr-text)", color: "#fff",
-                }}>Dig my idea</div>
+                <div style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, background: "var(--clr-text)", color: "#fff" }}>Dig my idea</div>
                 <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>or</span>
-                <div style={{
-                  padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem",
-                  fontWeight: 500, background: "var(--clr-surface-2)", color: "var(--clr-text-3)",
-                }}>Get my stack</div>
+                <div style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, background: "var(--clr-surface-2)", color: "var(--clr-text-3)" }}>Get my stack</div>
               </div>
-              {/* Textarea placeholder */}
               <div style={{ padding: "0 24px 12px" }}>
-                <div style={{
-                  width: "100%", minHeight: 88,
-                  background: "var(--clr-bg)", border: "1px solid var(--clr-border)",
-                  borderRadius: 12,
-                }} />
+                <div style={{ width: "100%", minHeight: 88, background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 12 }} />
               </div>
-              {/* Bottom bar */}
-              <div style={{
-                borderTop: "1px solid var(--clr-border)",
-                padding: "14px 24px",
-                display: "flex",
-                justifyContent: "flex-end",
-              }}>
-                <div style={{
-                  background: "var(--clr-surface-2)", color: "var(--clr-text-4)",
-                  borderRadius: 10, padding: "10px 28px",
-                  fontSize: "0.9375rem", fontWeight: 600,
-                }}>Dig →</div>
+              <div style={{ borderTop: "1px solid var(--clr-border)", padding: "14px 24px", display: "flex", justifyContent: "flex-end" }}>
+                <div style={{ background: "var(--clr-surface-2)", color: "var(--clr-text-4)", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600 }}>Dig →</div>
               </div>
             </div>
 
@@ -127,15 +86,11 @@ function HeroFallback() {
   );
 }
 
-/* ── Dynamic import: HomeClient loads as a separate JS chunk ── */
-const HomeClient = dynamic(
-  () => import("./components/HomeClient"),
-  {
-    ssr: false,
-    loading: () => <HeroFallback />,
-  }
-);
-
 export default function Home() {
-  return <HomeClient />;
+  return (
+    <>
+      <StaticHero />
+      <ClientWrapper />
+    </>
+  );
 }
