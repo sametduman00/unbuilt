@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Figtree:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
 
 /* ââ Color tokens â Perplexity-style light palette ââââââââââââ */
 :root {
@@ -539,3 +539,126 @@ iframe[class*="paddle"] {
 
 /* iOS Safari Paddle overlay fix */
 body[style*="position: fixed"] { overflow: hidden !important; }
+
+/* ── Performance: moved from inline <style> in page component ── */
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+#char-counter.shake { animation: shake 0.35s ease; }
+@keyframes fadeSlideIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:none; } }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.6)} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+@keyframes scanCardIn { from { opacity:0; transform:translateY(20px) scale(0.98); } to { opacity:1; transform:none; } }
+@keyframes stepIn { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:none; } }
+@keyframes checkPop { 0%{transform:scale(0.5);opacity:0} 60%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
+::placeholder { color: var(--clr-placeholder) !important; }
+
+/* ── Hero skeleton (server-rendered for fast LCP) ── */
+.hero-skeleton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.hero-skeleton-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 16px;
+  max-width: 100%;
+}
+.hero-skeleton-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 3rem;
+  align-items: center;
+  text-align: center;
+}
+.hero-skeleton h1 {
+  font-size: clamp(2.75rem, 5.5vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  margin-bottom: 0.75rem;
+}
+.hero-skeleton h1 em {
+  font-style: italic;
+  font-weight: 600;
+}
+.hero-skeleton .hero-sub {
+  font-size: 1.125rem;
+  color: var(--clr-text-3);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+.hero-skeleton .hero-pills {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+.hero-skeleton .hero-pill {
+  padding: 6px 18px;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  color: var(--clr-text-3);
+}
+.hero-skeleton .hero-pill strong {
+  font-weight: 600;
+  color: var(--clr-text);
+}
+.hero-skeleton .hero-card {
+  background: var(--clr-surface);
+  border: 1.5px solid var(--clr-border);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 700px;
+  overflow: hidden;
+}
+.hero-skeleton .hero-card-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 18px 24px 12px;
+}
+.hero-skeleton .hero-card-tab {
+  padding: 8px 20px;
+  border-radius: 9px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  border: none;
+  font-family: inherit;
+}
+.hero-skeleton .hero-card-tab.active {
+  background: var(--clr-text);
+  color: #fff;
+}
+.hero-skeleton .hero-card-tab.inactive {
+  background: var(--clr-surface-2);
+  color: var(--clr-text-3);
+}
+.hero-skeleton .hero-card-input {
+  margin: 0 24px 12px;
+  min-height: 88px;
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  border-radius: 12px;
+}
+.hero-skeleton .hero-card-bottom {
+  border-top: 1px solid var(--clr-border);
+  padding: 14px 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+.hero-skeleton .hero-card-btn {
+  background: var(--clr-surface-2);
+  color: var(--clr-text-4);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 28px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}

@@ -44,6 +44,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  reactStrictMode: true,
+  compress: true,
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
@@ -53,6 +55,15 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.mzstatic.com" },
       { protocol: "https", hostname: "img.youtube.com" },
       { protocol: "https", hostname: "img.clerk.com" },
+    ],
+  },
+  experimental: {
+    // Tree-shake heavy package internals for smaller bundles
+    optimizePackageImports: [
+      "react-markdown",
+      "remark-gfm",
+      "@clerk/nextjs",
+      "jspdf",
     ],
   },
 };
