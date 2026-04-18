@@ -163,6 +163,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Preconnect to critical origins — saves 100-300ms per connection */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Figtree:wght@300;400;500;600&display=swap" />
         <link rel="preconnect" href="https://clerk.unbuilt.me" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://connect.facebook.net" />
