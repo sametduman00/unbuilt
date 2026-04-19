@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 function scoreColor(s: number) { return s >= 70 ? "#22c55e" : s >= 40 ? "#f59e0b" : "#ef4444"; }
-function scoreLabel(s: number) { return s >= 70 ? "High Opportunity" : s >= 40 ? "Moderate" : "Low"; }
+function scoreLabel(s: number) { return s >= 70 ? "High" : s >= 40 ? "Mid" : "Low"; }
 function scoreBars(s: number) { return s >= 70 ? 3 : s >= 40 ? 2 : 1; }
 function catLabel(c: string) { return c.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()); }
 function diffColor(d: string) { return d?.toLowerCase().includes("easy") ? "#22c55e" : d?.toLowerCase().includes("hard") ? "#ef4444" : "#f59e0b"; }
@@ -87,29 +87,35 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ slu
 
       {/* Score bar — horizontal */}
       <div style={{ display: "flex", gap: 0, marginBottom: 12, borderRadius: 10, border: "1px solid var(--clr-border)", overflow: "hidden" }}>
-        <div style={{ flex: 1, padding: "16px 20px", background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)" }}>
+        <div style={{ flex: 1, padding: "14px 18px", background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)" }}>
           <div style={{ fontSize: 11, color: "var(--clr-text-4)", marginBottom: 8, fontWeight: 500 }}>Opportunity</div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, height: 28 }}>
             <div style={{ display: "flex", gap: 3, alignItems: "flex-end" }}>
               {[1, 2, 3].map(i => (
-                <div key={i} style={{ width: 8, height: i * 10, borderRadius: 2, background: i <= scoreBars(idea.opportunity_score) ? sc : "var(--clr-border)" }} />
+                <div key={i} style={{ width: 7, height: 6 + i * 7, borderRadius: 2, background: i <= scoreBars(idea.opportunity_score) ? sc : "var(--clr-border)" }} />
               ))}
             </div>
-            <span style={{ fontSize: 15, fontWeight: 700, color: sc }}>{scoreLabel(idea.opportunity_score)}</span>
+            <span style={{ fontSize: 18, fontWeight: 800, color: sc }}>{scoreLabel(idea.opportunity_score)}</span>
           </div>
         </div>
-        <div style={{ flex: 1, padding: "16px 20px", background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)" }}>
-          <div style={{ fontSize: 11, color: "var(--clr-text-4)", marginBottom: 6, fontWeight: 500 }}>Competitors</div>
-          <span style={{ fontSize: 28, fontWeight: 800, color: "var(--clr-text)", fontFamily: "'Syne', sans-serif" }}>{idea.competitor_count ?? "—"}</span>
-          <span style={{ fontSize: 13, color: "var(--clr-text-3)", fontWeight: 500 }}> apps</span>
+        <div style={{ flex: 1, padding: "14px 18px", background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)" }}>
+          <div style={{ fontSize: 11, color: "var(--clr-text-4)", marginBottom: 8, fontWeight: 500 }}>Competitors</div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 4, height: 28 }}>
+            <span style={{ fontSize: 24, fontWeight: 800, color: "var(--clr-text)", lineHeight: 1 }}>{idea.competitor_count ?? "—"}</span>
+            <span style={{ fontSize: 13, color: "var(--clr-text-3)", fontWeight: 500 }}>apps</span>
+          </div>
         </div>
-        <div style={{ flex: 1, padding: "16px 20px", background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)" }}>
-          <div style={{ fontSize: 11, color: "var(--clr-text-4)", marginBottom: 6, fontWeight: 500 }}>Difficulty</div>
-          <span style={{ fontSize: 20, fontWeight: 800, color: diffColor(idea.difficulty) }}>{(idea.difficulty || "Medium").split(/[—–,]/)[0].trim()}</span>
+        <div style={{ flex: 1, padding: "14px 18px", background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)" }}>
+          <div style={{ fontSize: 11, color: "var(--clr-text-4)", marginBottom: 8, fontWeight: 500 }}>Difficulty</div>
+          <div style={{ height: 28, display: "flex", alignItems: "center" }}>
+            <span style={{ fontSize: 18, fontWeight: 800, color: diffColor(idea.difficulty) }}>{(idea.difficulty || "Medium").split(/[—–,]/)[0].trim()}</span>
+          </div>
         </div>
-        <div style={{ flex: 1, padding: "16px 20px", background: "var(--clr-surface)" }}>
-          <div style={{ fontSize: 11, color: "var(--clr-text-4)", marginBottom: 6, fontWeight: 500 }}>Market</div>
-          <span style={{ fontSize: 20, fontWeight: 800, color: "var(--clr-text)" }}>{(idea.market_size || "Medium").split(/[—–,]/)[0].trim()}</span>
+        <div style={{ flex: 1, padding: "14px 18px", background: "var(--clr-surface)" }}>
+          <div style={{ fontSize: 11, color: "var(--clr-text-4)", marginBottom: 8, fontWeight: 500 }}>Market</div>
+          <div style={{ height: 28, display: "flex", alignItems: "center" }}>
+            <span style={{ fontSize: 18, fontWeight: 800, color: "var(--clr-text)" }}>{(idea.market_size || "Medium").split(/[—–,]/)[0].trim()}</span>
+          </div>
         </div>
       </div>
 
