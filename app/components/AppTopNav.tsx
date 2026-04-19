@@ -186,17 +186,6 @@ export default function AppTopNav() {
           onMouseLeave={e => { e.currentTarget.style.borderColor = "#e8e8e5"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)"; }}
         >
           Launches
-          <span style={{
-            padding: "1px 6px",
-            background: "#16a34a",
-            color: "#fff",
-            borderRadius: 4,
-            fontSize: "0.6rem",
-            fontWeight: 600,
-            letterSpacing: "0.5px",
-            textTransform: "uppercase" as const,
-            lineHeight: "1.4",
-          }}>live</span>
         </Link>
 
         {/* 4 — Get my Stack pill */}
@@ -213,17 +202,6 @@ export default function AppTopNav() {
           onMouseLeave={e => { e.currentTarget.style.borderColor = "#e8e8e5"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)"; }}
         >
           Startup Ideas
-          <span style={{
-            padding: "1px 6px",
-            background: "#6366f1",
-            color: "#fff",
-            borderRadius: 4,
-            fontSize: "0.55rem",
-            fontWeight: 600,
-            letterSpacing: "0.5px",
-            textTransform: "uppercase" as const,
-            lineHeight: "1.4",
-          }}>new</span>
         </Link>
         </div>
 

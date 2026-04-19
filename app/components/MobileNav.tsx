@@ -157,7 +157,7 @@ export default function MobileNav() {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 Launches
               </span>
-              <span style={{ padding:"1px 6px", background:"#16a34a", color:"#fff", borderRadius:4, fontSize:9, fontWeight:600, letterSpacing:"0.5px", marginLeft:4 }}>LIVE</span>
+
             </Link>
             <Link href="/use-cases" onClick={close} style={ROW}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/></svg>
