@@ -164,7 +164,7 @@ export default function AppTopNav() {
         <div style={{ justifySelf: "start" }}>
         <Link href="/" onClick={(e) => { e.preventDefault(); window.location.href = "/"; }} style={{ ...pill, gap: 8, textDecoration: "none", flexShrink: 0, padding: "0 16px" }}>
           <UnbuiltIcon size={22} />
-          <span style={{ fontSize: "1.15rem", fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.02em" }}>
+          <span style={{ fontSize: "1.38rem", fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.02em" }}>
             unbuilt
           </span>
         </Link>
