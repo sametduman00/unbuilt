@@ -3203,7 +3203,7 @@ function HomeInner() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tool = params.get("tool") as ToolId | null;
-    const q = params.get("q");
+    const q = params.get("q") || params.get("idea");
     const ssIdea = sessionStorage.getItem("unbuilt_stack_idea");
     if (tool === "stack-advisor" && ssIdea) {
       sessionStorage.removeItem("unbuilt_stack_idea");
