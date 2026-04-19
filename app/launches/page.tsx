@@ -14,6 +14,9 @@ export default function LaunchesPage() {
   const [pulsePhTopic, setPulsePhTopic] = useState("all");
   const [pulseAsSearch, setPulseAsSearch] = useState("");
   const [pulseAsCat, setPulseAsCat] = useState("all");
+  const [phPage, setPhPage] = useState(1);
+  const [asPage, setAsPage] = useState(1);
+  const PAGE_SIZE = 60;
   const PULSE_TOPIC_COLORS = ["#6366f1","#06b6d4","#f59e0b","#ec4899","#22c55e","#8b5cf6","#f97316","#14b8a6"];
 
   const pulseRelTime = (ts:string) => { const m=Math.floor((Date.now()-new Date(ts).getTime())/60000); if(m<1)return"just now"; if(m<60)return m+"m ago"; const h=Math.floor(m/60); if(h<24)return h+"h ago"; return Math.floor(h/24)+"d ago"; };
@@ -26,10 +29,17 @@ export default function LaunchesPage() {
 
   const phSignals = useMemo(()=>pulseSignals.filter(s=>s.source==="producthunt"),[pulseSignals]);
   const phTopics = useMemo(()=>Array.from(new Set(phSignals.flatMap(s=>s.topics||[]))).sort(),[phSignals]);
-  const phFiltered = useMemo(()=>{ let list=pulsePhTopic==="all"?phSignals:phSignals.filter(s=>s.topics?.includes(pulsePhTopic)); if(pulsePhSearch){const q=pulsePhSearch.toLowerCase();list=list.filter(s=>s.title?.toLowerCase().includes(q)||s.tagline?.toLowerCase().includes(q));} return list; },[phSignals,pulsePhTopic,pulsePhSearch]);
+  const phFiltered = useMemo(()=>{ setPhPage(1); let list=pulsePhTopic==="all"?phSignals:phSignals.filter(s=>s.topics?.includes(pulsePhTopic)); if(pulsePhSearch){const q=pulsePhSearch.toLowerCase();list=list.filter(s=>s.title?.toLowerCase().includes(q)||s.tagline?.toLowerCase().includes(q));} return list; },[phSignals,pulsePhTopic,pulsePhSearch]);
+  const phTotal = phFiltered.length;
+  const phPages = Math.ceil(phTotal / PAGE_SIZE);
+  const phPaged = useMemo(()=>phFiltered.slice((phPage-1)*PAGE_SIZE, phPage*PAGE_SIZE),[phFiltered,phPage]);
+
   const allAsApps = useMemo(()=>pulseAsDays.flatMap(d=>d.apps),[pulseAsDays]);
   const asCategories = useMemo(()=>Array.from(new Set(allAsApps.map(a=>a.category).filter(Boolean))).sort(),[allAsApps]);
-  const asFiltered = useMemo(()=>{ let list=pulseAsCat==="all"?allAsApps:allAsApps.filter(a=>a.category===pulseAsCat); if(pulseAsSearch){const q=pulseAsSearch.toLowerCase();list=list.filter(a=>a.app_name?.toLowerCase().includes(q)||a.developer?.toLowerCase().includes(q));} return list.sort((a,b)=>new Date(b.release_date||0).getTime()-new Date(a.release_date||0).getTime()); },[allAsApps,pulseAsCat,pulseAsSearch]);
+  const asFiltered = useMemo(()=>{ setAsPage(1); let list=pulseAsCat==="all"?allAsApps:allAsApps.filter(a=>a.category===pulseAsCat); if(pulseAsSearch){const q=pulseAsSearch.toLowerCase();list=list.filter(a=>a.app_name?.toLowerCase().includes(q)||a.developer?.toLowerCase().includes(q));} return list.sort((a,b)=>new Date(b.release_date||0).getTime()-new Date(a.release_date||0).getTime()); },[allAsApps,pulseAsCat,pulseAsSearch]);
+  const asTotal = asFiltered.length;
+  const asPages = Math.ceil(asTotal / PAGE_SIZE);
+  const asPaged = useMemo(()=>asFiltered.slice((asPage-1)*PAGE_SIZE, asPage*PAGE_SIZE),[asFiltered,asPage]);
 
   const handleDigNiche = (text: string) => {
     router.push("/?idea=" + encodeURIComponent(text) + "&tool=gap-analysis");
@@ -80,9 +90,9 @@ export default function LaunchesPage() {
                         {!pulseLoading && phFiltered.length===0 && pulseSignals.length>0 && (
                           <div style={{ textAlign:"center", padding:"3rem 0", color:"var(--clr-text-3)" }}>No results. <button onClick={()=>{setPulsePhSearch("");setPulsePhTopic("all");}} style={{ color:"#DA552F", background:"none", border:"none", cursor:"pointer" }}>Clear</button></div>
                         )}
-                        {!pulseLoading && phFiltered.length>0 && (
+                        {!pulseLoading && phPaged.length>0 && (
                           <div className="ph-card-grid" style={{ display:"grid", gridTemplateColumns:"repeat(2,minmax(0,1fr))", gap:10 }}>
-                            {phFiltered.map((s,i)=>{
+                            {phPaged.map((s,i)=>{
                               return (
                                 <div key={s.title+i} style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column" }}>
                                   <a href={s.externalUrl||s.url} target="_blank" rel="noopener noreferrer"
@@ -118,6 +128,13 @@ export default function LaunchesPage() {
                             })}
                           </div>
                         )}
+                        {phPages > 1 && (
+                          <div style={{ display:"flex", justifyContent:"center", alignItems:"center", gap:12, marginTop:24 }}>
+                            {phPage > 1 && <button onClick={()=>{setPhPage(p=>p-1);window.scrollTo(0,0);}} style={{ padding:"8px 20px", borderRadius:8, border:"1px solid var(--clr-border)", background:"var(--clr-surface)", color:"var(--clr-text-2)", fontSize:14, fontWeight:500, cursor:"pointer", fontFamily:"inherit" }}>← Previous</button>}
+                            <span style={{ fontSize:13, color:"var(--clr-text-4)" }}>Page {phPage} / {phPages}</span>
+                            {phPage < phPages && <button onClick={()=>{setPhPage(p=>p+1);window.scrollTo(0,0);}} style={{ padding:"8px 20px", borderRadius:8, border:"1px solid var(--clr-border)", background:"var(--clr-surface)", color:"var(--clr-text-2)", fontSize:14, fontWeight:500, cursor:"pointer", fontFamily:"inherit" }}>Next →</button>}
+                          </div>
+                        )}
                       </div>
                     )}
 
@@ -135,9 +152,9 @@ export default function LaunchesPage() {
                         </div>
                         {pulseAsLoading&&<div style={{ display:"flex",flexDirection:"column",gap:8 }}>{[1,2,3].map(i=><div key={i} className="shimmer" style={{ height:80, borderRadius:10 }}/>)}</div>}
                         {!pulseAsLoading&&pulseAsDays.length===0&&<div style={{ textAlign:"center", padding:"4rem 0", color:"var(--clr-text-3)" }}>No App Store data yet. Check back after 08:00 UTC.</div>}
-                        {!pulseAsLoading&&asFiltered.length>0&&(
+                        {!pulseAsLoading&&asPaged.length>0&&(
                           <div key={pulseAsCat+"_"+pulseAsSearch} style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                            {asFiltered.map(app=>(
+                            {asPaged.map(app=>(
                               <div key={app.app_id} style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden"}}>
                                         <a href={app.store_url} target="_blank" rel="noopener noreferrer"
                             style={{display:"flex",flexDirection:"column",gap:"0.875rem",padding:"1.25rem",textDecoration:"none",color:"inherit",transition:"background 0.15s"}}
@@ -202,6 +219,13 @@ export default function LaunchesPage() {
                           </div>
                         </div>
                             ))}
+                          </div>
+                        )}
+                        {asPages > 1 && (
+                          <div style={{ display:"flex", justifyContent:"center", alignItems:"center", gap:12, marginTop:24 }}>
+                            {asPage > 1 && <button onClick={()=>{setAsPage(p=>p-1);window.scrollTo(0,0);}} style={{ padding:"8px 20px", borderRadius:8, border:"1px solid var(--clr-border)", background:"var(--clr-surface)", color:"var(--clr-text-2)", fontSize:14, fontWeight:500, cursor:"pointer", fontFamily:"inherit" }}>← Previous</button>}
+                            <span style={{ fontSize:13, color:"var(--clr-text-4)" }}>Page {asPage} / {asPages}</span>
+                            {asPage < asPages && <button onClick={()=>{setAsPage(p=>p+1);window.scrollTo(0,0);}} style={{ padding:"8px 20px", borderRadius:8, border:"1px solid var(--clr-border)", background:"var(--clr-surface)", color:"var(--clr-text-2)", fontSize:14, fontWeight:500, cursor:"pointer", fontFamily:"inherit" }}>Next →</button>}
                           </div>
                         )}
                       </div>
