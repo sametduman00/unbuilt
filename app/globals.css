@@ -661,3 +661,92 @@ body[style*="position: fixed"] { overflow: hidden !important; }
   font-size: 0.9375rem;
   font-weight: 600;
 }
+
+/* ─── ISLAND NAV (left side) ─── */
+.island-nav {
+  position: fixed;
+  top: 80px;
+  left: 16px;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.island-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.island-btn:hover {
+  transform: translateX(4px);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.island-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.island-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-left: 4px;
+  letter-spacing: 0.3px;
+}
+
+/* Colors */
+.island-launches {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+.island-launches:hover { background: #dcfce7; }
+
+.island-dig {
+  background: #f5f3ff;
+  border-color: #ddd6fe;
+  color: #6d28d9;
+}
+.island-dig:hover { background: #ede9fe; }
+
+.island-stack {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #c2410c;
+}
+.island-stack:hover { background: #ffedd5; }
+
+.island-ideas {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.island-ideas:hover { background: #dbeafe; }
+
+/* Badges */
+.island-badge-live { background: #dcfce7; color: #16a34a; }
+.island-badge-new { background: #dbeafe; color: #2563eb; }
+
+/* Active state */
+.island-active {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  font-weight: 600;
+}
+
+/* Hide on mobile */
+@media (max-width: 768px) {
+  .island-nav { display: none; }
+}

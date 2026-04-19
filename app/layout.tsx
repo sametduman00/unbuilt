@@ -6,6 +6,7 @@ import ClerkThemeProvider from "./components/ClerkThemeProvider";
 import CookieConsent from "./components/CookieConsent";
 import AppTopNav from "./components/AppTopNav";
 import MobileNav from "./components/MobileNav";
+import IslandNav from "./components/IslandNav";
 import ConsentGate from "./components/ConsentGate";
 import "./globals.css";
 
@@ -137,6 +138,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ConsentGate>
               <AppTopNav />
               <MobileNav />
+              <IslandNav />
             <div className="app-content-wrapper" style={{ paddingTop: "72px" }}>
               {children}
             </div>
