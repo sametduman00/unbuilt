@@ -71,8 +71,6 @@ function StaticHero() {
             }}>
               <div style={{ display: "flex", alignItems: "center", padding: "18px 24px 12px", gap: 6 }}>
                 <div style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, background: "var(--clr-text)", color: "#fff" }}>Dig my idea</div>
-                <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>or</span>
-                <div style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, background: "var(--clr-surface-2)", color: "var(--clr-text-3)" }}>Get my stack</div>
               </div>
               <div style={{ padding: "0 24px 12px" }}>
                 <div style={{ width: "100%", minHeight: 88, background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 12 }} />

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from "rea
 // generatePdf is lazy-loaded when needed (heavy dep: jspdf + html2canvas)
 const lazyGeneratePdf = () => import("@/app/lib/generatePdf").then(m => m.generatePdf);
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 // react-markdown + remark-gfm moved to lazy-loaded chunk (~150KB savings)
 const LazyMarkdown = dynamic(() => import("./LazyMarkdown"), { ssr: false, loading: () => <div /> });
@@ -3114,7 +3114,14 @@ function HomeInner() {
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
   const router = useRouter();
   const [idea, setIdea] = useState("");
-  const [activeHeroTab, setActiveHeroTab] = useState<"gap-analysis" | "stack-advisor">("gap-analysis");
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const [activeHeroTab, setActiveHeroTab] = useState<"gap-analysis" | "stack-advisor">(tabParam === "stack" ? "stack-advisor" : "gap-analysis");
+
+  useEffect(() => {
+    if (tabParam === "stack") setActiveHeroTab("stack-advisor");
+    else if (tabParam === "dig") setActiveHeroTab("gap-analysis");
+  }, [tabParam]);
   const [showSampleReport, setShowSampleReport] = useState(false);
   // Reset sample report when tool changes
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -3808,22 +3815,10 @@ function HomeInner() {
                     </div>
                     {/* Input card */}
                     <div style={{ background: "var(--clr-surface)", border: "1.5px solid var(--clr-border)", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
-                      {/* Tab switcher — inside card */}
+                      {/* Tool title — no switcher, controlled by navbar */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 12px" }}>
-                        <div className="hero-tab-buttons" style={{ display: "flex", gap: 6 }}>
-                          <button
-                            onClick={() => setActiveHeroTab("gap-analysis")}
-                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
-                              background: activeHeroTab === "gap-analysis" ? "var(--clr-text)" : "var(--clr-surface-2)",
-                              color: activeHeroTab === "gap-analysis" ? "#fff" : "var(--clr-text-3)" }}
-                          >Dig my idea</button>
-                          <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", alignSelf: "center" }}>or</span>
-                          <button
-                            onClick={() => setActiveHeroTab("stack-advisor")}
-                            style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit",
-                              background: activeHeroTab === "stack-advisor" ? "var(--clr-text)" : "var(--clr-surface-2)",
-                              color: activeHeroTab === "stack-advisor" ? "#fff" : "var(--clr-text-3)" }}
-                          >Get my stack</button>
+                        <div style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, background: "var(--clr-text)", color: "#fff" }}>
+                          {activeHeroTab === "gap-analysis" ? "Dig my idea" : "Get my stack"}
                         </div>
                         <div className="hide-on-mobile" style={{ display: "flex", alignItems: "center", gap: 5 }}>
                           <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
