@@ -29,16 +29,18 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
   const activeCat = sp.category || null;
   const sb = getSupabase();
 
-  // Fetch seo_pages (paginated — Supabase max 1000/query)
+  // Fetch seo_pages (3 batches — Supabase max 1000/query)
   const seoSelect = "slug, keyword, category, opportunity_score, competitor_count, key_insight";
-  let sq1 = sb.from("seo_pages").select(seoSelect).eq("status", "published").order("opportunity_score", { ascending: false }).range(0, 999);
-  let sq2 = sb.from("seo_pages").select(seoSelect).eq("status", "published").order("opportunity_score", { ascending: false }).range(1000, 2499);
-  if (activeCat) { sq1 = sq1.eq("category", activeCat); sq2 = sq2.eq("category", activeCat); }
-  const [{ data: seo1 }, { data: seo2 }] = await Promise.all([sq1, sq2]);
-  const seoData = [...(seo1 || []), ...(seo2 || [])];
+  const mkQ = (from: number, to: number) => {
+    let q = sb.from("seo_pages").select(seoSelect).eq("status", "published").order("opportunity_score", { ascending: false }).range(from, to);
+    if (activeCat) q = q.eq("category", activeCat);
+    return q;
+  };
+  const [{ data: s1 }, { data: s2 }, { data: s3 }] = await Promise.all([mkQ(0, 999), mkQ(1000, 1999), mkQ(2000, 2999)]);
+  const seoData = [...(s1 || []), ...(s2 || []), ...(s3 || [])];
 
   // Fetch AI ideas
-  let aq = sb.from("startup_ideas").select("slug, title, category, opportunity_score, competitor_count, key_insight, one_liner").eq("status", "published").order("created_at", { ascending: false }).limit(200);
+  let aq = sb.from("startup_ideas").select("slug, title, category, opportunity_score, competitor_count, key_insight, one_liner").eq("status", "published").order("created_at", { ascending: false }).limit(500);
   if (activeCat) aq = aq.eq("category", activeCat);
   const { data: aiData } = await aq;
 
@@ -47,11 +49,11 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
   const aiCards: IdeaCard[] = (aiData || []).map(r => ({ slug: r.slug, keyword: r.title, key_insight: r.key_insight || r.one_liner || "", opportunity_score: r.opportunity_score ?? 50, competitor_count: r.competitor_count ?? 5, category: r.category, source: "ai" as const }));
   const allCards = [...aiCards, ...seoCards];
 
-  // Category counts
-  const { data: seoCats } = await sb.from("seo_pages").select("category").eq("status", "published");
-  const { data: aiCats } = await sb.from("startup_ideas").select("category").eq("status", "published");
+  // Category counts (paginated)
+  const mkCatQ = (from: number, to: number) => sb.from("seo_pages").select("category").eq("status", "published").range(from, to);
+  const [{ data: sc1 }, { data: sc2 }, { data: sc3 }, { data: aiCats }] = await Promise.all([mkCatQ(0, 999), mkCatQ(1000, 1999), mkCatQ(2000, 2999), sb.from("startup_ideas").select("category").eq("status", "published")]);
   const catCounts: Record<string, number> = {};
-  [...(seoCats || []), ...(aiCats || [])].forEach(r => { catCounts[r.category] = (catCounts[r.category] || 0) + 1; });
+  [...(sc1 || []), ...(sc2 || []), ...(sc3 || []), ...(aiCats || [])].forEach(r => { catCounts[r.category] = (catCounts[r.category] || 0) + 1; });
   const categories = CAT_ORDER.filter(c => catCounts[c]);
   const total = Object.values(catCounts).reduce((a, b) => a + b, 0);
 
