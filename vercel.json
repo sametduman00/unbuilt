@@ -19,3 +19,4 @@
     { "path": "/api/ideas/cron",     "schedule": "*/10 * * * *" }
   ]
 }
+
