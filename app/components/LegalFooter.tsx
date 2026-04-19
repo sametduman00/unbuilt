@@ -46,6 +46,8 @@ export default function LegalFooter() {
           flex-direction: column;
           align-items: center;
           gap: 1rem;
+          min-height: 140px;
+          contain: layout;
         }
         .legal-footer-nav {
           display: flex;
