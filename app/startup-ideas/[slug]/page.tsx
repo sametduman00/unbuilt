@@ -85,7 +85,7 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ slu
       </p>
 
       {/* Score bar — horizontal */}
-      <div style={{ display: "flex", gap: 0, marginBottom: 32, borderRadius: 10, border: "1px solid var(--clr-border)", overflow: "hidden" }}>
+      <div style={{ display: "flex", gap: 0, marginBottom: 12, borderRadius: 10, border: "1px solid var(--clr-border)", overflow: "hidden" }}>
         <div style={{ flex: 1, padding: "16px 20px", background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)" }}>
           <div style={{ fontSize: 11, color: "var(--clr-text-4)", marginBottom: 6, fontWeight: 500 }}>Opportunity</div>
           <span style={{ fontSize: 28, fontWeight: 800, color: sc, fontFamily: "'Syne', sans-serif" }}>{idea.opportunity_score}</span>
@@ -105,6 +105,15 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ slu
           <span style={{ fontSize: 20, fontWeight: 800, color: "var(--clr-text)" }}>{(idea.market_size || "Medium").split(/[—–,]/)[0].trim()}</span>
         </div>
       </div>
+
+      {/* Get Stack CTA — tied to difficulty */}
+      <Link href={`/?tab=stack&idea=${encodeURIComponent(idea.one_liner)}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderRadius: 10, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", textDecoration: "none", marginBottom: 32 }}>
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: "var(--clr-text)", marginBottom: 2 }}>How would you build this?</div>
+          <div style={{ fontSize: 13, color: "var(--clr-text-3)" }}>Get the recommended tech stack for &quot;{idea.title}&quot;</div>
+        </div>
+        <span style={{ padding: "8px 18px", borderRadius: 8, background: "var(--clr-text)", color: "#fff", fontSize: 13, fontWeight: 600, whiteSpace: "nowrap" }}>Get my Stack →</span>
+      </Link>
 
       {/* Key insight */}
       {(idea.key_insight || idea.gap_reason) && (
@@ -142,20 +151,15 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ slu
         </Section>
       )}
 
-      {/* CTA */}
+      {/* Dig CTA — bottom */}
       <div style={{ padding: "32px 28px", borderRadius: 12, background: "linear-gradient(135deg, #7c6fff12 0%, #0891b212 100%)", border: "1px solid var(--clr-border-2)", textAlign: "center", marginBottom: 48 }}>
-        <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, fontFamily: "'Syne', sans-serif" }}>Want the full report?</h3>
+        <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, fontFamily: "'Syne', sans-serif" }}>Dig deeper into this idea</h3>
         <p style={{ fontSize: 15, color: "var(--clr-text-3)", marginBottom: 20, maxWidth: 440, margin: "0 auto 20px" }}>
-          Dig analyzes &quot;{idea.title}&quot; against 70+ live sources in 5 minutes.
+          Get a full competitive analysis of &quot;{idea.title}&quot; — 70+ live sources scanned in 5 minutes.
         </p>
-        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-          <Link href={`/?tab=dig&idea=${encodeURIComponent(idea.one_liner)}`} style={{ display: "inline-flex", padding: "12px 28px", borderRadius: 8, background: "#7c6fff", color: "#fff", fontSize: 15, fontWeight: 600, textDecoration: "none" }}>
-            Dig this idea
-          </Link>
-          <Link href={`/?tab=stack&idea=${encodeURIComponent(idea.one_liner)}`} style={{ display: "inline-flex", padding: "12px 28px", borderRadius: 8, background: "var(--clr-surface)", color: "var(--clr-text-2)", fontSize: 15, fontWeight: 500, textDecoration: "none", border: "1px solid var(--clr-border)" }}>
-            Get tech stack
-          </Link>
-        </div>
+        <Link href={`/?tab=dig&idea=${encodeURIComponent(idea.one_liner)}`} style={{ display: "inline-flex", padding: "14px 32px", borderRadius: 8, background: "#7c6fff", color: "#fff", fontSize: 16, fontWeight: 600, textDecoration: "none" }}>
+          Dig my Idea →
+        </Link>
       </div>
 
       {/* Related ideas */}
