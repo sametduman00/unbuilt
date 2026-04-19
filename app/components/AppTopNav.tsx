@@ -153,21 +153,25 @@ export default function AppTopNav() {
       width: "calc(100% - 48px)",
       maxWidth: 1200,
       zIndex: 1000,
-      display: "flex",
+      display: "grid",
+      gridTemplateColumns: "1fr auto 1fr",
       alignItems: "center",
-      justifyContent: "center",
       gap: 8,
       boxSizing: "border-box",
     }}>
 
-        {/* 1 — Logo pill */}
-        <Link href="/" onClick={(e) => { e.preventDefault(); window.location.href = "/"; }} style={{ ...pill, gap: 8, textDecoration: "none", flexShrink: 0, padding: "0 16px", marginRight: "auto" }}>
+        {/* 1 — Logo pill (left-aligned) */}
+        <div style={{ justifySelf: "start" }}>
+        <Link href="/" onClick={(e) => { e.preventDefault(); window.location.href = "/"; }} style={{ ...pill, gap: 8, textDecoration: "none", flexShrink: 0, padding: "0 16px" }}>
           <UnbuiltIcon size={22} />
           <span style={{ fontSize: "1.15rem", fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.02em" }}>
             unbuilt
           </span>
         </Link>
+        </div>
 
+        {/* Center — tools (always centered) */}
+        <div style={{ display: "flex", gap: 8, justifySelf: "center" }}>
         {/* 2 — Dig my Idea pill */}
         <Link href="/?tab=dig" style={toolPill}
           onMouseEnter={e => { e.currentTarget.style.borderColor = "#ccc"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)"; }}
@@ -202,9 +206,10 @@ export default function AppTopNav() {
         >
           Get my Stack
         </Link>
+        </div>
 
-        {/* 5 — User pill */}
-        <div style={{ marginLeft: "auto", flexShrink: 0 }}>
+        {/* 5 — User pill (right-aligned) */}
+        <div style={{ justifySelf: "end", flexShrink: 0 }}>
           {isSignedIn ? (
             <div ref={userRef} style={{ position: "relative" }}>
               <button
