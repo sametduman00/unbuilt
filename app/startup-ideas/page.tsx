@@ -1,5 +1,6 @@
 "use client";
 
+// Startup Ideas v1
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 
