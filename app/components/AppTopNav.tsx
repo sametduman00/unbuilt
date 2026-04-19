@@ -180,47 +180,6 @@ export default function AppTopNav() {
               lineHeight: "1.4",
             }}>live</span>
           </Link>
-          <div style={{ width: 1, height: 18, background: "#ddd", margin: "0 6px", flexShrink: 0 }} />
-
-          <Link href="/use-cases" style={linkBtn}
-            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
-            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-          >Use Cases</Link>
-
-          <Link href="/how-it-works" style={linkBtn}
-            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
-            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-          >How it works</Link>
-
-          <Link href="/pricing" style={linkBtn}
-            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
-            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-          >Pricing</Link>
-          {/* Docs — hover */}
-          <div ref={docsRef} style={{ position: "relative" }}
-            onMouseEnter={() => { if (docsTimer.current) clearTimeout(docsTimer.current); setDocsOpen(true); }}
-            onMouseLeave={() => { docsTimer.current = setTimeout(() => setDocsOpen(false), 150); }}>
-            <button style={{ ...linkBtn, background: docsOpen ? "#f5f5f3" : "transparent" }}>
-              Docs
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8"
-                style={{ transition: "transform 0.15s", transform: docsOpen ? "rotate(180deg)" : "none" }}>
-                <polyline points="2 4.5 6 8 10 4.5"/>
-              </svg>
-            </button>
-            {docsOpen && (
-              <div style={{ ...dropStyle, minWidth: 210 }}>
-                <div style={dropSectionStyle}>LEGAL & POLICIES</div>
-                {DOCS_ITEMS.map(item => (
-                  <Link key={item.href} href={item.href} style={dropItemStyle}
-                    onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-                    onClick={() => setDocsOpen(false)}>
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Right */}

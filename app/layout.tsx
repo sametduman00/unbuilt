@@ -6,6 +6,7 @@ import ClerkThemeProvider from "./components/ClerkThemeProvider";
 import CookieConsent from "./components/CookieConsent";
 import AppTopNav from "./components/AppTopNav";
 import MobileNav from "./components/MobileNav";
+import LegalFooter from "./components/LegalFooter";
 import ConsentGate from "./components/ConsentGate";
 import "./globals.css";
 
@@ -140,6 +141,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="app-content-wrapper" style={{ paddingTop: "72px" }}>
               {children}
             </div>
+            <LegalFooter />
             
             <CookieConsent />
           </ConsentGate>
