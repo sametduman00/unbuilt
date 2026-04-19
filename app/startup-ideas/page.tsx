@@ -1,256 +1,122 @@
-"use client";
-
-// Startup Ideas v1
-import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import type { Metadata } from "next";
+import { getSupabase } from "@/app/lib/supabase";
 
-interface Idea {
-  id: string;
-  title: string;
-  slug: string;
-  category: string;
-  one_liner: string;
-  problem: string;
-  target_audience: string;
-  market_size: string;
-  competition_level: string;
-  difficulty: string;
-  why_now: string;
-  gap_reason: string;
-  created_at: string;
-}
+export const revalidate = 60;
 
-function timeAgo(date: string): string {
-  const now = Date.now();
-  const then = new Date(date).getTime();
-  const diff = Math.floor((now - then) / 1000);
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
-}
+export const metadata: Metadata = {
+  title: "Startup Ideas — Unbuilt",
+  description: "Browse 1,000+ startup ideas with opportunity scores, competitor counts and key insights. New AI-generated ideas added every 10 minutes.",
+  openGraph: { title: "Startup Ideas — Unbuilt", description: "Browse 1,000+ startup ideas with opportunity scores and market gaps.", url: "https://unbuilt.me/startup-ideas" },
+  alternates: { canonical: "https://unbuilt.me/startup-ideas" },
+};
 
-function difficultyColor(d: string) {
-  if (d?.toLowerCase().includes("easy")) return { bg: "#dcfce7", color: "#15803d" };
-  if (d?.toLowerCase().includes("hard")) return { bg: "#fee2e2", color: "#dc2626" };
-  return { bg: "#fef3c7", color: "#d97706" };
-}
+interface IdeaCard { slug: string; keyword: string; key_insight: string; opportunity_score: number; competitor_count: number; category: string; source: "seo" | "ai"; }
 
-function competitionColor(c: string) {
-  if (c?.toLowerCase().includes("low")) return { bg: "#dcfce7", color: "#15803d" };
-  if (c?.toLowerCase().includes("high")) return { bg: "#fee2e2", color: "#dc2626" };
-  return { bg: "#fef3c7", color: "#d97706" };
-}
+function catLabel(c: string) { return c.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()); }
+function scoreColor(s: number) { return s >= 70 ? "#22c55e" : s >= 40 ? "#f59e0b" : "#ef4444"; }
 
-function categoryLabel(c: string) {
-  return c.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase());
-}
+const CAT_ORDER = [
+  "saas","ai_tools","developer_tools","productivity","marketing","automation",
+  "content_creation","ecommerce","finance","freelancing","health","education",
+  "community","design","analytics","hr_and_hiring","travel","real_estate",
+  "food_and_restaurant","legal","pet","parenting","sustainability","tools",
+  "vibecoding","niche_ideas","gaming","fitness","general",
+];
 
-export default function StartupIdeasPage() {
-  const [ideas, setIdeas] = useState<Idea[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [category, setCategory] = useState("all");
+export default async function StartupIdeasPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+  const sp = await searchParams;
+  const activeCat = sp.category || null;
+  const sb = getSupabase();
 
-  const fetchIdeas = useCallback(async () => {
-    try {
-      const url = category === "all"
-        ? "/api/ideas/list?limit=50"
-        : `/api/ideas/list?limit=50&category=${category}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      setIdeas(data.ideas || []);
-    } catch { }
-    setLoading(false);
-  }, [category]);
+  // Fetch seo_pages
+  let sq = sb.from("seo_pages").select("slug, keyword, category, opportunity_score, competitor_count, key_insight").eq("status", "published").order("opportunity_score", { ascending: false }).limit(500);
+  if (activeCat) sq = sq.eq("category", activeCat);
+  const { data: seoData } = await sq;
 
-  useEffect(() => {
-    fetchIdeas();
-    // Poll every 30s for new ideas
-    const interval = setInterval(fetchIdeas, 30000);
-    return () => clearInterval(interval);
-  }, [fetchIdeas]);
+  // Fetch AI ideas
+  let aq = sb.from("startup_ideas").select("slug, title, category, opportunity_score, competitor_count, key_insight, one_liner").eq("status", "published").order("created_at", { ascending: false }).limit(200);
+  if (activeCat) aq = aq.eq("category", activeCat);
+  const { data: aiData } = await aq;
 
-  const categories = ["all", ...Array.from(new Set(ideas.map(i => i.category)))];
+  // Merge
+  const seoCards: IdeaCard[] = (seoData || []).map(r => ({ slug: r.slug, keyword: r.keyword, key_insight: r.key_insight || "", opportunity_score: r.opportunity_score ?? 50, competitor_count: r.competitor_count ?? 0, category: r.category, source: "seo" as const }));
+  const aiCards: IdeaCard[] = (aiData || []).map(r => ({ slug: r.slug, keyword: r.title, key_insight: r.key_insight || r.one_liner || "", opportunity_score: r.opportunity_score ?? 50, competitor_count: r.competitor_count ?? 5, category: r.category, source: "ai" as const }));
+  const allCards = [...aiCards, ...seoCards];
+
+  // Category counts
+  const { data: seoCats } = await sb.from("seo_pages").select("category").eq("status", "published");
+  const { data: aiCats } = await sb.from("startup_ideas").select("category").eq("status", "published");
+  const catCounts: Record<string, number> = {};
+  [...(seoCats || []), ...(aiCats || [])].forEach(r => { catCounts[r.category] = (catCounts[r.category] || 0) + 1; });
+  const categories = CAT_ORDER.filter(c => catCounts[c]);
+  const total = Object.values(catCounts).reduce((a, b) => a + b, 0);
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: "2rem 16px 4rem" }}>
-      {/* Header */}
-      <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)", fontWeight: 700, letterSpacing: "-0.03em", color: "var(--clr-text)", marginBottom: 8 }}>
-          Startup Ideas
-        </h1>
-        <p style={{ fontSize: "1rem", color: "var(--clr-text-3)", lineHeight: 1.6, marginBottom: 12 }}>
-          AI-generated startup ideas with mini analysis. New idea every ~10 minutes.
-        </p>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{
-            display: "inline-flex", alignItems: "center", gap: 6,
-            padding: "4px 12px", borderRadius: 999,
-            background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-            fontSize: "0.8125rem", color: "var(--clr-text-3)",
-          }}>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
-            New idea every ~10 min
-          </span>
-          <span style={{
-            padding: "4px 12px", borderRadius: 999,
-            background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
-            fontSize: "0.8125rem", color: "var(--clr-text-3)",
-          }}>
-            {ideas.length} ideas generated
-          </span>
-        </div>
+    <main style={{ maxWidth: 960, margin: "0 auto", padding: "2.5rem 20px 5rem" }}>
+      <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.035em", fontFamily: "'Syne', sans-serif", marginBottom: 8 }}>
+        Startup Ideas
+      </h1>
+      <p style={{ fontSize: 16, color: "var(--clr-text-3)", marginBottom: 10, maxWidth: 560, lineHeight: 1.6 }}>
+        {total.toLocaleString()} ideas scanned. Find the gap. Skip the graveyard.
+      </p>
+      <p style={{ fontSize: 13, color: "var(--clr-text-4)", marginBottom: 32, display: "flex", alignItems: "center", gap: 6 }}>
+        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
+        New AI ideas added every ~10 min
+      </p>
+
+      {/* Category pills */}
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 32 }}>
+        <Link href="/startup-ideas" style={{ fontSize: 13, padding: "5px 14px", borderRadius: 6, background: !activeCat ? "var(--clr-text)" : "var(--clr-surface)", color: !activeCat ? "#fff" : "var(--clr-text-3)", border: "1px solid var(--clr-border)", textDecoration: "none", fontWeight: 500 }}>
+          All
+        </Link>
+        {categories.map(cat => (
+          <Link key={cat} href={`/startup-ideas?category=${cat}`} style={{ fontSize: 13, padding: "5px 14px", borderRadius: 6, background: activeCat === cat ? "var(--clr-text)" : "var(--clr-surface)", color: activeCat === cat ? "#fff" : "var(--clr-text-3)", border: "1px solid var(--clr-border)", textDecoration: "none", fontWeight: 500 }}>
+            {catLabel(cat)} ({catCounts[cat]})
+          </Link>
+        ))}
       </div>
 
-      {/* Category filter */}
-      {categories.length > 2 && (
-        <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: "1.5rem" }}>
-          {categories.slice(0, 12).map(cat => (
-            <button
-              key={cat}
-              onClick={() => { setCategory(cat); setLoading(true); }}
-              style={{
-                padding: "5px 12px", borderRadius: 8, fontSize: "0.75rem", fontWeight: 500,
-                border: "none", cursor: "pointer", fontFamily: "inherit",
-                background: category === cat ? "var(--clr-text)" : "var(--clr-surface-2)",
-                color: category === cat ? "#fff" : "var(--clr-text-3)",
-                transition: "all 0.12s",
-              }}
-            >
-              {cat === "all" ? "All" : categoryLabel(cat)}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Ideas list */}
-      {loading ? (
-        <div style={{ textAlign: "center", padding: "3rem 0", color: "var(--clr-text-4)" }}>Loading ideas...</div>
-      ) : ideas.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "3rem 0", color: "var(--clr-text-4)" }}>No ideas yet. First one generating soon...</div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {ideas.map(idea => {
-            const isOpen = expandedId === idea.id;
-            const dc = difficultyColor(idea.difficulty);
-            const cc = competitionColor(idea.competition_level);
-            return (
-              <div key={idea.id} style={{
-                border: "1px solid var(--clr-border)",
-                borderRadius: 14,
-                background: "var(--clr-surface)",
-                overflow: "hidden",
-                transition: "border-color 0.15s",
-                ...(isOpen ? { borderColor: "var(--clr-text-4)" } : {}),
-              }}>
-                {/* Collapsed row */}
-                <button
-                  onClick={() => setExpandedId(isOpen ? null : idea.id)}
-                  style={{
-                    width: "100%", display: "flex", alignItems: "center", gap: 12,
-                    padding: "14px 18px", background: "transparent", border: "none",
-                    cursor: "pointer", textAlign: "left", fontFamily: "inherit",
-                  }}
-                >
-                  <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="var(--clr-text-3)" strokeWidth="1.8"
-                    style={{ flexShrink: 0, transition: "transform 0.15s", transform: isOpen ? "rotate(90deg)" : "none" }}>
-                    <polyline points="4 2 8 6 4 10" />
-                  </svg>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--clr-text)", marginBottom: 2 }}>{idea.title}</div>
-                    <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{idea.one_liner}</div>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-                    <span style={{ fontSize: "0.6875rem", padding: "2px 8px", borderRadius: 6, background: "var(--clr-surface-2)", color: "var(--clr-text-4)", fontWeight: 500 }}>
-                      {categoryLabel(idea.category)}
-                    </span>
-                    <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", whiteSpace: "nowrap", minWidth: 55, textAlign: "right" }}>
-                      {timeAgo(idea.created_at)}
-                    </span>
-                  </div>
-                </button>
-
-                {/* Expanded panel */}
-                {isOpen && (
-                  <div style={{ padding: "0 18px 18px", borderTop: "1px solid var(--clr-border)" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, padding: "14px 0" }}>
-                      <div style={{ background: "var(--clr-bg)", borderRadius: 10, padding: "10px 12px" }}>
-                        <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase", marginBottom: 4 }}>Difficulty</div>
-                        <span style={{ fontSize: "0.8125rem", fontWeight: 600, padding: "2px 8px", borderRadius: 6, background: dc.bg, color: dc.color }}>{idea.difficulty}</span>
-                      </div>
-                      <div style={{ background: "var(--clr-bg)", borderRadius: 10, padding: "10px 12px" }}>
-                        <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase", marginBottom: 4 }}>Competition</div>
-                        <span style={{ fontSize: "0.8125rem", fontWeight: 600, padding: "2px 8px", borderRadius: 6, background: cc.bg, color: cc.color }}>{idea.competition_level}</span>
-                      </div>
-                      <div style={{ background: "var(--clr-bg)", borderRadius: 10, padding: "10px 12px" }}>
-                        <div style={{ fontSize: "0.625rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase", marginBottom: 4 }}>Market</div>
-                        <span style={{ fontSize: "0.8125rem", fontWeight: 500, color: "var(--clr-text-2)" }}>{idea.market_size}</span>
-                      </div>
-                    </div>
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                      <div>
-                        <div style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase", marginBottom: 4 }}>Problem</div>
-                        <p style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", lineHeight: 1.6, margin: 0 }}>{idea.problem}</p>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase", marginBottom: 4 }}>Target audience</div>
-                        <p style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", lineHeight: 1.6, margin: 0 }}>{idea.target_audience}</p>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase", marginBottom: 4 }}>Why now</div>
-                        <p style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", lineHeight: 1.6, margin: 0 }}>{idea.why_now}</p>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--clr-text-4)", textTransform: "uppercase", marginBottom: 4 }}>Gap</div>
-                        <p style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", lineHeight: 1.6, margin: 0 }}>{idea.gap_reason}</p>
-                      </div>
-                    </div>
-
-                    {/* CTA */}
-                    <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
-                      <Link
-                        href={`/?tab=dig&idea=${encodeURIComponent(idea.one_liner)}`}
-                        style={{
-                          display: "inline-flex", alignItems: "center", gap: 6,
-                          padding: "8px 18px", borderRadius: 10,
-                          background: "var(--clr-text)", color: "#fff",
-                          fontSize: "0.8125rem", fontWeight: 600,
-                          textDecoration: "none", transition: "opacity 0.12s",
-                        }}
-                      >
-                        Dig this idea →
-                      </Link>
-                      <Link
-                        href={`/?tab=stack&idea=${encodeURIComponent(idea.one_liner)}`}
-                        style={{
-                          display: "inline-flex", alignItems: "center", gap: 6,
-                          padding: "8px 18px", borderRadius: 10,
-                          background: "var(--clr-surface-2)", color: "var(--clr-text-2)",
-                          fontSize: "0.8125rem", fontWeight: 500,
-                          textDecoration: "none", border: "1px solid var(--clr-border)",
-                          transition: "opacity 0.12s",
-                        }}
-                      >
-                        Get stack for this
-                      </Link>
-                    </div>
-                  </div>
-                )}
+      {/* Ideas grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 12 }}>
+        {allCards.map(p => (
+          <Link key={`${p.source}-${p.slug}`} href={p.source === "seo" ? `/ideas/${p.slug}` : `/startup-ideas`} style={{ display: "block", padding: "16px 18px", borderRadius: 10, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", textDecoration: "none", transition: "border-color 0.2s, box-shadow 0.2s", position: "relative" }}>
+            {p.source === "ai" && (
+              <span style={{ position: "absolute", top: 10, right: 12, fontSize: 10, fontWeight: 600, padding: "2px 7px", borderRadius: 4, background: "#dcfce7", color: "#15803d", letterSpacing: "0.04em" }}>AI</span>
+            )}
+            <div style={{ fontSize: 15, fontWeight: 600, color: "var(--clr-text)", marginBottom: 6, lineHeight: 1.35, paddingRight: p.source === "ai" ? 36 : 0 }}>
+              {p.keyword}
+            </div>
+            {p.key_insight && (
+              <div style={{ fontSize: 13, color: "var(--clr-text-3)", lineHeight: 1.5, marginBottom: 10, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const, overflow: "hidden" }}>
+                {p.key_insight}
               </div>
-            );
-          })}
-        </div>
+            )}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12, color: "var(--clr-text-4)" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: "50%", background: scoreColor(p.opportunity_score) }} />
+                {p.opportunity_score}/100
+              </span>
+              <span style={{ color: "var(--clr-text-5)" }}>·</span>
+              <span>{p.competitor_count ?? "?"} competitors</span>
+              <span style={{ color: "var(--clr-text-5)" }}>·</span>
+              <span>{catLabel(p.category)}</span>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {allCards.length === 0 && (
+        <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--clr-text-4)" }}>No ideas published yet.</div>
       )}
 
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.4; transform: scale(0.7); }
-        }
-      `}</style>
-    </div>
+      <div style={{ marginTop: 48, padding: "32px 28px", borderRadius: 12, background: "linear-gradient(135deg, #7c6fff12 0%, #0891b212 100%)", border: "1px solid var(--clr-border-2)", textAlign: "center" }}>
+        <h3 style={{ fontSize: 20, fontWeight: 700, fontFamily: "'Syne', sans-serif", marginBottom: 8 }}>Got your own idea?</h3>
+        <p style={{ fontSize: 15, color: "var(--clr-text-3)", marginBottom: 20 }}>Dig analyzes it against 70+ live sources in 5 minutes.</p>
+        <Link href="/?tool=gap-analysis" style={{ display: "inline-flex", padding: "12px 28px", borderRadius: 8, background: "#7c6fff", color: "#fff", fontSize: 15, fontWeight: 600, textDecoration: "none" }}>
+          Try Dig free
+        </Link>
+      </div>
+    </main>
   );
 }
-// Startup Ideas v1

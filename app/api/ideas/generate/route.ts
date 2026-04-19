@@ -71,7 +71,10 @@ Respond ONLY with valid JSON, no markdown, no backticks:
   "competition_level": "Low / Medium / High — name 1-2 existing alternatives if any",
   "difficulty": "Easy / Medium / Hard — considering vibe coding tools",
   "why_now": "Why this idea makes sense right now (1-2 sentences)",
-  "gap_reason": "What's missing in existing solutions (1-2 sentences)"
+  "gap_reason": "What's missing in existing solutions (1-2 sentences)",
+  "opportunity_score": "A number 30-95 representing how big the opportunity is (higher = bigger gap)",
+  "competitor_count": "Estimated number of direct competitors (integer)",
+  "key_insight": "One sharp sentence about why this opportunity exists — be opinionated and specific"
 }`;
 
   try {
@@ -101,6 +104,9 @@ Respond ONLY with valid JSON, no markdown, no backticks:
         difficulty: parsed.difficulty,
         why_now: parsed.why_now,
         gap_reason: parsed.gap_reason,
+        opportunity_score: Math.min(95, Math.max(10, parseInt(parsed.opportunity_score) || 50)),
+        competitor_count: Math.max(0, parseInt(parsed.competitor_count) || 5),
+        key_insight: parsed.key_insight || parsed.one_liner,
         status: "published",
       })
       .select()
