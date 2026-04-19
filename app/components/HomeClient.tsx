@@ -3674,14 +3674,12 @@ function HomeInner() {
   return (
     <>
       {/* Shell */}
-      <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-
-        {/* Sidebar */}
+      <div style={{ display: "flex", minHeight: "100vh" }}>
 
 
 
         {/* Main content */}
-        <main style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto", overflowX: "hidden", padding: "0 16px", maxWidth: "100%" }}>
+        <main style={{ flex: 1, display: "flex", flexDirection: "column", overflowX: "hidden", padding: "0 16px", maxWidth: "100%" }}>
 
           {/* ── Scanning overlay ── */}
           {scanStep >= 0 ? (() => {
