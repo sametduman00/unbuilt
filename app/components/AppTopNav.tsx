@@ -206,6 +206,25 @@ export default function AppTopNav() {
         >
           Get my Stack
         </Link>
+
+        {/* 5 — Startup Ideas pill */}
+        <Link href="/startup-ideas" style={toolPill}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "#ccc"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "#e8e8e5"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)"; }}
+        >
+          Startup Ideas
+          <span style={{
+            padding: "1px 6px",
+            background: "#6366f1",
+            color: "#fff",
+            borderRadius: 4,
+            fontSize: "0.55rem",
+            fontWeight: 600,
+            letterSpacing: "0.5px",
+            textTransform: "uppercase" as const,
+            lineHeight: "1.4",
+          }}>new</span>
+        </Link>
         </div>
 
         {/* 5 — User pill (right-aligned) */}
