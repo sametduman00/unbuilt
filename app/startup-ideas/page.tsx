@@ -60,7 +60,7 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
   const hasNext = page < totalPages;
 
   return (
-    <main style={{ maxWidth: 720, margin: "0 auto", padding: "2.5rem 20px 5rem" }}>
+    <main style={{ maxWidth: 860, margin: "0 auto", padding: "2.5rem 20px 5rem" }}>
       <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.035em", fontFamily: "'Syne', sans-serif", marginBottom: 8 }}>
         Startup Ideas
       </h1>
@@ -72,42 +72,54 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
         New AI ideas added every ~10 min
       </p>
 
-      {/* Ideas list — single column */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {cards.map((p, i) => (
-          <Link key={`${i}-${p.slug}`} href={p.ai ? `/startup-ideas/${p.slug}` : `/ideas/${p.slug}`} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", borderRadius: 10, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", textDecoration: "none", transition: "border-color 0.15s" }}>
-            {/* Score dot */}
-            {/* Score bars */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, flexShrink: 0, width: 38 }}>
-              <div style={{ display: "flex", gap: 2, alignItems: "flex-end", height: 24 }}>
-                {[1, 2, 3].map(i => (
-                  <div key={i} style={{ width: 6, height: i * 7, borderRadius: 2, background: i <= scoreBars(p.score) ? scoreColor(p.score) : "var(--clr-border)" }} />
-                ))}
-              </div>
-              <span style={{ fontSize: 9, fontWeight: 700, color: scoreColor(p.score), letterSpacing: "0.03em" }}>{scoreLabel(p.score)}</span>
-            </div>
+      {/* Table header */}
+      <div style={{ display: "flex", alignItems: "center", padding: "0 20px 10px", gap: 16 }}>
+        <div style={{ flex: 1, fontSize: 11, fontWeight: 600, color: "var(--clr-text-4)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Idea</div>
+        <div style={{ width: 80, fontSize: 11, fontWeight: 600, color: "var(--clr-text-4)", textTransform: "uppercase", letterSpacing: "0.06em", textAlign: "center" }}>Score</div>
+        <div style={{ width: 80, fontSize: 11, fontWeight: 600, color: "var(--clr-text-4)", textTransform: "uppercase", letterSpacing: "0.06em", textAlign: "center" }}>Comp.</div>
+        <div style={{ width: 120, fontSize: 11, fontWeight: 600, color: "var(--clr-text-4)", textTransform: "uppercase", letterSpacing: "0.06em", textAlign: "center" }}>Category</div>
+      </div>
 
-            {/* Content */}
+      {/* Ideas list */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {cards.map((p, i) => (
+          <Link key={`${i}-${p.slug}`} href={p.ai ? `/startup-ideas/${p.slug}` : `/ideas/${p.slug}`} style={{ display: "flex", alignItems: "center", gap: 16, padding: "18px 20px", borderRadius: 12, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", textDecoration: "none", transition: "border-color 0.15s, box-shadow 0.15s" }}>
+
+            {/* Name + insight */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 15, fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {p.name}
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                <span style={{ fontSize: 16, fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.3 }}>
+                  {p.name}
+                </span>
+                {p.ai && (
+                  <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 4, background: "#dcfce7", color: "#15803d", flexShrink: 0 }}>AI</span>
+                )}
               </div>
               {p.insight && (
-                <div style={{ fontSize: 13, color: "var(--clr-text-3)", lineHeight: 1.4, marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <div style={{ fontSize: 13, color: "var(--clr-text-3)", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {p.insight}
                 </div>
               )}
             </div>
 
-            {/* Meta */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-              {p.ai && (
-                <span style={{ fontSize: 10, fontWeight: 600, padding: "2px 7px", borderRadius: 4, background: "#dcfce7", color: "#15803d" }}>AI</span>
-              )}
-              <span style={{ fontSize: 12, color: "var(--clr-text-4)", whiteSpace: "nowrap" }}>
-                {p.competitors} comp.
-              </span>
-              <span style={{ fontSize: 11, color: "var(--clr-text-4)", padding: "2px 8px", borderRadius: 6, background: "var(--clr-surface-2)", whiteSpace: "nowrap" }}>
+            {/* Score — 3 bars */}
+            <div style={{ width: 80, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flexShrink: 0 }}>
+              <div style={{ display: "flex", gap: 3, alignItems: "flex-end" }}>
+                {[1, 2, 3].map(j => (
+                  <div key={j} style={{ width: 8, height: 6 + j * 8, borderRadius: 2, background: j <= scoreBars(p.score) ? scoreColor(p.score) : "var(--clr-border)" }} />
+                ))}
+              </div>
+              <span style={{ fontSize: 11, fontWeight: 700, color: scoreColor(p.score) }}>{scoreLabel(p.score)}</span>
+            </div>
+
+            {/* Competitors */}
+            <div style={{ width: 80, textAlign: "center", flexShrink: 0 }}>
+              <span style={{ fontSize: 20, fontWeight: 800, color: "var(--clr-text)" }}>{p.competitors}</span>
+            </div>
+
+            {/* Category */}
+            <div style={{ width: 120, textAlign: "center", flexShrink: 0 }}>
+              <span style={{ fontSize: 12, fontWeight: 600, padding: "5px 12px", borderRadius: 8, background: "var(--clr-surface-2)", color: "var(--clr-text-3)", whiteSpace: "nowrap" }}>
                 {catLabel(p.cat)}
               </span>
             </div>
