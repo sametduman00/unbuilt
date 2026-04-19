@@ -153,6 +153,23 @@ export default function AppTopNav() {
 
         {/* Center nav */}
         <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
+          <Link href="/?tab=dig" style={{
+            display: "flex", alignItems: "center", gap: 5,
+            fontSize: "0.9rem", fontWeight: 500, color: "#1a1a1a",
+            padding: "6px 14px",
+            background: "transparent",
+            border: "none",
+            borderRadius: 8,
+            textDecoration: "none",
+            transition: "background 0.12s",
+            cursor: "pointer",
+          }}
+            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+          >
+            Dig my Idea
+          </Link>
+          <div style={{ width: 1, height: 18, background: "#ddd", margin: "0 6px", flexShrink: 0 }} />
           <Link href="/launches" style={{
             display: "flex", alignItems: "center", gap: 6,
             fontSize: "0.9rem", fontWeight: 500, color: "#1a1a1a",
@@ -179,6 +196,23 @@ export default function AppTopNav() {
               textTransform: "uppercase" as const,
               lineHeight: "1.4",
             }}>live</span>
+          </Link>
+          <div style={{ width: 1, height: 18, background: "#ddd", margin: "0 6px", flexShrink: 0 }} />
+          <Link href="/?tab=stack" style={{
+            display: "flex", alignItems: "center", gap: 5,
+            fontSize: "0.9rem", fontWeight: 500, color: "#1a1a1a",
+            padding: "6px 14px",
+            background: "transparent",
+            border: "none",
+            borderRadius: 8,
+            textDecoration: "none",
+            transition: "background 0.12s",
+            cursor: "pointer",
+          }}
+            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+          >
+            Get my Stack
           </Link>
         </div>
 
