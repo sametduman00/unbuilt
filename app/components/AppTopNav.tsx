@@ -163,7 +163,7 @@ export default function AppTopNav() {
 
         {/* 1 — Logo pill (left-aligned) */}
         <div style={{ justifySelf: "start" }}>
-        <Link href="/" onClick={(e) => { e.preventDefault(); window.location.href = "/"; }} style={{ ...pill, gap: 8, textDecoration: "none", flexShrink: 0, padding: "0 16px" }}>
+        <Link href="/" onClick={(e) => { e.preventDefault(); window.location.href = "/"; }} style={{ ...pill, gap: 8, textDecoration: "none", flexShrink: 0, padding: "0 24px" }}>
           <UnbuiltIcon size={22} />
           <span style={{ fontSize: "1.38rem", fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.02em" }}>
             unbuilt
