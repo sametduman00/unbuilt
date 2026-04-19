@@ -16,6 +16,57 @@ async function sendTelegram(msg: string) {
   }).then(() => {}, () => {});
 }
 
+/**
+ * Meta Conversions API (CAPI) — server-side Purchase event.
+ * Client-side fbq() is unreliable (ad blockers, iOS ITP, timing).
+ * CAPI sends directly from server → Meta. 100% delivery.
+ *
+ * Setup: Add META_CAPI_TOKEN env var in Vercel dashboard.
+ * Get it from: Meta Events Manager → Settings → Generate access token
+ */
+async function sendMetaPurchaseEvent(email: string, amountUsd: number, currency: string) {
+  const pixelId = "2766426413706285";
+  const token = process.env.META_CAPI_TOKEN;
+  if (!token) {
+    console.log("[Meta CAPI] META_CAPI_TOKEN not set, skipping");
+    return;
+  }
+
+  // Hash email for privacy (Meta requires SHA256)
+  const encoder = new TextEncoder();
+  const hashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(email.toLowerCase().trim()));
+  const hashedEmail = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+
+  const payload = {
+    data: [{
+      event_name: "Purchase",
+      event_time: Math.floor(Date.now() / 1000),
+      action_source: "website",
+      event_source_url: "https://unbuilt.me/pricing",
+      user_data: {
+        em: [hashedEmail],
+      },
+      custom_data: {
+        value: amountUsd,
+        currency: currency.toUpperCase(),
+        content_name: "Unbuilt Credits",
+      },
+    }],
+  };
+
+  try {
+    const res = await fetch(`https://graph.facebook.com/v21.0/${pixelId}/events?access_token=${token}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const result = await res.json();
+    console.log("[Meta CAPI] Purchase event sent:", result?.events_received ?? 0, "events received");
+  } catch (err) {
+    console.error("[Meta CAPI] Failed to send event:", err);
+  }
+}
+
 export async function POST(req: NextRequest) {
   const secret = process.env.PADDLE_WEBHOOK_SECRET;
   const signature = req.headers.get("paddle-signature") ?? "";
@@ -116,6 +167,9 @@ export async function POST(req: NextRequest) {
     await sendTelegram(
       `💰 <b>New purchase!</b>\n📦 Package: <b>${packageSlug}</b> (${credits} credits)\n💵 Amount: <b>${amountFormatted}</b>\n📧 ${email}`
     );
+
+    // Meta CAPI — server-side Purchase event (reliable, ad-blocker proof)
+    await sendMetaPurchaseEvent(email, amountUsd ?? 0, currency);
   }
 
   return NextResponse.json({ ok: true });
