@@ -2,7 +2,7 @@
 
 **[unbuilt.me](https://unbuilt.me)** is a market intelligence platform for vibe coders, indie hackers, and no-code founders. Find what to build, validate if it's worth it, and get the exact tools to ship.
 
-## What Unbuilt Does
+## What Unbuilt Does?
 
 Unbuilt has three tools that cover the full journey from idea to execution:
 
