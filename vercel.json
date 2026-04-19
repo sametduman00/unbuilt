@@ -16,7 +16,7 @@
   "crons": [
     { "path": "/api/pulse/cron",     "schedule": "0 6 * * *" },
     { "path": "/api/cockpit/alerts", "schedule": "0 7 * * *" },
-    { "path": "/api/ideas/cron",     "schedule": "*/10 * * * *" }
+    { "path": "/api/ideas/cron",     "schedule": "0 8 * * *" }
   ]
 }
 
