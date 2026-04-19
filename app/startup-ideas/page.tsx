@@ -6,63 +6,63 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Startup Ideas — Unbuilt",
-  description: "Browse 1,000+ startup ideas with opportunity scores, competitor counts and key insights. New AI-generated ideas added every 10 minutes.",
-  openGraph: { title: "Startup Ideas — Unbuilt", description: "Browse 1,000+ startup ideas with opportunity scores and market gaps.", url: "https://unbuilt.me/startup-ideas" },
+  description: "Browse 2,000+ startup ideas with opportunity scores and key insights. New AI-generated ideas added every 10 minutes.",
+  openGraph: { title: "Startup Ideas — Unbuilt", description: "Browse 2,000+ startup ideas with opportunity scores and market gaps.", url: "https://unbuilt.me/startup-ideas" },
   alternates: { canonical: "https://unbuilt.me/startup-ideas" },
 };
-
-interface IdeaCard { slug: string; keyword: string; key_insight: string; opportunity_score: number; competitor_count: number; category: string; source: "seo" | "ai"; created_at: string; }
 
 function catLabel(c: string) { return c.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()); }
 function scoreColor(s: number) { return s >= 70 ? "#22c55e" : s >= 40 ? "#f59e0b" : "#ef4444"; }
 
-const CAT_ORDER = [
-  "saas","ai_tools","developer_tools","productivity","marketing","automation",
-  "content_creation","ecommerce","finance","freelancing","health","education",
-  "community","design","analytics","hr_and_hiring","travel","real_estate",
-  "food_and_restaurant","legal","pet","parenting","sustainability","tools",
-  "vibecoding","niche_ideas","gaming","fitness","general",
-];
+const PER_PAGE = 60;
 
-export default async function StartupIdeasPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+export default async function StartupIdeasPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const sp = await searchParams;
-  const activeCat = sp.category || null;
+  const page = Math.max(1, parseInt(sp.page || "1"));
   const sb = getSupabase();
 
-  // Fetch seo_pages (3 batches — Supabase max 1000/query)
-  const seoSelect = "slug, keyword, category, opportunity_score, competitor_count, key_insight, created_at";
-  const mkQ = (from: number, to: number) => {
-    let q = sb.from("seo_pages").select(seoSelect).eq("status", "published").order("created_at", { ascending: false }).range(from, to);
-    if (activeCat) q = q.eq("category", activeCat);
-    return q;
-  };
-  const [{ data: s1 }, { data: s2 }, { data: s3 }] = await Promise.all([mkQ(0, 999), mkQ(1000, 1999), mkQ(2000, 2999)]);
-  const seoData = [...(s1 || []), ...(s2 || []), ...(s3 || [])];
+  /* ── AI ideas (page 1 only) ── */
+  let aiRows: any[] = [];
+  if (page === 1) {
+    const { data } = await sb.from("startup_ideas")
+      .select("slug, title, category, opportunity_score, competitor_count, key_insight, one_liner")
+      .eq("status", "published")
+      .order("created_at", { ascending: false })
+      .limit(50);
+    aiRows = data || [];
+  }
 
-  // Fetch AI ideas
-  let aq = sb.from("startup_ideas").select("slug, title, category, opportunity_score, competitor_count, key_insight, one_liner, created_at").eq("status", "published").order("created_at", { ascending: false }).limit(500);
-  if (activeCat) aq = aq.eq("category", activeCat);
-  const { data: aiData } = await aq;
+  /* ── SEO pages (paginated) ── */
+  const seoOffset = page === 1 ? 0 : (page - 1) * PER_PAGE;
+  const seoLimit = page === 1 ? PER_PAGE - aiRows.length : PER_PAGE;
 
-  // Merge — newest first
-  const seoCards: IdeaCard[] = (seoData || []).map(r => ({ slug: r.slug, keyword: r.keyword, key_insight: r.key_insight || "", opportunity_score: r.opportunity_score ?? 50, competitor_count: r.competitor_count ?? 0, category: r.category, source: "seo" as const, created_at: r.created_at || "" }));
-  const aiCards: IdeaCard[] = (aiData || []).map(r => ({ slug: r.slug, keyword: r.title, key_insight: r.key_insight || r.one_liner || "", opportunity_score: r.opportunity_score ?? 50, competitor_count: r.competitor_count ?? 5, category: r.category, source: "ai" as const, created_at: r.created_at || "" }));
-  const allCards = [...aiCards, ...seoCards].sort((a, b) => (b.created_at > a.created_at ? 1 : -1));
+  const { data: seoRows } = await sb.from("seo_pages")
+    .select("slug, keyword, category, opportunity_score, competitor_count, key_insight")
+    .eq("status", "published")
+    .order("created_at", { ascending: false })
+    .range(seoOffset, seoOffset + seoLimit - 1);
 
-  // Category counts (paginated)
-  const mkCatQ = (from: number, to: number) => sb.from("seo_pages").select("category").eq("status", "published").range(from, to);
-  const [{ data: sc1 }, { data: sc2 }, { data: sc3 }, { data: aiCats }] = await Promise.all([mkCatQ(0, 999), mkCatQ(1000, 1999), mkCatQ(2000, 2999), sb.from("startup_ideas").select("category").eq("status", "published")]);
-  const catCounts: Record<string, number> = {};
-  [...(sc1 || []), ...(sc2 || []), ...(sc3 || []), ...(aiCats || [])].forEach(r => { catCounts[r.category] = (catCounts[r.category] || 0) + 1; });
-  const categories = CAT_ORDER.filter(c => catCounts[c]);
-  const total = Object.values(catCounts).reduce((a, b) => a + b, 0);
+  /* ── Totals ── */
+  const { count: seoTotal } = await sb.from("seo_pages").select("id", { count: "exact", head: true }).eq("status", "published");
+  const { count: aiTotal } = await sb.from("startup_ideas").select("id", { count: "exact", head: true }).eq("status", "published");
+  const total = (seoTotal || 0) + (aiTotal || 0);
+  const totalPages = Math.ceil((seoTotal || 0) / PER_PAGE);
+
+  /* ── Build cards ── */
+  const cards = [
+    ...aiRows.map(r => ({ slug: r.slug, name: r.title, insight: r.key_insight || r.one_liner || "", score: r.opportunity_score ?? 50, competitors: r.competitor_count ?? 5, cat: r.category, ai: true })),
+    ...(seoRows || []).map(r => ({ slug: r.slug, name: r.keyword, insight: r.key_insight || "", score: r.opportunity_score ?? 50, competitors: r.competitor_count ?? 0, cat: r.category, ai: false })),
+  ];
+
+  const hasPrev = page > 1;
+  const hasNext = page < totalPages;
 
   return (
-    <main style={{ maxWidth: 960, margin: "0 auto", padding: "2.5rem 20px 5rem" }}>
+    <main style={{ maxWidth: 720, margin: "0 auto", padding: "2.5rem 20px 5rem" }}>
       <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.035em", fontFamily: "'Syne', sans-serif", marginBottom: 8 }}>
         Startup Ideas
       </h1>
-      <p style={{ fontSize: 16, color: "var(--clr-text-3)", marginBottom: 10, maxWidth: 560, lineHeight: 1.6 }}>
+      <p style={{ fontSize: 16, color: "var(--clr-text-3)", marginBottom: 10, lineHeight: 1.6 }}>
         {total.toLocaleString()} ideas scanned. Find the gap. Skip the graveyard.
       </p>
       <p style={{ fontSize: 13, color: "var(--clr-text-4)", marginBottom: 32, display: "flex", alignItems: "center", gap: 6 }}>
@@ -70,51 +70,67 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
         New AI ideas added every ~10 min
       </p>
 
-      {/* Category pills */}
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 32 }}>
-        <Link href="/startup-ideas" style={{ fontSize: 13, padding: "5px 14px", borderRadius: 6, background: !activeCat ? "var(--clr-text)" : "var(--clr-surface)", color: !activeCat ? "#fff" : "var(--clr-text-3)", border: "1px solid var(--clr-border)", textDecoration: "none", fontWeight: 500 }}>
-          All
-        </Link>
-        {categories.map(cat => (
-          <Link key={cat} href={`/startup-ideas?category=${cat}`} style={{ fontSize: 13, padding: "5px 14px", borderRadius: 6, background: activeCat === cat ? "var(--clr-text)" : "var(--clr-surface)", color: activeCat === cat ? "#fff" : "var(--clr-text-3)", border: "1px solid var(--clr-border)", textDecoration: "none", fontWeight: 500 }}>
-            {catLabel(cat)} ({catCounts[cat]})
-          </Link>
-        ))}
-      </div>
+      {/* Ideas list — single column */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {cards.map((p, i) => (
+          <Link key={`${i}-${p.slug}`} href={p.ai ? `/startup-ideas` : `/ideas/${p.slug}`} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", borderRadius: 10, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", textDecoration: "none", transition: "border-color 0.15s" }}>
+            {/* Score dot */}
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, width: 38, height: 38, borderRadius: 8, background: "var(--clr-bg)", fontSize: 12, fontWeight: 700, color: scoreColor(p.score) }}>
+              {p.score}
+            </span>
 
-      {/* Ideas grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 12 }}>
-        {allCards.map(p => (
-          <Link key={`${p.source}-${p.slug}`} href={p.source === "seo" ? `/ideas/${p.slug}` : `/startup-ideas`} style={{ display: "block", padding: "16px 18px", borderRadius: 10, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", textDecoration: "none", transition: "border-color 0.2s, box-shadow 0.2s", position: "relative" }}>
-            {p.source === "ai" && (
-              <span style={{ position: "absolute", top: 10, right: 12, fontSize: 10, fontWeight: 600, padding: "2px 7px", borderRadius: 4, background: "#dcfce7", color: "#15803d", letterSpacing: "0.04em" }}>AI</span>
-            )}
-            <div style={{ fontSize: 15, fontWeight: 600, color: "var(--clr-text)", marginBottom: 6, lineHeight: 1.35, paddingRight: p.source === "ai" ? 36 : 0 }}>
-              {p.keyword}
-            </div>
-            {p.key_insight && (
-              <div style={{ fontSize: 13, color: "var(--clr-text-3)", lineHeight: 1.5, marginBottom: 10, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const, overflow: "hidden" }}>
-                {p.key_insight}
+            {/* Content */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 15, fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {p.name}
               </div>
-            )}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12, color: "var(--clr-text-4)" }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: "50%", background: scoreColor(p.opportunity_score) }} />
-                {p.opportunity_score}/100
+              {p.insight && (
+                <div style={{ fontSize: 13, color: "var(--clr-text-3)", lineHeight: 1.4, marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {p.insight}
+                </div>
+              )}
+            </div>
+
+            {/* Meta */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+              {p.ai && (
+                <span style={{ fontSize: 10, fontWeight: 600, padding: "2px 7px", borderRadius: 4, background: "#dcfce7", color: "#15803d" }}>AI</span>
+              )}
+              <span style={{ fontSize: 12, color: "var(--clr-text-4)", whiteSpace: "nowrap" }}>
+                {p.competitors} comp.
               </span>
-              <span style={{ color: "var(--clr-text-5)" }}>·</span>
-              <span>{p.competitor_count ?? "?"} competitors</span>
-              <span style={{ color: "var(--clr-text-5)" }}>·</span>
-              <span>{catLabel(p.category)}</span>
+              <span style={{ fontSize: 11, color: "var(--clr-text-4)", padding: "2px 8px", borderRadius: 6, background: "var(--clr-surface-2)", whiteSpace: "nowrap" }}>
+                {catLabel(p.cat)}
+              </span>
             </div>
           </Link>
         ))}
       </div>
 
-      {allCards.length === 0 && (
-        <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--clr-text-4)" }}>No ideas published yet.</div>
+      {cards.length === 0 && (
+        <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--clr-text-4)" }}>No ideas found.</div>
       )}
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 40 }}>
+          {hasPrev ? (
+            <Link href={`/startup-ideas?page=${page - 1}`} style={{ padding: "8px 20px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", color: "var(--clr-text-2)", fontSize: 14, fontWeight: 500, textDecoration: "none" }}>
+              ← Previous
+            </Link>
+          ) : <span />}
+          <span style={{ fontSize: 13, color: "var(--clr-text-4)" }}>
+            Page {page} / {totalPages}
+          </span>
+          {hasNext ? (
+            <Link href={`/startup-ideas?page=${page + 1}`} style={{ padding: "8px 20px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", color: "var(--clr-text-2)", fontSize: 14, fontWeight: 500, textDecoration: "none" }}>
+              Next →
+            </Link>
+          ) : <span />}
+        </div>
+      )}
+
+      {/* Bottom CTA */}
       <div style={{ marginTop: 48, padding: "32px 28px", borderRadius: 12, background: "linear-gradient(135deg, #7c6fff12 0%, #0891b212 100%)", border: "1px solid var(--clr-border-2)", textAlign: "center" }}>
         <h3 style={{ fontSize: 20, fontWeight: 700, fontFamily: "'Syne', sans-serif", marginBottom: 8 }}>Got your own idea?</h3>
         <p style={{ fontSize: 15, color: "var(--clr-text-3)", marginBottom: 20 }}>Dig analyzes it against 70+ live sources in 5 minutes.</p>
