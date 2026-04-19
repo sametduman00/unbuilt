@@ -21,10 +21,19 @@ function slugify(text: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  // Verify cron secret or allow internal calls
+  // Verify auth: CRON_SECRET or IDEAS_CRON_KEY
   const authHeader = req.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  const ideasKey = process.env.IDEAS_CRON_KEY;
+  const queryKey = req.nextUrl.searchParams.get("key");
+
+  const isAuthed =
+    !cronSecret ||
+    authHeader === `Bearer ${cronSecret}` ||
+    (ideasKey && authHeader === `Bearer ${ideasKey}`) ||
+    (ideasKey && queryKey === ideasKey);
+
+  if (!isAuthed) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
