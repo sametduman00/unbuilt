@@ -73,27 +73,24 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
       </p>
 
       {/* Table header */}
-      <div style={{ display: "flex", alignItems: "center", padding: "0 20px 10px", gap: 16 }}>
-        <div style={{ flex: 1, fontSize: 11, fontWeight: 600, color: "var(--clr-text-4)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Idea</div>
-        <div style={{ width: 80, fontSize: 11, fontWeight: 600, color: "var(--clr-text-4)", textTransform: "uppercase", letterSpacing: "0.06em", textAlign: "center" }}>Score</div>
-        <div style={{ width: 80, fontSize: 11, fontWeight: 600, color: "var(--clr-text-4)", textTransform: "uppercase", letterSpacing: "0.06em", textAlign: "center" }}>Comp.</div>
-        <div style={{ width: 120, fontSize: 11, fontWeight: 600, color: "var(--clr-text-4)", textTransform: "uppercase", letterSpacing: "0.06em", textAlign: "center" }}>Category</div>
+      <div style={{ display: "flex", alignItems: "center", padding: "0 20px 12px", gap: 16, borderBottom: "2px solid var(--clr-border)" }}>
+        <div style={{ flex: 1, fontSize: 13, fontWeight: 700, color: "var(--clr-text-2)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Idea</div>
+        <div style={{ width: 80, fontSize: 13, fontWeight: 700, color: "var(--clr-text-2)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "center" }}>Score</div>
+        <div style={{ width: 100, fontSize: 13, fontWeight: 700, color: "var(--clr-text-2)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "center" }}>Competitors</div>
+        <div style={{ width: 120, fontSize: 13, fontWeight: 700, color: "var(--clr-text-2)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "center" }}>Category</div>
       </div>
 
       {/* Ideas list */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8 }}>
         {cards.map((p, i) => (
           <Link key={`${i}-${p.slug}`} href={p.ai ? `/startup-ideas/${p.slug}` : `/ideas/${p.slug}`} style={{ display: "flex", alignItems: "center", gap: 16, padding: "18px 20px", borderRadius: 12, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", textDecoration: "none", transition: "border-color 0.15s, box-shadow 0.15s" }}>
 
             {/* Name + insight */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <div style={{ marginBottom: 4 }}>
                 <span style={{ fontSize: 16, fontWeight: 700, color: "var(--clr-text)", lineHeight: 1.3 }}>
                   {p.name}
                 </span>
-                {p.ai && (
-                  <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 4, background: "#dcfce7", color: "#15803d", flexShrink: 0 }}>AI</span>
-                )}
               </div>
               {p.insight && (
                 <div style={{ fontSize: 13, color: "var(--clr-text-3)", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -113,7 +110,7 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
             </div>
 
             {/* Competitors */}
-            <div style={{ width: 80, textAlign: "center", flexShrink: 0 }}>
+            <div style={{ width: 100, textAlign: "center", flexShrink: 0 }}>
               <span style={{ fontSize: 20, fontWeight: 800, color: "var(--clr-text)" }}>{p.competitors}</span>
             </div>
 
