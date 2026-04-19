@@ -106,52 +106,6 @@ const jsonLd = [
     "sameAs": [
       "https://x.com/Unbuilt_me"
     ]
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What is Unbuilt?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Unbuilt is a market intelligence platform for vibe coders, indie hackers, and no-code founders. It has three tools: Launches (free daily feed of new apps with AI analysis), Dig (market analysis scanning 70+ live sources), and Stack (build plan from 700+ tools)."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How does Dig validate an app idea?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Dig scans 70+ live data sources including App Store, Google Play, Reddit, X, YouTube, and Product Hunt. It returns a competitor list, pain points, market gaps, SWOT analysis, and an opportunity score from 0 to 100. The process takes approximately 5 minutes."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is Unbuilt free to use?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Launches (the daily app feed) is completely free with no account required. Dig (market analysis) and Stack (build plan) each cost 1 credit per report. Unbuilt also hosts 2,400+ free app idea analysis pages at unbuilt.me/ideas."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is vibecoding?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Vibecoding is building software using AI-powered tools like Cursor, Lovable, Bolt, Replit, and v0. It allows non-traditional developers to create apps quickly. Unbuilt helps vibe coders validate their ideas before building."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How many app ideas does Unbuilt analyze?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Unbuilt hosts over 2,400 pre-analyzed app idea pages covering 25+ categories including SaaS, AI tools, developer tools, productivity, finance, health, and education. Each page includes an opportunity score, competitor count, and market overview."
-        }
-      }
-    ]
   }
 ];
 
