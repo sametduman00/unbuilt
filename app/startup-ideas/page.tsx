@@ -73,7 +73,7 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
       {/* Ideas list — single column */}
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {cards.map((p, i) => (
-          <Link key={`${i}-${p.slug}`} href={p.ai ? `/startup-ideas` : `/ideas/${p.slug}`} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", borderRadius: 10, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", textDecoration: "none", transition: "border-color 0.15s" }}>
+          <Link key={`${i}-${p.slug}`} href={p.ai ? `/startup-ideas/${p.slug}` : `/ideas/${p.slug}`} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", borderRadius: 10, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", textDecoration: "none", transition: "border-color 0.15s" }}>
             {/* Score dot */}
             <span style={{ display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, width: 38, height: 38, borderRadius: 8, background: "var(--clr-bg)", fontSize: 12, fontWeight: 700, color: scoreColor(p.score) }}>
               {p.score}
