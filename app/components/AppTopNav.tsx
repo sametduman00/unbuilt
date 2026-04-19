@@ -121,6 +121,29 @@ export default function AppTopNav() {
     transition: "background 0.12s",
   };
 
+  const pill: React.CSSProperties = {
+    background: "rgba(255,255,255,0.97)",
+    backdropFilter: "blur(12px)",
+    border: "1px solid #e8e8e5",
+    borderRadius: 999,
+    boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+    display: "flex",
+    alignItems: "center",
+    height: 44,
+    transition: "box-shadow 0.15s, border-color 0.15s",
+  };
+
+  const toolPill: React.CSSProperties = {
+    ...pill,
+    padding: "0 18px",
+    fontSize: "0.875rem",
+    fontWeight: 500,
+    color: "#1a1a1a",
+    textDecoration: "none",
+    cursor: "pointer",
+    gap: 6,
+  };
+
   return (
     <nav className="app-desktop-nav" style={{
       position: "fixed",
@@ -130,110 +153,74 @@ export default function AppTopNav() {
       width: "calc(100% - 48px)",
       maxWidth: 1200,
       zIndex: 1000,
-      height: 54,
-      background: "rgba(255,255,255,0.97)",
-      backdropFilter: "blur(12px)",
-      border: "1px solid #e8e8e5",
-      borderRadius: 14,
       display: "flex",
       alignItems: "center",
-      justifyContent: "space-between",
-      padding: "0 20px",
-      boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+      justifyContent: "center",
+      gap: 8,
       boxSizing: "border-box",
     }}>
 
-        {/* Logo — inline SVG, transparent bg */}
-        <Link href="/" onClick={(e) => { e.preventDefault(); window.location.href = "/"; }} style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", flexShrink: 0 }}>
-          <UnbuiltIcon size={26} />
-          <span style={{ fontSize: "1.32rem", fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.02em" }}>
+        {/* 1 — Logo pill */}
+        <Link href="/" onClick={(e) => { e.preventDefault(); window.location.href = "/"; }} style={{ ...pill, gap: 8, textDecoration: "none", flexShrink: 0, padding: "0 16px", marginRight: "auto" }}>
+          <UnbuiltIcon size={22} />
+          <span style={{ fontSize: "1.15rem", fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.02em" }}>
             unbuilt
           </span>
         </Link>
 
-        {/* Center nav */}
-        <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
-          <Link href="/?tab=dig" style={{
-            display: "flex", alignItems: "center", gap: 5,
-            fontSize: "0.9rem", fontWeight: 500, color: "#1a1a1a",
-            padding: "6px 14px",
-            background: "transparent",
-            border: "none",
-            borderRadius: 8,
-            textDecoration: "none",
-            transition: "background 0.12s",
-            cursor: "pointer",
-          }}
-            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
-            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-          >
-            Dig my Idea
-          </Link>
-          <div style={{ width: 1, height: 18, background: "#ddd", margin: "0 6px", flexShrink: 0 }} />
-          <Link href="/launches" style={{
-            display: "flex", alignItems: "center", gap: 6,
-            fontSize: "0.9rem", fontWeight: 500, color: "#1a1a1a",
-            padding: "6px 14px",
-            background: "transparent",
-            border: "none",
-            borderRadius: 8,
-            textDecoration: "none",
-            transition: "background 0.12s",
-            cursor: "pointer",
-          }}
-            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
-            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-          >
-            Launches
-            <span style={{
-              padding: "1px 6px",
-              background: "#16a34a",
-              color: "#fff",
-              borderRadius: 4,
-              fontSize: "0.6rem",
-              fontWeight: 600,
-              letterSpacing: "0.5px",
-              textTransform: "uppercase" as const,
-              lineHeight: "1.4",
-            }}>live</span>
-          </Link>
-          <div style={{ width: 1, height: 18, background: "#ddd", margin: "0 6px", flexShrink: 0 }} />
-          <Link href="/?tab=stack" style={{
-            display: "flex", alignItems: "center", gap: 5,
-            fontSize: "0.9rem", fontWeight: 500, color: "#1a1a1a",
-            padding: "6px 14px",
-            background: "transparent",
-            border: "none",
-            borderRadius: 8,
-            textDecoration: "none",
-            transition: "background 0.12s",
-            cursor: "pointer",
-          }}
-            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
-            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-          >
-            Get my Stack
-          </Link>
-        </div>
+        {/* 2 — Dig my Idea pill */}
+        <Link href="/?tab=dig" style={toolPill}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "#ccc"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "#e8e8e5"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)"; }}
+        >
+          Dig my Idea
+        </Link>
 
-        {/* Right */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+        {/* 3 — Launches pill */}
+        <Link href="/launches" style={toolPill}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "#ccc"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "#e8e8e5"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)"; }}
+        >
+          Launches
+          <span style={{
+            padding: "1px 6px",
+            background: "#16a34a",
+            color: "#fff",
+            borderRadius: 4,
+            fontSize: "0.6rem",
+            fontWeight: 600,
+            letterSpacing: "0.5px",
+            textTransform: "uppercase" as const,
+            lineHeight: "1.4",
+          }}>live</span>
+        </Link>
+
+        {/* 4 — Get my Stack pill */}
+        <Link href="/?tab=stack" style={toolPill}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "#ccc"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "#e8e8e5"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)"; }}
+        >
+          Get my Stack
+        </Link>
+
+        {/* 5 — User pill */}
+        <div style={{ marginLeft: "auto", flexShrink: 0 }}>
           {isSignedIn ? (
             <div ref={userRef} style={{ position: "relative" }}>
               <button
                 onClick={() => setUserOpen(p => !p)}
                 style={{
-                  display: "flex", alignItems: "center", gap: 8,
-                  padding: "5px 10px 5px 5px",
-                  background: userOpen ? "#f5f5f3" : "transparent",
-                  border: "1px solid #e8e8e5", borderRadius: 999,
-                  cursor: "pointer", transition: "background 0.15s",
+                  ...pill,
+                  gap: 8,
+                  padding: "0 10px 0 5px",
+                  background: userOpen ? "#f9f9f8" : "rgba(255,255,255,0.97)",
+                  cursor: "pointer",
                 }}>
                 <div style={{
                   width: 28, height: 28, borderRadius: "50%",
                   background: "#6c47ff", color: "#fff",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "0.75rem", fontWeight: 600, flexShrink: 0,
+                  fontSize: "0.75rem", fontWeight: 600, flexShrink: 0, marginLeft: 3,
                 }}>{initials}</div>
                 <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "#1a1a1a" }}>{firstName}</span>
                 <span style={{ fontSize: "0.75rem", color: "#666", background: "#f0f0ee", borderRadius: 4, padding: "1px 7px", fontWeight: 500 }}>
@@ -286,12 +273,15 @@ export default function AppTopNav() {
             </div>
           ) : (
             <Link href="/sign-in" style={{
+              ...pill,
+              padding: "0 18px",
               fontSize: "0.875rem", fontWeight: 500,
               color: "#fff", background: "#1a1a1a",
-              borderRadius: 8, padding: "7px 18px", textDecoration: "none",
+              border: "1px solid #1a1a1a",
+              textDecoration: "none",
             }}
-              onMouseEnter={e => (e.currentTarget.style.background = "#333")}
-              onMouseLeave={e => (e.currentTarget.style.background = "#1a1a1a")}
+              onMouseEnter={e => { e.currentTarget.style.background = "#333"; e.currentTarget.style.borderColor = "#333"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "#1a1a1a"; e.currentTarget.style.borderColor = "#1a1a1a"; }}
             >Sign in</Link>
           )}
         </div>
