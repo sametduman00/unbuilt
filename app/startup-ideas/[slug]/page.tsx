@@ -101,15 +101,19 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ slu
             <span style={{ fontSize: 32, fontWeight: 800, color: "var(--clr-text)", fontFamily: "'Syne', sans-serif" }}>{idea.competitor_count ?? "—"}</span>
             <span style={{ fontSize: 14, color: "var(--clr-text-3)", fontWeight: 500 }}>apps</span>
           </div>
-          <div style={{ fontSize: 13, color: "var(--clr-text-3)", marginTop: 4 }}>{idea.competition_level}</div>
+          <div style={{ fontSize: 13, color: "var(--clr-text-3)", marginTop: 4 }}>
+            {(idea.competition_level || "").split("—")[0].split("–")[0].trim()}
+          </div>
         </div>
 
         <div style={{ padding: "20px 24px", borderRadius: 10, background: "var(--clr-surface)", border: "1px solid var(--clr-border)" }}>
           <div style={{ fontSize: 12, color: "var(--clr-text-4)", marginBottom: 8, fontWeight: 500 }}>Difficulty</div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-            <span style={{ fontSize: 20, fontWeight: 800, color: diffColor(idea.difficulty), fontFamily: "'Syne', sans-serif" }}>{idea.difficulty}</span>
+            <span style={{ fontSize: 28, fontWeight: 800, color: diffColor(idea.difficulty), fontFamily: "'Syne', sans-serif" }}>
+              {(idea.difficulty || "Medium").split("—")[0].split("–")[0].trim()}
+            </span>
           </div>
-          <div style={{ fontSize: 13, color: "var(--clr-text-3)", marginTop: 4 }}>Market: {idea.market_size}</div>
+          <div style={{ fontSize: 13, color: "var(--clr-text-3)", marginTop: 4 }}>Market: {(idea.market_size || "").split("—")[0].split("–")[0].trim()}</div>
         </div>
       </div>
 
