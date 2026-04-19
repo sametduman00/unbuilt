@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 
 function catLabel(c: string) { return c.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()); }
 function scoreColor(s: number) { return s >= 70 ? "#22c55e" : s >= 40 ? "#f59e0b" : "#ef4444"; }
+function scoreBars(s: number) { return s >= 70 ? 3 : s >= 40 ? 2 : 1; }
+function scoreLabel(s: number) { return s >= 70 ? "High" : s >= 40 ? "Mid" : "Low"; }
 
 const PER_PAGE = 60;
 
@@ -75,9 +77,15 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
         {cards.map((p, i) => (
           <Link key={`${i}-${p.slug}`} href={p.ai ? `/startup-ideas/${p.slug}` : `/ideas/${p.slug}`} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", borderRadius: 10, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", textDecoration: "none", transition: "border-color 0.15s" }}>
             {/* Score dot */}
-            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, width: 38, height: 38, borderRadius: 8, background: "var(--clr-bg)", fontSize: 12, fontWeight: 700, color: scoreColor(p.score) }}>
-              {p.score}
-            </span>
+            {/* Score bars */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, flexShrink: 0, width: 38 }}>
+              <div style={{ display: "flex", gap: 2, alignItems: "flex-end", height: 24 }}>
+                {[1, 2, 3].map(i => (
+                  <div key={i} style={{ width: 6, height: i * 7, borderRadius: 2, background: i <= scoreBars(p.score) ? scoreColor(p.score) : "var(--clr-border)" }} />
+                ))}
+              </div>
+              <span style={{ fontSize: 9, fontWeight: 700, color: scoreColor(p.score), letterSpacing: "0.03em" }}>{scoreLabel(p.score)}</span>
+            </div>
 
             {/* Content */}
             <div style={{ flex: 1, minWidth: 0 }}>

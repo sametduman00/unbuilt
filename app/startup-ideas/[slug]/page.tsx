@@ -40,7 +40,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 function scoreColor(s: number) { return s >= 70 ? "#22c55e" : s >= 40 ? "#f59e0b" : "#ef4444"; }
-function scoreLabel(s: number) { return s >= 70 ? "High Opportunity" : s >= 40 ? "Moderate" : "Crowded"; }
+function scoreLabel(s: number) { return s >= 70 ? "High Opportunity" : s >= 40 ? "Moderate" : "Low"; }
+function scoreBars(s: number) { return s >= 70 ? 3 : s >= 40 ? 2 : 1; }
 function catLabel(c: string) { return c.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()); }
 function diffColor(d: string) { return d?.toLowerCase().includes("easy") ? "#22c55e" : d?.toLowerCase().includes("hard") ? "#ef4444" : "#f59e0b"; }
 
@@ -87,9 +88,15 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ slu
       {/* Score bar — horizontal */}
       <div style={{ display: "flex", gap: 0, marginBottom: 12, borderRadius: 10, border: "1px solid var(--clr-border)", overflow: "hidden" }}>
         <div style={{ flex: 1, padding: "16px 20px", background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)" }}>
-          <div style={{ fontSize: 11, color: "var(--clr-text-4)", marginBottom: 6, fontWeight: 500 }}>Opportunity</div>
-          <span style={{ fontSize: 28, fontWeight: 800, color: sc, fontFamily: "'Syne', sans-serif" }}>{idea.opportunity_score}</span>
-          <span style={{ fontSize: 13, color: sc, fontWeight: 600 }}> /100</span>
+          <div style={{ fontSize: 11, color: "var(--clr-text-4)", marginBottom: 8, fontWeight: 500 }}>Opportunity</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ display: "flex", gap: 3, alignItems: "flex-end" }}>
+              {[1, 2, 3].map(i => (
+                <div key={i} style={{ width: 8, height: i * 10, borderRadius: 2, background: i <= scoreBars(idea.opportunity_score) ? sc : "var(--clr-border)" }} />
+              ))}
+            </div>
+            <span style={{ fontSize: 15, fontWeight: 700, color: sc }}>{scoreLabel(idea.opportunity_score)}</span>
+          </div>
         </div>
         <div style={{ flex: 1, padding: "16px 20px", background: "var(--clr-surface)", borderRight: "1px solid var(--clr-border)" }}>
           <div style={{ fontSize: 11, color: "var(--clr-text-4)", marginBottom: 6, fontWeight: 500 }}>Competitors</div>
@@ -171,9 +178,11 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ slu
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {related.map(r => (
               <Link key={r.slug} href={`/startup-ideas/${r.slug}`} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 16px", borderRadius: 10, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", textDecoration: "none" }}>
-                <span style={{ width: 34, height: 34, borderRadius: 8, background: "var(--clr-bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: scoreColor(r.opportunity_score ?? 50), flexShrink: 0 }}>
-                  {r.opportunity_score ?? 50}
-                </span>
+                <div style={{ display: "flex", gap: 2, alignItems: "flex-end", flexShrink: 0, width: 28 }}>
+                  {[1, 2, 3].map(i => (
+                    <div key={i} style={{ width: 5, height: i * 6, borderRadius: 2, background: i <= scoreBars(r.opportunity_score ?? 50) ? scoreColor(r.opportunity_score ?? 50) : "var(--clr-border)" }} />
+                  ))}
+                </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 14, fontWeight: 600, color: "var(--clr-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.title}</div>
                 </div>
