@@ -29,10 +29,13 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
   const activeCat = sp.category || null;
   const sb = getSupabase();
 
-  // Fetch seo_pages
-  let sq = sb.from("seo_pages").select("slug, keyword, category, opportunity_score, competitor_count, key_insight").eq("status", "published").order("opportunity_score", { ascending: false }).limit(500);
-  if (activeCat) sq = sq.eq("category", activeCat);
-  const { data: seoData } = await sq;
+  // Fetch seo_pages (paginated — Supabase max 1000/query)
+  const seoSelect = "slug, keyword, category, opportunity_score, competitor_count, key_insight";
+  let sq1 = sb.from("seo_pages").select(seoSelect).eq("status", "published").order("opportunity_score", { ascending: false }).range(0, 999);
+  let sq2 = sb.from("seo_pages").select(seoSelect).eq("status", "published").order("opportunity_score", { ascending: false }).range(1000, 2499);
+  if (activeCat) { sq1 = sq1.eq("category", activeCat); sq2 = sq2.eq("category", activeCat); }
+  const [{ data: seo1 }, { data: seo2 }] = await Promise.all([sq1, sq2]);
+  const seoData = [...(seo1 || []), ...(seo2 || [])];
 
   // Fetch AI ideas
   let aq = sb.from("startup_ideas").select("slug, title, category, opportunity_score, competitor_count, key_insight, one_liner").eq("status", "published").order("created_at", { ascending: false }).limit(200);
