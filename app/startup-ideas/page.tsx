@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://unbuilt.me/startup-ideas" },
 };
 
-interface IdeaCard { slug: string; keyword: string; key_insight: string; opportunity_score: number; competitor_count: number; category: string; source: "seo" | "ai"; }
+interface IdeaCard { slug: string; keyword: string; key_insight: string; opportunity_score: number; competitor_count: number; category: string; source: "seo" | "ai"; created_at: string; }
 
 function catLabel(c: string) { return c.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()); }
 function scoreColor(s: number) { return s >= 70 ? "#22c55e" : s >= 40 ? "#f59e0b" : "#ef4444"; }
@@ -30,9 +30,9 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
   const sb = getSupabase();
 
   // Fetch seo_pages (3 batches — Supabase max 1000/query)
-  const seoSelect = "slug, keyword, category, opportunity_score, competitor_count, key_insight";
+  const seoSelect = "slug, keyword, category, opportunity_score, competitor_count, key_insight, created_at";
   const mkQ = (from: number, to: number) => {
-    let q = sb.from("seo_pages").select(seoSelect).eq("status", "published").order("opportunity_score", { ascending: false }).range(from, to);
+    let q = sb.from("seo_pages").select(seoSelect).eq("status", "published").order("created_at", { ascending: false }).range(from, to);
     if (activeCat) q = q.eq("category", activeCat);
     return q;
   };
@@ -40,14 +40,14 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
   const seoData = [...(s1 || []), ...(s2 || []), ...(s3 || [])];
 
   // Fetch AI ideas
-  let aq = sb.from("startup_ideas").select("slug, title, category, opportunity_score, competitor_count, key_insight, one_liner").eq("status", "published").order("created_at", { ascending: false }).limit(500);
+  let aq = sb.from("startup_ideas").select("slug, title, category, opportunity_score, competitor_count, key_insight, one_liner, created_at").eq("status", "published").order("created_at", { ascending: false }).limit(500);
   if (activeCat) aq = aq.eq("category", activeCat);
   const { data: aiData } = await aq;
 
-  // Merge
-  const seoCards: IdeaCard[] = (seoData || []).map(r => ({ slug: r.slug, keyword: r.keyword, key_insight: r.key_insight || "", opportunity_score: r.opportunity_score ?? 50, competitor_count: r.competitor_count ?? 0, category: r.category, source: "seo" as const }));
-  const aiCards: IdeaCard[] = (aiData || []).map(r => ({ slug: r.slug, keyword: r.title, key_insight: r.key_insight || r.one_liner || "", opportunity_score: r.opportunity_score ?? 50, competitor_count: r.competitor_count ?? 5, category: r.category, source: "ai" as const }));
-  const allCards = [...aiCards, ...seoCards];
+  // Merge — newest first
+  const seoCards: IdeaCard[] = (seoData || []).map(r => ({ slug: r.slug, keyword: r.keyword, key_insight: r.key_insight || "", opportunity_score: r.opportunity_score ?? 50, competitor_count: r.competitor_count ?? 0, category: r.category, source: "seo" as const, created_at: r.created_at || "" }));
+  const aiCards: IdeaCard[] = (aiData || []).map(r => ({ slug: r.slug, keyword: r.title, key_insight: r.key_insight || r.one_liner || "", opportunity_score: r.opportunity_score ?? 50, competitor_count: r.competitor_count ?? 5, category: r.category, source: "ai" as const, created_at: r.created_at || "" }));
+  const allCards = [...aiCards, ...seoCards].sort((a, b) => (b.created_at > a.created_at ? 1 : -1));
 
   // Category counts (paginated)
   const mkCatQ = (from: number, to: number) => sb.from("seo_pages").select("category").eq("status", "published").range(from, to);
