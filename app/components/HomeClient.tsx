@@ -1508,20 +1508,24 @@ function LandingReportPreview() {
   );
 }
 
-function NoCreditsModal({ idea, onClose }: { idea: string; onClose: () => void }) {
+function UpgradeModal({ idea, onClose, isPro }: { idea: string; onClose: () => void; isPro?: boolean }) {
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 16, padding: "28px 28px 24px", maxWidth: 400, width: "100%", boxShadow: "0 24px 64px rgba(0,0,0,0.18)" }}>
+      <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 16, padding: "28px 28px 24px", maxWidth: 420, width: "100%", boxShadow: "0 24px 64px rgba(0,0,0,0.18)" }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(239,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(99,102,241,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             </div>
             <div>
-              <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--clr-text)" }}>You&apos;re out of credits</div>
-              <div style={{ fontSize: "0.775rem", color: "var(--clr-text-4)", marginTop: 2 }}>Dig and Stack cost 1 credit each</div>
+              <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--clr-text)" }}>
+                {isPro ? "You\u2019ve used all your analyses" : "Unlock full reports"}
+              </div>
+              <div style={{ fontSize: "0.775rem", color: "var(--clr-text-4)", marginTop: 2 }}>
+                {isPro ? "Buy more or wait for renewal" : "Free gets the answer. Pro gets the full picture."}
+              </div>
             </div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--clr-text-4)", padding: 4, lineHeight: 1 }}>
@@ -1534,23 +1538,35 @@ function NoCreditsModal({ idea, onClose }: { idea: string; onClose: () => void }
             &ldquo;{idea.trim().slice(0, 100)}{idea.trim().length > 100 ? "..." : ""}&rdquo;
           </div>
         )}
-        <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, margin: "0 0 20px" }}>
-          Buy a credit pack and your prompt will be right here waiting — no need to retype anything.
-        </p>
-        <div style={{ display: "flex", gap: 10 }}>
-          <a
-            href="/pricing"
-            style={{ flex: 1, display: "block", textAlign: "center" as const, padding: "11px 0", borderRadius: 9, background: "#7c6fff", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}
-          >
-            Buy credits →
-          </a>
-          <button
-            onClick={onClose}
-            style={{ padding: "11px 18px", borderRadius: 9, background: "transparent", border: "1px solid var(--clr-border)", color: "var(--clr-text-3)", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
-          >
-            Maybe later
-          </button>
-        </div>
+        {!isPro ? (
+          <>
+            <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.7, margin: "0 0 20px" }}>
+              Pro includes full Dig reports, complete Stack plans, all Launches &amp; Startup Ideas, PDF export, and saved report history.
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <a href="/pricing" style={{ flex: 1, display: "block", textAlign: "center" as const, padding: "11px 0", borderRadius: 9, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
+                Go Pro — $9.99/mo →
+              </a>
+              <button onClick={onClose} style={{ padding: "11px 18px", borderRadius: 9, background: "transparent", border: "1px solid var(--clr-border)", color: "var(--clr-text-3)", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                Maybe later
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.6, margin: "0 0 20px" }}>
+              You can still search with limited results, or buy extra analyses for full reports.
+            </p>
+            <div style={{ display: "flex", gap: 10 }}>
+              <a href="/pricing" style={{ flex: 1, display: "block", textAlign: "center" as const, padding: "11px 0", borderRadius: 9, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
+                Buy more analyses →
+              </a>
+              <button onClick={onClose} style={{ padding: "11px 18px", borderRadius: 9, background: "transparent", border: "1px solid var(--clr-border)", color: "var(--clr-text-3)", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                Close
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -3185,7 +3201,7 @@ function HomeInner() {
   useEffect(() => { const mq = window.matchMedia("(max-width: 768px)"); const fn = () => setIsMobile(mq.matches); fn(); mq.addEventListener("change", fn); return () => mq.removeEventListener("change", fn); }, []);
   const { isSignedIn } = useAuth();
   const { user } = useUser();
-  const [credits, setCredits] = useState<number | null>(null);
+  const [userPlan, setUserPlan] = useState<{ plan: string; totalAnalyses: number; isPro: boolean; currentPeriodEnd: string | null } | null>(null);
   useEffect(() => {
     if (!isSignedIn) return;
     // Restore pending idea/tool saved before sign-in redirect
@@ -3202,7 +3218,7 @@ function HomeInner() {
         setIdea(pendingIdea);
       }
     }
-    fetch("/api/credits").then(r => r.json()).then(d => setCredits(d.credits ?? 0)).catch(() => {});
+    fetch("/api/user/plan").then(r => r.json()).then(d => setUserPlan({ plan: d.plan ?? "free", totalAnalyses: d.totalAnalyses ?? 0, isPro: d.isPro ?? false, currentPeriodEnd: d.currentPeriodEnd ?? null })).catch(() => {});
   }, [isSignedIn]);
   const { openSignIn } = useClerk();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
@@ -3226,8 +3242,8 @@ function HomeInner() {
   const [loading, setLoading] = useState(false);
   const [streamedContent, setStreamedContent] = useState("");
   const [error, setError] = useState("");
-  const [outOfCredits, setOutOfCredits] = useState(false);
-  const [showNoCreditsModal, setShowNoCreditsModal] = useState(false);
+  const [outOfAnalyses, setOutOfAnalyses] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showFreeCreditPopup, setShowFreeCreditPopup] = useState(false);
   useEffect(() => {
     if (!isSignedIn && !sessionStorage.getItem("free_popup_dismissed")) {
@@ -3330,7 +3346,7 @@ function HomeInner() {
     setStreamedContent("");
     setIdea("");
     setError("");
-    setOutOfCredits(false);
+    setOutOfAnalyses(false);
     setLoading(false);
     setResultCached(null);
     setGithubRepos([]);
@@ -3543,7 +3559,7 @@ function HomeInner() {
 
   const handleSubmit = async () => {
     if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", selectedTool ?? activeHeroTab); window.history.replaceState({}, "", "/"); openSignIn(); return; }
-    if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); setSelectedTool(null); window.history.replaceState({}, "", "/"); return; }
+    if (userPlan && !userPlan.isPro && userPlan.totalAnalyses <= 0) { /* Free user — will use free endpoint, no blocking */ }
     if (!selectedTool || idea.trim().length < 3) return;
     const tool = TOOLS.find((t) => t.id === selectedTool)!;
 
@@ -3555,7 +3571,7 @@ function HomeInner() {
     }
     setStreamedContent("");
     setError("")
-    setOutOfCredits(false);;
+    setOutOfAnalyses(false);;
     setResultCached(null);
     setGithubRepos([]);
     setGithubFetched(false);
@@ -3593,7 +3609,7 @@ function HomeInner() {
         const res = await fetch(`/api/trend-feed?q=${encodeURIComponent(idea.trim())}`);
         if (!res.ok) {
           const d = await res.json();
-          if (res.status === 402) { setOutOfCredits(true); setLoading(false); return; }
+          if (res.status === 402) { setOutOfAnalyses(true); setLoading(false); return; }
           throw new Error(d.error || "Something went wrong");
         }
         const result = await res.json();
@@ -3645,7 +3661,7 @@ function HomeInner() {
       });
       if (!res.ok) {
         const d = await res.json();
-        if (res.status === 402) { setOutOfCredits(true); setLoading(false); return; }
+        if (res.status === 402) { setOutOfAnalyses(true); setLoading(false); return; }
         throw new Error(d.error || "Something went wrong");
       }
       const reader = res.body?.getReader();
@@ -3719,7 +3735,7 @@ function HomeInner() {
     }, 50);
     setStreamedContent("");
     setError("")
-    setOutOfCredits(false);;
+    setOutOfAnalyses(false);;
     setResultCached(null);
     setTrendFeedData(null);
     setGithubRepos([]);
@@ -3745,7 +3761,7 @@ function HomeInner() {
     setIdea("");
     setStreamedContent("");
     setError("")
-    setOutOfCredits(false);;
+    setOutOfAnalyses(false);;
     setResultCached(null);
     setGithubRepos([]);
     setGithubFetched(false);
@@ -3914,7 +3930,7 @@ function HomeInner() {
                       <textarea
                         value={idea}
                         onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
-                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); } else { setSelectedTool(activeHeroTab as ToolId); } } } }}
+                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); } } } }}
                         placeholder={activeHeroTab === "gap-analysis" ? 'e.g. "Project management for freelancers"' : 'e.g. "A marketplace for local freelancers with payments"'}
                         style={{ width: "100%", minHeight: 88, resize: "none", background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "16px 18px", fontSize: "1.0625rem", color: "var(--clr-text)", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
                       />
@@ -3968,7 +3984,7 @@ function HomeInner() {
                             <span style={{ fontSize: "0.8125rem", color: "var(--clr-text)" }}>{40 - idea.trim().length} more chars</span>
                           )}
                           <button
-                            onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); } else { setSelectedTool(activeHeroTab as ToolId); } } }}
+                            onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); } } }}
                             disabled={idea.trim().length < 40}
                             style={{ background: idea.trim().length >= 40 ? "var(--clr-text)" : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
@@ -4665,13 +4681,13 @@ ${sections.join("\n")}
               {loading && selectedTool !== "gap-analysis" && selectedTool !== "stack-advisor" && selectedTool !== "trend-feed" && sections.length === 0 && currentTool && <LoadingSkeleton tool={currentTool} />}
 
               {/* Error */}
-              {outOfCredits && (
+              {outOfAnalyses && (
                 <div style={{ margin: "16px 0", padding: "14px 18px", borderRadius: 10, background: "rgba(255,80,80,0.08)", border: "1px solid rgba(255,80,80,0.3)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,80,80,0.9)" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "rgba(255,80,80,0.9)" }}>Out of credits</span>
+                    <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "rgba(255,80,80,0.9)" }}>No analyses left</span>
                   </div>
-                  <a href="/pricing" style={{ fontSize: "0.8rem", fontWeight: 700, color: "#fff", background: "rgba(255,80,80,0.85)", padding: "6px 14px", borderRadius: 7, textDecoration: "none" }}>Buy credits →</a>
+                  <a href="/pricing" style={{ fontSize: "0.8rem", fontWeight: 700, color: "#fff", background: "rgba(255,80,80,0.85)", padding: "6px 14px", borderRadius: 7, textDecoration: "none" }}>Get more analyses →</a>
                 </div>
               )}
               {error && (
@@ -4740,7 +4756,7 @@ ${sections.join("\n")}
                     <div className="section-card" style={{ textAlign: "center", padding: "2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
                       <div style={{ fontSize: "2rem" }}>⚠️</div>
                       <div style={{ color: "var(--clr-text-6)", fontSize: "0.95rem", maxWidth: 400 }}>
-                        The analysis was generated but couldn{"'"}t be fully rendered. This usually happens when the report is very long. Your credit has been refunded.
+                        The analysis was generated but couldn{"'"}t be fully rendered. This usually happens when the report is very long. Your analysis has been refunded.
                       </div>
                       <button onClick={handleSubmit} style={{ padding: "8px 20px", borderRadius: 8, border: "1px solid #d1d5db", background: "white", cursor: "pointer", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: 6 }}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -4774,7 +4790,7 @@ ${sections.join("\n")}
                     <div className="section-card" style={{ textAlign: "center", padding: "2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
                       <div style={{ fontSize: "2rem" }}>⚠️</div>
                       <div style={{ color: "var(--clr-text-6)", fontSize: "0.95rem", maxWidth: 400 }}>
-                        The stack recommendation was generated but couldn{"'"}t be fully rendered. Your credit has been refunded.
+                        The stack recommendation was generated but couldn{"'"}t be fully rendered. Your analysis has been refunded.
                       </div>
                       <button onClick={handleSubmit} style={{ padding: "8px 20px", borderRadius: 8, border: "1px solid #d1d5db", background: "white", cursor: "pointer", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: 6 }}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -4824,7 +4840,7 @@ ${sections.join("\n")}
         </main>
 
       </div>
-      {showNoCreditsModal && <NoCreditsModal idea={idea} onClose={() => setShowNoCreditsModal(false)} />}
+      {showUpgradeModal && <UpgradeModal idea={idea} onClose={() => setShowUpgradeModal(false)} isPro={userPlan?.isPro} />}
       {showFreeCreditPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}
           onClick={e => { if (e.target === e.currentTarget) { setShowFreeCreditPopup(false); sessionStorage.setItem("free_popup_dismissed", "1"); } }}>
@@ -4838,7 +4854,7 @@ ${sections.join("\n")}
               </div>
               <div style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 6 }}>Try it free</div>
               <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", lineHeight: 1.7, marginBottom: 24 }}>
-                Sign up and get 1 free credit.<br/>Use <strong>Dig</strong> to research your idea or <strong>Stack</strong> to find the right tools to build it.
+                Sign up to save your results and unlock more features.<br/>Use <strong>Dig</strong> to research your idea or <strong>Stack</strong> to find the right tools to build it.
               </div>
               <button onClick={() => { setShowFreeCreditPopup(false); sessionStorage.setItem("free_popup_dismissed", "1"); openSignIn(); }} style={{ width: "100%", padding: "11px 0", borderRadius: 10, background: "var(--clr-text)", color: "#fff", fontSize: "0.875rem", fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "inherit", marginBottom: 10 }}>Sign up free →</button>
               <div onClick={() => { setShowFreeCreditPopup(false); sessionStorage.setItem("free_popup_dismissed", "1"); }} style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", cursor: "pointer" }}>Maybe later</div>

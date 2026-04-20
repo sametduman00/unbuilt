@@ -93,27 +93,28 @@ export async function initUserSubscription(userId: string): Promise<void> {
   }
 }
 
-/** Activate Pro subscription */
+/** Activate Pro subscription. monthlyQuota: 10 for Pro, 25 for Pro+ */
 export async function activateProSubscription(
   userId: string,
   paddleSubscriptionId: string,
-  periodEnd: string
+  periodEnd: string,
+  monthlyQuota: number = 10
 ): Promise<void> {
   const supabase = getSupabase();
   await supabase.from("user_subscriptions").upsert({
     user_id: userId,
     plan: "pro",
-    monthly_analyses: 10,
+    monthly_analyses: monthlyQuota,
     paddle_subscription_id: paddleSubscriptionId,
     current_period_end: periodEnd,
   }, { onConflict: "user_id" });
 }
 
-/** Renew Pro subscription — reset monthly analyses to 10 */
-export async function renewProSubscription(userId: string, periodEnd: string): Promise<void> {
+/** Renew Pro subscription — reset monthly analyses */
+export async function renewProSubscription(userId: string, periodEnd: string, monthlyQuota: number = 10): Promise<void> {
   const supabase = getSupabase();
   await supabase.from("user_subscriptions")
-    .update({ monthly_analyses: 10, current_period_end: periodEnd })
+    .update({ monthly_analyses: monthlyQuota, current_period_end: periodEnd })
     .eq("user_id", userId);
 }
 

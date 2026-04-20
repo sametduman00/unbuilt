@@ -5,13 +5,13 @@ import { useState, useEffect } from "react";
 
 export default function GlobalHeader() {
   const { isSignedIn, isLoaded } = useUser();
-  const [credits, setCredits] = useState<number | null>(null);
+  const [plan, setPlan] = useState<{ plan: string; totalAnalyses: number; isPro: boolean } | null>(null);
 
   useEffect(() => {
     if (!isSignedIn) return;
-    fetch("/api/credits")
+    fetch("/api/user/plan")
       .then((r) => r.json())
-      .then((d) => setCredits(d.credits ?? 0))
+      .then((d) => setPlan({ plan: d.plan ?? "free", totalAnalyses: d.totalAnalyses ?? 0, isPro: d.isPro ?? false }))
       .catch(() => {});
   }, [isSignedIn]);
 
@@ -59,23 +59,38 @@ export default function GlobalHeader() {
           <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 4.5H14L10 9l1.5 4.5L8 11 4.5 13.5 6 9 2 6.5h4.5L8 2z" fill="currentColor"/></svg>
           Dig my idea
         </Link>
-        {isLoaded && isSignedIn && credits !== null && (
+        {isLoaded && isSignedIn && plan !== null && (
           <Link href="/pricing" style={{ textDecoration: "none" }}>
             <div style={{
               display: "flex", alignItems: "center", gap: 5,
               padding: "5px 12px", borderRadius: 20,
-              border: credits === 0 ? "1px solid rgba(220,38,38,0.3)" : "1px solid var(--clr-border-2)",
-              background: credits === 0 ? "rgba(220,38,38,0.05)" : "transparent",
+              border: plan.isPro ? "1px solid rgba(99,102,241,0.3)" : "1px solid var(--clr-border-2)",
+              background: plan.isPro ? "rgba(99,102,241,0.05)" : "transparent",
               cursor: "pointer",
             }}>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                stroke={credits === 0 ? "rgb(220,38,38)" : "var(--clr-accent)"}
-                strokeWidth="2.5">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-              </svg>
-              <span style={{ fontSize: "0.8rem", fontWeight: 600, color: credits === 0 ? "rgb(220,38,38)" : "var(--clr-text-2)" }}>
-                {credits === 0 ? "Buy credits" : `${credits} credit${credits === 1 ? "" : "s"}`}
-              </span>
+              {plan.isPro ? (
+                <>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                    stroke="rgb(99,102,241)"
+                    strokeWidth="2.5">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                  <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "rgb(99,102,241)" }}>
+                    Pro · {plan.totalAnalyses} {plan.totalAnalyses === 1 ? "analysis" : "analyses"}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                    stroke="var(--clr-accent)"
+                    strokeWidth="2.5">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                  <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--clr-text-2)" }}>
+                    {plan.totalAnalyses > 0 ? `${plan.totalAnalyses} ${plan.totalAnalyses === 1 ? "analysis" : "analyses"}` : "Upgrade"}
+                  </span>
+                </>
+              )}
             </div>
           </Link>
         )}
