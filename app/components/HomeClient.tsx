@@ -559,7 +559,7 @@ function ThreatDots({ level }: { level: number }) {
   );
 }
 
-function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack }: { data: GapAnalysisData; itunesApps?: ITunesApp[]; gplayApps?: GooglePlayApp[]; idea?: string; onSwitchToStack?: (idea: string) => void }) {
+function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack, isFreeResult }: { data: GapAnalysisData; itunesApps?: ITunesApp[]; gplayApps?: GooglePlayApp[]; idea?: string; onSwitchToStack?: (idea: string) => void; isFreeResult?: boolean }) {
   const [mob, setMob] = useState(false);
   useEffect(() => { const mq = window.matchMedia("(max-width: 768px)"); const chk = () => setMob(mq.matches); chk(); mq.addEventListener("change", chk); return () => mq.removeEventListener("change", chk); }, []);
   data = {
@@ -1442,6 +1442,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
             <button key={tab.id} onClick={() => { setActiveTab(tab.id); document.getElementById('gap-tab-content')?.scrollTo({top:0}); }} style={{ display:"flex", alignItems:"center", width:"100%", padding:"8px 10px", borderRadius:8, background:isActive?"white":"transparent", border:"1px solid "+(isActive?"#e5e7eb":"transparent"), cursor:"pointer", textAlign:"left" as const, boxShadow:isActive?"0 1px 2px rgba(0,0,0,0.05)":"none", gap:8 }}>
               <span style={{ fontSize:12, color:tab.id==="overview"?"#6366f1":"#10b981", flexShrink:0 }}>{tab.id==="overview"?"●":"✓"}</span>
               <span style={{ fontSize:13, fontWeight:isActive?600:400, color:isActive?"#111827":"#374151", flex:1 }}>{tab.label}</span>
+              {isFreeResult && tab.id !== "overview" && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>}
               {tab.score !== undefined && <span style={{ background:"#6366f1", color:"white", padding:"1px 6px", borderRadius:4, fontSize:11, fontWeight:700, flexShrink:0 }}>{tab.score}</span>}
               <span style={{ fontSize:12, color:"#9ca3af", flexShrink:0 }}>{isActive?"↓":"›"}</span>
             </button>
@@ -1449,7 +1450,11 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
         })}
       </div>
       <div id="gap-tab-content" style={{ flex:1, padding: mob ? 12 : 22, overflowY:"auto" as const, overflowX:"hidden" as const, background:"white", boxSizing:"border-box" as const }}>
-        {renderTab()}
+        {activeTab === "overview" || !isFreeResult ? renderTab() : (
+          <ProGate show={true} label="Full analysis — Pro only">
+            {renderTab()}
+          </ProGate>
+        )}
       </div>
     </div>
   );
@@ -1504,6 +1509,36 @@ function LandingReportPreview() {
         <button onClick={() => setTab("stack")} style={{ padding: "7px 18px", borderRadius: 8, fontSize: "0.8125rem", fontWeight: 500, border: "none", cursor: "pointer", fontFamily: "inherit", background: tab === "stack" ? "#2a9a80" : "var(--clr-surface-2)", color: tab === "stack" ? "#fff" : "var(--clr-text-3)" }}>Stack report</button>
       </div>
       {tab === "dig" ? <DigSampleReport /> : <StackSampleReport />}
+    </div>
+  );
+}
+
+function ProGate({ children, show, label }: { children: React.ReactNode; show: boolean; label?: string }) {
+  if (!show) return <>{children}</>;
+  return (
+    <div style={{ position: "relative" }}>
+      <div style={{ filter: "blur(8px)", pointerEvents: "none", userSelect: "none", opacity: 0.6 }}>
+        {children}
+      </div>
+      <div style={{
+        position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        background: "rgba(255,255,255,0.02)", borderRadius: 12, zIndex: 2,
+      }}>
+        <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "20px 28px", textAlign: "center", boxShadow: "0 8px 32px rgba(0,0,0,0.08)" }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" style={{ marginBottom: 8 }}>
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 4 }}>
+            {label || "Pro members only"}
+          </div>
+          <div style={{ fontSize: "0.775rem", color: "var(--clr-text-4)", marginBottom: 12 }}>
+            Upgrade to see the full analysis
+          </div>
+          <a href="/pricing" style={{ display: "inline-block", padding: "8px 20px", borderRadius: 8, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.8rem", fontWeight: 700 }}>
+            Go Pro →
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
@@ -2825,7 +2860,7 @@ function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
 const PHASE_COLORS = ["var(--clr-text)", "var(--clr-text-2)", "var(--clr-text-3)", "var(--clr-text-5)", "var(--clr-text-6)"];
 const PHASE_BGS = ["rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)", "rgba(var(--clr-text-rgb),0.04)"];
 
-function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVideos?: YouTubeVideo[] }) {
+function StackAdvisorResult({ data, ytVideos, isFreeResult }: { data: StackAdvisorData; ytVideos?: YouTubeVideo[]; isFreeResult?: boolean }) {
   const [mob, setMob] = useState(false);
   useEffect(() => { const mq = window.matchMedia("(max-width: 768px)"); const chk = () => setMob(mq.matches); chk(); mq.addEventListener("change", chk); return () => mq.removeEventListener("change", chk); }, []);
   // Build a lookup: tool name (lowercased) â best matching YouTube video
@@ -2931,9 +2966,11 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
     if (phaseIdx >= 0 && phaseIdx < data.phases.length) {
       const phase = data.phases[phaseIdx];
       const isP0 = isPhaseZero(phase.name);
+      const isP1 = /phase\s*1/i.test(phase.name) || /mvp/i.test(phase.name);
+      const shouldBlur = isFreeResult && !isP0;
       const colors = ["#6366f1","#10b981","#0ea5e9","#f59e0b","#8b5cf6"];
       const c = colors[phaseIdx] ?? colors[0];
-      return (
+      const phaseContent = (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
             <div>
@@ -3092,6 +3129,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
         ))}
       </div>
     );
+      return shouldBlur ? <ProGate show={true} label="Full stack plan — Pro only">{phaseContent}</ProGate> : phaseContent;
 
     // Scale Up tab
     if (stackTab === scaleTabIdx && (data.scalability.length > 0 || data.upgrades.length > 0)) return (
@@ -3152,6 +3190,7 @@ function StackAdvisorResult({ data, ytVideos }: { data: StackAdvisorData; ytVide
               style={{ display: "flex", alignItems: "flex-start", width: "100%", padding: "8px 10px", borderRadius: 8, background: isActive ? "white" : "transparent", border: `1px solid ${isActive ? "#e5e7eb" : "transparent"}`, cursor: "pointer", textAlign: "left" as const, boxShadow: isActive ? "0 1px 2px rgba(0,0,0,0.05)" : "none", gap: 6 }}>
               <span style={{ fontSize: 11, color: dotColor, flexShrink: 0, fontWeight: 700, marginTop: 1 }}>{isActive ? "●" : isPhase ? "✓" : tab.icon}</span>
               <span style={{ fontSize: 12, fontWeight: isActive ? 600 : 400, color: isActive ? "#111827" : "#374151", flex: 1, lineHeight: 1.35, wordBreak: "break-word" as const }}>{tab.label}</span>
+              {isFreeResult && ti > 0 && !(isPhase && isPhaseZero(data.phases[ti-1]?.name ?? "")) && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>}
               {isPhase && data.phases[ti-1].costs?.total && (
                 <span style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", flexShrink: 0, marginTop: 1 }}>{data.phases[ti-1].costs?.total?.split(' ')[0]}</span>
               )}
@@ -3277,6 +3316,7 @@ function HomeInner() {
 
   const [domainKeywords, setDomainKeywords] = useState<string[]>([]);
   const [resultCached, setResultCached] = useState<boolean | null>(null);
+  const [isFreeResult, setIsFreeResult] = useState(false);
 
   const [scanStep, setScanStep] = useState(-1); // -1=hidden 0-3=active step 4=all done
 
@@ -3652,8 +3692,19 @@ function HomeInner() {
     const submittedTool = selectedTool;
     const abortCtrl = new AbortController();
     abortControllerRef.current = abortCtrl;
+
+    // Route to free or pro endpoint
+    const canUsePro = userPlan?.isPro && userPlan.totalAnalyses > 0;
+    let apiEndpoint = tool.apiPath;
+    if (!canUsePro) {
+      if (selectedTool === "gap-analysis") apiEndpoint = "/api/analyze-free";
+      else if (selectedTool === "stack-advisor") apiEndpoint = "/api/stack-free";
+    }
+    const isFreeSearch = apiEndpoint.includes("-free");
+    setIsFreeResult(isFreeSearch);
+
     try {
-      const res = await fetch(tool.apiPath, {
+      const res = await fetch(apiEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -3713,6 +3764,12 @@ function HomeInner() {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       if (!abortCtrl.signal.aborted) setLoading(false);
+      // Refresh plan counter after search
+      if (!isFreeSearch) {
+        fetch("/api/user/plan").then(r => r.json()).then(d => {
+          setUserPlan({ plan: d.plan ?? "free", totalAnalyses: d.totalAnalyses ?? 0, isPro: d.isPro ?? false, currentPeriodEnd: d.currentPeriodEnd ?? null });
+        }).catch(() => {});
+      }
     }
   };
 
@@ -4748,7 +4805,7 @@ ${sections.join("\n")}
               {selectedTool === "gap-analysis" && !loading && streamedContent ? (
                 (() => {
                   const gapData = parseGapAnalysisJSON(streamedContent);
-                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} onSwitchToStack={(i) => { handleSelectTool("stack-advisor"); setTimeout(() => setIdea(i), 50); }} /></div>;
+                  if (gapData) return <div style={{ padding:"0 16px 16px 12px" }}><GapAnalysisResult data={gapData} itunesApps={itunesApps} gplayApps={gplayApps} idea={idea} isFreeResult={isFreeResult} onSwitchToStack={(i) => { handleSelectTool("stack-advisor"); setTimeout(() => setIdea(i), 50); }} /></div>;
                   // If content looks like JSON but failed to parse, show retry message instead of raw JSON
                   const trimmed = streamedContent.trim();
                   const looksLikeJSON = trimmed.startsWith('{') || trimmed.startsWith('```json') || trimmed.includes('"marketScore"');
@@ -4782,7 +4839,7 @@ ${sections.join("\n")}
               ) : selectedTool === "stack-advisor" && !loading && streamedContent ? (
                 (() => {
                   const stackData = parseStackAdvisorJSON(streamedContent);
-                  if (stackData) return <StackAdvisorResult data={stackData} ytVideos={ytVideos} />;
+                  if (stackData) return <StackAdvisorResult data={stackData} ytVideos={ytVideos} isFreeResult={isFreeResult} />;
                   // If content looks like JSON but failed to parse, show retry message
                   const trimmedStack = streamedContent.trim();
                   const looksLikeStackJSON = trimmedStack.startsWith('{') || trimmedStack.startsWith('```json') || trimmedStack.includes('"phases"');
