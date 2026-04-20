@@ -369,86 +369,213 @@ export function generatePdf(report: ReportData, jsPDF: any) {
   t(e(report.idea), 15, true, [30, 30, 30]); y += 2;
 
   // ── TAB 1: OVERVIEW ──────────────────────────────────────────
-  sec("OVERVIEW", "TL;DR — Executive Summary");
+  sec("OVERVIEW", "Current Idea Assessment");
 
+  // Determine band
+  const pres = o(p._presentation);
+  const band = str(pres.mode) || (Number(p.marketScore ?? 0) <= 30 ? "band1" : Number(p.marketScore ?? 0) <= 55 ? "band2" : "band3");
+  const sc = Number(p.marketScore ?? 0);
+
+  // Hero block — score + recommendation
   if (p.marketScore != null) {
-    doc.setFontSize(38); doc.setFont("helvetica", "bold"); doc.setTextColor(99, 102, 241);
-    doc.text(str(p.marketScore), M, y + 10);
-    doc.setFontSize(14); doc.setTextColor(150, 150, 150); doc.text("/100", M + 24, y + 10);
-    doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(80, 80, 80);
-    if (p.marketScoreLabel) doc.text(str(p.marketScoreLabel).toUpperCase(), M, y + 16);
+    const heroH = 24;
+    const heroBg: [number,number,number] = band === "band1" ? [254,242,242] : band === "band2" ? [255,251,235] : [240,253,244];
+    const heroLabelC: [number,number,number] = band === "band1" ? [220,38,38] : band === "band2" ? [217,119,6] : [22,163,74];
+    const heroTextC: [number,number,number] = band === "band1" ? [153,27,27] : band === "band2" ? [120,53,15] : [20,83,45];
+    const heroSubC: [number,number,number] = band === "band1" ? [185,28,28] : band === "band2" ? [146,64,14] : [22,101,52];
+    const circleC: [number,number,number] = band === "band1" ? [239,68,68] : band === "band2" ? [245,158,11] : [16,185,129];
+
+    // Background rect
+    doc.setFillColor(...heroBg); doc.roundedRect(M, y - 2, CW, heroH, 2, 2, "F");
+    // Score circle
+    doc.setDrawColor(...circleC); doc.setLineWidth(1.2); doc.circle(M + 14, y + 8, 8);
+    doc.setFontSize(16); doc.setFont("helvetica", "bold"); doc.setTextColor(...heroLabelC);
+    doc.text(str(sc), M + 14, y + 10, { align: "center" });
+    // Recommendation label
+    const synAct = o(p.synthesis);
+    const recLabel = str(synAct.recommendedAction ?? "").replace(/_/g, " ");
+    doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(...heroLabelC);
+    doc.text("RECOMMENDED: " + recLabel.toUpperCase(), M + 28, y + 3);
+    // Verdict
+    if (p.verdict) {
+      doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(...heroTextC);
+      const vLines = doc.splitTextToSize(e(p.verdict), CW - 32);
+      doc.text(vLines.slice(0, 2), M + 28, y + 7);
+      const vH = Math.min(2, vLines.length) * 3.5;
+      if (p.marketScoreSummary) {
+        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(...heroSubC);
+        const msLines = doc.splitTextToSize(e(p.marketScoreSummary), CW - 32);
+        doc.text(msLines.slice(0, 2), M + 28, y + 7 + vH + 1);
+      }
+    }
     // Confidence badge
     const ev = o(p._evidence);
     if (ev.level) {
       const confC: [number, number, number] = ev.level === "high" ? [22, 163, 74] : ev.level === "moderate" ? [234, 88, 12] : [220, 38, 38];
-      doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...confC);
-      doc.text(str(ev.level).toUpperCase() + " CONFIDENCE", M + 50, y + 16);
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(...confC);
+      doc.text(str(ev.level).toUpperCase() + " CONFIDENCE", PW - M - 2, y + 3, { align: "right" });
     }
-    y += 20;
-  }
-  // Verdict
-  if (p.verdict) t(str(p.verdict), 10, true, [17, 24, 39]);
-  if (p.marketScoreSummary) t(str(p.marketScoreSummary), 10, false, [60, 60, 60]);
-
-  // Recommended action badge
-  const synAct = o(p.synthesis);
-  if (synAct.recommendedAction) {
-    const actC: [number, number, number] = synAct.recommendedAction === "kill" ? [220, 38, 38] : synAct.recommendedAction === "move_fast" ? [22, 163, 74] : synAct.recommendedAction === "build_mvp" ? [37, 99, 235] : synAct.recommendedAction === "reposition" ? [234, 88, 12] : [55, 65, 81];
-    t("Recommended: " + str(synAct.recommendedAction).replace(/_/g, " "), 10, true, actC);
+    y += heroH + 4;
   }
 
-  if (p.oneLiner) { y += 2; t("One-Liner: " + str(p.oneLiner), 10, false, [80, 40, 160]); }
+  // Band-specific cards
+  const synB = o(p.synthesis);
+  const rpaths = arr<{ angle?: string; reasoning?: string }>(synB.repositionPaths);
+  const bnm = o(synB.bestNextMove);
+  const hardPartTxt = str(synB.hardPart || synB.fatalFlaw || "");
 
-  // Key numbers
-  const kn: string[] = [];
-  const ms0 = o(p.marketSize); if (ms0.tam) kn.push("TAM: " + str(ms0.tam).split(" ")[0]);
-  const comp0 = arr<{ name: string }>(p.competitors)[0]; if (comp0) kn.push("Top threat: " + str(comp0.name));
-  const gap0 = arr<{ title: string }>(p.marketGaps)[0]; if (gap0) kn.push("Best gap: " + str(gap0.title));
-  if (kn.length) { y += 2; t(kn.join("   |   "), 9, false, [80, 80, 80]); }
-
-  // Fatal flaw + upside condition cards
-  const synFF = o(p.synthesis);
-  if (synFF.fatalFlaw || synFF.upsideCondition) {
-    y += 3;
-    if (synFF.fatalFlaw) {
-      doc.setFillColor(254, 242, 242); doc.roundedRect(M, y - 2, CW / 2 - 2, 20, 2, 2, "F");
-      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(220, 38, 38);
-      doc.text("FATAL FLAW", M + 3, y + 3);
-      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(127, 29, 29);
-      const ffLines = doc.splitTextToSize(e(synFF.fatalFlaw), CW / 2 - 10);
-      doc.text(ffLines, M + 3, y + 7);
-      const ffH = Math.max(20, ffLines.length * 3.5 + 10);
-      doc.setFillColor(254, 242, 242); doc.roundedRect(M, y - 2, CW / 2 - 2, ffH, 2, 2, "F");
-      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(220, 38, 38); doc.text("FATAL FLAW", M + 3, y + 3);
-      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(127, 29, 29); doc.text(ffLines, M + 3, y + 7);
+  if (band === "band1" && (rpaths.length > 0 || bnm.action)) {
+    // WHERE THIS IDEA ACTUALLY WORKS
+    if (rpaths.length > 0) {
+      chk(rpaths.length * 10 + 10);
+      doc.setFillColor(245, 243, 255); doc.roundedRect(M, y - 2, CW, rpaths.length * 10 + 8, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(124, 58, 237);
+      doc.text("WHERE THIS IDEA ACTUALLY WORKS", M + 3, y + 3);
+      let ry = y + 7;
+      rpaths.forEach((rp, i) => {
+        doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(59, 7, 100);
+        doc.text((i + 1) + ".", M + 4, ry);
+        const rpText = str(rp.angle) + (rp.reasoning ? " — " + str(rp.reasoning) : "");
+        const rpLines = doc.splitTextToSize(e(rpText), CW - 14);
+        doc.setFont("helvetica", "normal"); doc.text(rpLines.slice(0, 2), M + 10, ry);
+        ry += rpLines.slice(0, 2).length * 3.5 + 3;
+      });
+      y = ry + 3;
     }
-    if (synFF.upsideCondition) {
-      const ux = M + CW / 2 + 2;
-      doc.setFillColor(240, 253, 244); doc.roundedRect(ux, y - 2, CW / 2 - 2, 20, 2, 2, "F");
-      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(22, 163, 74);
-      doc.text("UPSIDE CONDITION", ux + 3, y + 3);
+    // YOUR MOVE
+    if (bnm.action) {
+      chk(14);
+      doc.setFillColor(240, 253, 244); doc.roundedRect(M, y - 2, CW, 14, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(22, 163, 74); doc.text("YOUR MOVE", M + 3, y + 2);
+      doc.setFontSize(9.5); doc.setFont("helvetica", "bold"); doc.setTextColor(20, 83, 45);
+      doc.text(e(bnm.action), M + 3, y + 6);
+      if (bnm.detail) { doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); const dL = doc.splitTextToSize(e(bnm.detail), CW - 8); doc.text(dL.slice(0, 2), M + 3, y + 10); }
+      y += 17;
+    }
+    // THE HARD PART
+    if (hardPartTxt) {
+      chk(14);
+      doc.setFillColor(255, 251, 235); doc.roundedRect(M, y - 2, CW, 14, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(217, 119, 6); doc.text("THE HARD PART", M + 3, y + 2);
+      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(120, 53, 15);
+      const hpL = doc.splitTextToSize(e(hardPartTxt), CW - 8); doc.text(hpL.slice(0, 2), M + 3, y + 6);
+      y += Math.max(14, hpL.slice(0, 2).length * 3.5 + 8);
+    }
+  } else if (band === "band2" && (bnm.action || rpaths.length > 0)) {
+    // WHAT MAKES THIS WORK
+    if (synB.upsideCondition) {
+      chk(18);
+      doc.setFillColor(239, 246, 255); doc.roundedRect(M, y - 2, CW, 16, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(37, 99, 235); doc.text("WHAT MAKES THIS WORK", M + 3, y + 2);
+      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(30, 58, 95);
+      const wmL = doc.splitTextToSize(e(synB.upsideCondition), CW - 8); doc.text(wmL.slice(0, 3), M + 3, y + 6);
+      y += Math.max(16, wmL.slice(0, 3).length * 3.5 + 8) + 2;
+    }
+    // BEST NEXT MOVE + SHARPEN THE ANGLE side by side
+    const halfW = CW / 2 - 2;
+    chk(18);
+    if (bnm.action) {
+      doc.setFillColor(240, 253, 244); doc.roundedRect(M, y - 2, halfW, 16, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(22, 163, 74); doc.text("BEST NEXT MOVE", M + 3, y + 2);
       doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(20, 83, 45);
-      const ucLines = doc.splitTextToSize(e(synFF.upsideCondition), CW / 2 - 10);
-      doc.text(ucLines, ux + 3, y + 7);
-      const ucH = Math.max(20, ucLines.length * 3.5 + 10);
-      doc.setFillColor(240, 253, 244); doc.roundedRect(ux, y - 2, CW / 2 - 2, ucH, 2, 2, "F");
-      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(22, 163, 74); doc.text("UPSIDE CONDITION", ux + 3, y + 3);
-      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(20, 83, 45); doc.text(ucLines, ux + 3, y + 7);
+      const bnText = str(bnm.action) + (bnm.detail ? " — " + str(bnm.detail) : "");
+      const bnL = doc.splitTextToSize(e(bnText), halfW - 8); doc.text(bnL.slice(0, 3), M + 3, y + 6);
     }
-    y += 24;
-  }
+    if (rpaths[0]) {
+      const rx = M + CW / 2 + 2;
+      doc.setFillColor(245, 243, 255); doc.roundedRect(rx, y - 2, halfW, 16, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(124, 58, 237); doc.text("SHARPEN THE ANGLE", rx + 3, y + 2);
+      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(59, 7, 100);
+      const saText = str(rpaths[0].angle) + (rpaths[0].reasoning ? " — " + str(rpaths[0].reasoning) : "");
+      const saL = doc.splitTextToSize(e(saText), halfW - 8); doc.text(saL.slice(0, 3), rx + 3, y + 6);
+    }
+    y += 19;
+    // THE HARD PART
+    if (hardPartTxt) {
+      chk(14);
+      doc.setFillColor(255, 251, 235); doc.roundedRect(M, y - 2, CW, 14, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(217, 119, 6); doc.text("THE HARD PART", M + 3, y + 2);
+      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(120, 53, 15);
+      const hpL = doc.splitTextToSize(e(hardPartTxt), CW - 8); doc.text(hpL.slice(0, 2), M + 3, y + 6);
+      y += Math.max(14, hpL.slice(0, 2).length * 3.5 + 8);
+    }
+  } else if (band === "band3" && bnm.action) {
+    // WHY THIS HAS SIGNAL
+    if (synB.upsideCondition) {
+      chk(16);
+      doc.setFillColor(240, 253, 244); doc.roundedRect(M, y - 2, CW, 14, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(22, 163, 74); doc.text("WHY THIS HAS SIGNAL", M + 3, y + 2);
+      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(20, 83, 45);
+      const wsL = doc.splitTextToSize(e(synB.upsideCondition), CW - 8); doc.text(wsL.slice(0, 2), M + 3, y + 6);
+      y += Math.max(14, wsL.slice(0, 2).length * 3.5 + 8) + 2;
+    }
+    // YOUR ONE-LINER
+    if (p.oneLiner) {
+      chk(14);
+      doc.setFillColor(245, 243, 255); doc.roundedRect(M, y - 2, CW, 14, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(124, 58, 237); doc.text("YOUR ONE-LINER", M + 3, y + 2);
+      doc.setFontSize(9); doc.setFont("helvetica", "italic"); doc.setTextColor(30, 27, 75);
+      const olL = doc.splitTextToSize('"' + e(p.oneLiner) + '"', CW - 8); doc.text(olL.slice(0, 2), M + 3, y + 6);
+      y += Math.max(14, olL.slice(0, 2).length * 3.5 + 8) + 2;
+    }
+    // YOUR MOVE
+    if (bnm.action) {
+      chk(16);
+      doc.setFillColor(239, 246, 255); doc.roundedRect(M, y - 2, CW, 16, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(37, 99, 235); doc.text("YOUR MOVE", M + 3, y + 2);
+      doc.setFontSize(9.5); doc.setFont("helvetica", "bold"); doc.setTextColor(30, 58, 95); doc.text(e(bnm.action), M + 3, y + 6);
+      if (bnm.detail) { doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); const dL = doc.splitTextToSize(e(bnm.detail), CW - 8); doc.text(dL.slice(0, 2), M + 3, y + 10); }
+      y += 19;
+    }
+    // THE RISK YOU SHOULD WATCH
+    if (hardPartTxt) {
+      chk(14);
+      doc.setFillColor(255, 251, 235); doc.roundedRect(M, y - 2, CW, 14, 2, 2, "F");
+      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(217, 119, 6); doc.text("THE RISK YOU SHOULD WATCH", M + 3, y + 2);
+      doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(120, 53, 15);
+      const hpL = doc.splitTextToSize(e(hardPartTxt), CW - 8); doc.text(hpL.slice(0, 2), M + 3, y + 6);
+      y += Math.max(14, hpL.slice(0, 2).length * 3.5 + 8);
+    }
+  } else {
+    // FALLBACK — old report without new fields
+    if (p.oneLiner) { y += 2; t("One-Liner: " + str(p.oneLiner), 10, false, [80, 40, 160]); }
+    // Key numbers
+    const kn: string[] = [];
+    const ms0 = o(p.marketSize); if (ms0.tam) kn.push("TAM: " + str(ms0.tam).split(" ")[0]);
+    const comp0 = arr<{ name: string }>(p.competitors)[0]; if (comp0) kn.push("Top threat: " + str(comp0.name));
+    const gap0 = arr<{ title: string }>(p.marketGaps)[0]; if (gap0) kn.push("Best gap: " + str(gap0.title));
+    if (kn.length) { y += 2; t(kn.join("   |   "), 9, false, [80, 80, 80]); }
 
-  // 3 cards
-  const fg = arr<{ title: string; description: string }>(p.marketGaps)[0];
-  const ft = arr<string>(o(p.swot).threats)[0];
-  const ft2 = arr<string>(o(p.swot).threats)[1];
-  const fm = arr<{ action?: string; detail?: string }>(o(p.opportunity).actionItems)[0];
-  y += 3;
-  card3([
-    { label: "BIGGEST OPPORTUNITY", title: str(fg?.title), body: str(fg?.description), lc: [13, 148, 136], bg: [240, 253, 250] },
-    { label: "BIGGEST RISK", title: str(ft), body: str(ft2), lc: [234, 88, 12], bg: [255, 247, 237] },
-    { label: "FIRST MOVE", title: str(fm?.action), body: str(fm?.detail), lc: [37, 99, 235], bg: [239, 246, 255] },
-  ]);
+    // The hard part + upside condition
+    if (hardPartTxt || synB.upsideCondition) {
+      y += 3;
+      if (hardPartTxt) {
+        doc.setFillColor(255, 251, 235); const ffLines = doc.splitTextToSize(e(hardPartTxt), CW / 2 - 10); const ffH = Math.max(20, ffLines.length * 3.5 + 10);
+        doc.roundedRect(M, y - 2, CW / 2 - 2, ffH, 2, 2, "F");
+        doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(217, 119, 6); doc.text("THE HARD PART", M + 3, y + 3);
+        doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(120, 53, 15); doc.text(ffLines, M + 3, y + 7);
+      }
+      if (synB.upsideCondition) {
+        const ux = M + CW / 2 + 2;
+        doc.setFillColor(240, 253, 244); const ucLines = doc.splitTextToSize(e(synB.upsideCondition), CW / 2 - 10); const ucH = Math.max(20, ucLines.length * 3.5 + 10);
+        doc.roundedRect(ux, y - 2, CW / 2 - 2, ucH, 2, 2, "F");
+        doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(22, 163, 74); doc.text("UPSIDE CONDITION", ux + 3, y + 3);
+        doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(20, 83, 45); doc.text(ucLines, ux + 3, y + 7);
+      }
+      y += 24;
+    }
+    // 3 cards
+    const fg = arr<{ title: string; description: string }>(p.marketGaps)[0];
+    const ft = arr<string>(o(p.swot).threats)[0];
+    const ft2 = arr<string>(o(p.swot).threats)[1];
+    const fm = arr<{ action?: string; detail?: string }>(o(p.opportunity).actionItems)[0];
+    y += 3;
+    card3([
+      { label: "BIGGEST OPPORTUNITY", title: str(fg?.title), body: str(fg?.description), lc: [13, 148, 136], bg: [240, 253, 250] },
+      { label: "BIGGEST RISK", title: str(ft), body: str(ft2), lc: [234, 88, 12], bg: [255, 247, 237] },
+      { label: "FIRST MOVE", title: str(fm?.action), body: str(fm?.detail), lc: [37, 99, 235], bg: [239, 246, 255] },
+    ]);
+  }
 
   // D1-D5 Score Breakdown
   const scoring = o(p._scoring);
@@ -759,14 +886,15 @@ export function generatePdf(report: ReportData, jsPDF: any) {
     y += 2; t("Recommended: " + str(syn.recommendedAction).replace(/_/g, " "), 11, true, actColor);
   }
 
-  // Fatal flaw + upside condition
-  if (syn.fatalFlaw) {
+  // The hard part + upside condition
+  const synHP = str(syn.hardPart || syn.fatalFlaw || "");
+  if (synHP) {
     y += 3;
-    doc.setFillColor(254, 242, 242); doc.roundedRect(M, y - 2, CW, 14, 2, 2, "F");
-    doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(220, 38, 38);
-    doc.text("FATAL FLAW", M + 3, y + 2);
-    const ffL = doc.splitTextToSize(e(syn.fatalFlaw), CW - 8);
-    doc.setFontSize(9); doc.setFont("helvetica", "normal"); doc.setTextColor(127, 29, 29);
+    doc.setFillColor(255, 251, 235); doc.roundedRect(M, y - 2, CW, 14, 2, 2, "F");
+    doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(217, 119, 6);
+    doc.text("THE HARD PART", M + 3, y + 2);
+    const ffL = doc.splitTextToSize(e(synHP), CW - 8);
+    doc.setFontSize(9); doc.setFont("helvetica", "normal"); doc.setTextColor(120, 53, 15);
     doc.text(ffL, M + 3, y + 6);
     y += Math.max(14, ffL.length * 3.8 + 8);
   }
