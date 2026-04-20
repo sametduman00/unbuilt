@@ -37,15 +37,20 @@ const DIV = <div style={{ height:1, background:"var(--clr-border)", margin:"2px 
 export default function MobileNav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [expanded, setExpanded] = useState<string|null>(null);
-  const [credits, setCredits] = useState<number|null>(null);
+  const [plan, setPlan] = useState<{ tier: "free"|"pro"|"pro+"; totalAnalyses: number } | null>(null);
   const { isSignedIn } = useAuth();
   const { user } = useUser();
   const { signOut } = useClerk();
   const router = useRouter();
 
   useEffect(() => {
-    if(!isSignedIn) { setCredits(null); return; }
-    fetch("/api/credits").then(r=>r.json()).then(d=>setCredits(d.credits??0)).catch(()=>{});
+    if(!isSignedIn) { setPlan(null); return; }
+    fetch("/api/user/plan").then(r=>r.json()).then(d=>{
+      const isPro = d.isPro ?? false;
+      const monthly = d.monthlyAnalyses ?? 0;
+      const tier = !isPro ? "free" as const : monthly > 10 ? "pro+" as const : "pro" as const;
+      setPlan({ tier, totalAnalyses: d.totalAnalyses ?? 0 });
+    }).catch(()=>{});
   }, [isSignedIn]);
 
   const close = () => { setMenuOpen(false); setExpanded(null); };
@@ -109,15 +114,16 @@ export default function MobileNav() {
                   </div>
                 </div>
 
-                {/* Credits */}
-                <div style={{ margin:"0 16px 10px", background:"#f0fdf4", border:"0.5px solid #bbf7d0", borderRadius:8, padding:"10px 14px", display:"flex", alignItems:"center", justifyContent:"space-between", gap:12 }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polygon points="6,1 7.5,4 11,4.7 8.5,7 9.2,11 6,9.2 2.8,11 3.5,7 1,4.7 4.5,4" fill="#16a34a"/></svg>
-                    <span style={{ fontSize:13, fontWeight:600, color:"#15803d" }}>
-                      {credits !== null ? `${credits} credits` : "Loading..."}
+                {/* Plan badge */}
+                <div style={{ margin:"0 16px 10px", background: plan?.tier !== "free" ? "rgba(99,102,241,0.05)" : "#f0fdf4", border: plan?.tier !== "free" ? "0.5px solid rgba(99,102,241,0.3)" : "0.5px solid #bbf7d0", borderRadius:8, padding:"10px 14px", display:"flex", alignItems:"center", justifyContent:"space-between", gap:12 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                    <span style={{ fontSize:11, fontWeight:800, letterSpacing:"0.04em", color: plan?.tier !== "free" ? "#6366f1" : "#15803d" }}>
+                      {plan?.tier === "pro+" ? "PRO+" : plan?.tier === "pro" ? "PRO" : "FREE"}
+                    </span>
+                    <span style={{ fontSize:13, fontWeight:600, color: plan?.tier !== "free" ? "#6366f1" : "#15803d" }}>
+                      {plan !== null ? `${plan.totalAnalyses} analyses` : "Loading..."}
                     </span>
                   </div>
-
                 </div>
 
                 {DIV}

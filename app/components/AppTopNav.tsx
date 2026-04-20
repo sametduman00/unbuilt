@@ -67,7 +67,7 @@ export default function AppTopNav() {
   const { user } = useUser();
   const [docsOpen, setDocsOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
-  const [credits, setCredits] = useState<number | null>(null);
+  const [plan, setPlan] = useState<{ plan: string; totalAnalyses: number; isPro: boolean; tier: "free" | "pro" | "pro+" } | null>(null);
   const { signOut } = useClerk();
   const docsRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
@@ -83,9 +83,14 @@ export default function AppTopNav() {
 
   useEffect(() => {
     if (!isSignedIn) return;
-    fetch("/api/credits")
+    fetch("/api/user/plan")
       .then((r) => r.json())
-      .then((d) => setCredits(d.credits ?? 0))
+      .then((d) => {
+        const isPro = d.isPro ?? false;
+        const monthly = d.monthlyAnalyses ?? 0;
+        const tier = !isPro ? "free" as const : monthly > 10 ? "pro+" as const : "pro" as const;
+        setPlan({ plan: d.plan ?? "free", totalAnalyses: d.totalAnalyses ?? 0, isPro, tier });
+      })
       .catch(() => {});
   }, [isSignedIn]);
 
@@ -230,8 +235,8 @@ export default function AppTopNav() {
                   fontSize: "0.75rem", fontWeight: 600, flexShrink: 0, marginLeft: 3,
                 }}>{initials}</div>
                 <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "#1a1a1a" }}>{firstName}</span>
-                <span style={{ fontSize: "0.75rem", color: "#666", background: "#f0f0ee", borderRadius: 4, padding: "1px 7px", fontWeight: 500 }}>
-                  {credits} credits
+                <span style={{ fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.04em", color: plan?.isPro ? "#6366f1" : "#666", background: plan?.isPro ? "rgba(99,102,241,0.08)" : "#f0f0ee", borderRadius: 4, padding: "2px 7px" }}>
+                  {plan?.tier === "pro+" ? "PRO+" : plan?.tier === "pro" ? "PRO" : "FREE"}
                 </span>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8"
                   style={{ color: "#888", transform: userOpen ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}>
@@ -248,8 +253,8 @@ export default function AppTopNav() {
                       {user?.emailAddresses?.[0]?.emailAddress}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8, background: "#f5f5f3", borderRadius: 8, padding: "6px 10px" }}>
-                      <span style={{ fontSize: "0.8rem", color: "#666", fontWeight: 500 }}>Credits remaining</span>
-                      <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "#1a1a1a" }}>{credits}</span>
+                      <span style={{ fontSize: "0.8rem", color: "#666", fontWeight: 500 }}>Analyses remaining</span>
+                      <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "#1a1a1a" }}>{plan?.totalAnalyses ?? 0}</span>
                     </div>
                   </div>
                   <Link href="/reports" style={{ ...dropItemStyle, display: "flex", alignItems: "center", gap: 8 }}
