@@ -79,5 +79,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (error) console.error("[Clerk webhook] Supabase upsert error:", error.message);
   if (!grantFreeCredit) console.log(`[Clerk webhook] Free credit denied — IP ${ip} already used in last 24h`);
 
+  // Also init user_subscriptions with purchased analysis (new freemium system)
+  await sb.from("user_subscriptions").upsert(
+    { user_id: userId, plan: "free", monthly_analyses: 0, purchased_analyses: grantFreeCredit ? 1 : 0, created_at: new Date().toISOString() },
+    { onConflict: "user_id" }
+  ).then(() => {}, (e: any) => console.error("[Clerk webhook] subscription upsert error:", e.message));
+
   return NextResponse.json({ ok: true });
 }

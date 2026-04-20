@@ -27,6 +27,8 @@ export async function GET(req: NextRequest) {
     { count: reportsTotal }, { count: reportsToday }, { count: reportsWeek },
     { count: digTotal }, { count: stackTotal }, { count: digToday }, { count: stackToday },
     { data: orders }, { data: pulse }, { data: daily },
+    { count: proUsers }, { count: freeAnalysesToday }, { count: freeAnalysesWeek },
+    { data: subscriptionData },
   ] = await Promise.all([
     sb.from("user_credits").select("*", { count:"exact", head:true }),
     sb.from("user_credits").select("*", { count:"exact", head:true }).gte("created_at", today.toISOString()),
@@ -41,6 +43,11 @@ export async function GET(req: NextRequest) {
     sb.from("orders").select("id,package_slug,credits_added,amount_usd,created_at").order("created_at",{ascending:false}).limit(50),
     sb.from("pulse_feed_cache").select("generated_at,signals").order("generated_at",{ascending:false}).limit(1).single(),
     sb.from("user_reports").select("created_at,tool").gte("created_at", month.toISOString()).order("created_at",{ascending:true}),
+    // Freemium metrics
+    sb.from("user_subscriptions").select("*", { count:"exact", head:true }).eq("plan", "pro"),
+    sb.from("free_analysis_log").select("*", { count:"exact", head:true }).gte("created_at", today.toISOString()),
+    sb.from("free_analysis_log").select("*", { count:"exact", head:true }).gte("created_at", week.toISOString()),
+    sb.from("user_subscriptions").select("plan,monthly_analyses,purchased_analyses").eq("plan", "pro"),
   ]);
 
   const totalRevenue = orders?.reduce((s,o)=>s+(o.amount_usd??0),0)??0;
@@ -57,6 +64,9 @@ export async function GET(req: NextRequest) {
     if (r.tool==="gap-analysis") dailyMap[d].dig++; else dailyMap[d].stack++;
   }
 
+  const totalMonthlyRemaining = subscriptionData?.reduce((s: number, u: any) => s + (u.monthly_analyses ?? 0), 0) ?? 0;
+  const totalPurchasedRemaining = subscriptionData?.reduce((s: number, u: any) => s + (u.purchased_analyses ?? 0), 0) ?? 0;
+
   return NextResponse.json({
     users:   { total:usersTotal??0, today:usersToday??0, week:usersWeek??0 },
     reports: { total:reportsTotal??0, today:reportsToday??0, week:reportsWeek??0,
@@ -66,5 +76,11 @@ export async function GET(req: NextRequest) {
                credits:creditsGiven, recent:orders?.slice(0,10)??[] },
     pulse:   { generatedAt:pulse?.generated_at??null, signals:pulseSignals, ageMinutes:pulseAge },
     daily:   dailyMap,
+    freemium: {
+      proSubscribers: proUsers ?? 0,
+      freeAnalyses: { today: freeAnalysesToday ?? 0, week: freeAnalysesWeek ?? 0 },
+      monthlyAnalysesRemaining: totalMonthlyRemaining,
+      purchasedAnalysesRemaining: totalPurchasedRemaining,
+    },
   }, { headers: CORS });
 }

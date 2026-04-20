@@ -231,7 +231,11 @@ export async function POST(req: NextRequest) {
   if (event.event_type === "subscription.canceled") {
     const userId = event.data?.custom_data?.user_id as string | undefined;
     if (userId) {
-      await cancelProSubscription(userId);
+      // Period ended — downgrade to free, clear monthly analyses
+      const supabase = getSupabase();
+      await supabase.from("user_subscriptions")
+        .update({ plan: "free", monthly_analyses: 0, paddle_subscription_id: null })
+        .eq("user_id", userId);
       await sendTelegram(`❌ <b>Pro ended</b>\n👤 ${userId}`);
     }
   }
