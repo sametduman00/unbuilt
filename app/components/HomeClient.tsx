@@ -3867,16 +3867,16 @@ function HomeInner() {
                             }, 50);
                           }
                         }}
-                          style={{ background: "transparent", border: "none", padding: 0, fontSize: "0.8125rem", color: "var(--clr-text-4)", cursor: "pointer", textDecoration: "underline", fontFamily: "inherit" }}
+                          style={{ background: "transparent", border: "none", padding: 0, fontSize: "0.8125rem", color: "var(--clr-text)", cursor: "pointer", textDecoration: "underline", fontFamily: "inherit" }}
                         >↓ Sample report</button>
                         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                           {idea.trim().length < 40 && (
-                            <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)" }}>{40 - idea.trim().length} more chars</span>
+                            <span style={{ fontSize: "0.8125rem", color: "var(--clr-text)" }}>{40 - idea.trim().length} more chars</span>
                           )}
                           <button
                             onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else if (credits !== null && credits <= 0) { setShowNoCreditsModal(true); } else { setSelectedTool(activeHeroTab as ToolId); } } }}
                             disabled={idea.trim().length < 40}
-                            style={{ background: idea.trim().length >= 40 ? "var(--clr-text)" : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text-4)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
+                            style={{ background: idea.trim().length >= 40 ? "var(--clr-text)" : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
                         </div>
                       </div>
