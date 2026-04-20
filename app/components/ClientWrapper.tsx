@@ -28,9 +28,7 @@ function HeroSkeleton() {
               ))}
             </div>
             <div style={{ background: "var(--clr-surface)", border: "1.5px solid var(--clr-border)", borderRadius: 18, width: "100%", maxWidth: 700, overflow: "hidden" }}>
-              <div style={{ display: "flex", alignItems: "center", padding: "18px 24px 12px" }}>
-                <div style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, background: "var(--clr-text)", color: "#fff" }}>Dig my idea</div>
-              </div>
+              <div style={{ padding: "18px 24px 12px" }} />
               <div style={{ padding: "0 24px 12px" }}>
                 <div style={{ width: "100%", minHeight: 88, background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 12 }} />
               </div>
