@@ -3816,10 +3816,7 @@ function HomeInner() {
                     {/* Input card */}
                     <div style={{ background: "var(--clr-surface)", border: "1.5px solid var(--clr-border)", borderRadius: 18, padding: "0", width: "100%", maxWidth: 700, overflow: "hidden" }}>
                       {/* Tool title — no switcher, controlled by navbar */}
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 12px" }}>
-                        <div style={{ padding: "8px 20px", borderRadius: 9, fontSize: "0.9375rem", fontWeight: 500, background: "var(--clr-text)", color: "#fff" }}>
-                          {activeHeroTab === "gap-analysis" ? "Dig my idea" : "Get my stack"}
-                        </div>
+                      <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", padding: "18px 24px 12px" }}>
                         <div className="hide-on-mobile" style={{ display: "flex", alignItems: "center", gap: 5 }}>
                           <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
                           <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Opus 4.6</span>
