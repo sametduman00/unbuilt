@@ -2796,8 +2796,11 @@ function parseGapAnalysisJSON(raw: string): GapAnalysisData | null {
   }
   try {
     const data = JSON.parse(jsonStr);
-    // Only require the absolute essentials — v2.2 may omit some legacy fields
-    if (!data.competitors || !data.marketGaps) return null;
+    // Only require marketScore — free results won't have competitors/marketGaps
+    if (data.marketScore === undefined && data.marketScore !== 0) return null;
+    // Default fields if missing
+    data.competitors = data.competitors ?? [];
+    data.marketGaps = data.marketGaps ?? [];
     // Default fields if missing
     data.marketScore = data.marketScore ?? 50;
     data.marketScoreLabel = data.marketScoreLabel ?? "";
