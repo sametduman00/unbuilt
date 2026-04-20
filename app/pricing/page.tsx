@@ -10,7 +10,7 @@ const PLANS = [
     price: "$9.99",
     period: "/mo",
     analyses: 10,
-    paddlePriceId: "pri_01km8zvgagyf8qaxhe8ds1cmh3", // TODO: replace with subscription price ID
+    paddlePriceId: "pri_01kppbg9wpd5xn5mx0wem71msn",
     highlight: true,
     badge: "MOST POPULAR" as string | null,
     hook: "Perfect for solo makers",
@@ -22,7 +22,7 @@ const PLANS = [
     price: "$19.99",
     period: "/mo",
     analyses: 25,
-    paddlePriceId: "pri_01km8ztv9kx85hwtzepp4b1enf", // TODO: replace with subscription price ID
+    paddlePriceId: "pri_01kppbkmgk5a6nthnt1132zh85",
     highlight: false,
     badge: null as string | null,
     hook: "Building seriously?",

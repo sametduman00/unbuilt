@@ -9,8 +9,8 @@ const PACKAGES: Record<string, number> = { starter: 5, popular: 10, pro: 25, "ad
 // Map Paddle subscription price IDs to monthly analysis quotas
 // TODO: Replace these with real Paddle price IDs after creating subscription products
 const SUBSCRIPTION_QUOTAS: Record<string, number> = {
-  "pri_REPLACE_PRO_10": 10,     // Pro $9.99/mo → 10 analyses
-  "pri_REPLACE_PRO_25": 25,     // Pro+ $19.99/mo → 25 analyses
+  "pri_01kppbg9wpd5xn5mx0wem71msn": 10,     // Pro $9.99/mo → 10 analyses
+  "pri_01kppbkmgk5a6nthnt1132zh85": 25,     // Pro+ $19.99/mo → 25 analyses
 };
 
 async function sendTelegram(msg: string) {
