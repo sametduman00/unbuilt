@@ -64,6 +64,7 @@ const nextConfig: NextConfig = {
       "remark-gfm",
       "@clerk/nextjs",
       "jspdf",
+      "lucide-react",
     ],
   },
 };
