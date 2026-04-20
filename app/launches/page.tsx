@@ -1,9 +1,16 @@
 "use client";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 export default function LaunchesPage() {
   const router = useRouter();
+  const { isSignedIn } = useUser();
+  const [isPro, setIsPro] = useState(false);
+  useEffect(() => {
+    if (!isSignedIn) return;
+    fetch("/api/user/plan").then(r => r.json()).then(d => setIsPro(d.isPro ?? false)).catch(() => {});
+  }, [isSignedIn]);
   const [pulseTab, setPulseTab] = useState<"ph"|"appstore">("appstore");
   const [pulseSignals, setPulseSignals] = useState<Array<{source:string;sourceLabel:string;emoji:string;title:string;subtitle:string;signal:string;url:string;timestamp:string;movementType?:string;imageUrl?:string;topics?:string[];tagline?:string;externalUrl?:string;claudeGap?:string;}>>([]);
   const [pulseLoading, setPulseLoading] = useState(false);
@@ -93,8 +100,14 @@ export default function LaunchesPage() {
                         {!pulseLoading && phPaged.length>0 && (
                           <div className="ph-card-grid" style={{ display:"grid", gridTemplateColumns:"repeat(2,minmax(0,1fr))", gap:10 }}>
                             {phPaged.map((s,i)=>{
+                              const isLocked = !isPro && i >= 3;
                               return (
-                                <div key={s.title+i} style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column" }}>
+                                <div key={s.title+i} style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column", position: "relative", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const } : {}) }}>
+                                  {isLocked && i === 3 && (
+                                    <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center", filter: "none" }}>
+                                      <a href="/pricing" style={{ padding: "10px 24px", borderRadius: 10, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.85rem", fontWeight: 700, boxShadow: "0 4px 16px rgba(0,0,0,0.15)" }}>Unlock all — Go Pro →</a>
+                                    </div>
+                                  )}
                                   <a href={s.externalUrl||s.url} target="_blank" rel="noopener noreferrer"
                                     style={{ display:"flex", alignItems:"flex-start", gap:"1rem", padding:"1.125rem 1.125rem 0.875rem", textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
                                     onMouseEnter={e=>e.currentTarget.style.background="rgba(0,0,0,0.02)"}
@@ -154,8 +167,15 @@ export default function LaunchesPage() {
                         {!pulseAsLoading&&pulseAsDays.length===0&&<div style={{ textAlign:"center", padding:"4rem 0", color:"var(--clr-text-3)" }}>No App Store data yet. Check back after 08:00 UTC.</div>}
                         {!pulseAsLoading&&asPaged.length>0&&(
                           <div key={pulseAsCat+"_"+pulseAsSearch} style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                            {asPaged.map(app=>(
-                              <div key={app.app_id} style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden"}}>
+                            {asPaged.map((app,appIdx)=>{
+                              const isLocked = !isPro && appIdx >= 3;
+                              return (
+                              <div key={app.app_id} style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden", position:"relative", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const } : {})}}>
+                                {isLocked && appIdx === 3 && (
+                                  <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center", filter: "none" }}>
+                                    <a href="/pricing" style={{ padding: "10px 24px", borderRadius: 10, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.85rem", fontWeight: 700, boxShadow: "0 4px 16px rgba(0,0,0,0.15)" }}>Unlock all — Go Pro →</a>
+                                  </div>
+                                )}
                                         <a href={app.store_url} target="_blank" rel="noopener noreferrer"
                             style={{display:"flex",flexDirection:"column",gap:"0.875rem",padding:"1.25rem",textDecoration:"none",color:"inherit",transition:"background 0.15s"}}
                             onMouseEnter={e=>e.currentTarget.style.background="rgba(var(--clr-text-rgb),0.02)"}
@@ -218,7 +238,7 @@ export default function LaunchesPage() {
                             </div>
                           </div>
                         </div>
-                            ))}
+                            )})}
                           </div>
                         )}
                         {asPages > 1 && (

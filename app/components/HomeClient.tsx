@@ -3079,6 +3079,7 @@ function StackAdvisorResult({ data, ytVideos, isFreeResult }: { data: StackAdvis
           )}
         </div>
       );
+      return shouldBlur ? <ProGate show={true} label="Full stack plan — Pro only">{phaseContent}</ProGate> : phaseContent;
     }
 
     // Build Order tab
@@ -3129,7 +3130,6 @@ function StackAdvisorResult({ data, ytVideos, isFreeResult }: { data: StackAdvis
         ))}
       </div>
     );
-      return shouldBlur ? <ProGate show={true} label="Full stack plan — Pro only">{phaseContent}</ProGate> : phaseContent;
 
     // Scale Up tab
     if (stackTab === scaleTabIdx && (data.scalability.length > 0 || data.upgrades.length > 0)) return (
@@ -4585,6 +4585,7 @@ function HomeInner() {
                   <div style={{ display: "flex", gap: 8, flexShrink: 0, alignItems: "center" }}>
                     <button
                       onClick={async () => {
+                        if (!userPlan?.isPro) { setShowUpgradeModal(true); return; }
                         const toolLabel = selectedTool === "gap-analysis" ? "Dig" : "Stack";
                         const dateStr = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
                         const esc = (s: unknown) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -4696,10 +4697,11 @@ ${sections.join("\n")}
                       }}
                     >
                       <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v7M5 6l3 3 3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/><path d="M3 10v2.5A1.5 1.5 0 004.5 14h7a1.5 1.5 0 001.5-1.5V10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
-                      Download PDF
+                      Download PDF {!userPlan?.isPro && <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "#6366f1", marginLeft: 2 }}>PRO</span>}
                     </button>
                     <a
-                      href="/reports"
+                      href={userPlan?.isPro ? "/reports" : "#"}
+                      onClick={(e) => { if (!userPlan?.isPro) { e.preventDefault(); setShowUpgradeModal(true); } }}
                       style={{
                         display: "flex", alignItems: "center", gap: 6,
                         padding: "0.375rem 0.875rem", borderRadius: 9,
@@ -4709,7 +4711,7 @@ ${sections.join("\n")}
                       }}
                     >
                       <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 2h7l3 3v9H3V2z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/><path d="M6 7h4M6 10h4M6 4h3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
-                      My Reports
+                      My Reports {!userPlan?.isPro && <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "#6366f1", marginLeft: 2 }}>PRO</span>}
                     </a>
                     <button
                       onClick={backToTools}
