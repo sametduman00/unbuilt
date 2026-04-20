@@ -5,13 +5,18 @@ import { useState, useEffect } from "react";
 
 export default function GlobalHeader() {
   const { isSignedIn, isLoaded } = useUser();
-  const [plan, setPlan] = useState<{ plan: string; totalAnalyses: number; isPro: boolean } | null>(null);
+  const [plan, setPlan] = useState<{ plan: string; totalAnalyses: number; isPro: boolean; tier: "free" | "pro" | "pro+" } | null>(null);
 
   useEffect(() => {
     if (!isSignedIn) return;
     fetch("/api/user/plan")
       .then((r) => r.json())
-      .then((d) => setPlan({ plan: d.plan ?? "free", totalAnalyses: d.totalAnalyses ?? 0, isPro: d.isPro ?? false }))
+      .then((d) => {
+        const isPro = d.isPro ?? false;
+        const monthly = d.monthlyAnalyses ?? 0;
+        const tier = !isPro ? "free" as const : monthly > 10 ? "pro+" as const : "pro" as const;
+        setPlan({ plan: d.plan ?? "free", totalAnalyses: d.totalAnalyses ?? 0, isPro, tier });
+      })
       .catch(() => {});
   }, [isSignedIn]);
 
@@ -68,26 +73,22 @@ export default function GlobalHeader() {
               background: plan.isPro ? "rgba(99,102,241,0.05)" : "transparent",
               cursor: "pointer",
             }}>
-              {plan.isPro ? (
+              {plan.tier === "free" ? (
                 <>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                    stroke="rgb(99,102,241)"
-                    strokeWidth="2.5">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                  </svg>
-                  <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "rgb(99,102,241)" }}>
-                    Pro · {plan.totalAnalyses} {plan.totalAnalyses === 1 ? "analysis" : "analyses"}
+                  <span style={{ fontSize: "0.65rem", fontWeight: 800, color: "var(--clr-text-4)", letterSpacing: "0.04em" }}>FREE</span>
+                  <span style={{ width: 1, height: 12, background: "var(--clr-border-2)" }} />
+                  <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--clr-text-2)" }}>
+                    {plan.totalAnalyses > 0 ? `${plan.totalAnalyses} ${plan.totalAnalyses === 1 ? "analysis" : "analyses"}` : "Upgrade"}
                   </span>
                 </>
               ) : (
                 <>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                    stroke="var(--clr-accent)"
-                    strokeWidth="2.5">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                  </svg>
-                  <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--clr-text-2)" }}>
-                    {plan.totalAnalyses > 0 ? `${plan.totalAnalyses} ${plan.totalAnalyses === 1 ? "analysis" : "analyses"}` : "Upgrade"}
+                  <span style={{ fontSize: "0.65rem", fontWeight: 800, color: "#6366f1", letterSpacing: "0.04em" }}>
+                    {plan.tier === "pro+" ? "PRO+" : "PRO"}
+                  </span>
+                  <span style={{ width: 1, height: 12, background: "rgba(99,102,241,0.2)" }} />
+                  <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "rgb(99,102,241)" }}>
+                    {plan.totalAnalyses} {plan.totalAnalyses === 1 ? "analysis" : "analyses"}
                   </span>
                 </>
               )}
