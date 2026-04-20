@@ -86,7 +86,7 @@ export default function HowItWorksPage() {
         {tab === "launches" && (
           <div style={{ marginTop: "3rem", padding: "2rem", borderRadius: 16, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.05)", textAlign: "center" }}>
             <p style={{ fontSize: "0.9375rem", fontWeight: 700, margin: "0 0 6px" }}>Ready to explore the market?</p>
-            <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Launches is completely free — no credits needed.</p>
+            <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Launches is completely free — no account needed.</p>
             <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "#ef4444", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
               Open Launches →
             </Link>
@@ -95,7 +95,7 @@ export default function HowItWorksPage() {
         {tab === "dig" && (
           <div style={{ marginTop: "3rem", padding: "2rem", borderRadius: 16, border: "1px solid rgba(124,111,255,0.2)", background: "rgba(124,111,255,0.05)", textAlign: "center" }}>
             <p style={{ fontSize: "0.9375rem", fontWeight: 700, margin: "0 0 6px" }}>Don't build what already exists.</p>
-            <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Dig costs 1 credit. Find the gap before you spend months building.</p>
+            <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Dig uses 1 analysis. Find the gap before you spend months building.</p>
             <Link href="/?tool=gap-analysis" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "#7c6fff", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
               Dig my idea →
             </Link>
@@ -104,7 +104,7 @@ export default function HowItWorksPage() {
         {tab === "stack" && (
           <div style={{ marginTop: "3rem", padding: "2rem", borderRadius: 16, border: "1px solid rgba(56,189,248,0.2)", background: "rgba(56,189,248,0.05)", textAlign: "center" }}>
             <p style={{ fontSize: "0.9375rem", fontWeight: 700, margin: "0 0 6px" }}>Stop Googling "best tools for vibecoding".</p>
-            <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Stack costs 1 credit. Get a phased build plan in 90 seconds.</p>
+            <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Stack uses 1 analysis. Get a phased build plan in 90 seconds.</p>
             <Link href="/?tool=stack-advisor" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "#38bdf8", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
               Get my Stack →
             </Link>
@@ -196,7 +196,7 @@ function LaunchesTab() {
           <OutputRow emoji="⚔️" label="COMPETITORS" desc="The main apps already in this space. Who you'd be up against if you built something similar." />
           <OutputRow emoji="🛠️" label="BUILD WITH" desc="3 recommended tools to build this product, each with their specific role in the stack." />
           <div style={{ paddingTop: 10 }}>
-            <OutputRow emoji="🔗" label="Bottom actions" desc="'Dig my idea' runs a full market analysis on this space. 'Get my Stack' generates a phased build plan. Both cost 1 credit." />
+            <OutputRow emoji="🔗" label="Bottom actions" desc="'Dig my idea' runs a full market analysis on this space. 'Get my Stack' generates a phased build plan. Both use 1 analysis." />
           </div>
         </div>
       </Card>
@@ -223,7 +223,7 @@ function DigTab() {
           <DigIcon />
         </div>
         <div>
-          <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.025em" }}>Dig <span style={{ fontSize: "0.7rem", fontWeight: 800, padding: "2px 7px", borderRadius: 5, background: "rgba(124,111,255,0.12)", color: "#7c6fff", verticalAlign: "middle" }}>1 credit</span></h2>
+          <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.025em" }}>Dig <span style={{ fontSize: "0.7rem", fontWeight: 800, padding: "2px 7px", borderRadius: 5, background: "rgba(124,111,255,0.12)", color: "#7c6fff", verticalAlign: "middle" }}>1 analysis</span></h2>
           <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", margin: 0, lineHeight: 1.6 }}>
             Describe your idea. We scan 70+ live sources — Reddit, X, YouTube, App Store, Google Play, Product Hunt, LinkedIn — and tell you exactly where the gap is.
           </p>
@@ -283,7 +283,7 @@ function StackTab() {
           <StackIcon />
         </div>
         <div>
-          <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.025em" }}>Stack <span style={{ fontSize: "0.7rem", fontWeight: 800, padding: "2px 7px", borderRadius: 5, background: "rgba(56,189,248,0.12)", color: "#38bdf8", verticalAlign: "middle" }}>1 credit</span></h2>
+          <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.025em" }}>Stack <span style={{ fontSize: "0.7rem", fontWeight: 800, padding: "2px 7px", borderRadius: 5, background: "rgba(56,189,248,0.12)", color: "#38bdf8", verticalAlign: "middle" }}>1 analysis</span></h2>
           <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", margin: 0, lineHeight: 1.6 }}>
             Describe what you're building. Get a phased tool plan with exact pricing, build order, and step-by-step instructions for every tool — built for vibe coders who move fast.
           </p>

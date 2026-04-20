@@ -5,7 +5,7 @@ import Link from "next/link";
 const FAQS = [
   {
     q: "How do credits work?",
-    a: "Each Dig or Stack report costs 1 credit. Launches is always free — no credits needed. Credits never expire, so you can buy a pack and use them whenever you want.",
+    a: "Dig and Stack each use 1 analysis. Launches is always free. Free users get limited results. Pro users get full reports with 10 or 25 analyses per month.",
   },
   {
     q: "What's the difference between Dig and Stack?",
