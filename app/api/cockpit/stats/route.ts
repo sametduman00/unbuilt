@@ -67,6 +67,20 @@ export async function GET(req: NextRequest) {
   const totalMonthlyRemaining = subscriptionData?.reduce((s: number, u: any) => s + (u.monthly_analyses ?? 0), 0) ?? 0;
   const totalPurchasedRemaining = subscriptionData?.reduce((s: number, u: any) => s + (u.purchased_analyses ?? 0), 0) ?? 0;
 
+  // Abuse monitoring: top free IPs today
+  const { data: freeLogToday } = await sb.from("free_analysis_log")
+    .select("ip")
+    .gte("created_at", today.toISOString());
+  
+  const ipCounts: Record<string, number> = {};
+  for (const row of freeLogToday ?? []) {
+    ipCounts[row.ip] = (ipCounts[row.ip] ?? 0) + 1;
+  }
+  const topFreeIPs = Object.entries(ipCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([ip, count]) => ({ ip, count }));
+
   return NextResponse.json({
     users:   { total:usersTotal??0, today:usersToday??0, week:usersWeek??0 },
     reports: { total:reportsTotal??0, today:reportsToday??0, week:reportsWeek??0,
@@ -81,6 +95,7 @@ export async function GET(req: NextRequest) {
       freeAnalyses: { today: freeAnalysesToday ?? 0, week: freeAnalysesWeek ?? 0 },
       monthlyAnalysesRemaining: totalMonthlyRemaining,
       purchasedAnalysesRemaining: totalPurchasedRemaining,
+      topFreeIPs,
     },
   }, { headers: CORS });
 }

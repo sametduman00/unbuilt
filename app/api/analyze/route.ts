@@ -826,13 +826,15 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const hasAnalysis = await deductAnalysis(userId);
+  const deductResult = await deductAnalysis(userId);
+  const hasAnalysis = deductResult.success;
   if (!hasAnalysis) {
     await releaseIdempotencyLock(lockKey);
     return new Response(JSON.stringify({ error: "No analyses remaining. Upgrade to Pro or buy more." }), { status: 402, headers: { "Content-Type": "application/json" } });
   }
 
   incrementAlert("analyses_used", 3600).catch(() => {});
+  if (deductResult.source) console.log(`[Analyze] Analysis deducted from ${deductResult.source} for user ${userId}`);
 
     // 7. Stream AI response
   const encoder = new TextEncoder();

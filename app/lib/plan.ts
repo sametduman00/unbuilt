@@ -53,20 +53,20 @@ export async function getUserPlan(userId: string): Promise<UserPlan> {
 }
 
 /** Deduct 1 analysis. Returns true if successful. Consumes monthly first, then purchased. */
-export async function deductAnalysis(userId: string): Promise<boolean> {
+export async function deductAnalysis(userId: string): Promise<{ success: boolean; source?: "monthly" | "purchased" | "legacy" }> {
   const supabase = getSupabase();
 
   // Try to deduct from monthly first
   const { data: monthlyResult } = await supabase.rpc("deduct_monthly_analysis", { p_user_id: userId });
-  if (monthlyResult === true) return true;
+  if (monthlyResult === true) return { success: true, source: "monthly" };
 
   // Try purchased analyses
   const { data: purchasedResult } = await supabase.rpc("deduct_purchased_analysis", { p_user_id: userId });
-  if (purchasedResult === true) return true;
+  if (purchasedResult === true) return { success: true, source: "purchased" };
 
   // Also try legacy credits table as fallback
   const { data: legacyResult } = await supabase.rpc("deduct_credit", { p_user_id: userId });
-  return legacyResult === true;
+  return legacyResult === true ? { success: true, source: "legacy" } : { success: false };
 }
 
 /** Add purchased analyses (from credit pack purchase) */

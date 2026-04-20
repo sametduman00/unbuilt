@@ -244,7 +244,8 @@ export async function POST(req: NextRequest) {
   if (!locked) return new Response(JSON.stringify({ error: "This stack analysis is already in progress. Please wait." }), { status: 409, headers: { "Content-Type": "application/json" } });
 
   // Deduct credit only after all checks
-  const hasAnalysis = await deductAnalysis(userId);
+  const deductResult = await deductAnalysis(userId);
+  const hasAnalysis = deductResult.success;
   // Daily per-user quota — max 20/day across analyze + stack
   const quotaCheck = await checkDailyCreditQuota(userId);
   if (!quotaCheck.allowed) {
@@ -258,6 +259,7 @@ export async function POST(req: NextRequest) {
     await releaseIdempotencyLock(lockKey);
     return new Response(JSON.stringify({ error: "No analyses remaining. Upgrade to Pro or buy more." }), { status: 402, headers: { "Content-Type": "application/json" } });
   }
+  if (deductResult.source) console.log(`[Stack] Analysis deducted from ${deductResult.source} for user ${userId}`);
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
