@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addCredits } from "@/app/lib/credits";
+import { addPurchasedAnalyses, activateProSubscription, renewProSubscription, cancelProSubscription } from "@/app/lib/plan";
 import { incrementAlert } from "@/app/lib/alerts";
 import { getSupabase } from "@/app/lib/supabase";
 
-const PACKAGES: Record<string, number> = { starter: 5, popular: 10, pro: 25 };
+const PACKAGES: Record<string, number> = { starter: 5, popular: 10, pro: 25, "addon-5": 5, "addon-10": 10 };
+
+// Map Paddle subscription price IDs to monthly analysis quotas
+// TODO: Replace these with real Paddle price IDs after creating subscription products
+const SUBSCRIPTION_QUOTAS: Record<string, number> = {
+  "pri_REPLACE_PRO_10": 10,     // Pro $9.99/mo → 10 analyses
+  "pri_REPLACE_PRO_25": 25,     // Pro+ $19.99/mo → 25 analyses
+};
 
 async function sendTelegram(msg: string) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -158,18 +166,88 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "DB error" }, { status: 500 });
     }
 
-    // ── Add credits AFTER successful order insert ─────────────────────────────
+    // ── Add analyses AFTER successful order insert ─────────────────────────────
+    await addPurchasedAnalyses(userId, credits);
+    // Also add to legacy credits table for backward compat
     await addCredits(userId, credits);
 
     const amountFormatted = amount
       ? `${(parseInt(amount) / 100).toFixed(2)} ${currency}`
       : "?";
     await sendTelegram(
-      `💰 <b>New purchase!</b>\n📦 Package: <b>${packageSlug}</b> (${credits} credits)\n💵 Amount: <b>${amountFormatted}</b>\n📧 ${email}`
+      `💰 <b>New purchase!</b>\n📦 Package: <b>${packageSlug}</b> (${credits} analyses)\n💵 Amount: <b>${amountFormatted}</b>\n📧 ${email}`
     );
 
     // Meta CAPI — server-side Purchase event (reliable, ad-blocker proof)
     await sendMetaPurchaseEvent(email, amountUsd ?? 0, currency);
+  }
+
+  // ── SUBSCRIPTION EVENTS ──────────────────────────────────────────────────────
+
+  if (event.event_type === "subscription.activated" || event.event_type === "subscription.created") {
+    const userId = event.data?.custom_data?.user_id as string | undefined;
+    const subscriptionId = event.data?.id as string | undefined;
+    const priceId = event.data?.items?.[0]?.price?.id as string | undefined;
+    const periodEnd = event.data?.current_billing_period?.ends_at as string | undefined;
+    const email = event.data?.customer?.email ?? "unknown";
+
+    if (!userId || !priceId) {
+      console.error("[Paddle] Subscription event missing user_id or price_id");
+      return NextResponse.json({ ok: true });
+    }
+
+    const quota = SUBSCRIPTION_QUOTAS[priceId] ?? 10;
+    await activateProSubscription(userId, subscriptionId ?? "", periodEnd ?? new Date(Date.now() + 30 * 86400000).toISOString(), quota);
+
+    await sendTelegram(
+      `🎉 <b>New Pro subscriber!</b>\n⚡ Plan: <b>${quota} analyses/mo</b>\n📧 ${email}`
+    );
+  }
+
+  if (event.event_type === "subscription.updated") {
+    // Handles plan changes (upgrade/downgrade)
+    const userId = event.data?.custom_data?.user_id as string | undefined;
+    const subscriptionId = event.data?.id as string | undefined;
+    const priceId = event.data?.items?.[0]?.price?.id as string | undefined;
+    const periodEnd = event.data?.current_billing_period?.ends_at as string | undefined;
+    const scheduledChange = event.data?.scheduled_change;
+
+    if (!userId) {
+      console.error("[Paddle] subscription.updated missing user_id");
+      return NextResponse.json({ ok: true });
+    }
+
+    // If there's a scheduled cancellation, don't change plan yet — it stays pro until period end
+    if (scheduledChange?.action === "cancel") {
+      await cancelProSubscription(userId);
+      await sendTelegram(`⚠️ <b>Pro cancelled</b> (active until period end)\n👤 ${userId}`);
+    } else if (priceId) {
+      // Plan change (e.g. Pro → Pro+)
+      const quota = SUBSCRIPTION_QUOTAS[priceId] ?? 10;
+      await activateProSubscription(userId, subscriptionId ?? "", periodEnd ?? "", quota);
+    }
+  }
+
+  if (event.event_type === "subscription.canceled") {
+    const userId = event.data?.custom_data?.user_id as string | undefined;
+    if (userId) {
+      await cancelProSubscription(userId);
+      await sendTelegram(`❌ <b>Pro ended</b>\n👤 ${userId}`);
+    }
+  }
+
+  // Renewal — reset monthly analyses
+  if (event.event_type === "transaction.completed" && event.data?.subscription_id) {
+    // This is a renewal payment for an existing subscription
+    const userId = event.data?.custom_data?.user_id as string | undefined;
+    const priceId = event.data?.items?.[0]?.price?.id as string | undefined;
+    const periodEnd = event.data?.current_billing_period?.ends_at as string | undefined;
+
+    if (userId && priceId && SUBSCRIPTION_QUOTAS[priceId]) {
+      const quota = SUBSCRIPTION_QUOTAS[priceId];
+      await renewProSubscription(userId, periodEnd ?? new Date(Date.now() + 30 * 86400000).toISOString(), quota);
+      await sendTelegram(`🔄 <b>Pro renewed!</b>\n⚡ ${quota} analyses reset\n👤 ${userId}`);
+    }
   }
 
   return NextResponse.json({ ok: true });
