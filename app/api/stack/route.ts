@@ -6,7 +6,7 @@ import { join } from "path";
 import { getCached, setCached, TTL_MS } from "../_cache";
 import { normalizeQuery } from "../_normalize";
 import { auth } from "@clerk/nextjs/server";
-import { deductCredit } from "@/app/lib/credits";
+import { deductAnalysis } from "@/app/lib/plan";
 import { saveReport } from "@/app/lib/reports";
 import { validateStackBody, checkPayloadSize, errorResponse } from "@/app/lib/validate";
 import { checkDailyCreditQuota, incrementDailyCredits } from "@/app/lib/abuse";
@@ -244,7 +244,7 @@ export async function POST(req: NextRequest) {
   if (!locked) return new Response(JSON.stringify({ error: "This stack analysis is already in progress. Please wait." }), { status: 409, headers: { "Content-Type": "application/json" } });
 
   // Deduct credit only after all checks
-  const hasCredits = await deductCredit(userId);
+  const hasAnalysis = await deductAnalysis(userId);
   // Daily per-user quota — max 20/day across analyze + stack
   const quotaCheck = await checkDailyCreditQuota(userId);
   if (!quotaCheck.allowed) {
@@ -254,9 +254,9 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  if (!hasCredits) {
+  if (!hasAnalysis) {
     await releaseIdempotencyLock(lockKey);
-    return new Response(JSON.stringify({ error: "No credits remaining" }), { status: 402, headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: "No analyses remaining. Upgrade to Pro or buy more." }), { status: 402, headers: { "Content-Type": "application/json" } });
   }
 
   const encoder = new TextEncoder();

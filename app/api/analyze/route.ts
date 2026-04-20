@@ -5,7 +5,7 @@ import gplay from "google-play-scraper";
 import { getCached, setCached, TTL_MS } from "../_cache";
 import { normalizeQuery } from "../_normalize";
 import { auth } from "@clerk/nextjs/server";
-import { deductCredit, addCredits } from "@/app/lib/credits";
+import { deductAnalysis, addPurchasedAnalyses } from "@/app/lib/plan";
 import { saveReport } from "@/app/lib/reports";
 import { validateAnalyzeBody, checkPayloadSize, errorResponse, MAX_PAYLOAD_BYTES } from "@/app/lib/validate";
 import { checkDailyCreditQuota, incrementDailyCredits } from "@/app/lib/abuse";
@@ -826,13 +826,13 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const hasCredits = await deductCredit(userId);
-  if (!hasCredits) {
+  const hasAnalysis = await deductAnalysis(userId);
+  if (!hasAnalysis) {
     await releaseIdempotencyLock(lockKey);
-    return new Response(JSON.stringify({ error: "No credits remaining" }), { status: 402, headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: "No analyses remaining. Upgrade to Pro or buy more." }), { status: 402, headers: { "Content-Type": "application/json" } });
   }
 
-  incrementAlert("credits_burned", 3600).catch(() => {});
+  incrementAlert("analyses_used", 3600).catch(() => {});
 
     // 7. Stream AI response
   const encoder = new TextEncoder();
@@ -880,14 +880,14 @@ export async function POST(req: NextRequest) {
           setCached(normalizedKey, full);
         } else if (full && !isCompleteJSON) {
           // Truncated/incomplete JSON — refund
-          console.error("[Analyze] Incomplete JSON — refunding credit for", userId);
-          await addCredits(userId, 1);
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis was incomplete. Your credit has been refunded. Please try again." })}\n\n`));
+          console.error("[Analyze] Incomplete JSON — refunding analysis for", userId);
+          await addPurchasedAnalyses(userId, 1);
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis was incomplete. Your analysis has been refunded. Please try again." })}\n\n`));
         } else {
           // Empty response — refund
-          console.error("[Analyze] Empty response — refunding credit for", userId);
-          await addCredits(userId, 1);
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis produced no output. Your credit has been refunded. Please try again." })}\n\n`));
+          console.error("[Analyze] Empty response — refunding analysis for", userId);
+          await addPurchasedAnalyses(userId, 1);
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis produced no output. Your analysis has been refunded. Please try again." })}\n\n`));
         }
         if (full && isCompleteJSON && userId && (toolType === "gap-analysis" || toolType === "stack-advisor")) {
           try {
@@ -931,10 +931,10 @@ export async function POST(req: NextRequest) {
         incrementAlert("ai_error", 300).catch(() => {});
         // Refund credit on API failure
         if (userId) {
-          await addCredits(userId, 1).catch(() => {});
-          console.error("[Analyze] AI error — refunded credit for", userId, err);
+          await addPurchasedAnalyses(userId, 1).catch(() => {});
+          console.error("[Analyze] AI error — refunded analysis for", userId, err);
         }
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis failed. Your credit has been refunded. Please try again." })}\n\n`));
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Analysis failed. Your analysis has been refunded. Please try again." })}\n\n`));
       } finally {
         await releaseIdempotencyLock(lockKey);
         controller.close();
