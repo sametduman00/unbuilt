@@ -655,83 +655,177 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
 
   const renderTab = () => {
     switch (activeTab) {
-      case "overview": return (
+      case "overview": {
+        const band = data._presentation?.mode || (sc <= 30 ? "band1" : sc <= 55 ? "band2" : "band3");
+        const heroColor = band === "band1" ? { bg:"#fef2f2", border:"#fecaca", text:"#991b1b", sub:"#b91c1c", label:"#dc2626", circle:"#ef4444" }
+          : band === "band2" ? { bg:"#fffbeb", border:"#fcd34d", text:"#78350f", sub:"#92400e", label:"#d97706", circle:"#f59e0b" }
+          : { bg:"#f0fdf4", border:"#86efac", text:"#14532d", sub:"#166534", label:"#16a34a", circle:"#10b981" };
+        const recLabel = data.synthesis?.recommendedAction?.replace(/_/g," ") ?? "analyze";
+        const hardPartText = data.synthesis?.hardPart || data.synthesis?.fatalFlaw || "";
+        return (
         <div>
-          <Card title="TL;DR - Executive Summary" sub={"Market score: "+sc+"/100"} right={
-            <div style={{ display:"flex", gap:6, alignItems:"center" }}>
-              {data._evidence?.level && <Pill text={data._evidence.level+" confidence"} color={data._evidence.level==="high"?"green":data._evidence.level==="moderate"?"orange":"red"} />}
-              <Pill text={data.marketScoreLabel??"Opportunity"} color={sc>=70?"green":sc>=50?"orange":"red"} />
-            </div>
+          <Card title="Current idea assessment" right={
+            data._evidence?.level ? <Pill text={data._evidence.level+" confidence"} color={data._evidence.level==="high"?"green":data._evidence.level==="moderate"?"orange":"red"} /> : null
           }>
-            <div style={{ display:"flex", flexDirection:(typeof window!=="undefined"&&window.innerWidth<768)?"column":"row" as const, alignItems:(typeof window!=="undefined"&&window.innerWidth<768)?"center":"flex-start" as const, gap:20, marginBottom:20 }}>
-              <div style={{ display:"flex", flexDirection:"column" as const, alignItems:"center", gap:8, flexShrink:0 }}>
-                <ScoreCircle size={90} />
+            {/* Hero block — score + recommendation */}
+            <div style={{ display:"flex", gap:0, marginBottom:16, borderRadius:10, overflow:"hidden", border:`1px solid ${heroColor.border}` }}>
+              <div style={{ width: mob?70:90, background:heroColor.bg, display:"flex", alignItems:"center", justifyContent:"center", padding:"16px 12px", flexShrink:0 }}>
+                <div style={{ width:56, height:56, borderRadius:"50%", border:`4px solid ${heroColor.circle}`, display:"flex", alignItems:"center", justifyContent:"center", background:"white" }}>
+                  <span style={{ fontSize:20, fontWeight:500, color:heroColor.label }}>{sc}</span>
+                </div>
               </div>
-              <div style={{ flex:1, minWidth:0 }}>
-                {data.verdict && <p style={{ fontSize:14, lineHeight:1.7, color:"#111827", fontWeight:500, margin:"0 0 8px 0" }}>{data.verdict}</p>}
-                <p style={{ fontSize:13, lineHeight:1.7, color:"#6b7280", margin:"0 0 12px 0" }}>{data.marketScoreSummary}</p>
-                {data.synthesis?.recommendedAction && (
-                  <div style={{ marginBottom:12 }}>
-                    <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"5px 12px", borderRadius:8, fontSize:12, fontWeight:600,
-                      background: data.synthesis.recommendedAction==="kill"?"#fee2e2" : data.synthesis.recommendedAction==="move_fast"?"#dcfce7" : data.synthesis.recommendedAction==="build_mvp"?"#dbeafe" : data.synthesis.recommendedAction==="reposition"?"#fff7ed" : "#f3f4f6",
-                      color: data.synthesis.recommendedAction==="kill"?"#dc2626" : data.synthesis.recommendedAction==="move_fast"?"#16a34a" : data.synthesis.recommendedAction==="build_mvp"?"#2563eb" : data.synthesis.recommendedAction==="reposition"?"#ea580c" : "#374151",
-                    }}>
-                      Recommended: {data.synthesis.recommendedAction.replace(/_/g," ")}
+              <div style={{ flex:1, background:heroColor.bg, padding:"14px 16px", borderLeft:`1px solid ${heroColor.border}` }}>
+                <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.08em", color:heroColor.label, marginBottom:4 }}>Recommended: {recLabel}</div>
+                {data.verdict && <div style={{ fontSize:13, fontWeight:500, color:heroColor.text, lineHeight:1.5, marginBottom:6 }}>{data.verdict}</div>}
+                <div style={{ fontSize:11, color:heroColor.sub, lineHeight:1.5 }}>{data.marketScoreSummary}</div>
+              </div>
+            </div>
+
+            {/* Band-specific cards */}
+            {band === "band1" && (
+              <>
+                {/* Where this idea actually works */}
+                {data.synthesis?.repositionPaths && data.synthesis.repositionPaths.length > 0 && (
+                  <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:10, padding:14, marginBottom:10 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#7c3aed", marginBottom:8 }}>Where this idea actually works</div>
+                    <div style={{ display:"flex", flexDirection:"column" as const, gap:8 }}>
+                      {data.synthesis.repositionPaths.map((p,i) => (
+                        <div key={i} style={{ display:"flex", gap:8, alignItems:"flex-start" }}>
+                          <div style={{ width:18, height:18, borderRadius:"50%", background:"#ddd6fe", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontSize:10, color:"#5b21b6", fontWeight:500 }}>{i+1}</div>
+                          <div style={{ fontSize:12, color:"#3b0764", lineHeight:1.5 }}><strong>{p.angle}</strong>{p.reasoning ? ` — ${p.reasoning}` : ""}</div>
+                        </div>
+                      ))}
                     </div>
-                    {data._scoring?.action_override && (
-                      <div style={{ fontSize:11, color:"#6b7280", marginTop:4, lineHeight:1.5 }}>
-                        {data._scoring.action_override_reason}
-                      </div>
-                    )}
                   </div>
                 )}
+                {/* Your move */}
+                {data.synthesis?.bestNextMove && (
+                  <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14, marginBottom:10 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#16a34a", marginBottom:4 }}>Your move</div>
+                    <div style={{ fontSize:13, fontWeight:500, color:"#14532d", marginBottom:4 }}>{data.synthesis.bestNextMove.action}</div>
+                    <div style={{ fontSize:12, color:"#166534", lineHeight:1.5 }}>{data.synthesis.bestNextMove.detail}</div>
+                  </div>
+                )}
+                {/* The hard part */}
+                {hardPartText && (
+                  <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:14, marginBottom:10 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#d97706", marginBottom:4 }}>The hard part</div>
+                    <div style={{ fontSize:12, color:"#78350f", lineHeight:1.5 }}>{hardPartText}</div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {band === "band2" && (
+              <>
+                {/* What makes this work */}
+                {data.synthesis?.upsideCondition && (
+                  <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:10, padding:14, marginBottom:10 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#2563eb", marginBottom:4 }}>What makes this work</div>
+                    <div style={{ fontSize:12, color:"#1e3a5f", lineHeight:1.5 }}>{data.synthesis.upsideCondition}</div>
+                  </div>
+                )}
+                {/* Best next move + Sharpen the angle */}
+                <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:10, marginBottom:10 }}>
+                  {data.synthesis?.bestNextMove && (
+                    <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14 }}>
+                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#16a34a", marginBottom:4 }}>Best next move</div>
+                      <div style={{ fontSize:12, color:"#14532d", lineHeight:1.5 }}><strong>{data.synthesis.bestNextMove.action}</strong>{data.synthesis.bestNextMove.detail ? ` — ${data.synthesis.bestNextMove.detail}` : ""}</div>
+                    </div>
+                  )}
+                  {data.synthesis?.repositionPaths?.[0] && (
+                    <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:10, padding:14 }}>
+                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#7c3aed", marginBottom:4 }}>Sharpen the angle</div>
+                      <div style={{ fontSize:12, color:"#3b0764", lineHeight:1.5 }}>{data.synthesis.repositionPaths[0].angle}{data.synthesis.repositionPaths[0].reasoning ? ` — ${data.synthesis.repositionPaths[0].reasoning}` : ""}</div>
+                    </div>
+                  )}
+                </div>
+                {/* The hard part */}
+                {hardPartText && (
+                  <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:14, marginBottom:10 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#d97706", marginBottom:4 }}>The hard part</div>
+                    <div style={{ fontSize:12, color:"#78350f", lineHeight:1.5 }}>{hardPartText}</div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {band === "band3" && (
+              <>
+                {/* Why this has signal */}
+                {data.synthesis?.upsideCondition && (
+                  <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14, marginBottom:10 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#16a34a", marginBottom:4 }}>Why this has signal</div>
+                    <div style={{ fontSize:12, color:"#14532d", lineHeight:1.5 }}>{data.synthesis.upsideCondition}</div>
+                  </div>
+                )}
+                {/* Your one-liner */}
+                {data.oneLiner && (
+                  <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:10, padding:14, marginBottom:10 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#7c3aed", marginBottom:4 }}>Your one-liner</div>
+                    <div style={{ fontSize:13, fontStyle:"italic" as const, color:"#1e1b4b" }}>"{data.oneLiner}"</div>
+                  </div>
+                )}
+                {/* Your move */}
+                {data.synthesis?.bestNextMove && (
+                  <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:10, padding:14, marginBottom:10 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#2563eb", marginBottom:4 }}>Your move</div>
+                    <div style={{ fontSize:13, fontWeight:500, color:"#1e3a5f", marginBottom:4 }}>{data.synthesis.bestNextMove.action}</div>
+                    <div style={{ fontSize:12, color:"#1e40af", lineHeight:1.5 }}>{data.synthesis.bestNextMove.detail}</div>
+                  </div>
+                )}
+                {/* The risk you should watch */}
+                {hardPartText && (
+                  <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:14, marginBottom:10 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#d97706", marginBottom:4 }}>The risk you should watch</div>
+                    <div style={{ fontSize:12, color:"#78350f", lineHeight:1.5 }}>{hardPartText}</div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Fallback: if new fields missing, show old-style cards */}
+            {!data.synthesis?.bestNextMove && !data.synthesis?.repositionPaths && (
+              <>
                 {data.oneLiner && sc >= 30 && (
-                  <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:8, padding:"10px 14px" }}>
+                  <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:10, padding:"10px 14px", marginBottom:10 }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#7c3aed", marginBottom:3, letterSpacing:"0.07em" }}>Your One-Liner</div>
                     <div style={{ fontSize:13, fontStyle:"italic" as const, color:"#1e1b4b" }}>"{data.oneLiner}"</div>
                   </div>
                 )}
-                <div style={{ display:"flex", gap:12, marginTop:12, flexWrap:"wrap" as const }}>
-                  {data.marketSize?.tam && <div style={{ fontSize:12, color:"#374151" }}>📈 <strong>TAM:</strong> {parseMarketVal(data.marketSize.tam).num}</div>}
-                  {data.competitors?.[0] && <div style={{ fontSize:12, color:"#374151" }}>⚔ <strong>Top threat:</strong> {data.competitors[0].name}</div>}
-                  {data.marketGaps?.[0] && <div style={{ fontSize:12, color:"#374151" }}>🎯 <strong>Best gap:</strong> {data.marketGaps[0].title}</div>}
+                <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:10, marginBottom:10 }}>
+                  {hardPartText && (
+                    <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:14 }}>
+                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#d97706", marginBottom:6, letterSpacing:"0.07em" }}>The hard part</div>
+                      <div style={{ fontSize:13, color:"#78350f", lineHeight:1.5 }}>{hardPartText}</div>
+                    </div>
+                  )}
+                  {data.synthesis?.upsideCondition && (
+                    <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14 }}>
+                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#16a34a", marginBottom:6, letterSpacing:"0.07em" }}>Upside condition</div>
+                      <div style={{ fontSize:13, color:"#14532d", lineHeight:1.5 }}>{data.synthesis.upsideCondition}</div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            </div>
-            {/* Fatal flaw + upside condition */}
-            {(data.synthesis?.fatalFlaw || data.synthesis?.upsideCondition) && (
-              <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:10, marginBottom:16 }}>
-                {data.synthesis?.fatalFlaw && (
-                  <div style={{ background:"#fef2f2", border:"1px solid #fecaca", borderRadius:10, padding:14 }}>
-                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#dc2626", marginBottom:6, letterSpacing:"0.07em" }}>Fatal flaw</div>
-                    <div style={{ fontSize:13, color:"#7f1d1d", lineHeight:1.5 }}>{data.synthesis.fatalFlaw}</div>
+                <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr 1fr", gap:10 }}>
+                  <div style={{ background:"#f0fdfb", border:"1px solid #ccfbf1", borderRadius:10, padding:14 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#0d9488", marginBottom:6, letterSpacing:"0.07em" }}>Biggest Opportunity</div>
+                    <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.marketGaps?.[0]?.title??"-"}</div>
+                    <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.5 }}>{data.marketGaps?.[0]?.description??""}</div>
                   </div>
-                )}
-                {data.synthesis?.upsideCondition && (
-                  <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14 }}>
-                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#16a34a", marginBottom:6, letterSpacing:"0.07em" }}>Upside condition</div>
-                    <div style={{ fontSize:13, color:"#14532d", lineHeight:1.5 }}>{data.synthesis.upsideCondition}</div>
+                  <div style={{ background:"#fff7ed", border:"1px solid #fed7aa", borderRadius:10, padding:14 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ea580c", marginBottom:6, letterSpacing:"0.07em" }}>Biggest Risk</div>
+                    <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.swot?.threats?.[0]??"-"}</div>
+                    <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.5 }}>{data.swot?.threats?.[1]??""}</div>
                   </div>
-                )}
-              </div>
+                  <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:10, padding:14 }}>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#2563eb", marginBottom:6, letterSpacing:"0.07em" }}>First Move</div>
+                    <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.opportunity?.actionItems?.[0]?.action??"-"}</div>
+                    <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.5 }}>{data.opportunity?.actionItems?.[0]?.detail??""}</div>
+                  </div>
+                </div>
+              </>
             )}
-            <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr 1fr", gap:10 }}>
-              <div style={{ background:"#f0fdfb", border:"1px solid #ccfbf1", borderRadius:10, padding:14 }}>
-                <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#0d9488", marginBottom:6, letterSpacing:"0.07em" }}>Biggest Opportunity</div>
-                <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.marketGaps?.[0]?.title??"-"}</div>
-                <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.5 }}>{data.marketGaps?.[0]?.description??""}</div>
-              </div>
-              <div style={{ background:"#fff7ed", border:"1px solid #fed7aa", borderRadius:10, padding:14 }}>
-                <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ea580c", marginBottom:6, letterSpacing:"0.07em" }}>Biggest Risk</div>
-                <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.swot?.threats?.[0]??"-"}</div>
-                <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.5 }}>{data.swot?.threats?.[1]??""}</div>
-              </div>
-              <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:10, padding:14 }}>
-                <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#2563eb", marginBottom:6, letterSpacing:"0.07em" }}>First Move</div>
-                <div style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:4 }}>{data.opportunity?.actionItems?.[0]?.action??"-"}</div>
-                <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.5 }}>{data.opportunity?.actionItems?.[0]?.detail??""}</div>
-              </div>
-            </div>
           </Card>
           {/* D1-D5 Score Breakdown */}
           {data._scoring && (
@@ -773,13 +867,9 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack 
               )}
             </Card>
           )}
-          {data.synthesis && (
-            <Card title="Synthesis" sub="Your idea at a glance">
-              <p style={{ fontSize:14, lineHeight:1.7, color:"#374151", margin:0 }}>{data.synthesis.oneParagraph}</p>
-            </Card>
-          )}
         </div>
-      );
+      );}
+
       case "market": return (
         <div>
           {data.marketSize && (
@@ -2492,8 +2582,11 @@ interface GapMarketSize {
 interface GapSynthesis {
   oneParagraph: string;
   fatalFlaw?: string;
+  hardPart?: string;
   recommendedAction?: "kill" | "reposition" | "validate_niche" | "build_mvp" | "move_fast";
   upsideCondition?: string;
+  bestNextMove?: { action: string; detail: string };
+  repositionPaths?: { angle: string; reasoning: string }[];
   defensibility?: { level?: string; moat?: string; copyTimeframe?: string };
   workingForYou: string[];
   watchOutFor: string[];
@@ -2595,6 +2688,7 @@ interface GapAnalysisData {
   _scoring?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   _evidence?: any;
+  _presentation?: { mode?: "band1" | "band2" | "band3" };
 }
 
 function parseGapAnalysisJSON(raw: string): GapAnalysisData | null {
