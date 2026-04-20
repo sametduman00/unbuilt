@@ -2,48 +2,37 @@
 import { useUser, SignInButton, useClerk } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import Script from "next/script";
-import { generatePdf, type ReportData } from "@/app/lib/generatePdf";
 
-const PACKAGES = [
-  {
-    slug: "starter",
-    name: "Starter",
-    price: "$4.99",
-    credits: 5,
-    perCredit: "$1.00",
-    paddlePriceId: "pri_01km8znr6vfjy12bhkrgxcqky8",
-    highlight: false,
-    badge: null as string | null,
-    hook: "Try it out",
-    hookSub: "Run 5 full analyses. Find one gap, save months.",
-    perks: ["5 Dig or Stack reports","Credits never expire","Instant delivery","Full 10-section Dig reports","Full 4-phase Stack plans"],
-  },
-  {
-    slug: "popular",
-    name: "Popular",
-    price: "$8.99",
-    credits: 10,
-    perCredit: "$0.90",
-    paddlePriceId: "pri_01km8zvgagyf8qaxhe8ds1cmh3",
-    highlight: true,
-    badge: "BEST VALUE" as string | null,
-    hook: "Most founders pick this",
-    hookSub: "10 reports. Enough to validate an idea end-to-end.",
-    perks: ["10 Dig or Stack reports","Credits never expire","Instant delivery","Full 10-section Dig reports","Full 4-phase Stack plans"],
-  },
+const PLANS = [
   {
     slug: "pro",
     name: "Pro",
+    price: "$9.99",
+    period: "/mo",
+    analyses: 10,
+    paddlePriceId: "pri_01km8zvgagyf8qaxhe8ds1cmh3", // TODO: replace with subscription price ID
+    highlight: true,
+    badge: "MOST POPULAR" as string | null,
+    hook: "Perfect for solo makers",
+    hookSub: "10 full analyses per month. Enough to validate ideas end-to-end.",
+  },
+  {
+    slug: "pro-plus",
+    name: "Pro+",
     price: "$19.99",
-    credits: 25,
-    perCredit: "$0.80",
-    paddlePriceId: "pri_01km8ztv9kx85hwtzepp4b1enf",
+    period: "/mo",
+    analyses: 25,
+    paddlePriceId: "pri_01km8ztv9kx85hwtzepp4b1enf", // TODO: replace with subscription price ID
     highlight: false,
     badge: null as string | null,
     hook: "Building seriously?",
-    hookSub: "25 reports. Research multiple ideas, compare markets.",
-    perks: ["25 Dig or Stack reports","Credits never expire","Instant delivery","Full 10-section Dig reports","Full 4-phase Stack plans"],
+    hookSub: "25 analyses per month. Research multiple ideas, compare markets.",
   },
+];
+
+const ADDONS = [
+  { slug: "addon-5", name: "5 extra analyses", price: "$4.99", analyses: 5, paddlePriceId: "pri_01km8znr6vfjy12bhkrgxcqky8" },
+  { slug: "addon-10", name: "10 extra analyses", price: "$8.99", analyses: 10, paddlePriceId: "pri_01km8zvgagyf8qaxhe8ds1cmh3" },
 ];
 
 const WALLETS = [
@@ -90,19 +79,18 @@ export default function PricingPage() {
 
 
 
-  const handleBuy = (pkg: typeof PACKAGES[0]) => {
+  const handleBuy = (paddlePriceId: string, slug: string) => {
     if (!isSignedIn) { openSignIn(); return; }
     if (!paddleReady || !(window as any).Paddle) {
       alert("Checkout is loading, please try again in a moment.");
       return;
     }
     (window as any).Paddle.Checkout.open({
-      items: [{ priceId: pkg.paddlePriceId, quantity: 1 }],
-      customData: { user_id: user?.id ?? "", package_slug: pkg.slug },
+      items: [{ priceId: paddlePriceId, quantity: 1 }],
+      customData: { user_id: user?.id ?? "", package_slug: slug },
     });
-    // Meta Pixel: track InitiateCheckout
     if (typeof (window as any).fbq === "function") {
-      (window as any).fbq("track", "InitiateCheckout", { content_name: pkg.slug, value: pkg.paddlePriceId });
+      (window as any).fbq("track", "InitiateCheckout", { content_name: slug, value: paddlePriceId });
     }
   };
 
@@ -121,120 +109,143 @@ export default function PricingPage() {
     <main className="pricing-main" style={{ minHeight: "100vh", background: "var(--clr-bg)", padding: "32px 24px 80px", maxWidth: 860, margin: "0 auto" }}>
 
       {/* Header */}
-      <div style={{ textAlign: "center", marginBottom: 28 }}>
+      <div style={{ textAlign: "center", marginBottom: 36 }}>
         <p style={{ ...s.label, color: "var(--clr-text-4)", marginBottom: 14 }}>Pricing</p>
         <h1 style={{ fontSize: "1.625rem", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.15, margin: "0 0 14px" }}>
-          Launches is free.<br />
-          <span style={{ color: "var(--clr-text-3)", fontWeight: 400, fontStyle: "italic" }}>Dig and Stack cost 1 credit each.</span>
+          Free gets the answer.<br />
+          <span style={{ color: "var(--clr-text-3)", fontWeight: 400, fontStyle: "italic" }}>Pro gets the full picture.</span>
         </h1>
-        <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text-2)", margin: "0 auto", whiteSpace: "normal" as const }}>
-          No subscription · No monthly fee · Credits never expire · Buy when you need, use when you want.
+        <p style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--clr-text-3)", margin: "0 auto", maxWidth: 460 }}>
+          Try every feature for free with limited depth. Upgrade to Pro for full reports, all data, and saved history.
         </p>
       </div>
 
-      {/* Credit packs */}
-      <div style={{ marginBottom: 10 }}>
-        <div className="pricing-packs-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
-          {PACKAGES.map((pkg) => (
-            <div key={pkg.slug} style={{
-              background: "var(--clr-surface)",
-              border: pkg.highlight ? "2px solid #7c6fff" : "1px solid var(--clr-border)",
-              borderRadius: 14, padding: "24px 20px 20px",
-              position: "relative", display: "flex", flexDirection: "column",
-            }}>
-              {pkg.badge && (
-                <div style={{ position: "absolute", top: -1, left: "50%", transform: "translateX(-50%)", background: "#7c6fff", color: "#fff", fontSize: 10, fontWeight: 800, padding: "3px 12px", borderRadius: "0 0 8px 8px", letterSpacing: "0.08em" }}>
-                  {pkg.badge}
-                </div>
-              )}
-              <div style={{ marginBottom: 14 }}>
-                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: pkg.highlight ? "#7c6fff" : "var(--clr-text-4)", marginBottom: 2 }}>{pkg.hook}</div>
-                <div style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", lineHeight: 1.45 }}>{pkg.hookSub}</div>
-              </div>
-              <div style={{ marginBottom: 18 }}>
-                <div style={{ fontSize: "2rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.03em", lineHeight: 1 }}>{pkg.price}</div>
-                <div style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", marginTop: 4 }}>{pkg.credits} credits · {pkg.perCredit} each</div>
-              </div>
-              <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
-                {pkg.perks.map((p) => (
-                  <li key={p} style={{ display: "flex", alignItems: "flex-start", gap: 7, fontSize: "0.75rem", color: "var(--clr-text-3)" }}>
-                    <span style={{ color: pkg.highlight ? "#7c6fff" : "var(--clr-text-5)", fontWeight: 800, flexShrink: 0, marginTop: 1 }}>✓</span>{p}
-                  </li>
-                ))}
-              </ul>
-              <button onClick={() => handleBuy(pkg)} style={{ display: "block", width: "100%", padding: "11px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.875rem", fontWeight: 700, cursor: "pointer", background: pkg.highlight ? "#7c6fff" : "transparent", border: pkg.highlight ? "none" : "1px solid var(--clr-border)", color: pkg.highlight ? "#fff" : "var(--clr-text)" }}>
-                {isSignedIn ? `Buy ${pkg.credits} credits` : "Sign in to buy"}
-              </button>
+      {/* Free vs Pro comparison */}
+      <div style={{ marginBottom: 16 }}>
+        <div className="pricing-packs-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          {/* FREE column */}
+          <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "24px 22px 20px" }}>
+            <div style={{ marginBottom: 18 }}>
+              <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.02em" }}>Free</div>
+              <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: 4 }}>No credit card required</div>
             </div>
-          ))}
+            <div style={{ fontSize: "2rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.03em", marginBottom: 18 }}>$0</div>
+            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 8 }}>
+              {[
+                { text: "Limited Dig — score, verdict, top threat, best gap", ok: true },
+                { text: "Limited Stack — Phase 0 only", ok: true },
+                { text: "3 Launches visible", ok: true },
+                { text: "3 Startup Ideas visible", ok: true },
+                { text: "Up to 5 limited analyses/day", ok: true },
+                { text: "Full Dig reports (all 10 tabs)", ok: false },
+                { text: "Full Stack plans (all phases)", ok: false },
+                { text: "PDF export", ok: false },
+                { text: "Saved report history", ok: false },
+              ].map((f) => (
+                <li key={f.text} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: "0.775rem", color: f.ok ? "var(--clr-text-3)" : "var(--clr-text-5)" }}>
+                  <span style={{ flexShrink: 0, marginTop: 1, fontSize: 11 }}>{f.ok ? "✓" : "—"}</span>
+                  <span style={{ textDecoration: f.ok ? "none" : "line-through" }}>{f.text}</span>
+                </li>
+              ))}
+            </ul>
+            <a href="/" style={{ display: "block", width: "100%", padding: "11px 0", borderRadius: 9, textAlign: "center", fontSize: "0.875rem", fontWeight: 700, border: "1px solid var(--clr-border)", color: "var(--clr-text)", textDecoration: "none", boxSizing: "border-box" }}>
+              Start free →
+            </a>
+          </div>
+
+          {/* PRO column */}
+          <div style={{ background: "var(--clr-surface)", border: "2px solid #6366f1", borderRadius: 14, padding: "24px 22px 20px", position: "relative" }}>
+            <div style={{ position: "absolute", top: -1, left: "50%", transform: "translateX(-50%)", background: "#6366f1", color: "#fff", fontSize: 10, fontWeight: 800, padding: "3px 12px", borderRadius: "0 0 8px 8px", letterSpacing: "0.08em" }}>
+              RECOMMENDED
+            </div>
+            <div style={{ marginBottom: 18 }}>
+              <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#6366f1", letterSpacing: "-0.02em" }}>Pro</div>
+              <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: 4 }}>Full access + monthly analyses</div>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 18 }}>
+              <span style={{ fontSize: "2rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.03em" }}>$9.99</span>
+              <span style={{ fontSize: "0.8rem", color: "var(--clr-text-4)" }}>/mo</span>
+            </div>
+            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 8 }}>
+              {[
+                "Full Dig reports — all 10 tabs, live data",
+                "Full Stack plans — all phases + Vibe Guides",
+                "All Launches visible",
+                "All Startup Ideas visible",
+                "10 full analyses included every month",
+                "PDF export",
+                "Saved report history",
+                "Priority support",
+              ].map((f) => (
+                <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: "0.775rem", color: "var(--clr-text-2)" }}>
+                  <span style={{ color: "#6366f1", flexShrink: 0, fontWeight: 800, marginTop: 1, fontSize: 11 }}>✓</span>{f}
+                </li>
+              ))}
+            </ul>
+            <button onClick={() => handleBuy(PLANS[0].paddlePriceId, PLANS[0].slug)} style={{ display: "block", width: "100%", padding: "11px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.875rem", fontWeight: 700, cursor: "pointer", background: "#6366f1", border: "none", color: "#fff" }}>
+              {isSignedIn ? "Go Pro — $9.99/mo" : "Sign in to subscribe"}
+            </button>
+          </div>
         </div>
 
         {/* Trust badge */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 14, flexWrap: "wrap" as const }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text-4)" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Secure checkout via</span>
-          <a href="https://www.paddle.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.75rem", fontWeight: 700, color: "#0C1F3D", textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
-            <svg width="13" height="13" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#0C1F3D"/><path d="M9 8h7.5c3.5 0 6 2.2 6 5.5s-2.5 5.5-6 5.5H12v5H9V8zm3 8.5h4.5c1.8 0 3-1 3-3s-1.2-3-3-3H12v6z" fill="#fff"/></svg>
-            Paddle
-          </a>
+          <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Secure checkout via Paddle</span>
           <span style={{ color: "var(--clr-text-5)", fontSize: "0.75rem" }}>·</span>
-          <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Credits never expire</span>
+          <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Cancel anytime</span>
           <span style={{ color: "var(--clr-text-5)", fontSize: "0.75rem" }}>·</span>
-          <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Instant delivery</span>
+          <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Unused analyses do not carry over</span>
         </div>
       </div>
 
-      {/* Why the price */}
+      {/* Pro+ tier */}
       <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginBottom: 32 }}>
-        <p style={{ fontSize: "0.9375rem", fontWeight: 800, letterSpacing: "-0.01em", color: "var(--clr-text)", textAlign: "center", marginBottom: 16 }}>Why does a credit cost $0.80–$1.00?</p>
-        <div className="pricing-why-flex" style={{ display: "flex", gap: 24, flexWrap: "wrap" as const, alignItems: "stretch" }}>
-          <div style={{ flex: 1, minWidth: 220, display: "flex", flexDirection: "column" as const, gap: 12 }}>
-            <p style={{ ...s.muted, margin: 0 }}>
-              Every query runs on <strong style={{ color: "var(--clr-text)" }}>Claude Opus 4.6 with Extended Thinking</strong> — Anthropic's most capable model. No cheaper shortcuts, no batching, no caching tricks.
-            </p>
-            <p style={{ ...s.muted, margin: 0 }}>
-              Don't take our word for it — verify the numbers yourself with{" "}
-              <a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener noreferrer" style={{ color: "var(--clr-text)", fontWeight: 600 }}>Anthropic's official pricing ↗</a>
-            </p>
-            <div style={{ marginTop: "auto", paddingTop: 8, borderTop: "1px solid var(--clr-border)", display: "flex", alignItems: "center", gap: 8 }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--clr-text-4)" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>We show our math. You check it. That's the deal.</span>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <span style={{ fontSize: "1rem", fontWeight: 800, color: "var(--clr-text)" }}>Pro+</span>
+              <span style={{ fontSize: 9, fontWeight: 800, color: "#6366f1", letterSpacing: ".06em", padding: "2px 8px", borderRadius: 4, background: "rgba(99,102,241,0.08)" }}>SAVE 20%</span>
             </div>
+            <div style={{ fontSize: "0.8rem", color: "var(--clr-text-3)" }}>25 full analyses per month · Everything in Pro</div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 10, padding: "14px 18px", minWidth: 250 }}>
-              <p style={{ ...s.label, marginBottom: 10 }}>Cost per query</p>
-              {[["~20,000 input tokens", "× $15/1M", "= $0.30"],["~5,000 output tokens", "× $75/1M", "= $0.375"]].map(([a, b, c]) => (
-                <div key={a} style={{ display: "flex", gap: 6, fontSize: "0.75rem", fontFamily: "monospace", marginBottom: 4 }}>
-                  <span style={{ color: "var(--clr-text-3)", flex: 1 }}>{a}</span>
-                  <span style={{ color: "var(--clr-text-4)" }}>{b}</span>
-                  <span style={{ color: "var(--clr-text)", fontWeight: 700, minWidth: 52, textAlign: "right" as const }}>{c}</span>
-                </div>
-              ))}
-              <div style={{ borderTop: "1px solid var(--clr-border)", marginTop: 8, paddingTop: 8, display: "flex", justifyContent: "space-between", fontSize: "0.8rem", fontFamily: "monospace" }}>
-                <span style={{ color: "var(--clr-text-3)" }}>Our total cost</span>
-                <span style={{ color: "var(--clr-text)", fontWeight: 800 }}>~$0.675</span>
-              </div>
-              <p style={{ fontSize: 10, color: "var(--clr-text-5)", margin: "6px 0 0", fontStyle: "italic" }}>The rest: hosting, search APIs, infrastructure.</p>
-            </div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+            <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--clr-text)" }}>$19.99</span>
+            <span style={{ fontSize: "0.8rem", color: "var(--clr-text-4)" }}>/mo</span>
+            <button onClick={() => handleBuy(PLANS[1].paddlePriceId, PLANS[1].slug)} style={{ padding: "8px 20px", borderRadius: 8, fontFamily: "inherit", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer", background: "transparent", border: "1px solid var(--clr-border)", color: "var(--clr-text)", marginLeft: 8 }}>
+              {isSignedIn ? "Get Pro+" : "Sign in"}
+            </button>
           </div>
         </div>
       </div>
 
-      {/* What 1 credit gets you */}
-      <div style={{ marginTop: 36, marginBottom: 48 }}>
-        <p style={{ ...s.label, textAlign: "center", marginBottom: 20 }}>What 1 credit gets you</p>
+      {/* Need more analyses? */}
+      <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginBottom: 32 }}>
+        <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 4 }}>Need more analyses?</p>
+        <p style={{ fontSize: "0.775rem", color: "var(--clr-text-3)", margin: "0 0 14px" }}>Pro users can buy extra analyses anytime. Extra analyses never expire and are consumed after monthly ones.</p>
+        <div style={{ display: "flex", gap: 10 }}>
+          {ADDONS.map(a => (
+            <button key={a.slug} onClick={() => handleBuy(a.paddlePriceId, a.slug)} style={{ flex: 1, padding: "10px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", background: "transparent", border: "1px solid var(--clr-border)", color: "var(--clr-text)" }}>
+              {a.analyses} analyses — {a.price}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* How it works */}
+      <div style={{ marginBottom: 48 }}>
+        <p style={{ ...s.label, textAlign: "center", marginBottom: 20 }}>Each Dig or Stack analysis uses 1 of your monthly analyses</p>
         <div className="pricing-credits-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
           {[
             { name: "Launches", badge: "FREE", badgeColor: "#ef4444", iconColor: "#ef4444", iconPath: "pulse",
-              desc: "Live feed of today's launches with AI analysis of what each product is missing.",
-              items: ["WHAT · DIFF · MISS per product","Product Hunt + App Store","Topic filters","'Dig my angle' shortcut","Updated daily"] },
-            { name: "Dig", badge: "1 CREDIT", badgeColor: "#7c6fff", iconColor: "#7c6fff", iconPath: "dig",
-              desc: "Full market intelligence report on your idea — 70+ live sources, 10 sections.",
-              items: ["Market score 0–100","Real competitor apps (both stores)","Pain points from Reddit / X / YouTube","TAM / SAM / SOM sizing","Validation checklist + financial model","PDF export"] },
-            { name: "Stack", badge: "1 CREDIT", badgeColor: "#38bdf8", iconColor: "#38bdf8", iconPath: "stack",
-              desc: "Phased build plan with exact tools, pricing, and step-by-step setup instructions.",
-              items: ["4 phases: Validate → MVP → Growth → Scale","Tool cards with real pricing","Vibe Guide: copy-paste prompts","Mistake warnings","Upgrade triggers","PDF export"] },
+              desc: "Live feed of today's launches with AI analysis. Free for all — 3 visible, all with Pro.",
+              items: ["AI analysis per product","Product Hunt + App Store","Topic filters","'Dig my angle' shortcut"] },
+            { name: "Dig", badge: "1 ANALYSIS", badgeColor: "#6366f1", iconColor: "#6366f1", iconPath: "dig",
+              desc: "Full market intelligence report — 70+ live sources, 10 sections.",
+              items: ["Market score 0–100","Competitors from both stores","Pain points from Reddit / X / YouTube","TAM / SAM / SOM + financial model","Validation checklist + PDF export"] },
+            { name: "Stack", badge: "1 ANALYSIS", badgeColor: "#38bdf8", iconColor: "#38bdf8", iconPath: "stack",
+              desc: "Phased build plan with exact tools, pricing, and setup instructions.",
+              items: ["4 phases: Validate → Scale","Tool cards with real pricing","Vibe Guide: copy-paste prompts","Mistake warnings + upgrade triggers"] },
           ].map((t) => (
             <div key={t.name} style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
