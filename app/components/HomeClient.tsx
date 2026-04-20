@@ -568,6 +568,25 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
     painPoints: data.painPoints?.filter((p: GapPainPoint) => p?.quote) ?? [],
     marketGaps: data.marketGaps?.filter((g: GapMarketGap) => g?.title) ?? [],
   };
+
+  // Map free result fields to expected Overview fields
+  if (isFreeResult) {
+    const d = data as any;
+    if (!data.synthesis) {
+      data.synthesis = {
+        recommendedAction: d.recommendedAction ?? "analyze",
+        bestNextMove: d.bestGap ? { action: d.bestGap, detail: "" } : undefined,
+        repositionPaths: d.topThreat ? [{ angle: `Differentiate from ${d.topThreat}`, reasoning: d.bestGap || "" }] : [],
+        hardPart: d.topThreat ? `Competing against ${d.topThreat} in a saturated space.` : "",
+      } as any;
+    }
+    if (data.marketGaps.length === 0 && d.bestGap) {
+      data.marketGaps = [{ title: d.bestGap, description: "", type: "untapped", score: 7 }] as any;
+    }
+    if (!data.swot) {
+      data.swot = { strengths: [], weaknesses: [], opportunities: [d.bestGap || ""], threats: [d.topThreat || ""] } as any;
+    }
+  }
   const [activeTab, setActiveTab] = useState("overview");
   const tabs = [
     { id: "overview", label: "Overview", score: data.marketScore },
@@ -1517,27 +1536,25 @@ function ProGate({ children, show, label }: { children: React.ReactNode; show: b
   if (!show) return <>{children}</>;
   return (
     <div style={{ position: "relative" }}>
-      <div style={{ filter: "blur(8px)", pointerEvents: "none", userSelect: "none", opacity: 0.6 }}>
-        {children}
-      </div>
+      {/* Upgrade banner at top */}
       <div style={{
-        position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-        background: "rgba(255,255,255,0.02)", borderRadius: 12, zIndex: 2,
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+        padding: "12px 16px", marginBottom: 12, borderRadius: 10,
+        background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.15)",
       }}>
-        <div style={{ background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "20px 28px", textAlign: "center", boxShadow: "0 8px 32px rgba(0,0,0,0.08)" }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" style={{ marginBottom: 8 }}>
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-          </svg>
-          <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 4 }}>
-            {label || "Pro members only"}
-          </div>
-          <div style={{ fontSize: "0.775rem", color: "var(--clr-text-4)", marginBottom: 12 }}>
-            Upgrade to see the full analysis
-          </div>
-          <a href="/pricing" style={{ display: "inline-block", padding: "8px 20px", borderRadius: 8, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.8rem", fontWeight: 700 }}>
-            Go Pro →
-          </a>
-        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "#4338ca" }}>
+          {label || "Full analysis — Pro only"}
+        </span>
+        <a href="/pricing" style={{ padding: "5px 14px", borderRadius: 6, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.75rem", fontWeight: 700 }}>
+          Go Pro →
+        </a>
+      </div>
+      {/* Blurred content — headers still somewhat visible */}
+      <div style={{ filter: "blur(5px)", pointerEvents: "none", userSelect: "none", opacity: 0.5, maxHeight: 400, overflow: "hidden" }}>
+        {children}
       </div>
     </div>
   );
