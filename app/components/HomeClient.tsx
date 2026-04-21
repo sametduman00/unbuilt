@@ -4802,6 +4802,52 @@ ${sections.join("\n")}
                 </div>
               )}
               {error && (
+                error.includes("free_limit_reached") ? (
+                  <div style={{
+                    padding: "2rem 1.5rem", borderRadius: 14,
+                    background: "rgba(99,102,241,0.04)", border: "1px solid rgba(99,102,241,0.15)",
+                    display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "1rem",
+                  }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 12, background: "rgba(99,102,241,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 6 }}>
+                        You&apos;ve used today&apos;s free analyses
+                      </div>
+                      <div style={{ fontSize: "0.85rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 400 }}>
+                        Free includes up to 5 limited analyses per day. Go Pro for full reports with 70+ sources, all tabs unlocked, and PDF export.
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+                      <a href="/pricing" style={{
+                        display: "inline-flex", alignItems: "center", gap: 8,
+                        padding: "10px 24px", borderRadius: 10,
+                        background: "#6366f1", color: "#fff", textDecoration: "none",
+                        fontSize: "0.875rem", fontWeight: 700,
+                      }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        Go Pro →
+                      </a>
+                      <button
+                        onClick={() => setError("")}
+                        style={{
+                          padding: "10px 20px", borderRadius: 10,
+                          background: "transparent", border: "1px solid var(--clr-border)",
+                          color: "var(--clr-text-3)", fontSize: "0.875rem", fontWeight: 600,
+                          cursor: "pointer", fontFamily: "inherit",
+                        }}
+                      >
+                        Maybe later
+                      </button>
+                    </div>
+                    <div style={{ fontSize: "0.725rem", color: "var(--clr-text-5)", marginTop: 4 }}>
+                      Resets every day at midnight UTC
+                    </div>
+                  </div>
+                ) : (
                 <div style={{
                   padding: "1.25rem 1.5rem", borderRadius: 12,
                   background: "rgba(var(--clr-text-rgb),0.04)", border: "1px solid var(--clr-border-2)",
@@ -4848,6 +4894,7 @@ ${sections.join("\n")}
                     Try again
                   </button>
                 </div>
+                )
               )}
 
               {/* Trend Feed: structured result */}
