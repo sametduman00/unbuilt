@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 
-const SOURCES = [
+const DIG_SOURCES = [
   { name: "App Store", icon: "📱", color: "#007AFF" },
   { name: "Google Play", icon: "🤖", color: "#34A853" },
   { name: "Reddit", icon: "💬", color: "#FF4500" },
@@ -22,7 +22,28 @@ const SOURCES = [
   { name: "Capterra", icon: "🔍", color: "#FF9800" },
 ];
 
-const FUNNY_MSGS = [
+const STACK_SOURCES = [
+  { name: "Lovable", icon: "🧡", color: "#f97316" },
+  { name: "Cursor", icon: "▶", color: "#111" },
+  { name: "Bolt", icon: "⚡", color: "#0ea5e9" },
+  { name: "Supabase", icon: "⚡", color: "#3ecf8e" },
+  { name: "Firebase", icon: "🔥", color: "#DD2C00" },
+  { name: "Vercel", icon: "▲", color: "#000" },
+  { name: "Netlify", icon: "◆", color: "#00c7b7" },
+  { name: "Railway", icon: "🚂", color: "#0B0D0E" },
+  { name: "Stripe", icon: "💳", color: "#635bff" },
+  { name: "Paddle", icon: "🏓", color: "#4285f4" },
+  { name: "Resend", icon: "📧", color: "#111" },
+  { name: "PostHog", icon: "🦔", color: "#1d4aff" },
+  { name: "Clerk", icon: "🔐", color: "#6c47ff" },
+  { name: "Sentry", icon: "🛡", color: "#362d59" },
+  { name: "Neon", icon: "🟢", color: "#0ea5e9" },
+  { name: "Render", icon: "☁️", color: "#46e3b7" },
+  { name: "Cloudflare", icon: "🌐", color: "#f38020" },
+  { name: "Upstash", icon: "🔴", color: "#00e9a3" },
+];
+
+const DIG_MSGS = [
   "Claude is reading 47 Reddit posts right now. You could not have done this yourself.",
   "Your competitors skipped this research. You didn't. Smart move.",
   "134 apps found so far. Most are terrible. We'll tell you which.",
@@ -40,12 +61,36 @@ const FUNNY_MSGS = [
   "We're basically doing the work of a $200/hr consultant. For free. Almost done.",
 ];
 
-const PHASES = [
+const STACK_MSGS = [
+  "Comparing 700+ tools so you don't have to. You're welcome.",
+  "Matching tools to your budget... most of them are actually free.",
+  "Found 12 tools that fit. Filtering down to the best 5.",
+  "Checking which tools play well together. Compatibility matters.",
+  "Lovable or Bolt? Supabase or Firebase? We'll tell you which — and why.",
+  "Building your phase-by-phase roadmap. Start at $0, scale when ready.",
+  "Writing step-by-step Vibe Guides for each tool. No jargon, we promise.",
+  "Cross-referencing pricing tiers... most people overpay. You won't.",
+  "The internet has 50 opinions on the 'best stack.' We have data.",
+  "Mapping upgrade triggers — you'll know exactly when to scale up.",
+  "Evaluating no-code vs low-code vs dev tools for your skill level.",
+  "If you Googled this, you'd have 14 tabs open by now. We're faster.",
+  "Almost done. Your entire tech stack in one report. No tabs required.",
+];
+
+const DIG_PHASES = [
   { label: "Gathering data", range: [0, 20] },
   { label: "Analyzing competitors", range: [20, 45] },
   { label: "Finding market gaps", range: [45, 65] },
   { label: "Scoring your idea", range: [65, 85] },
   { label: "Writing your report", range: [85, 100] },
+];
+
+const STACK_PHASES = [
+  { label: "Evaluating tools", range: [0, 25] },
+  { label: "Matching to your budget", range: [25, 45] },
+  { label: "Building your roadmap", range: [45, 65] },
+  { label: "Writing Vibe Guides", range: [65, 85] },
+  { label: "Finalizing your stack", range: [85, 100] },
 ];
 
 export default function ScanningOverlay({ idea, isStack, scanStep, maxStep }: { idea: string; isStack: boolean; scanStep: number; maxStep: number }) {
@@ -60,28 +105,33 @@ export default function ScanningOverlay({ idea, isStack, scanStep, maxStep }: { 
     return () => clearInterval(t);
   }, []);
 
+  const sources = isStack ? STACK_SOURCES : DIG_SOURCES;
+  const msgs = isStack ? STACK_MSGS : DIG_MSGS;
+  const phases = isStack ? STACK_PHASES : DIG_PHASES;
+
   // Rotate messages
   useEffect(() => {
-    const t = setInterval(() => setMsgIdx(p => (p + 1) % FUNNY_MSGS.length), 4500);
+    const t = setInterval(() => setMsgIdx(p => (p + 1) % msgs.length), 4500);
     return () => clearInterval(t);
-  }, []);
+  }, [msgs.length]);
 
   // Light up sources one by one
   useEffect(() => {
+    setLitSources([]);
     const timers: ReturnType<typeof setTimeout>[] = [];
-    SOURCES.forEach((_, i) => {
+    sources.forEach((_, i) => {
       timers.push(setTimeout(() => {
         setLitSources(p => [...p, i]);
       }, 800 + i * 700 + Math.random() * 400));
     });
     return () => timers.forEach(clearTimeout);
-  }, []);
+  }, [isStack, sources.length]);
 
   const progress = maxStep > 0 ? Math.min(((scanStep + 1) / (maxStep + 1)) * 100, 100) : 0;
   const minutes = Math.floor(elapsed / 60);
   const seconds = elapsed % 60;
   const timeStr = `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  const phase = PHASES.find(p => progress >= p.range[0] && progress < p.range[1]) || PHASES[PHASES.length - 1];
+  const phase = phases.find(p => progress >= p.range[0] && progress < p.range[1]) || phases[phases.length - 1];
 
   return (
     <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem 1rem", minHeight: "70vh" }}>
@@ -139,10 +189,10 @@ export default function ScanningOverlay({ idea, isStack, scanStep, maxStep }: { 
         {/* Sources grid */}
         <div style={{ background: "#fafafa", borderRadius: 14, border: "1px solid #e5e7eb", padding: "16px 14px", marginBottom: 20, position: "relative", overflow: "hidden" }}>
           <div style={{ fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#9ca3af", marginBottom: 12 }}>
-            SOURCES ({litSources.length}/{SOURCES.length}+)
+            {isStack ? "TOOLS" : "SOURCES"} ({litSources.length}/{sources.length}+)
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
-            {SOURCES.map((s, i) => {
+            {sources.map((s, i) => {
               const isLit = litSources.includes(i);
               return (
                 <div key={i} className={isLit ? "so-source-lit" : ""} style={{
@@ -160,14 +210,14 @@ export default function ScanningOverlay({ idea, isStack, scanStep, maxStep }: { 
             })}
           </div>
           <div style={{ textAlign: "center", marginTop: 10, fontSize: "0.625rem", color: "#9ca3af" }}>
-            + 52 more sources running in background
+            {isStack ? "+ 680 more tools being evaluated" : "+ 52 more sources running in background"}
           </div>
         </div>
 
         {/* Funny message */}
         <div style={{ textAlign: "center", minHeight: 48, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
           <p key={msgIdx} style={{ fontSize: "0.8125rem", color: "#6b7280", lineHeight: 1.5, maxWidth: 400, fontStyle: "italic", animation: "so-msg 4.5s ease" }}>
-            &ldquo;{FUNNY_MSGS[msgIdx]}&rdquo;
+            &ldquo;{msgs[msgIdx]}&rdquo;
           </p>
         </div>
 
@@ -177,7 +227,9 @@ export default function ScanningOverlay({ idea, isStack, scanStep, maxStep }: { 
             ☕ Grab a coffee — this takes ~4 minutes
           </div>
           <div style={{ fontSize: "0.6875rem", color: "#92400e" }}>
-            Claude Opus is processing 70+ live sources with extended thinking. Don&apos;t close this tab.
+            {isStack
+              ? "Claude Opus is evaluating 700+ tools with extended thinking. Don\u0027t close this tab."
+              : "Claude Opus is processing 70+ live sources with extended thinking. Don\u0027t close this tab."}
           </div>
         </div>
       </div>
