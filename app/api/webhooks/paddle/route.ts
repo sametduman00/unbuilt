@@ -4,7 +4,7 @@ import { addPurchasedAnalyses, activateProSubscription, renewProSubscription, ca
 import { incrementAlert } from "@/app/lib/alerts";
 import { getSupabase } from "@/app/lib/supabase";
 
-const PACKAGES: Record<string, number> = { starter: 5, popular: 10, pro: 25, "addon-5": 5, "addon-10": 10 };
+const PACKAGES: Record<string, number> = { starter: 5, popular: 10, pro: 25, "addon-5": 5, "addon-10": 10, "addon-25": 25 };
 
 // Map Paddle subscription price IDs to monthly analysis quotas
 // TODO: Replace these with real Paddle price IDs after creating subscription products

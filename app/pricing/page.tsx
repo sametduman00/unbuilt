@@ -33,6 +33,7 @@ const PLANS = [
 const ADDONS = [
   { slug: "addon-5", name: "5 extra analyses", price: "$4.99", analyses: 5, paddlePriceId: "pri_01km8znr6vfjy12bhkrgxcqky8" },
   { slug: "addon-10", name: "10 extra analyses", price: "$8.99", analyses: 10, paddlePriceId: "pri_01km8zvgagyf8qaxhe8ds1cmh3" },
+  { slug: "addon-25", name: "25 extra analyses", price: "$19.99", analyses: 25, paddlePriceId: "pri_01km8ztv9kx85hwtzepp4b1enf" },
 ];
 
 const WALLETS = [
