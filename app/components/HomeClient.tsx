@@ -2898,8 +2898,9 @@ function parseStackAdvisorJSON(raw: string): StackAdvisorData | null {
   if (!jsonStr) return null;
   try {
     const data = JSON.parse(jsonStr);
-    if (!data.phases || !data.buildOrder) return null;
+    if (!data.phases) return null;
     data.headline = data.headline ?? "";
+    data.buildOrder = data.buildOrder ?? [];
     data.mistakes = data.mistakes ?? [];
     data.scalability = data.scalability ?? [];
     data.upgrades = data.upgrades ?? [];
