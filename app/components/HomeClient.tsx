@@ -571,20 +571,27 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
 
   // Map free result fields to expected Overview fields
   if (isFreeResult) {
-    const d = data as any;
-    if (!data.synthesis) {
-      data.synthesis = {
-        recommendedAction: d.recommendedAction ?? "analyze",
-        bestNextMove: d.bestGap ? { action: d.bestGap, detail: "" } : undefined,
-        repositionPaths: d.topThreat ? [{ angle: `Differentiate from ${d.topThreat}`, reasoning: d.bestGap || "" }] : [],
-        hardPart: d.topThreat ? `Competing against ${d.topThreat} in a saturated space.` : "",
-      } as any;
-    }
-    if (data.marketGaps.length === 0 && d.bestGap) {
-      data.marketGaps = [{ title: d.bestGap, description: "", type: "untapped", score: 7 }] as any;
-    }
-    if (!data.swot) {
-      data.swot = { strengths: [], weaknesses: [], opportunities: [d.bestGap || ""], threats: [d.topThreat || ""] } as any;
+    // Parse sample report to use as template for blurred tabs
+    const sampleData = parseGapAnalysisJSON(DIG_SAMPLE_JSON);
+    if (sampleData) {
+      // Keep only hero fields from real free result, everything else from sample
+      const realHero = {
+        marketScore: data.marketScore,
+        marketScoreLabel: data.marketScoreLabel,
+        marketScoreSummary: data.marketScoreSummary,
+        verdict: data.verdict,
+        _presentation: data._presentation,
+      };
+      // Merge: sample as base, real hero on top
+      data = { ...sampleData, ...realHero };
+      // Map free-specific fields to synthesis for band rendering
+      const d = data as any;
+      if (d.recommendedAction) {
+        data.synthesis = {
+          ...sampleData.synthesis,
+          recommendedAction: d.recommendedAction,
+        } as any;
+      }
     }
   }
   const [activeTab, setActiveTab] = useState("overview");
@@ -1536,25 +1543,26 @@ function ProGate({ children, show, label }: { children: React.ReactNode; show: b
   if (!show) return <>{children}</>;
   return (
     <div style={{ position: "relative" }}>
-      {/* Upgrade banner at top */}
-      <div style={{
-        display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
-        padding: "12px 16px", marginBottom: 12, borderRadius: 10,
-        background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.15)",
-      }}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-        </svg>
-        <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "#4338ca" }}>
-          {label || "Full analysis — Pro only"}
-        </span>
-        <a href="/pricing" style={{ padding: "5px 14px", borderRadius: 6, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.75rem", fontWeight: 700 }}>
-          Go Pro →
-        </a>
-      </div>
-      {/* Blurred content — headers still somewhat visible */}
-      <div style={{ filter: "blur(5px)", pointerEvents: "none", userSelect: "none", opacity: 0.5, maxHeight: 400, overflow: "hidden" }}>
+      {/* Content with blur — headers still somewhat visible at 4px */}
+      <div style={{ filter: "blur(4px)", pointerEvents: "none", userSelect: "none", opacity: 0.7 }}>
         {children}
+      </div>
+      {/* Upgrade overlay */}
+      <div style={{
+        position: "absolute", top: 40, left: 0, right: 0,
+        display: "flex", justifyContent: "center", zIndex: 5,
+      }}>
+        <a href="/pricing" style={{
+          display: "flex", alignItems: "center", gap: 8,
+          padding: "10px 22px", borderRadius: 10,
+          background: "#6366f1", color: "#fff", textDecoration: "none",
+          fontSize: "0.825rem", fontWeight: 700, boxShadow: "0 4px 20px rgba(99,102,241,0.3)",
+        }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+          {label || "Unlock full analysis — Go Pro"}
+        </a>
       </div>
     </div>
   );
