@@ -60,7 +60,7 @@ export default function DigLanding({ onDigClick }: { onDigClick: () => void }) {
       `}</style>
 
       {/* ── SECTION 1: THE GRAVEYARD ── */}
-      <div className="dl-section" style={{ textAlign: "center", paddingTop: "4rem" }}>
+      <div className="dl-section" style={{ textAlign: "center", paddingTop: "8rem" }}>
         <div data-a="" style={{ marginBottom: 16 }}>
           <span style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6366f1" }}>
             THE PROBLEM
