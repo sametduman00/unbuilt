@@ -4087,13 +4087,6 @@ function HomeInner() {
                     <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)" }}>|</span>
                     <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>Powered by <span style={{ fontWeight: 600, color: "var(--clr-text)" }}>Claude Opus 4.6</span></span>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "center", gap: 6, paddingBottom: "0.5rem" }}>
-                    <a href="/how-it-works" style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", textDecoration: "none", padding: "4px 10px", borderRadius: 6, transition: "color 0.15s" }} onMouseEnter={e => e.currentTarget.style.color = "var(--clr-text)"} onMouseLeave={e => e.currentTarget.style.color = "var(--clr-text-4)"}>How it works</a>
-                    <span style={{ fontSize: "0.75rem", color: "var(--clr-border)" }}>·</span>
-                    <a href="/use-cases" style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", textDecoration: "none", padding: "4px 10px", borderRadius: 6, transition: "color 0.15s" }} onMouseEnter={e => e.currentTarget.style.color = "var(--clr-text)"} onMouseLeave={e => e.currentTarget.style.color = "var(--clr-text-4)"}>Use cases</a>
-                    <span style={{ fontSize: "0.75rem", color: "var(--clr-border)" }}>·</span>
-                    <a href="/pricing" style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", textDecoration: "none", padding: "4px 10px", borderRadius: 6, transition: "color 0.15s" }} onMouseEnter={e => e.currentTarget.style.color = "var(--clr-text)"} onMouseLeave={e => e.currentTarget.style.color = "var(--clr-text-4)"}>Pricing</a>
-                  </div>
 
                   {/* Tab-specific landing sections */}
                   {activeHeroTab === "gap-analysis" && (
