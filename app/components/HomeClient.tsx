@@ -4000,12 +4000,12 @@ function HomeInner() {
                   <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
                     {/* Title */}
                     {activeHeroTab === "gap-analysis" ? (
-                      <div style={{ fontSize: "clamp(2.75rem, 5.5vw, 3.5rem)", fontWeight: 700, color: "#111", lineHeight: 1.1, letterSpacing: "-0.04em", marginBottom: "0.75rem" }}>
+                      <div style={{ fontSize: "clamp(3rem, 6vw, 3.85rem)", fontWeight: 700, color: "#111", lineHeight: 1.1, letterSpacing: "-0.04em", marginBottom: "0.75rem" }}>
                         Don&apos;t build what<br />
                         <span style={{ background: "linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>already exists.</span>
                       </div>
                     ) : (
-                      <div style={{ fontSize: "clamp(2.75rem, 5.5vw, 3.5rem)", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.1, letterSpacing: "-0.035em", marginBottom: "0.75rem" }}>
+                      <div style={{ fontSize: "clamp(3rem, 6vw, 3.85rem)", fontWeight: 600, color: "var(--clr-text)", lineHeight: 1.1, letterSpacing: "-0.035em", marginBottom: "0.75rem" }}>
                         Stop Googling<br />
                         <em style={{ fontStyle: "italic", fontWeight: 600 }}>&quot;best tools for vibecoding&quot;</em>
                       </div>
