@@ -214,13 +214,13 @@ export default function DigLanding({ onDigClick }: { onDigClick: () => void }) {
           <div data-a="left" style={{ background: "#fafafa", borderRadius: 14, padding: "20px 18px", textAlign: "left" }}>
             <div style={{ fontSize: "0.6875rem", fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 16 }}>ChatGPT / generic AI</div>
             {[
-              { range: "80-100", w: "88%" },
-              { range: "60-79", w: "36%" },
-              { range: "40-59", w: "14%" },
-              { range: "0-39", w: "4%" },
+              { range: "80–100", w: "88%" },
+              { range: "60–79", w: "36%" },
+              { range: "40–59", w: "14%" },
+              { range: "0–39", w: "4%" },
             ].map(b => (
-              <div key={b.range} className="dl-bar" data-a="" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
-                <span style={{ fontSize: "0.5625rem", color: "#9ca3af", width: 32, textAlign: "right" }}>{b.range}</span>
+              <div key={b.range} className="dl-bar" data-a="" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <span style={{ fontSize: "0.625rem", color: "#9ca3af", width: 44, textAlign: "right", whiteSpace: "nowrap", flexShrink: 0 }}>{b.range}</span>
                 <div style={{ flex: 1, height: 10, background: "#f3f4f6", borderRadius: 4, overflow: "hidden" }}>
                   <div className="dl-bar-inner" style={{ width: b.w, height: "100%", background: "#d4d4d4", borderRadius: 4 }} />
                 </div>
@@ -233,13 +233,13 @@ export default function DigLanding({ onDigClick }: { onDigClick: () => void }) {
           <div data-a="right" style={{ background: "#fff", borderRadius: 14, padding: "20px 18px", textAlign: "left", border: "2px solid #111" }}>
             <div style={{ fontSize: "0.6875rem", fontWeight: 700, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 16 }}>Unbuilt · 1,247 ideas</div>
             {[
-              { range: "80-100", w: "2%", color: "#22c55e" },
-              { range: "60-79", w: "9%", color: "#3b82f6" },
-              { range: "40-59", w: "40%", color: "#f59e0b" },
-              { range: "0-39", w: "93%", color: "#ef4444" },
+              { range: "80–100", w: "2%", color: "#22c55e" },
+              { range: "60–79", w: "9%", color: "#3b82f6" },
+              { range: "40–59", w: "40%", color: "#f59e0b" },
+              { range: "0–39", w: "93%", color: "#ef4444" },
             ].map(b => (
-              <div key={b.range} className="dl-bar" data-a="" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
-                <span style={{ fontSize: "0.5625rem", color: "#6b7280", width: 32, textAlign: "right" }}>{b.range}</span>
+              <div key={b.range} className="dl-bar" data-a="" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <span style={{ fontSize: "0.625rem", color: "#6b7280", width: 44, textAlign: "right", whiteSpace: "nowrap", flexShrink: 0 }}>{b.range}</span>
                 <div style={{ flex: 1, height: 10, background: "#f3f4f6", borderRadius: 4, overflow: "hidden" }}>
                   <div className="dl-bar-inner" style={{ width: b.w, height: "100%", background: b.color, borderRadius: 4 }} />
                 </div>
