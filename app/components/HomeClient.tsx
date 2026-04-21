@@ -657,7 +657,9 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
     );
   };
 
-  const Card = ({ title, sub, right, children }: { title: string; sub?: string; right?: React.ReactNode; children: React.ReactNode }) => (
+  const Card = ({ title, sub, right, children }: { title: string; sub?: string; right?: React.ReactNode; children: React.ReactNode }) => {
+    const blurBody = isFreeResult && activeTab !== "overview";
+    return (
     <div style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:12, padding:20, marginBottom:16 }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:14 }}>
         <div>
@@ -666,9 +668,14 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
         </div>
         {right}
       </div>
-      {children}
+      {blurBody ? (
+        <div style={{ filter: "blur(4px)", pointerEvents: "none", userSelect: "none", opacity: 0.7 }}>
+          {children}
+        </div>
+      ) : children}
     </div>
-  );
+    );
+  };
 
   // Parse market size value: extract leading number for big display + rest as subtitle
   const parseMarketVal = (val: string) => {
@@ -1485,11 +1492,14 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
         })}
       </div>
       <div id="gap-tab-content" style={{ flex:1, padding: mob ? 12 : 22, overflowY:"auto" as const, overflowX:"hidden" as const, background:"white", boxSizing:"border-box" as const }}>
-        {activeTab === "overview" || !isFreeResult ? renderTab() : (
-          <ProGate show={true} label="Full analysis — Pro only">
-            {renderTab()}
-          </ProGate>
+        {isFreeResult && activeTab !== "overview" && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "10px 16px", marginBottom: 14, borderRadius: 10, background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.15)" }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "#4338ca" }}>Full data available with Pro</span>
+            <a href="/pricing" style={{ padding: "5px 14px", borderRadius: 6, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.75rem", fontWeight: 700 }}>Go Pro →</a>
+          </div>
         )}
+        {renderTab()}
       </div>
     </div>
   );
