@@ -3337,12 +3337,6 @@ function AiBlock({ what, diff, gap }: { what:string|null; diff:string|null; gap:
 function HomeInner() {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => { const mq = window.matchMedia("(max-width: 768px)"); const fn = () => setIsMobile(mq.matches); fn(); mq.addEventListener("change", fn); return () => mq.removeEventListener("change", fn); }, []);
-  const [showSecNav, setShowSecNav] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setShowSecNav(window.scrollY > 500);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
   const { isSignedIn } = useAuth();
   const { user } = useUser();
   const [userPlan, setUserPlan] = useState<{ plan: string; totalAnalyses: number; isPro: boolean; currentPeriodEnd: string | null } | null>(null);
@@ -4545,40 +4539,6 @@ ${sections.join("\n")}
 
       </div>
       {showUpgradeModal && <UpgradeModal idea={idea} onClose={() => setShowUpgradeModal(false)} isPro={userPlan?.isPro} />}
-
-      {/* Sticky secondary nav — appears on scroll, hides on top */}
-      {!selectedTool && !hasResults && (
-        <div style={{
-          position: "fixed",
-          top: showSecNav ? 0 : -52,
-          left: 0, right: 0,
-          height: 44,
-          background: "#1d1d1f",
-          zIndex: 999,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 6,
-          transition: "top 0.4s cubic-bezier(0.16,1,0.3,1)",
-          boxShadow: "0 1px 8px rgba(0,0,0,0.12)",
-        }}>
-          {[
-            { label: "How it works", href: "/how-it-works" },
-            { label: "Use cases", href: "/use-cases" },
-            { label: "Pricing", href: "/pricing" },
-          ].map(link => (
-            <a key={link.href} href={link.href} style={{
-              fontSize: "0.8125rem", fontWeight: 500, color: "rgba(255,255,255,0.85)",
-              textDecoration: "none", padding: "6px 16px", borderRadius: 999,
-              transition: "background 0.2s, color 0.2s",
-              letterSpacing: "-0.01em",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = "#fff"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.85)"; }}
-            >{link.label}</a>
-          ))}
-        </div>
-      )}
     </>
   );
 }
