@@ -151,18 +151,18 @@ export default function DigLanding({ onDigClick }: { onDigClick: () => void }) {
       </div>
 
       {/* ── SECTION 3: LIVE SOURCES ── */}
-      <div style={{ padding: "5rem 1.5rem", background: "#111827", color: "#fff" }}>
+      <div style={{ padding: "5rem 1.5rem", background: "#fafafa" }}>
         <div style={{ maxWidth: 780, margin: "0 auto", textAlign: "center" }}>
           <div data-a="">
-            <span style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#818cf8" }}>
+            <span style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6366f1" }}>
               THE ENGINE
             </span>
           </div>
-          <h2 data-a="" data-d="1" style={{ fontSize: "clamp(2rem, 4vw, 2.75rem)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.15, marginBottom: 12 }}>
+          <h2 data-a="" data-d="1" className="dl-sticky-text" style={{ marginBottom: 12 }}>
             70+ live sources.<br/>One click.
           </h2>
-          <p data-a="" data-d="2" style={{ fontSize: "1rem", color: "#9ca3af", lineHeight: 1.7, maxWidth: 480, margin: "0 auto 3rem" }}>
-            Dig doesn't guess. It reads real data from real platforms — in real time.
+          <p data-a="" data-d="2" style={{ fontSize: "1.0625rem", color: "#6b7280", lineHeight: 1.7, maxWidth: 480, margin: "0 auto 3rem" }}>
+            Dig doesn&apos;t guess. It reads real data from real platforms — in real time.
           </p>
 
           {/* Source grid */}
@@ -178,20 +178,20 @@ export default function DigLanding({ onDigClick }: { onDigClick: () => void }) {
               { name: "LinkedIn", count: "3 sources", color: "#0ea5e9", icon: "🔗" },
               { name: "G2 & Reviews", count: "6 sources", color: "#f59e0b", icon: "⭐" },
             ].map((s, i) => (
-              <div key={s.name} data-a="scale" data-d={String((i % 3) + 1)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", background: "rgba(255,255,255,0.05)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)" }}>
+              <div key={s.name} data-a="scale" data-d={String((i % 3) + 1)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", background: "#fff", borderRadius: 10, border: "1px solid #e5e7eb" }}>
                 <span style={{ fontSize: "1.25rem" }}>{s.icon}</span>
                 <div style={{ textAlign: "left" }}>
-                  <div style={{ fontSize: "0.75rem", fontWeight: 600 }}>{s.name}</div>
-                  <div style={{ fontSize: "0.5625rem", color: "#6b7280" }}>{s.count}</div>
+                  <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "#111" }}>{s.name}</div>
+                  <div style={{ fontSize: "0.5625rem", color: "#9ca3af" }}>{s.count}</div>
                 </div>
                 <div className="dl-dot" style={{ marginLeft: "auto" }} />
               </div>
             ))}
           </div>
 
-          <div data-a="" data-d="3" style={{ marginTop: 24, display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px", borderRadius: 8, background: "rgba(99,102,241,0.15)", border: "1px solid rgba(99,102,241,0.3)" }}>
-            <span style={{ fontSize: "0.75rem", color: "#a5b4fc" }}>Powered by</span>
-            <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "#fff" }}>Claude Opus 4.6</span>
+          <div data-a="" data-d="3" style={{ marginTop: 24, display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px", borderRadius: 8, background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.15)" }}>
+            <span style={{ fontSize: "0.75rem", color: "#6b7280" }}>Powered by</span>
+            <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "#111" }}>Claude Opus 4.6</span>
           </div>
         </div>
       </div>
