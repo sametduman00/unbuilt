@@ -2942,6 +2942,25 @@ function StackAdvisorResult({ data, ytVideos, isFreeResult }: { data: StackAdvis
     upgrades: data.upgrades.filter(u => u.tool?.trim()),
     buildOrder: data.buildOrder.filter(b => b.title?.trim() && b.steps.length > 0),
   };
+
+  // For free results: keep real headline + Phase 0, fill rest from sample
+  if (isFreeResult) {
+    const sampleData = parseStackAdvisorJSON(STACK_SAMPLE_JSON);
+    if (sampleData) {
+      const realHeadline = data.headline;
+      const realPhase0 = data.phases.find(p => /phase\s*0/i.test(p.name) || /validate/i.test(p.name));
+      const realTimeToMvp = data.timeToMvp;
+      data = {
+        ...sampleData,
+        headline: realHeadline || sampleData.headline,
+        timeToMvp: realTimeToMvp || sampleData.timeToMvp,
+        phases: [
+          realPhase0 || sampleData.phases[0],
+          ...sampleData.phases.slice(1),
+        ],
+      };
+    }
+  }
   if (!data.headline && data.phases.length === 0) return null;
   const isPhaseZero = (name: string) => /phase\s*0/i.test(name) || /validate/i.test(name);
   const [stackTab, setStackTab] = useState(0);
