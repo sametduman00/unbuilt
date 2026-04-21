@@ -3918,7 +3918,8 @@ function HomeInner() {
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                   {/* ── HERO ── */}
-                  <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", opacity: heroMounted ? 1 : 0, transition: "opacity 0.15s ease" }}>
+                  <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+                    {heroMounted ? (<>
                     {/* Title */}
                     {activeHeroTab === "gap-analysis" ? (
                       <div style={{ fontSize: "clamp(3rem, 6vw, 3.85rem)", fontWeight: 700, color: "#111", lineHeight: 1.1, letterSpacing: "-0.04em", marginBottom: "0.75rem" }}>
@@ -4044,6 +4045,7 @@ function HomeInner() {
                     <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-4)" }}>|</span>
                     <span style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>Powered by <span style={{ fontWeight: 600, color: "var(--clr-text)" }}>Claude Opus 4.6</span></span>
                   </div>
+                  </>) : <div style={{ minHeight: "60vh" }} />}
 
                   {/* Tab-specific landing sections */}
                   {activeHeroTab === "gap-analysis" && (
