@@ -17,7 +17,8 @@ export default function ProBlurGate({ children, freeLimit = 3 }: { children: Rea
   return (
     <>
       {items.map((child, i) => {
-        const shouldBlur = checked && !isPro && i >= freeLimit;
+        // Blur by default for items beyond freeLimit — only unblur when confirmed Pro
+        const shouldBlur = i >= freeLimit && (!checked || !isPro);
         if (!shouldBlur) return <React.Fragment key={i}>{child}</React.Fragment>;
         return (
           <div key={i} style={{ position: "relative" }}>
