@@ -10,7 +10,7 @@ const TITLES: Record<string, string> = {
   "/legal/ai-transparency": "AI Transparency",
   "/legal/do-not-sell": "Do Not Sell My Info",
   "/legal/disclaimer": "Disclaimer",
-  "/legal/refund-policy": "Refund Policy",
+  "/legal/refund-policy": "Refund, Billing, and Cancellation Policy",
 };
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
