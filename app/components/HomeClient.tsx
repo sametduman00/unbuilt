@@ -3064,6 +3064,8 @@ function StackAdvisorResult({ data, ytVideos, isFreeResult }: { data: StackAdvis
             )}
           </div>
 
+          {/* Tools, costs, vibeGuide — blurred for free users on non-P0 */}
+          <div style={shouldBlur ? { filter: "blur(4px)", pointerEvents: "none" as const, userSelect: "none" as const, opacity: 0.7 } : {}}>
           {/* Tools list */}
           <div style={{ display: "flex", flexDirection: "column" as const, gap: 8 }}>
             {phase.tools.map((tool, ti) => {
@@ -3150,9 +3152,11 @@ function StackAdvisorResult({ data, ytVideos, isFreeResult }: { data: StackAdvis
               </div>
             </div>
           )}
+          </div>{/* close blur wrapper */}
         </div>
       );
-      return shouldBlur ? <ProGate show={true} label="Full stack plan — Pro only">{phaseContent}</ProGate> : phaseContent;
+      if (shouldBlur) return <>{phaseContent}<div style={{ textAlign: "center", marginTop: 16 }}><a href="/pricing" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 20px", borderRadius: 8, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.8rem", fontWeight: 700 }}>Unlock full plan — Go Pro</a></div></>;
+      return phaseContent;
     }
 
     // Build Order tab
@@ -3160,8 +3164,14 @@ function StackAdvisorResult({ data, ytVideos, isFreeResult }: { data: StackAdvis
     const avoidTabIdx = buildOrderTabIdx + (data.buildOrder.length > 0 ? 1 : 0);
     const scaleTabIdx = avoidTabIdx + (data.mistakes.length > 0 ? 1 : 0);
 
-    if (stackTab === buildOrderTabIdx && data.buildOrder.length > 0) return (
+    // Free blur style for non-Phase-0 tabs
+    const freeBlur: React.CSSProperties = isFreeResult ? { filter: "blur(4px)", pointerEvents: "none", userSelect: "none", opacity: 0.7 } : {};
+
+    if (stackTab === buildOrderTabIdx && data.buildOrder.length > 0) {
+      const content = (
       <div style={{ display: "flex", flexDirection: "column", gap: 0, position: "relative" }}>
+        <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#374151", marginBottom: 14 }}>Build Order</div>
+        <div style={freeBlur}>
         {data.buildOrder.map((block, bi) => {
           const isLast = bi === data.buildOrder.length - 1;
           const colors = ["#6366f1","#10b981","#0ea5e9","#f59e0b","#8b5cf6"];
@@ -3189,24 +3199,36 @@ function StackAdvisorResult({ data, ytVideos, isFreeResult }: { data: StackAdvis
             </div>
           );
         })}
+        </div>
       </div>
-    );
+      );
+      return isFreeResult ? <>{content}<div style={{ textAlign: "center", marginTop: 16 }}><a href="/pricing" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 20px", borderRadius: 8, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.8rem", fontWeight: 700 }}>Unlock full plan — Go Pro</a></div></> : content;
+    }
 
     // Avoid These tab
-    if (stackTab === avoidTabIdx && data.mistakes.length > 0) return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+    if (stackTab === avoidTabIdx && data.mistakes.length > 0) {
+      const content = (
+      <div>
+        <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#374151", marginBottom: 14 }}>Common Mistakes to Avoid</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, ...freeBlur }}>
         {data.mistakes.map((m, i) => (
           <div key={i} style={{ borderLeft: "4px solid #ef4444", paddingLeft: 14, background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 10, padding: "12px 14px" }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 5 }}>⚠ {m.title}</div>
             <p style={{ fontSize: 12, color: "#6b7280", margin: 0, lineHeight: 1.6 }}>{m.description}</p>
           </div>
         ))}
+        </div>
       </div>
-    );
+      );
+      return isFreeResult ? <>{content}<div style={{ textAlign: "center", marginTop: 16 }}><a href="/pricing" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 20px", borderRadius: 8, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.8rem", fontWeight: 700 }}>Unlock full plan — Go Pro</a></div></> : content;
+    }
 
     // Scale Up tab
-    if (stackTab === scaleTabIdx && (data.scalability.length > 0 || data.upgrades.length > 0)) return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+    if (stackTab === scaleTabIdx && (data.scalability.length > 0 || data.upgrades.length > 0)) {
+      const content = (
+      <div>
+        <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "#374151", marginBottom: 14 }}>Scalability & Upgrades</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, ...freeBlur }}>
         {data.scalability.length > 0 && (
           <div>
             <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, color: "#9ca3af", letterSpacing: "0.07em", marginBottom: 8 }}>Scalability Triggers</div>
@@ -3238,7 +3260,10 @@ function StackAdvisorResult({ data, ytVideos, isFreeResult }: { data: StackAdvis
           </div>
         )}
       </div>
-    );
+      </div>
+      );
+      return isFreeResult ? <>{content}<div style={{ textAlign: "center", marginTop: 16 }}><a href="/pricing" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 20px", borderRadius: 8, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.8rem", fontWeight: 700 }}>Unlock full plan — Go Pro</a></div></> : content;
+    }
 
     return null;
   };
