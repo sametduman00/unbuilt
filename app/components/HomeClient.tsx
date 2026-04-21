@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 // react-markdown + remark-gfm moved to lazy-loaded chunk (~150KB savings)
 const LazyMarkdown = dynamic(() => import("./LazyMarkdown"), { ssr: false, loading: () => <div /> });
 const DigLanding = dynamic(() => import("./DigLanding"), { ssr: false });
+const StackLanding = dynamic(() => import("./StackLanding"), { ssr: false });
 const ScanningOverlay = dynamic(() => import("./ScanningOverlay"), { ssr: false });
 import { useAuth, useUser, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
 
@@ -4090,6 +4091,9 @@ function HomeInner() {
                   {/* Tab-specific landing sections */}
                   {activeHeroTab === "gap-analysis" && (
                     <DigLanding onDigClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("gap-analysis"); }} />
+                  )}
+                  {activeHeroTab === "stack-advisor" && (
+                    <StackLanding onStackClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setActiveHeroTab("stack-advisor"); }} />
                   )}
                 </div>
               )}
