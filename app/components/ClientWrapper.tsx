@@ -10,12 +10,12 @@ function HeroSkeleton() {
         <div style={{ flex: 1, display: "flex", flexDirection: "column" as const }}>
           <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column" as const, alignItems: "center", textAlign: "center" as const }}>
             <div style={{
-              fontSize: "clamp(2.75rem, 5.5vw, 3.5rem)",
-              fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.035em",
-              marginBottom: "0.75rem", color: "var(--clr-text)",
+              fontSize: "clamp(3rem, 6vw, 3.85rem)",
+              fontWeight: 700, lineHeight: 1.1, letterSpacing: "-0.04em",
+              marginBottom: "0.75rem", color: "#111",
             }}>
               Don&apos;t build what<br />
-              <em style={{ fontStyle: "italic", fontWeight: 600 }}>already exists.</em>
+              <span style={{ background: "linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" } as React.CSSProperties}>already exists.</span>
             </div>
             <div style={{ fontSize: "1.125rem", color: "var(--clr-text-3)", marginBottom: "1.5rem", lineHeight: 1.5 }}>
               Describe your idea. We&apos;ll scan 70+ live sources and tell you exactly where the gap is.
