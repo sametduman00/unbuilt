@@ -48,6 +48,12 @@ export default function PricingPage() {
   const { isSignedIn, user } = useUser();
   const { openSignIn } = useClerk();
   const [copied, setCopied] = useState<string | null>(null);
+  const [isPro, setIsPro] = useState(false);
+
+  useEffect(() => {
+    if (!isSignedIn) return;
+    fetch("/api/user/plan").then(r => r.json()).then(d => setIsPro(d.isPro ?? false)).catch(() => {});
+  }, [isSignedIn]);
 
   const [paddleReady, setPaddleReady] = useState(false);
 
@@ -233,13 +239,19 @@ export default function PricingPage() {
       <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginBottom: 32 }}>
         <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 4 }}>Need more analyses?</p>
         <p style={{ fontSize: "0.775rem", color: "var(--clr-text-3)", margin: "0 0 14px" }}>Pro users can buy extra analyses anytime. Extra analyses never expire and are consumed after monthly ones.</p>
-        <div style={{ display: "flex", gap: 10 }}>
-          {ADDONS.map(a => (
-            <button key={a.slug} onClick={() => handleBuy(a.paddlePriceId, a.slug)} style={{ flex: 1, padding: "10px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", background: "transparent", border: "1px solid var(--clr-border)", color: "var(--clr-text)" }}>
-              {a.analyses} analyses — {a.price}
-            </button>
-          ))}
-        </div>
+        {isPro ? (
+          <div style={{ display: "flex", gap: 10 }}>
+            {ADDONS.map(a => (
+              <button key={a.slug} onClick={() => handleBuy(a.paddlePriceId, a.slug)} style={{ flex: 1, padding: "10px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", background: "transparent", border: "1px solid var(--clr-border)", color: "var(--clr-text)" }}>
+                {a.analyses} analyses — {a.price}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div style={{ padding: "12px 16px", borderRadius: 9, background: "rgba(99,102,241,0.04)", border: "1px solid rgba(99,102,241,0.12)", textAlign: "center" }}>
+            <span style={{ fontSize: "0.775rem", color: "#6366f1", fontWeight: 600 }}>Subscribe to Pro or Pro+ first to buy extra packs</span>
+          </div>
+        )}
       </div>
 
       {/* How it works */}
