@@ -4550,19 +4550,17 @@ ${sections.join("\n")}
       {!selectedTool && !hasResults && (
         <div style={{
           position: "fixed",
-          top: showSecNav ? 0 : -48,
+          top: showSecNav ? 0 : -52,
           left: 0, right: 0,
-          height: 40,
-          background: "rgba(255,255,255,0.72)",
-          backdropFilter: "blur(16px) saturate(180%)",
-          WebkitBackdropFilter: "blur(16px) saturate(180%)",
-          borderBottom: "1px solid rgba(0,0,0,0.06)",
+          height: 44,
+          background: "#1d1d1f",
           zIndex: 999,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: 4,
-          transition: "top 0.35s cubic-bezier(0.16,1,0.3,1)",
+          gap: 6,
+          transition: "top 0.4s cubic-bezier(0.16,1,0.3,1)",
+          boxShadow: "0 1px 8px rgba(0,0,0,0.12)",
         }}>
           {[
             { label: "How it works", href: "/how-it-works" },
@@ -4570,12 +4568,13 @@ ${sections.join("\n")}
             { label: "Pricing", href: "/pricing" },
           ].map(link => (
             <a key={link.href} href={link.href} style={{
-              fontSize: "0.8125rem", fontWeight: 500, color: "#374151",
-              textDecoration: "none", padding: "5px 14px", borderRadius: 8,
-              transition: "background 0.15s, color 0.15s",
+              fontSize: "0.8125rem", fontWeight: 500, color: "rgba(255,255,255,0.85)",
+              textDecoration: "none", padding: "6px 16px", borderRadius: 999,
+              transition: "background 0.2s, color 0.2s",
+              letterSpacing: "-0.01em",
             }}
-              onMouseEnter={e => { e.currentTarget.style.background = "rgba(0,0,0,0.05)"; e.currentTarget.style.color = "#111"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#374151"; }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = "#fff"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.85)"; }}
             >{link.label}</a>
           ))}
         </div>
