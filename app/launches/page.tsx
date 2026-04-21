@@ -223,7 +223,7 @@ export default function LaunchesPage() {
                                 <div style={{fontSize:"0.6875rem",fontWeight:600,color:"var(--clr-text)",marginBottom:1}}>Got a better idea?</div>
                                 <div style={{fontSize:"0.625rem",color:"var(--clr-text-3)"}}>Analyze competitors & gaps</div>
                               </div>
-                              <button onClick={e=>{e.preventDefault();router.push("/?tool=gap-analysis");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"#534AB7",background:"rgba(99,102,241,0.08)",border:"0.5px solid rgba(99,102,241,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Dig my idea →</button>
+                              <button onClick={e=>{e.preventDefault();router.push("/?tab=dig");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"#534AB7",background:"rgba(99,102,241,0.08)",border:"0.5px solid rgba(99,102,241,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Dig my idea →</button>
                             </div>
                             <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px"}}>
                               <div style={{flexShrink:0,width:30,height:30,borderRadius:8,background:"rgba(16,185,129,0.08)",display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -233,7 +233,7 @@ export default function LaunchesPage() {
                                 <div style={{fontSize:"0.6875rem",fontWeight:600,color:"var(--clr-text)",marginBottom:1}}>Want to build this yourself?</div>
                                 <div style={{fontSize:"0.625rem",color:"var(--clr-text-3)"}}>Get your personal tool stack</div>
                               </div>
-                              <button onClick={e=>{e.preventDefault();router.push("/?tool=stack-advisor");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"rgb(5,150,105)",background:"rgba(16,185,129,0.08)",border:"0.5px solid rgba(16,185,129,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Get my Stack →</button>
+                              <button onClick={e=>{e.preventDefault();router.push("/?tab=stack");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"rgb(5,150,105)",background:"rgba(16,185,129,0.08)",border:"0.5px solid rgba(16,185,129,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Get my Stack →</button>
                             </div>
                           </div>
                         </div>

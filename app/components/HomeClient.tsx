@@ -3424,10 +3424,6 @@ function HomeInner() {
       setIdea(q);
       pendingAutoSubmit.current = true;
       window.history.replaceState({}, "", "/");
-    } else if (tool && !q && (tool === "gap-analysis" || tool === "stack-advisor")) {
-      // Just tool, no idea — show the correct input tab
-      setActiveHeroTab(tool);
-      window.history.replaceState({}, "", "/");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
