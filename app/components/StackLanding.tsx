@@ -166,8 +166,7 @@ export default function StackLanding({ onStackClick }: { onStackClick: () => voi
           <span className="sl-gradient">$47/mo on tools they don&apos;t need.</span>
         </h2>
         <p data-a="" data-d="1" style={{ fontSize: "1rem", color: "#6b7280", lineHeight: 1.7, maxWidth: 480, margin: "0 auto 2.5rem" }}>
-          We analyzed hundreds of stacks. Most people overpay for 2-3 tools<br/>
-          that have identical free alternatives.
+          We analyzed hundreds of stacks.<br/>Most people overpay for tools that have free alternatives.
         </p>
 
         {/* Cost comparison bars */}
@@ -317,8 +316,7 @@ export default function StackLanding({ onStackClick }: { onStackClick: () => voi
             <span className="sl-gradient">what to type. Where to click.</span>
           </h2>
           <p data-a="" data-d="2" style={{ fontSize: "1rem", color: "#6b7280", lineHeight: 1.7, maxWidth: 460, margin: "0 auto 2.5rem" }}>
-            Every tool comes with a Vibe Guide — step-by-step instructions<br/>
-            written for people who&apos;ve never used it before.
+            Every tool comes with a Vibe Guide —<br/>step-by-step instructions for first-time users.
           </p>
 
           {/* Mock vibe guide card */}
