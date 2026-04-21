@@ -3916,7 +3916,7 @@ function HomeInner() {
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                   {/* ── HERO ── */}
-                  <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+                  <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", animation: "heroFadeIn 0.3s ease 0.05s both" }}>
                     {/* Title */}
                     {activeHeroTab === "gap-analysis" ? (
                       <div style={{ fontSize: "clamp(3rem, 6vw, 3.85rem)", fontWeight: 700, color: "#111", lineHeight: 1.1, letterSpacing: "-0.04em", marginBottom: "0.75rem" }}>
