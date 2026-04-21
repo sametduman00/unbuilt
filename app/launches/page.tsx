@@ -102,12 +102,9 @@ export default function LaunchesPage() {
                             {phPaged.map((s,i)=>{
                               const isLocked = !isPro && i >= 3;
                               return (
-                                <div key={s.title+i} style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column", position: "relative", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const } : {}) }}>
-                                  {isLocked && i === 3 && (
-                                    <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center", filter: "none" }}>
-                                      <a href="/pricing" style={{ padding: "10px 24px", borderRadius: 10, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.85rem", fontWeight: 700, boxShadow: "0 4px 16px rgba(0,0,0,0.15)" }}>Unlock all — Go Pro →</a>
-                                    </div>
-                                  )}
+                                <div key={s.title+i} style={{ position: "relative" }}>
+                                <div style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const } : {}) }}>
+                                  
                                   <a href={s.externalUrl||s.url} target="_blank" rel="noopener noreferrer"
                                     style={{ display:"flex", alignItems:"flex-start", gap:"1rem", padding:"1.125rem 1.125rem 0.875rem", textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
                                     onMouseEnter={e=>e.currentTarget.style.background="rgba(0,0,0,0.02)"}
@@ -136,6 +133,12 @@ export default function LaunchesPage() {
                                       style={{ fontSize:"0.6875rem", fontWeight:600, color:"#534AB7", background:"rgba(99,102,241,0.08)", border:"0.5px solid rgba(99,102,241,0.25)", borderRadius:999, padding:"4px 12px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}
                                     >Dig this niche →</button>
                                   </div>
+                                </div>
+                                {isLocked && i === 3 && (
+                                  <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <a href="/pricing" style={{ padding: "10px 24px", borderRadius: 10, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.85rem", fontWeight: 700, boxShadow: "0 4px 16px rgba(0,0,0,0.15)" }}>Unlock all — Go Pro →</a>
+                                  </div>
+                                )}
                                 </div>
                               );
                             })}
@@ -170,12 +173,8 @@ export default function LaunchesPage() {
                             {asPaged.map((app,appIdx)=>{
                               const isLocked = !isPro && appIdx >= 3;
                               return (
-                              <div key={app.app_id} style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden", position:"relative", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const } : {})}}>
-                                {isLocked && appIdx === 3 && (
-                                  <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center", filter: "none" }}>
-                                    <a href="/pricing" style={{ padding: "10px 24px", borderRadius: 10, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.85rem", fontWeight: 700, boxShadow: "0 4px 16px rgba(0,0,0,0.15)" }}>Unlock all — Go Pro →</a>
-                                  </div>
-                                )}
+                              <div key={app.app_id} style={{ position: "relative" }}>
+                              <div style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const } : {})}}>
                                         <a href={app.store_url} target="_blank" rel="noopener noreferrer"
                             style={{display:"flex",flexDirection:"column",gap:"0.875rem",padding:"1.25rem",textDecoration:"none",color:"inherit",transition:"background 0.15s"}}
                             onMouseEnter={e=>e.currentTarget.style.background="rgba(var(--clr-text-rgb),0.02)"}
@@ -237,6 +236,12 @@ export default function LaunchesPage() {
                               <button onClick={e=>{e.preventDefault();router.push("/");}} style={{flexShrink:0,fontSize:"0.6875rem",fontWeight:600,color:"rgb(5,150,105)",background:"rgba(16,185,129,0.08)",border:"0.5px solid rgba(16,185,129,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Get my Stack →</button>
                             </div>
                           </div>
+                        </div>
+                        {isLocked && appIdx === 3 && (
+                          <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <a href="/pricing" style={{ padding: "10px 24px", borderRadius: 10, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.85rem", fontWeight: 700, boxShadow: "0 4px 16px rgba(0,0,0,0.15)" }}>Unlock all — Go Pro →</a>
+                          </div>
+                        )}
                         </div>
                             )})}
                           </div>
