@@ -37,23 +37,6 @@ Respond with ONLY a JSON code block:
           "tip": "One practical tip. 1 sentence."
         }
       ]
-    },
-    {
-      "name": "Phase 1: MVP",
-      "subtitle": "Build the first version",
-      "tools": [
-        {
-          "name": "Tool name",
-          "purpose": "What it does. 1 sentence.",
-          "price": "Free or $X/mo",
-          "free": true,
-          "alternatives": [{ "name": "Alt", "reason": "When to use." }]
-        }
-      ],
-      "costs": {
-        "tools": [{ "name": "Tool", "purpose": "What", "freeTier": true, "monthlyCost": "$0" }],
-        "total": "$0-20/mo"
-      }
     }
   ],
   "timeToMvp": "X days/weeks"
@@ -61,9 +44,10 @@ Respond with ONLY a JSON code block:
 \`\`\`
 
 Rules:
+- ONLY output Phase 0. Do NOT include Phase 1 or any other phases.
 - Phase 0 must cost $0. Use Telegram bots, Google Forms, landing pages, WhatsApp groups.
-- Phase 1: recommend 3-5 real tools. Include real URLs. Prefer no-code/low-code tools.
-- Phase 1 tool names visible but vibeGuide only in Phase 0 (Pro unlocks the rest).
+- Recommend 2-3 free validation tools with real URLs.
+- Include vibeGuide with step-by-step instructions for each tool.
 - Keep every sentence under 20 words.
 - Be specific to the idea, not generic.`;
 
@@ -114,7 +98,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 4000,
+        max_tokens: 2000,
         system: FREE_STACK_PROMPT,
         messages: [{ role: "user", content: `Idea: "${cleanIdea}"` }],
       }),
