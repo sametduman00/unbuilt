@@ -4588,7 +4588,7 @@ function HomeInner() {
               )}
               {/* ââ Results — inline below input ââ */}
               {hasResults && (
-              <div ref={resultsRef} style={{ paddingTop: "1rem", paddingBottom: "5rem", animation: "fadeSlideIn 0.3s ease" }}>
+              <div ref={resultsRef} style={{ paddingTop: "4.5rem", paddingBottom: "5rem", animation: "fadeSlideIn 0.3s ease" }}>
 
               {/* ââ Compact query bar ââ */}
               {currentTool && (
