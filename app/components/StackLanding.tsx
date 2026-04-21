@@ -75,8 +75,7 @@ export default function StackLanding({ onStackClick }: { onStackClick: () => voi
           <span className="sl-gradient">You&apos;ll pick the wrong ones.</span>
         </h2>
         <p data-a="" data-d="2" style={{ fontSize: "1.0625rem", color: "#6b7280", lineHeight: 1.7, maxWidth: 520, margin: "0 auto 3rem" }}>
-          You Googled &ldquo;best tools for vibecoding&rdquo; and got 14 blog posts,<br/>
-          each recommending something different. Three hours later, you&apos;re still reading.
+          You Googled &ldquo;best tools for vibecoding&rdquo; and got<br/>14 blog posts, each recommending something different.<br/>Three hours later, you&apos;re still reading.
         </p>
 
         {/* Chaos orbit visual — 30 real tools */}

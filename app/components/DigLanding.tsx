@@ -162,7 +162,7 @@ export default function DigLanding({ onDigClick }: { onDigClick: () => void }) {
             70+ live sources.<br/>One click.
           </h2>
           <p data-a="" data-d="2" style={{ fontSize: "1.0625rem", color: "#6b7280", lineHeight: 1.7, maxWidth: 480, margin: "0 auto 3rem" }}>
-            Dig doesn&apos;t guess. It reads real data from real platforms — in real time.
+            Dig doesn&apos;t guess. It reads real data<br/>from real platforms — in real time.
           </p>
 
           {/* Source grid */}
@@ -207,7 +207,7 @@ export default function DigLanding({ onDigClick }: { onDigClick: () => void }) {
           We don't sugarcoat.
         </h2>
         <p data-a="" data-d="2" style={{ fontSize: "1.0625rem", color: "#6b7280", lineHeight: 1.7, maxWidth: 480, margin: "0 auto 3rem" }}>
-          ChatGPT says "Great idea!" to everything. Dig gives you a score calibrated against 1,247 real analyses.
+          ChatGPT says &ldquo;Great idea!&rdquo; to everything.<br/>Dig gives you a score — calibrated against 1,247 real analyses.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, maxWidth: 600, margin: "0 auto" }}>
