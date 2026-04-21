@@ -3739,8 +3739,8 @@ function HomeInner() {
     const abortCtrl = new AbortController();
     abortControllerRef.current = abortCtrl;
 
-    // Route to free or pro endpoint
-    const canUsePro = userPlan?.isPro && userPlan.totalAnalyses > 0;
+    // Route to free or pro endpoint — anyone with analyses (monthly or purchased) gets full
+    const canUsePro = userPlan && userPlan.totalAnalyses > 0;
     let apiEndpoint = tool.apiPath;
     if (!canUsePro) {
       if (selectedTool === "gap-analysis") apiEndpoint = "/api/analyze-free";
