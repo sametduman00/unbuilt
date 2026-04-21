@@ -50,7 +50,7 @@ export default function DigLanding({ onDigClick }: { onDigClick: () => void }) {
         .dl-float-d { animation: dl-float 3s ease-in-out 1s infinite; }
 
         .dl-gradient-text {
-          background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+          background-image: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
           background-clip: text;
         }

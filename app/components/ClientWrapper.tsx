@@ -15,7 +15,7 @@ function HeroSkeleton() {
               marginBottom: "0.75rem", color: "#111",
             }}>
               Don&apos;t build what<br />
-              <span style={{ background: "linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" } as React.CSSProperties}>already exists.</span>
+              <span style={{ backgroundImage: "linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" } as React.CSSProperties}>already exists.</span>
             </div>
             <div style={{ fontSize: "1.125rem", color: "var(--clr-text-3)", marginBottom: "1.5rem", lineHeight: 1.5 }}>
               Describe your idea. We&apos;ll scan 70+ live sources and tell you exactly where the gap is.

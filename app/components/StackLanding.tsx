@@ -49,7 +49,7 @@ export default function StackLanding({ onStackClick }: { onStackClick: () => voi
         .sl-float-d { animation: sl-float 3s ease-in-out 0.8s infinite; }
         .sl-float-d2 { animation: sl-float 3s ease-in-out 1.6s infinite; }
 
-        .sl-gradient { background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .sl-gradient { background-image: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .sl-section { padding: 5rem 1.5rem; max-width: 780px; margin: 0 auto; }
         .sl-ticker-wrap { overflow: hidden; padding: 1rem 0; border-top: 1px solid rgba(0,0,0,0.06); border-bottom: 1px solid rgba(0,0,0,0.06); }
         .sl-sticky { font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; }

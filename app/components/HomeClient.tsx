@@ -3967,12 +3967,12 @@ function HomeInner() {
                     {activeHeroTab === "gap-analysis" ? (
                       <div style={{ fontSize: "clamp(3rem, 6vw, 3.85rem)", fontWeight: 700, color: "#111", lineHeight: 1.1, letterSpacing: "-0.04em", marginBottom: "0.75rem" }}>
                         Don&apos;t build what<br />
-                        <span style={{ background: "linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>already exists.</span>
+                        <span style={{ backgroundImage: "linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>already exists.</span>
                       </div>
                     ) : (
                       <div style={{ fontSize: "clamp(3rem, 6vw, 3.85rem)", fontWeight: 700, color: "#111", lineHeight: 1.1, letterSpacing: "-0.04em", marginBottom: "0.75rem" }}>
                         Stop Googling<br />
-                        <span style={{ background: "linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #a855f7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>&quot;best tools for vibecoding&quot;</span>
+                        <span style={{ backgroundImage: "linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #a855f7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>&quot;best tools for vibecoding&quot;</span>
                       </div>
                     )}
                     {/* Subtitle — single line */}
