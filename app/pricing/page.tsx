@@ -120,70 +120,99 @@ export default function PricingPage() {
         </p>
       </div>
 
-      {/* Free vs Pro comparison */}
+      {/* Free vs Pro vs Pro+ comparison */}
       <div style={{ marginBottom: 16 }}>
-        <div className="pricing-packs-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+        <div className="pricing-packs-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
           {/* FREE column */}
-          <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "24px 22px 20px" }}>
+          <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "24px 20px 20px", display: "flex", flexDirection: "column" }}>
             <div style={{ marginBottom: 18 }}>
-              <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.02em" }}>Free</div>
-              <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: 4 }}>No credit card required</div>
+              <div style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.02em" }}>Free</div>
+              <div style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", marginTop: 4 }}>No credit card required</div>
             </div>
-            <div style={{ fontSize: "2rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.03em", marginBottom: 18 }}>$0</div>
-            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.03em", marginBottom: 18 }}>$0</div>
+            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 7, flex: 1 }}>
               {[
-                { text: "Limited Dig — score, verdict, top threat, best gap", ok: true },
-                { text: "Limited Stack — Phase 0 only", ok: true },
+                { text: "Limited Dig — score + verdict", ok: true },
+                { text: "Limited Stack — Phase 0", ok: true },
                 { text: "3 Launches visible", ok: true },
                 { text: "3 Startup Ideas visible", ok: true },
-                { text: "Up to 5 limited analyses/day", ok: true },
-                { text: "Full Dig reports (all 10 tabs)", ok: false },
-                { text: "Full Stack plans (all phases)", ok: false },
+                { text: "Up to 5 analyses/day", ok: true },
+                { text: "Full reports (10 tabs)", ok: false },
                 { text: "PDF export", ok: false },
-                { text: "Saved report history", ok: false },
+                { text: "Saved history", ok: false },
               ].map((f) => (
-                <li key={f.text} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: "0.775rem", color: f.ok ? "var(--clr-text-3)" : "var(--clr-text-5)" }}>
-                  <span style={{ flexShrink: 0, marginTop: 1, fontSize: 11 }}>{f.ok ? "✓" : "—"}</span>
+                <li key={f.text} style={{ display: "flex", alignItems: "flex-start", gap: 7, fontSize: "0.725rem", color: f.ok ? "var(--clr-text-3)" : "var(--clr-text-5)" }}>
+                  <span style={{ flexShrink: 0, marginTop: 1, fontSize: 10 }}>{f.ok ? "✓" : "—"}</span>
                   <span style={{ textDecoration: f.ok ? "none" : "line-through" }}>{f.text}</span>
                 </li>
               ))}
             </ul>
-            <a href="/" style={{ display: "block", width: "100%", padding: "11px 0", borderRadius: 9, textAlign: "center", fontSize: "0.875rem", fontWeight: 700, border: "1px solid var(--clr-border)", color: "var(--clr-text)", textDecoration: "none", boxSizing: "border-box" }}>
+            <a href="/" style={{ display: "block", width: "100%", padding: "10px 0", borderRadius: 9, textAlign: "center", fontSize: "0.8rem", fontWeight: 700, border: "1px solid var(--clr-border)", color: "var(--clr-text)", textDecoration: "none", boxSizing: "border-box", marginTop: "auto" }}>
               Start free →
             </a>
           </div>
 
           {/* PRO column */}
-          <div style={{ background: "var(--clr-surface)", border: "2px solid #6366f1", borderRadius: 14, padding: "24px 22px 20px", position: "relative" }}>
-            <div style={{ position: "absolute", top: -1, left: "50%", transform: "translateX(-50%)", background: "#6366f1", color: "#fff", fontSize: 10, fontWeight: 800, padding: "3px 12px", borderRadius: "0 0 8px 8px", letterSpacing: "0.08em" }}>
+          <div style={{ background: "var(--clr-surface)", border: "2px solid #6366f1", borderRadius: 14, padding: "24px 20px 20px", position: "relative", display: "flex", flexDirection: "column" }}>
+            <div style={{ position: "absolute", top: -1, left: "50%", transform: "translateX(-50%)", background: "#6366f1", color: "#fff", fontSize: 9, fontWeight: 800, padding: "3px 10px", borderRadius: "0 0 8px 8px", letterSpacing: "0.08em" }}>
               RECOMMENDED
             </div>
             <div style={{ marginBottom: 18 }}>
-              <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#6366f1", letterSpacing: "-0.02em" }}>Pro</div>
-              <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", marginTop: 4 }}>Full access + monthly analyses</div>
+              <div style={{ fontSize: "1.125rem", fontWeight: 800, color: "#6366f1", letterSpacing: "-0.02em" }}>Pro</div>
+              <div style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", marginTop: 4 }}>10 full analyses / month</div>
             </div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 18 }}>
-              <span style={{ fontSize: "2rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.03em" }}>$9.99</span>
-              <span style={{ fontSize: "0.8rem", color: "var(--clr-text-4)" }}>/mo</span>
+              <span style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.03em" }}>$9.99</span>
+              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>/mo</span>
             </div>
-            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 8 }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 7, flex: 1 }}>
               {[
-                "Full Dig reports — all 10 tabs, live data",
-                "Full Stack plans — all phases + Vibe Guides",
-                "All Launches visible",
-                "All Startup Ideas visible",
-                "10 full analyses included every month",
+                "Full Dig — all 10 tabs, live data",
+                "Full Stack — all phases + Vibe Guides",
+                "All Launches + Startup Ideas",
+                "10 analyses included / month",
                 "PDF export",
                 "Saved report history",
                 "Priority support",
               ].map((f) => (
-                <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: "0.775rem", color: "var(--clr-text-2)" }}>
-                  <span style={{ color: "#6366f1", flexShrink: 0, fontWeight: 800, marginTop: 1, fontSize: 11 }}>✓</span>{f}
+                <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 7, fontSize: "0.725rem", color: "var(--clr-text-2)" }}>
+                  <span style={{ color: "#6366f1", flexShrink: 0, fontWeight: 800, marginTop: 1, fontSize: 10 }}>✓</span>{f}
                 </li>
               ))}
             </ul>
-            <button onClick={() => handleBuy(PLANS[0].paddlePriceId, PLANS[0].slug)} style={{ display: "block", width: "100%", padding: "11px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.875rem", fontWeight: 700, cursor: "pointer", background: "#6366f1", border: "none", color: "#fff" }}>
+            <button onClick={() => handleBuy(PLANS[0].paddlePriceId, PLANS[0].slug)} style={{ display: "block", width: "100%", padding: "10px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer", background: "#6366f1", border: "none", color: "#fff", marginTop: "auto" }}>
               {isSignedIn ? "Go Pro — $9.99/mo" : "Sign in to subscribe"}
+            </button>
+          </div>
+
+          {/* PRO+ column */}
+          <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "24px 20px 20px", display: "flex", flexDirection: "column" }}>
+            <div style={{ marginBottom: 18 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.02em" }}>Pro+</span>
+                <span style={{ fontSize: 8, fontWeight: 800, color: "#6366f1", letterSpacing: ".06em", padding: "2px 6px", borderRadius: 4, background: "rgba(99,102,241,0.08)" }}>SAVE 20%</span>
+              </div>
+              <div style={{ fontSize: "0.7rem", color: "var(--clr-text-4)", marginTop: 4 }}>25 full analyses / month</div>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 18 }}>
+              <span style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--clr-text)", letterSpacing: "-0.03em" }}>$19.99</span>
+              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>/mo</span>
+            </div>
+            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px", display: "flex", flexDirection: "column", gap: 7, flex: 1 }}>
+              {[
+                "Everything in Pro",
+                "25 analyses included / month",
+                "Best for multiple ideas",
+                "Compare markets side by side",
+                "Research + build in one cycle",
+              ].map((f) => (
+                <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 7, fontSize: "0.725rem", color: "var(--clr-text-2)" }}>
+                  <span style={{ color: "var(--clr-text-5)", flexShrink: 0, fontWeight: 800, marginTop: 1, fontSize: 10 }}>✓</span>{f}
+                </li>
+              ))}
+            </ul>
+            <button onClick={() => handleBuy(PLANS[1].paddlePriceId, PLANS[1].slug)} style={{ display: "block", width: "100%", padding: "10px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer", background: "transparent", border: "1px solid var(--clr-border)", color: "var(--clr-text)", marginTop: "auto" }}>
+              {isSignedIn ? "Get Pro+ — $19.99/mo" : "Sign in to subscribe"}
             </button>
           </div>
         </div>
@@ -196,26 +225,6 @@ export default function PricingPage() {
           <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Cancel anytime</span>
           <span style={{ color: "var(--clr-text-5)", fontSize: "0.75rem" }}>·</span>
           <span style={{ fontSize: "0.75rem", color: "var(--clr-text-4)" }}>Unused analyses do not carry over</span>
-        </div>
-      </div>
-
-      {/* Pro+ tier */}
-      <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginBottom: 32 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-              <span style={{ fontSize: "1rem", fontWeight: 800, color: "var(--clr-text)" }}>Pro+</span>
-              <span style={{ fontSize: 9, fontWeight: 800, color: "#6366f1", letterSpacing: ".06em", padding: "2px 8px", borderRadius: 4, background: "rgba(99,102,241,0.08)" }}>SAVE 20%</span>
-            </div>
-            <div style={{ fontSize: "0.8rem", color: "var(--clr-text-3)" }}>25 full analyses per month · Everything in Pro</div>
-          </div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-            <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--clr-text)" }}>$19.99</span>
-            <span style={{ fontSize: "0.8rem", color: "var(--clr-text-4)" }}>/mo</span>
-            <button onClick={() => handleBuy(PLANS[1].paddlePriceId, PLANS[1].slug)} style={{ padding: "8px 20px", borderRadius: 8, fontFamily: "inherit", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer", background: "transparent", border: "1px solid var(--clr-border)", color: "var(--clr-text)", marginLeft: 8 }}>
-              {isSignedIn ? "Get Pro+" : "Sign in"}
-            </button>
-          </div>
         </div>
       </div>
 
