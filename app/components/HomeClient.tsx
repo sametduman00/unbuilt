@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 // react-markdown + remark-gfm moved to lazy-loaded chunk (~150KB savings)
 const LazyMarkdown = dynamic(() => import("./LazyMarkdown"), { ssr: false, loading: () => <div /> });
 const DigLanding = dynamic(() => import("./DigLanding"), { ssr: false });
+const ScanningOverlay = dynamic(() => import("./ScanningOverlay"), { ssr: false });
 import { useAuth, useUser, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
 
 // ââ Types âââââââââââââââââââââââââââââââââââââââââââââââââââââ
@@ -3908,89 +3909,14 @@ function HomeInner() {
         <main style={{ flex: 1, display: "flex", flexDirection: "column", overflowX: "hidden", padding: "0 16px", maxWidth: "100%" }}>
 
           {/* ── Scanning overlay ── */}
-          {scanStep >= 0 ? (() => {
-            const isStack = selectedTool === "stack-advisor";
-            const accentColor = isStack ? "#0ea5e9" : "#6366f1";
-            const accentBg = isStack ? "rgba(14,165,233,0.1)" : "rgba(99,102,241,0.1)";
-            const accentBorder = isStack ? "rgba(14,165,233,0.2)" : "rgba(99,102,241,0.2)";
-            const DIG_SOURCES: { label: string; bg: string; svg: React.ReactNode }[] = [
-              { label: "Reddit",       bg: "#ff4500", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249z"/></svg> },
-              { label: "X / Twitter",  bg: "#000", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
-              { label: "YouTube",      bg: "#ff0000", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 00.5 6.19 31.6 31.6 0 000 12a31.6 31.6 0 00.5 5.81 3.02 3.02 0 002.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 002.12-2.14A31.6 31.6 0 0024 12a31.6 31.6 0 00-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg> },
-              { label: "App Store",    bg: "#1c1c1c", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> },
-              { label: "Google Play",  bg: "#3ddc84", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M3.18 23.04c.29.12.62.18.97.18.49 0 .97-.14 1.42-.42l.02-.01 1.73-1.01L17.63 22c1.07 0 2.01-.56 2.56-1.43l-9.6-5.55-7.4 8.02zm-.63-1.73l7.22-7.83L2.35 8.7c-.22.44-.35.94-.35 1.48V19.82c0 .6.18 1.15.55 1.49zm17.8-3.38c.59-.36 1.03-.94 1.2-1.63l.01-.04.04-.18c.06-.3.1-.63.1-.97v-.52l-.01-.03c-.05-.63-.32-1.18-.72-1.59L17.7 11.3l-2.87 3.12 5.52 3.51zm-.3-10.2L7.36 1.37 4.57 2.99 14.83 11.3l5.22-3.57z"/></svg> },
-              { label: "Product Hunt", bg: "#e60023", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg> },
-              { label: "LinkedIn",     bg: "#0a66c2", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
-            ];
-            const STACK_TOOLS: { label: string; bg: string; svg: React.ReactNode }[] = [
-              { label: "Lovable",  bg: "#f97316", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg> },
-              { label: "Supabase", bg: "#3ecf8e", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M21.362 9.354H12V.396a.396.396 0 0 0-.716-.233L.235 12.9a.396.396 0 0 0 .302.643h9.362v8.958a.396.396 0 0 0 .716.233L21.664 9.997a.396.396 0 0 0-.302-.643z"/></svg> },
-              { label: "Stripe",   bg: "#635bff", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/></svg> },
-              { label: "Vercel",   bg: "#000", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M24 22.525H0l12-21.05 12 21.05z"/></svg> },
-              { label: "Resend",   bg: "#3b82f6", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M14.79.42c-.29-.56-1.08-.56-1.37 0L.42 23.58c-.29.56.08 1.25.69 1.25h22c.61 0 .98-.69.69-1.25L14.79.42z" opacity=".5"/><path d="M8.79 16.83l4.21-8.17 4.21 8.17H8.79z"/></svg> },
-              { label: "Upstash",  bg: "#9333ea", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="9" height="9" rx="1"/><rect x="13" y="2" width="9" height="9" rx="1"/><rect x="2" y="13" width="9" height="9" rx="1"/><rect x="13" y="13" width="9" height="9" rx="1"/></svg> },
-              { label: "Railway",  bg: "#e74c3c", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M4 4h16v2H4V4zm0 4h16v2H4V8zm0 4h10v2H4v-2zm0 4h16v2H4v-2z"/></svg> },
-            ];
-            const sources = isStack ? STACK_TOOLS : DIG_SOURCES;
-            const moreLabel = isStack ? "+ 700 tools evaluated in total" : "+ 60 more sources in the background";
-            const DIG_MSGS = ["Claude is reading 47 Reddit posts right now. You could not have done this yourself.", "Wish AI were faster? So do we. Worth the wait, we promise.", "Scanning App Store, YouTube, X, Reddit, LinkedIn... almost done.", "Your competitors skipped this research. You didn't.", "134 apps found so far. Most are terrible. We'll tell you which."];
-            const STACK_MSGS = ["Comparing 700+ tools so you don't have to. You're welcome.", "Lovable, Supabase, Stripe — matched to your exact budget and skill level.", "Wish AI were faster? So do we. Almost there.", "700+ tools evaluated. Most won't make the cut.", "The internet has opinions on tools. We filtered the good ones."];
-            const msgs = isStack ? STACK_MSGS : DIG_MSGS;
-            const crossHref = isStack ? "/?tool=gap-analysis" : "/?tool=stack-advisor";
-            const crossTitle = isStack ? "Also try Dig" : "Also try Stack";
-            const crossSub = isStack ? "Is there actually a gap in this market?" : "Find the best tools to build this idea";
-            const crossColor = isStack ? "#2563eb" : "#16a34a";
-            const crossBg = isStack ? "#eff6ff" : "#f0fdf4";
-            const crossIcon = isStack
-              ? <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>;
-            return (
-              <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem 0" }}>
-                <div style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "1.75rem", width: "100%", maxWidth: 400, animation: "scanCardIn 0.35s cubic-bezier(0.16,1,0.3,1)" }}>
-                  <div style={{ textAlign: "center", marginBottom: "1.25rem" }}>
-                    <div style={{ width: 44, height: 44, borderRadius: 10, margin: "0 auto 10px", background: accentBg, border: `1px solid ${accentBorder}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      {currentTool && TOOL_ICONS[currentTool.id](accentColor)}
-                    </div>
-                    <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--clr-text)", letterSpacing: "-0.02em", marginBottom: 4 }}>
-                      {isStack ? "Building your stack..." : "Scanning live sources..."}
-                    </div>
-                    <div style={{ fontSize: "0.75rem", color: "var(--clr-text-4)", fontStyle: "italic", lineHeight: 1.4 }}>{idea}</div>
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5, marginBottom: 6 }}>
-                    {sources.map((s, i) => {
-                      const isDone = i < scanStep;
-                      const isActive = i === scanStep;
-                      return (
-                        <div key={i} style={{ display: "flex", alignItems: "center", gap: 7, padding: "5px 8px", borderRadius: 6, background: isActive ? `${accentColor}12` : "var(--clr-surface-2)", opacity: (!isDone && !isActive) ? 0.2 : isDone ? 0.45 : 1, transition: "opacity 0.3s" }}>
-                          <div style={{ width: 18, height: 18, borderRadius: 4, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{s.svg}</div>
-                          <span style={{ fontSize: "0.6875rem", fontWeight: 500, color: "var(--clr-text)", flex: 1 }}>{s.label}</span>
-                          {isDone && <span style={{ color: "#16a34a", fontSize: "0.7rem" }}>✓</span>}
-                          {isActive && <div style={{ width: 9, height: 9, borderRadius: "50%", border: `1.5px solid ${accentColor}40`, borderTopColor: accentColor, animation: "spin 0.8s linear infinite", flexShrink: 0 }} />}
-                        </div>
-                      );
-                    })}
-                    <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "5px 8px", borderRadius: 6, background: `${accentColor}12` }}>
-                      <div style={{ width: 18, height: 18, borderRadius: 4, background: accentColor, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                        <svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.2 3.1 1.6 5-4.4-3.2L5.6 15.5l1.6-5L3 7.4h5.2L10 2z" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/></svg>
-                      </div>
-                      <span style={{ fontSize: "0.6875rem", fontWeight: 500, color: "var(--clr-text)", flex: 1 }}>Claude AI</span>
-                      <div style={{ width: 9, height: 9, borderRadius: "50%", border: `1.5px solid ${accentColor}40`, borderTopColor: accentColor, animation: "spin 0.8s linear infinite", flexShrink: 0 }} />
-                    </div>
-                  </div>
-                  <div style={{ fontSize: "0.6875rem", color: "var(--clr-text-5)", textAlign: "center", marginBottom: "0.875rem" }}>{moreLabel}</div>
-                  <FunnyMessage msgs={msgs} />
-                  <div style={{ border: "1px solid var(--clr-border)", borderRadius: 8, padding: "8px 12px", display: "flex", alignItems: "center", gap: 10 }}>
-                    <div style={{ width: 30, height: 30, borderRadius: 7, background: crossBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{crossIcon}</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--clr-text)", marginBottom: 1 }}>{crossTitle}</div>
-                      <div style={{ fontSize: "0.6875rem", color: "var(--clr-text-4)" }}>{crossSub}</div>
-                    </div>
-                    <a href={crossHref} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.6875rem", fontWeight: 500, padding: "3px 9px", borderRadius: 5, border: `1px solid ${crossColor}50`, color: crossColor, background: `${crossColor}10`, textDecoration: "none", whiteSpace: "nowrap" as const }}>Try →</a>
-                  </div>
-                </div>
-              </div>
-            );
-          })() : (
+          {scanStep >= 0 ? (
+              <ScanningOverlay
+                idea={idea}
+                isStack={selectedTool === "stack-advisor"}
+                scanStep={scanStep}
+                maxStep={scanStepCounts[selectedTool ?? "trend-feed"] ?? 3}
+              />
+          ) : (
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
 
               {/* ── Pulse Panel (default view) ── */}
