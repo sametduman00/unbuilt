@@ -3319,12 +3319,10 @@ function HomeInner() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
   const [activeHeroTab, setActiveHeroTab] = useState<"gap-analysis" | "stack-advisor">(tabParam === "stack" ? "stack-advisor" : "gap-analysis");
-  const [heroMounted, setHeroMounted] = useState(false);
 
   useEffect(() => {
     if (tabParam === "stack") setActiveHeroTab("stack-advisor");
     else if (tabParam === "dig") setActiveHeroTab("gap-analysis");
-    setHeroMounted(true);
   }, [tabParam]);
   const [showSampleReport, setShowSampleReport] = useState(false);
   // Reset sample report when tool changes
@@ -4021,7 +4019,7 @@ function HomeInner() {
                         </div>
                       </div>
                     </div>
-                      
+                  </div>
 
                   {showSampleReport && !selectedTool && (
                     <div id="hero-sample-panel" style={{ width: "100%", alignSelf: "stretch", marginTop: "1.5rem" }}>
@@ -4051,7 +4049,6 @@ function HomeInner() {
                 </div>
               )}
 
-                  {/* 47 hours vs 2 minutes */}
               {selectedTool && currentTool && !hasResults && !loading && (
                 <div ref={inputSectionRef}>
                   {/* Dig hero — clean */}
