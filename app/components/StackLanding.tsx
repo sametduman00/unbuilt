@@ -79,28 +79,55 @@ export default function StackLanding({ onStackClick }: { onStackClick: () => voi
           each recommending something different. Three hours later, you&apos;re still reading.
         </p>
 
-        {/* Chaos orbit visual */}
-        <div data-a="scale" data-d="3" style={{ position: "relative", width: 220, height: 220, margin: "0 auto" }}>
+        {/* Chaos orbit visual — 30 real tools */}
+        <div data-a="scale" data-d="3" style={{ position: "relative", width: 300, height: 300, margin: "0 auto" }}>
           {/* Center */}
-          <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 56, height: 56, borderRadius: 14, background: "#111", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
-            <span style={{ fontSize: 20, color: "#fff", fontWeight: 800 }}>?</span>
+          <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 52, height: 52, borderRadius: 14, background: "#111", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
+            <span style={{ fontSize: 18, color: "#fff", fontWeight: 800 }}>?</span>
           </div>
           {/* Pulse rings */}
-          <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 56, height: 56, borderRadius: 14, border: "2px solid #6366f1", animation: "sl-pulse-ring 2s ease-out infinite" }} />
-          {/* Orbiting tools */}
+          <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 52, height: 52, borderRadius: 14, border: "2px solid #6366f1", animation: "sl-pulse-ring 2s ease-out infinite" }} />
+          {/* Orbiting tools — 4 rings */}
           {[
-            { name: "Supabase", bg: "#3ecf8e", r: 80, dur: "8s", d: "0s" },
-            { name: "Vercel", bg: "#000", r: 80, dur: "8s", d: "2.7s" },
-            { name: "Stripe", bg: "#635bff", r: 80, dur: "8s", d: "5.3s" },
-            { name: "Railway", bg: "#e74c3c", r: 105, dur: "12s", d: "0s" },
-            { name: "Neon", bg: "#0ea5e9", r: 105, dur: "12s", d: "3s" },
-            { name: "Render", bg: "#46e3b7", r: 105, dur: "12s", d: "6s" },
-            { name: "Fly.io", bg: "#7c3aed", r: 105, dur: "12s", d: "9s" },
+            // Ring 1 — r:60, 5 tools, 7s
+            { name: "Lovable", bg: "#f97316", r: 58, dur: "7s", d: "0s" },
+            { name: "Cursor", bg: "#111", r: 58, dur: "7s", d: "1.4s" },
+            { name: "Bolt", bg: "#0ea5e9", r: 58, dur: "7s", d: "2.8s" },
+            { name: "Replit", bg: "#f26522", r: 58, dur: "7s", d: "4.2s" },
+            { name: "v0", bg: "#000", r: 58, dur: "7s", d: "5.6s" },
+            // Ring 2 — r:88, 7 tools, 11s
+            { name: "Supabase", bg: "#3ecf8e", r: 88, dur: "11s", d: "0s" },
+            { name: "Firebase", bg: "#ffca28", r: 88, dur: "11s", d: "1.57s" },
+            { name: "Neon", bg: "#0ea5e9", r: 88, dur: "11s", d: "3.14s" },
+            { name: "Vercel", bg: "#000", r: 88, dur: "11s", d: "4.71s" },
+            { name: "Netlify", bg: "#00c7b7", r: 88, dur: "11s", d: "6.28s" },
+            { name: "Render", bg: "#46e3b7", r: 88, dur: "11s", d: "7.85s" },
+            { name: "Railway", bg: "#e74c3c", r: 88, dur: "11s", d: "9.42s" },
+            // Ring 3 — r:115, 9 tools, 16s
+            { name: "Stripe", bg: "#635bff", r: 115, dur: "16s", d: "0s" },
+            { name: "Paddle", bg: "#4285f4", r: 115, dur: "16s", d: "1.78s" },
+            { name: "Resend", bg: "#111", r: 115, dur: "16s", d: "3.56s" },
+            { name: "PostHog", bg: "#1d4aff", r: 115, dur: "16s", d: "5.33s" },
+            { name: "Clerk", bg: "#6c47ff", r: 115, dur: "16s", d: "7.11s" },
+            { name: "Auth0", bg: "#eb5424", r: 115, dur: "16s", d: "8.89s" },
+            { name: "Sentry", bg: "#362d59", r: 115, dur: "16s", d: "10.67s" },
+            { name: "Upstash", bg: "#00e9a3", r: 115, dur: "16s", d: "12.44s" },
+            { name: "Twilio", bg: "#f22f46", r: 115, dur: "16s", d: "14.22s" },
+            // Ring 4 — r:142, 9 tools, 22s
+            { name: "Bubble", bg: "#3a3a3a", r: 142, dur: "22s", d: "0s" },
+            { name: "Webflow", bg: "#4353ff", r: 142, dur: "22s", d: "2.44s" },
+            { name: "Framer", bg: "#0055ff", r: 142, dur: "22s", d: "4.88s" },
+            { name: "Fly.io", bg: "#7c3aed", r: 142, dur: "22s", d: "7.33s" },
+            { name: "Cloudflare", bg: "#f38020", r: 142, dur: "22s", d: "9.77s" },
+            { name: "Algolia", bg: "#5468ff", r: 142, dur: "22s", d: "12.22s" },
+            { name: "Mixpanel", bg: "#7856ff", r: 142, dur: "22s", d: "14.66s" },
+            { name: "SendGrid", bg: "#1a82e2", r: 142, dur: "22s", d: "17.11s" },
+            { name: "Lemon", bg: "#ffc233", r: 142, dur: "22s", d: "19.55s" },
           ].map((t, i) => (
             <div key={i} style={{ position: "absolute", top: "50%", left: "50%", width: 0, height: 0 }}>
               <div className="sl-orbit" style={{ "--r": `${t.r}px`, "--dur": t.dur, animationDelay: t.d } as React.CSSProperties}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: t.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, color: "#fff", fontWeight: 700, transform: "translate(-50%,-50%)", boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
-                  {t.name.slice(0, 2).toUpperCase()}
+                <div style={{ width: 28, height: 28, borderRadius: 7, background: t.bg, display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%,-50%)", boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
+                  <span style={{ fontSize: 6.5, color: t.bg === "#ffca28" || t.bg === "#ffc233" ? "#111" : "#fff", fontWeight: 800, letterSpacing: "-0.03em" }}>{t.name.length <= 4 ? t.name : t.name.slice(0, 3)}</span>
                 </div>
               </div>
             </div>
