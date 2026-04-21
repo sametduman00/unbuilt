@@ -4,8 +4,8 @@ import Link from "next/link";
 
 const FAQS = [
   {
-    q: "How do credits work?",
-    a: "Dig and Stack each use 1 analysis. Launches is always free. Free users get limited results. Pro users get full reports with 10 or 25 analyses per month.",
+    q: "How does the free plan work?",
+    a: "Everyone can use Dig and Stack for free — up to 5 limited analyses per day. Free results show your market score, verdict, and key insights. Full reports with all 10 tabs, live competitor data, and PDF export are available with Pro.",
   },
   {
     q: "What's the difference between Dig and Stack?",
@@ -13,27 +13,35 @@ const FAQS = [
   },
   {
     q: "How fresh is the data in Dig reports?",
-    a: "Every Dig report scans live sources in real time — Reddit, X, YouTube, App Store, Google Play, Product Hunt, and LinkedIn. No cached results. The data is from the moment you hit run.",
+    a: "Every Pro Dig report scans live sources in real time — Reddit, X, YouTube, App Store, Google Play, Product Hunt, and LinkedIn. No cached results. The data is from the moment you hit run.",
   },
   {
     q: "Can I get a refund?",
-    a: "If a report failed to generate due to a technical error on our end, yes — reach out and we'll refund the credit or rerun it. If the report ran successfully but you didn't like the results, we don't offer refunds. See our Refund Policy for details.",
+    a: "If a report failed to generate due to a technical error on our end, yes — reach out and we'll refund the analysis or rerun it. If the report ran successfully but you didn't like the results, we don't offer refunds. See our Refund Policy for details.",
   },
   {
     q: "What model powers Unbuilt?",
-    a: "Every query runs on Claude Opus 4.6 with Extended Thinking — Anthropic's most capable model. We don't use cheaper models to cut costs.",
+    a: "Pro analyses run on Claude Opus 4.6 with Extended Thinking — Anthropic's most capable model. Free analyses use Claude Sonnet for speed and efficiency.",
   },
   {
     q: "Can I export my reports?",
-    a: "Yes. Every Dig and Stack report has a Download PDF button at the top of the results. You can also go to My Reports from the sidebar — all your past reports are saved there and can be downloaded as PDF.",
+    a: "Yes — Pro users can download any Dig or Stack report as a PDF. All past reports are saved in My Reports and can be re-downloaded anytime.",
   },
   {
     q: "My report looks broken or incomplete — what happened?",
-    a: "Occasionally the AI stream can cut off or return malformed output. Try running the query again — it doesn't cost an extra credit if the report failed to render. If it keeps happening, submit a request below.",
+    a: "Occasionally the AI stream can cut off or return malformed output. Try running the query again — it doesn't cost an extra analysis if the report failed to render. If it keeps happening, submit a request below.",
   },
   {
-    q: "Do credits expire?",
-    a: "Never. Buy once, use whenever.",
+    q: "What's the difference between Pro and Pro+?",
+    a: "Both give you full access to everything. Pro includes 10 analyses per month ($9.99/mo). Pro+ includes 25 analyses per month ($19.99/mo). You can also buy extra analysis packs anytime — those never expire.",
+  },
+  {
+    q: "Do purchased analyses expire?",
+    a: "Never. Extra analysis packs you buy are yours forever. Monthly analyses reset each billing cycle and don't roll over.",
+  },
+  {
+    q: "Can I cancel anytime?",
+    a: "Yes. Cancel from your Paddle dashboard. You keep Pro access until the end of your billing period. Purchased analyses stay in your account forever.",
   },
 ];
 

@@ -13,7 +13,7 @@ const CASES = [
     tool: "Dig",
     toolColor: "#7c6fff",
     answer: "Describe your idea in plain language. Dig scans 70+ live sources — App Store, Google Play, Reddit, Product Hunt, X, YouTube — and tells you exactly what exists, where competitors failed, and where the real gap is. In 5 minutes.",
-    href: "/?tool=gap-analysis",
+    href: "/?tab=dig",
     cta: "Dig my idea",
   },
   {
@@ -31,7 +31,7 @@ const CASES = [
     tool: "Dig",
     toolColor: "#7c6fff",
     answer: "Dig gives you a Market Score (0-100), a list of real competitors with their ratings and weaknesses, the actual pain points users complain about on Reddit and X, and a verdict. You decide — we just give you the data.",
-    href: "/?tool=gap-analysis",
+    href: "/?tab=dig",
     cta: "Validate my idea",
   },
   {
@@ -40,7 +40,7 @@ const CASES = [
     tool: "Stack",
     toolColor: "#38bdf8",
     answer: "Tell Stack what you're building, your budget, and your technical level. It returns a phased build plan with exact tools (from 700+), pricing, and a step-by-step guide for each tool. No Googling. No tab paralysis.",
-    href: "/?tool=stack-advisor",
+    href: "/?tab=stack",
     cta: "Get my Stack",
   },
   {
@@ -49,7 +49,7 @@ const CASES = [
     tool: "Dig",
     toolColor: "#7c6fff",
     answer: "The gap is almost never where the market is empty. It's where existing apps stopped caring about one specific user type. Dig finds those users by reading App Store reviews, Reddit complaints, and YouTube comments at scale.",
-    href: "/?tool=gap-analysis",
+    href: "/?tab=dig",
     cta: "Find the gap",
   },
   {
