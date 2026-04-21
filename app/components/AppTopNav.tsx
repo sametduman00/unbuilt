@@ -278,18 +278,17 @@ export default function AppTopNav() {
                       Upgrade plan
                     </Link>
                   )}
-                  {plan?.isPro && (
-                    <Link href="/reports" style={{ ...dropItemStyle, display: "flex", alignItems: "center", gap: 8 }}
-                      onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
-                      onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-                      onClick={() => setUserOpen(false)}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                      </svg>
-                      My Reports
-                    </Link>
-                  )}
+                  <Link href="/reports" style={{ ...dropItemStyle, display: "flex", alignItems: "center", gap: 8 }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                    onClick={() => setUserOpen(false)}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    My Reports
+                    {!plan?.isPro && <span style={{ fontSize: "0.5625rem", fontWeight: 700, color: "#6366f1", background: "rgba(99,102,241,0.1)", padding: "1px 6px", borderRadius: 4, letterSpacing: "0.04em" }}>PRO</span>}
+                  </Link>
                   <div style={{ borderTop: "1px solid #f0f0ee", margin: "6px 0" }}/>
                   <button
                     style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", fontSize: "0.875rem", color: "#dc2626", borderRadius: 8, background: "transparent", border: "none", cursor: "pointer", width: "100%", fontWeight: 450 }}
