@@ -12,12 +12,14 @@ export default function ReportsPage() {
   const router = useRouter();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isPro, setIsPro] = useState<boolean | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [generating, setGenerating] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoaded) return;
     if (!isSignedIn) { router.push("/"); return; }
+    fetch("/api/user/plan").then(r => r.json()).then(d => setIsPro(d.isPro ?? false)).catch(() => setIsPro(false));
     fetch("/api/reports").then(r => r.json()).then(d => setReports(d.reports ?? [])).catch(() => {}).finally(() => setLoading(false));
   }, [isSignedIn, isLoaded, router]);
 
@@ -59,15 +61,48 @@ export default function ReportsPage() {
 
       {/* Empty state */}
       {!loading && reports.length === 0 && (
-        <div style={{ padding: "64px 32px", textAlign: "center", border: "1px dashed var(--clr-border)", borderRadius: 12 }}>
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style={{ margin: "0 auto 12px", display: "block", opacity: 0.3 }}>
-            <path d="M8 6h16l8 8v22H8V6z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-            <path d="M24 6v8h8" stroke="currentColor" strokeWidth="2" />
-            <path d="M13 20h14M13 27h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-          <div style={{ fontSize: 15, fontWeight: 600, color: "var(--clr-text-2)", marginBottom: 6 }}>No reports yet</div>
-          <div style={{ fontSize: 13, color: "var(--clr-text-4)" }}>Run a Dig or Stack to get started.</div>
-        </div>
+        isPro === false ? (
+          /* Free user — upgrade CTA */
+          <div style={{ padding: "56px 32px", textAlign: "center", borderRadius: 16, background: "linear-gradient(135deg, #f5f3ff 0%, #eef2ff 50%, #fdf2f8 100%)", border: "1px solid #e9e5ff" }}>
+            <div style={{ width: 56, height: 56, borderRadius: 16, background: "#fff", boxShadow: "0 2px 12px rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <path d="M9 15l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: "#1a1a1a", marginBottom: 8 }}>Save your analyses</div>
+            <div style={{ fontSize: 14, color: "#6b7280", lineHeight: 1.6, maxWidth: 360, margin: "0 auto 24px" }}>
+              Pro members get full reports saved automatically —<br/>revisit, compare, and export as PDF anytime.
+            </div>
+            <a href="/pricing" style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              padding: "12px 28px", borderRadius: 12,
+              background: "#6366f1", color: "#fff",
+              fontSize: "0.9rem", fontWeight: 600,
+              textDecoration: "none",
+              boxShadow: "0 4px 16px rgba(99,102,241,0.25)",
+              transition: "transform 0.15s, box-shadow 0.15s",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(99,102,241,0.3)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(99,102,241,0.25)"; }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Upgrade to Pro
+            </a>
+          </div>
+        ) : (
+          /* Pro user — no reports yet */
+          <div style={{ padding: "64px 32px", textAlign: "center", border: "1px dashed var(--clr-border)", borderRadius: 12 }}>
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style={{ margin: "0 auto 12px", display: "block", opacity: 0.3 }}>
+              <path d="M8 6h16l8 8v22H8V6z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+              <path d="M24 6v8h8" stroke="currentColor" strokeWidth="2" />
+              <path d="M13 20h14M13 27h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            <div style={{ fontSize: 15, fontWeight: 600, color: "var(--clr-text-2)", marginBottom: 6 }}>No reports yet</div>
+            <div style={{ fontSize: 13, color: "var(--clr-text-4)" }}>Run a Dig or Stack to get started.</div>
+          </div>
+        )
       )}
 
       {/* Cards */}
