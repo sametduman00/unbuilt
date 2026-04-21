@@ -87,47 +87,57 @@ export default function StackLanding({ onStackClick }: { onStackClick: () => voi
           </div>
           {/* Pulse rings */}
           <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 52, height: 52, borderRadius: 14, border: "2px solid #6366f1", animation: "sl-pulse-ring 2s ease-out infinite" }} />
-          {/* Orbiting tools — 4 rings */}
+          {/* Orbiting tools — 4 rings with real logos */}
           {[
-            // Ring 1 — r:62, 5 tools, 7s
-            { name: "Lovable", bg: "#f97316", r: 62, dur: "7s", d: "0s" },
-            { name: "Cursor", bg: "#111", r: 62, dur: "7s", d: "1.4s" },
-            { name: "Bolt", bg: "#0ea5e9", r: 62, dur: "7s", d: "2.8s" },
-            { name: "Replit", bg: "#f26522", r: 62, dur: "7s", d: "4.2s" },
-            { name: "v0", bg: "#000", r: 62, dur: "7s", d: "5.6s" },
-            // Ring 2 — r:95, 7 tools, 11s
-            { name: "Supabase", bg: "#3ecf8e", r: 95, dur: "11s", d: "0s" },
-            { name: "Firebase", bg: "#ffca28", r: 95, dur: "11s", d: "1.57s" },
-            { name: "Neon", bg: "#0ea5e9", r: 95, dur: "11s", d: "3.14s" },
-            { name: "Vercel", bg: "#000", r: 95, dur: "11s", d: "4.71s" },
-            { name: "Netlify", bg: "#00c7b7", r: 95, dur: "11s", d: "6.28s" },
-            { name: "Render", bg: "#46e3b7", r: 95, dur: "11s", d: "7.85s" },
-            { name: "Railway", bg: "#e74c3c", r: 95, dur: "11s", d: "9.42s" },
-            // Ring 3 — r:128, 9 tools, 16s
-            { name: "Stripe", bg: "#635bff", r: 128, dur: "16s", d: "0s" },
-            { name: "Paddle", bg: "#4285f4", r: 128, dur: "16s", d: "1.78s" },
-            { name: "Resend", bg: "#111", r: 128, dur: "16s", d: "3.56s" },
-            { name: "PostHog", bg: "#1d4aff", r: 128, dur: "16s", d: "5.33s" },
-            { name: "Clerk", bg: "#6c47ff", r: 128, dur: "16s", d: "7.11s" },
-            { name: "Auth0", bg: "#eb5424", r: 128, dur: "16s", d: "8.89s" },
-            { name: "Sentry", bg: "#362d59", r: 128, dur: "16s", d: "10.67s" },
-            { name: "Upstash", bg: "#00e9a3", r: 128, dur: "16s", d: "12.44s" },
-            { name: "Twilio", bg: "#f22f46", r: 128, dur: "16s", d: "14.22s" },
-            // Ring 4 — r:158, 9 tools, 22s
-            { name: "Bubble", bg: "#3a3a3a", r: 158, dur: "22s", d: "0s" },
-            { name: "Webflow", bg: "#4353ff", r: 158, dur: "22s", d: "2.44s" },
-            { name: "Framer", bg: "#0055ff", r: 158, dur: "22s", d: "4.88s" },
-            { name: "Fly.io", bg: "#7c3aed", r: 158, dur: "22s", d: "7.33s" },
-            { name: "Cloudflare", bg: "#f38020", r: 158, dur: "22s", d: "9.77s" },
-            { name: "Algolia", bg: "#5468ff", r: 158, dur: "22s", d: "12.22s" },
-            { name: "Mixpanel", bg: "#7856ff", r: 158, dur: "22s", d: "14.66s" },
-            { name: "SendGrid", bg: "#1a82e2", r: 158, dur: "22s", d: "17.11s" },
-            { name: "Lemon", bg: "#ffc233", r: 158, dur: "22s", d: "19.55s" },
+            // Ring 1 — r:62, 5 tools, 7s (builders)
+            { name: "Lovable", icon: null, bg: "#f97316", r: 62, dur: "7s", d: "0s" },
+            { name: "Cursor", icon: null, bg: "#111", r: 62, dur: "7s", d: "1.4s" },
+            { name: "Bolt", icon: null, bg: "#0ea5e9", r: 62, dur: "7s", d: "2.8s" },
+            { name: "Replit", icon: "replit", bg: "#f26522", r: 62, dur: "7s", d: "4.2s" },
+            { name: "v0", icon: "v0", bg: "#000", r: 62, dur: "7s", d: "5.6s" },
+            // Ring 2 — r:95, 7 tools, 11s (infra)
+            { name: "Supabase", icon: "supabase", bg: "#3ecf8e", r: 95, dur: "11s", d: "0s" },
+            { name: "Firebase", icon: "firebase", bg: "#DD2C00", r: 95, dur: "11s", d: "1.57s" },
+            { name: "Neon", icon: null, bg: "#0ea5e9", r: 95, dur: "11s", d: "3.14s" },
+            { name: "Vercel", icon: "vercel", bg: "#000", r: 95, dur: "11s", d: "4.71s" },
+            { name: "Netlify", icon: "netlify", bg: "#00c7b7", r: 95, dur: "11s", d: "6.28s" },
+            { name: "Render", icon: "render", bg: "#46e3b7", r: 95, dur: "11s", d: "7.85s" },
+            { name: "Railway", icon: "railway", bg: "#0B0D0E", r: 95, dur: "11s", d: "9.42s" },
+            // Ring 3 — r:128, 9 tools, 16s (services)
+            { name: "Stripe", icon: "stripe", bg: "#635bff", r: 128, dur: "16s", d: "0s" },
+            { name: "Paddle", icon: "paddle", bg: "#4285f4", r: 128, dur: "16s", d: "1.78s" },
+            { name: "Resend", icon: "resend", bg: "#111", r: 128, dur: "16s", d: "3.56s" },
+            { name: "PostHog", icon: "posthog", bg: "#1d4aff", r: 128, dur: "16s", d: "5.33s" },
+            { name: "Clerk", icon: "clerk", bg: "#6c47ff", r: 128, dur: "16s", d: "7.11s" },
+            { name: "Auth0", icon: "auth0", bg: "#eb5424", r: 128, dur: "16s", d: "8.89s" },
+            { name: "Sentry", icon: "sentry", bg: "#362d59", r: 128, dur: "16s", d: "10.67s" },
+            { name: "Upstash", icon: "upstash", bg: "#00e9a3", r: 128, dur: "16s", d: "12.44s" },
+            { name: "Twilio", icon: "twilio", bg: "#f22f46", r: 128, dur: "16s", d: "14.22s" },
+            // Ring 4 — r:158, 9 tools, 22s (more)
+            { name: "Bubble", icon: "bubble", bg: "#3a3a3a", r: 158, dur: "22s", d: "0s" },
+            { name: "Webflow", icon: "webflow", bg: "#4353ff", r: 158, dur: "22s", d: "2.44s" },
+            { name: "Framer", icon: "framer", bg: "#0055ff", r: 158, dur: "22s", d: "4.88s" },
+            { name: "Fly.io", icon: "flydotio", bg: "#7c3aed", r: 158, dur: "22s", d: "7.33s" },
+            { name: "Cloudflare", icon: "cloudflare", bg: "#f38020", r: 158, dur: "22s", d: "9.77s" },
+            { name: "Algolia", icon: "algolia", bg: "#5468ff", r: 158, dur: "22s", d: "12.22s" },
+            { name: "Mixpanel", icon: "mixpanel", bg: "#7856ff", r: 158, dur: "22s", d: "14.66s" },
+            { name: "SendGrid", icon: "sendgrid", bg: "#1a82e2", r: 158, dur: "22s", d: "17.11s" },
+            { name: "Lemon", icon: "lemonsqueezy", bg: "#7047EB", r: 158, dur: "22s", d: "19.55s" },
           ].map((t, i) => (
             <div key={i} style={{ position: "absolute", top: "50%", left: "50%", width: 0, height: 0 }}>
               <div className="sl-orbit" style={{ "--r": `${t.r}px`, "--dur": t.dur, animationDelay: t.d } as React.CSSProperties}>
-                <div style={{ padding: "3px 8px", borderRadius: 6, background: t.bg, display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%,-50%)", boxShadow: "0 2px 8px rgba(0,0,0,0.18)", whiteSpace: "nowrap" }}>
-                  <span style={{ fontSize: 8, color: t.bg === "#ffca28" || t.bg === "#ffc233" || t.bg === "#00e9a3" ? "#111" : "#fff", fontWeight: 700, letterSpacing: "-0.02em" }}>{t.name}</span>
+                <div style={{ width: 30, height: 30, borderRadius: 8, background: t.bg, display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%,-50%)", boxShadow: "0 2px 8px rgba(0,0,0,0.18)", overflow: "hidden" }}>
+                  {t.icon ? (
+                    <img
+                      src={`https://cdn.simpleicons.org/${t.icon}/white`}
+                      alt={t.name}
+                      width={16}
+                      height={16}
+                      style={{ display: "block" }}
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; (e.target as HTMLImageElement).nextElementSibling && ((e.target as HTMLImageElement).nextSibling as HTMLElement).style.display = "block"; }}
+                    />
+                  ) : null}
+                  <span style={{ fontSize: 7, color: "#fff", fontWeight: 800, display: t.icon ? "none" : "block" }}>{t.name.slice(0, 2)}</span>
                 </div>
               </div>
             </div>
