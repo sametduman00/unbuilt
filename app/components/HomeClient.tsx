@@ -4022,7 +4022,6 @@ function HomeInner() {
                         </div>
                       </div>
                     </div>
-                  </div>
                       
 
                   {showSampleReport && !selectedTool && (
