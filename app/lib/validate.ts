@@ -69,7 +69,7 @@ export interface StackBody { idea: string; budget: Budget; techLevel: TechLevel;
 export function validateStackBody(raw: unknown): ValidationResult<StackBody> {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return validationError("Body must be a JSON object.");
   const body = raw as Record<string,unknown>;
-  const uf = unknownFields(body, ["idea","budget","techLevel","platform"]); if (uf) return uf;
+  const uf = unknownFields(body, ["idea","budget","techLevel","platform","tool","nocache"]); if (uf) return uf;
   const idea=reqString(body.idea,"idea",3,600); if(!idea.ok) return idea;
   const budget=reqEnum(body.budget,"budget",ALLOWED_BUDGETS); if(!budget.ok) return budget;
   const tech=reqEnum(body.techLevel,"techLevel",ALLOWED_TECH); if(!tech.ok) return tech;
