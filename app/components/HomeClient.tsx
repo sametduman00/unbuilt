@@ -3319,12 +3319,10 @@ function HomeInner() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
   const [activeHeroTab, setActiveHeroTab] = useState<"gap-analysis" | "stack-advisor">(tabParam === "stack" ? "stack-advisor" : "gap-analysis");
-  const [heroReady, setHeroReady] = useState(false);
 
   useEffect(() => {
     if (tabParam === "stack") setActiveHeroTab("stack-advisor");
     else if (tabParam === "dig") setActiveHeroTab("gap-analysis");
-    requestAnimationFrame(() => setHeroReady(true));
   }, [tabParam]);
   const [showSampleReport, setShowSampleReport] = useState(false);
   // Reset sample report when tool changes
@@ -3918,7 +3916,7 @@ function HomeInner() {
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                   {/* ── HERO ── */}
-                  <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", visibility: heroReady ? "visible" : "hidden" }}>
+                  <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
                     {/* Title */}
                     {activeHeroTab === "gap-analysis" ? (
                       <div style={{ fontSize: "clamp(3rem, 6vw, 3.85rem)", fontWeight: 700, color: "#111", lineHeight: 1.1, letterSpacing: "-0.04em", marginBottom: "0.75rem" }}>
@@ -4053,36 +4051,6 @@ function HomeInner() {
 
               {selectedTool && currentTool && !hasResults && !loading && (
                 <div ref={inputSectionRef}>
-                  {/* Dig hero — clean */}
-                  {selectedTool === "gap-analysis" && (
-                    <div style={{ textAlign: "center" as const, padding: "20px 24px 10px" }}>
-                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "0.6875rem", color: "var(--clr-text-3)", marginBottom: 14, letterSpacing: "0.03em" }}>
-                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
-                        live data, updated every hour
-                      </div>
-                      <h1 style={{ fontSize: "3rem", fontWeight: 800, letterSpacing: "-0.05em", lineHeight: 1.05, color: "var(--clr-text)", marginBottom: 8 }}>
-                        Don't build what<br/><em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>already exists.</em>
-                      </h1>
-                      <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, whiteSpace: "normal" }}>
-                        Describe your idea. We'll scan 70+ live sources and tell you exactly where the gap is.
-                      </p>
-                    </div>
-                  )}
-                  {/* Stack hero */}
-                  {selectedTool === "stack-advisor" && (
-                    <div style={{ textAlign: "center" as const, padding: "16px 24px 6px" }}>
-                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "0.6875rem", color: "var(--clr-text-3)", marginBottom: 14, letterSpacing: "0.03em" }}>
-                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#0ea5e9", display: "inline-block", animation: "pulse 2s ease-in-out infinite" }} />
-                        Updated weekly for new tools
-                      </div>
-                      <h1 style={{ fontSize: "3rem", fontWeight: 800, letterSpacing: "-0.05em", lineHeight: 1.05, color: "var(--clr-text)", marginBottom: 14 }}>
-                        Stop Googling<br/><em style={{ fontStyle: "italic", fontWeight: 400, color: "var(--clr-text-3)" }}>"best tools for vibecoding"</em>
-                      </h1>
-                      <p style={{ fontSize: "0.875rem", color: "var(--clr-text-3)", lineHeight: 1.6, maxWidth: 440, margin: "0 auto" }}>
-                        Describe what you're building. We'll give you exact tools, real costs<br/>and a build order — matched to your budget and skill level.
-                      </p>
-                    </div>
-                  )}
                   <InputSection
                     tool={currentTool}
                     idea={idea}
