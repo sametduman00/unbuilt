@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 500,
+        max_tokens: 1000,
         system: FREE_PROMPT,
         messages: [{ role: "user", content: `Idea: "${cleanIdea}"` }],
       }),
