@@ -257,6 +257,27 @@ export default function AppTopNav() {
                       <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "#1a1a1a" }}>{plan?.totalAnalyses ?? 0}</span>
                     </div>
                   </div>
+                  {plan?.tier === "pro+" ? (
+                    <Link href="/pricing#addons" style={{ ...dropItemStyle, display: "flex", alignItems: "center", gap: 8, color: "#6366f1" }}
+                      onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+                      onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                      onClick={() => setUserOpen(false)}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>
+                      </svg>
+                      Buy extra analyses
+                    </Link>
+                  ) : (
+                    <Link href="/pricing" style={{ ...dropItemStyle, display: "flex", alignItems: "center", gap: 8, color: "#6366f1", fontWeight: 600 }}
+                      onMouseEnter={e => (e.currentTarget.style.background = "#f0edff")}
+                      onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                      onClick={() => setUserOpen(false)}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                      </svg>
+                      Upgrade plan
+                    </Link>
+                  )}
                   <Link href="/reports" style={{ ...dropItemStyle, display: "flex", alignItems: "center", gap: 8 }}
                     onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
                     onMouseLeave={e => (e.currentTarget.style.background = "transparent")}

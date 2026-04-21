@@ -199,6 +199,19 @@ export default function MobileNav() {
 
             {DIV}
 
+            {/* Upgrade / Buy extra */}
+            {isSignedIn && plan?.tier === "pro+" ? (
+              <Link href="/pricing#addons" onClick={close} style={{ ...ROW, color:"#6366f1" } as React.CSSProperties}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+                Buy extra analyses
+              </Link>
+            ) : isSignedIn && (
+              <Link href="/pricing" onClick={close} style={{ ...ROW, color:"#6366f1", fontWeight:600 } as React.CSSProperties}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                Upgrade plan
+              </Link>
+            )}
+
             {/* Sign out */}
             {isSignedIn && (
               <button onClick={() => { close(); signOut({ redirectUrl:"/" }); }}
