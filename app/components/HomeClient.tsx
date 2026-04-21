@@ -1438,27 +1438,31 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
             <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:12 }}>
               <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14 }}>
                 <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:10, letterSpacing:"0.07em" }}>Working For You</div>
+                <div style={isFreeResult ? { filter: "blur(4px)", pointerEvents: "none" as const, userSelect: "none" as const, opacity: 0.7 } : {}}>
                 {data.synthesis.workingForYou.map((item,i) => (
                   <div key={i} style={{ display:"flex", gap:8, marginBottom:7 }}>
                     <span style={{ color:"#10b981", fontSize:14, flexShrink:0 }}>●</span>
                     <span style={{ fontSize:13, color:"#374151" }}>{item}</span>
                   </div>
                 ))}
+                </div>
               </div>
               <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14 }}>
                 <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:10, letterSpacing:"0.07em" }}>Watch Out</div>
+                <div style={isFreeResult ? { filter: "blur(4px)", pointerEvents: "none" as const, userSelect: "none" as const, opacity: 0.7 } : {}}>
                 {data.synthesis.watchOutFor.map((item,i) => (
                   <div key={i} style={{ display:"flex", gap:8, marginBottom:7 }}>
                     <span style={{ color:"#f59e0b", fontSize:14, flexShrink:0 }}>●</span>
                     <span style={{ fontSize:13, color:"#374151" }}>{item}</span>
                   </div>
                 ))}
+                </div>
               </div>
             </div>
           )}
           {/* Confidence note */}
           {data.synthesis?.confidenceNote && (
-            <div style={{ marginTop:12, padding:"10px 14px", background:"#f9fafb", border:"1px solid #e5e7eb", borderRadius:8, fontSize:12, color:"#6b7280", lineHeight:1.6 }}>
+            <div style={{ marginTop:12, padding:"10px 14px", background:"#f9fafb", border:"1px solid #e5e7eb", borderRadius:8, fontSize:12, color:"#6b7280", lineHeight:1.6, ...(isFreeResult ? { filter: "blur(4px)", pointerEvents: "none" as const, userSelect: "none" as const, opacity: 0.7 } : {}) }}>
               ℹ {data.synthesis.confidenceNote}
             </div>
           )}
