@@ -3319,10 +3319,12 @@ function HomeInner() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
   const [activeHeroTab, setActiveHeroTab] = useState<"gap-analysis" | "stack-advisor">(tabParam === "stack" ? "stack-advisor" : "gap-analysis");
+  const [heroMounted, setHeroMounted] = useState(false);
 
   useEffect(() => {
     if (tabParam === "stack") setActiveHeroTab("stack-advisor");
     else if (tabParam === "dig") setActiveHeroTab("gap-analysis");
+    setHeroMounted(true);
   }, [tabParam]);
   const [showSampleReport, setShowSampleReport] = useState(false);
   // Reset sample report when tool changes
@@ -3916,7 +3918,7 @@ function HomeInner() {
               {!selectedTool && !hasResults && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                   {/* ── HERO ── */}
-                  <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+                  <div style={{ paddingTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", opacity: heroMounted ? 1 : 0, transition: "opacity 0.15s ease" }}>
                     {/* Title */}
                     {activeHeroTab === "gap-analysis" ? (
                       <div style={{ fontSize: "clamp(3rem, 6vw, 3.85rem)", fontWeight: 700, color: "#111", lineHeight: 1.1, letterSpacing: "-0.04em", marginBottom: "0.75rem" }}>
