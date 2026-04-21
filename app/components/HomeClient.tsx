@@ -683,6 +683,8 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
     switch (activeTab) {
       case "overview": {
         const band = data._presentation?.mode || (sc <= 30 ? "band1" : sc <= 55 ? "band2" : "band3");
+        // Free blur style — applied to section content, headers stay visible
+        const fb: React.CSSProperties = isFreeResult ? { filter: "blur(4px)", pointerEvents: "none", userSelect: "none" } : {};
         const heroColor = band === "band1" ? { bg:"#fef2f2", border:"#fecaca", text:"#991b1b", sub:"#b91c1c", label:"#dc2626", circle:"#ef4444" }
           : band === "band2" ? { bg:"#fffbeb", border:"#fcd34d", text:"#78350f", sub:"#92400e", label:"#d97706", circle:"#f59e0b" }
           : { bg:"#f0fdf4", border:"#86efac", text:"#14532d", sub:"#166534", label:"#16a34a", circle:"#10b981" };
@@ -714,7 +716,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 {data.synthesis?.repositionPaths && data.synthesis.repositionPaths.length > 0 && (
                   <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:10, padding:14, marginBottom:10 }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#7c3aed", marginBottom:8 }}>Where this idea actually works</div>
-                    <div style={{ display:"flex", flexDirection:"column" as const, gap:8 }}>
+                    <div style={{ display:"flex", flexDirection:"column" as const, gap:8, ...fb }}>
                       {data.synthesis.repositionPaths.map((p,i) => (
                         <div key={i} style={{ display:"flex", gap:8, alignItems:"flex-start" }}>
                           <div style={{ width:18, height:18, borderRadius:"50%", background:"#ddd6fe", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontSize:10, color:"#5b21b6", fontWeight:500 }}>{i+1}</div>
@@ -728,15 +730,17 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 {data.synthesis?.bestNextMove && (
                   <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14, marginBottom:10 }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#16a34a", marginBottom:4 }}>Your move</div>
+                    <div style={{ ...fb }}>
                     <div style={{ fontSize:13, fontWeight:500, color:"#14532d", marginBottom:4 }}>{data.synthesis.bestNextMove.action}</div>
                     <div style={{ fontSize:12, color:"#166534", lineHeight:1.5 }}>{data.synthesis.bestNextMove.detail}</div>
+                    </div>
                   </div>
                 )}
                 {/* The hard part */}
                 {hardPartText && (
                   <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:14, marginBottom:10 }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#d97706", marginBottom:4 }}>The hard part</div>
-                    <div style={{ fontSize:12, color:"#78350f", lineHeight:1.5 }}>{hardPartText}</div>
+                    <div style={{ fontSize:12, color:"#78350f", lineHeight:1.5, ...fb }}>{hardPartText}</div>
                   </div>
                 )}
               </>
@@ -744,33 +748,30 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
 
             {band === "band2" && (
               <>
-                {/* What makes this work */}
                 {data.synthesis?.upsideCondition && (
                   <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:10, padding:14, marginBottom:10 }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#2563eb", marginBottom:4 }}>What makes this work</div>
-                    <div style={{ fontSize:12, color:"#1e3a5f", lineHeight:1.5 }}>{data.synthesis.upsideCondition}</div>
+                    <div style={{ fontSize:12, color:"#1e3a5f", lineHeight:1.5, ...fb }}>{data.synthesis.upsideCondition}</div>
                   </div>
                 )}
-                {/* Best next move + Sharpen the angle */}
                 <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:10, marginBottom:10 }}>
                   {data.synthesis?.bestNextMove && (
                     <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14 }}>
                       <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#16a34a", marginBottom:4 }}>Best next move</div>
-                      <div style={{ fontSize:12, color:"#14532d", lineHeight:1.5 }}><strong>{data.synthesis.bestNextMove.action}</strong>{data.synthesis.bestNextMove.detail ? ` — ${data.synthesis.bestNextMove.detail}` : ""}</div>
+                      <div style={{ fontSize:12, color:"#14532d", lineHeight:1.5, ...fb }}><strong>{data.synthesis.bestNextMove.action}</strong>{data.synthesis.bestNextMove.detail ? ` — ${data.synthesis.bestNextMove.detail}` : ""}</div>
                     </div>
                   )}
                   {data.synthesis?.repositionPaths?.[0] && (
                     <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:10, padding:14 }}>
                       <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#7c3aed", marginBottom:4 }}>Sharpen the angle</div>
-                      <div style={{ fontSize:12, color:"#3b0764", lineHeight:1.5 }}>{data.synthesis.repositionPaths[0].angle}{data.synthesis.repositionPaths[0].reasoning ? ` — ${data.synthesis.repositionPaths[0].reasoning}` : ""}</div>
+                      <div style={{ fontSize:12, color:"#3b0764", lineHeight:1.5, ...fb }}>{data.synthesis.repositionPaths[0].angle}{data.synthesis.repositionPaths[0].reasoning ? ` — ${data.synthesis.repositionPaths[0].reasoning}` : ""}</div>
                     </div>
                   )}
                 </div>
-                {/* The hard part */}
                 {hardPartText && (
                   <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:14, marginBottom:10 }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#d97706", marginBottom:4 }}>The hard part</div>
-                    <div style={{ fontSize:12, color:"#78350f", lineHeight:1.5 }}>{hardPartText}</div>
+                    <div style={{ fontSize:12, color:"#78350f", lineHeight:1.5, ...fb }}>{hardPartText}</div>
                   </div>
                 )}
               </>
@@ -782,29 +783,28 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 {data.synthesis?.upsideCondition && (
                   <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14, marginBottom:10 }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#16a34a", marginBottom:4 }}>Why this has signal</div>
-                    <div style={{ fontSize:12, color:"#14532d", lineHeight:1.5 }}>{data.synthesis.upsideCondition}</div>
+                    <div style={{ fontSize:12, color:"#14532d", lineHeight:1.5, ...fb }}>{data.synthesis.upsideCondition}</div>
                   </div>
                 )}
-                {/* Your one-liner */}
                 {data.oneLiner && (
                   <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:10, padding:14, marginBottom:10 }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#7c3aed", marginBottom:4 }}>Your one-liner</div>
-                    <div style={{ fontSize:13, fontStyle:"italic" as const, color:"#1e1b4b" }}>"{data.oneLiner}"</div>
+                    <div style={{ fontSize:13, fontStyle:"italic" as const, color:"#1e1b4b", ...fb }}>"{data.oneLiner}"</div>
                   </div>
                 )}
-                {/* Your move */}
                 {data.synthesis?.bestNextMove && (
                   <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:10, padding:14, marginBottom:10 }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#2563eb", marginBottom:4 }}>Your move</div>
+                    <div style={{ ...fb }}>
                     <div style={{ fontSize:13, fontWeight:500, color:"#1e3a5f", marginBottom:4 }}>{data.synthesis.bestNextMove.action}</div>
                     <div style={{ fontSize:12, color:"#1e40af", lineHeight:1.5 }}>{data.synthesis.bestNextMove.detail}</div>
+                    </div>
                   </div>
                 )}
-                {/* The risk you should watch */}
                 {hardPartText && (
                   <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:14, marginBottom:10 }}>
                     <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#d97706", marginBottom:4 }}>The risk you should watch</div>
-                    <div style={{ fontSize:12, color:"#78350f", lineHeight:1.5 }}>{hardPartText}</div>
+                    <div style={{ fontSize:12, color:"#78350f", lineHeight:1.5, ...fb }}>{hardPartText}</div>
                   </div>
                 )}
               </>
@@ -856,7 +856,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
           {/* D1-D5 Score Breakdown */}
           {data._scoring && (
             <Card title="Score Breakdown" sub="How the market score was calculated">
-              <div style={{ display:"flex", flexDirection:"column" as const, gap:10 }}>
+              <div style={{ display:"flex", flexDirection:"column" as const, gap:10, ...fb }}>
                 {[
                   { key:"D1_demand", label:"Demand signals", weight:"30%", color:"#6366f1" },
                   { key:"D2_competition", label:"Competitive density", weight:"20%", color:"#f59e0b" },
@@ -892,6 +892,15 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 </div>
               )}
             </Card>
+          )}
+          {isFreeResult && (
+            <div style={{ textAlign: "center", padding: "20px 0 8px", borderTop: "1px solid #e5e7eb", marginTop: 16 }}>
+              <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 10 }}>You're seeing the limited version. Full reports include 70+ sources, real competitors, and actionable data.</div>
+              <a href="/pricing" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 24px", borderRadius: 10, background: "#6366f1", color: "#fff", textDecoration: "none", fontSize: "0.85rem", fontWeight: 700 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Unlock full analysis — Go Pro
+              </a>
+            </div>
           )}
         </div>
       );}
