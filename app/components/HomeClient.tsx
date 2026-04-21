@@ -4598,6 +4598,7 @@ function HomeInner() {
                   background: "var(--clr-surface)", border: "1px solid var(--clr-border)",
                   borderRadius: 12, marginBottom: "1.25rem",
                   boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                  flexWrap: "wrap" as const,
                 }}>
                   {/* Tool icon */}
                   <div style={{
@@ -4614,7 +4615,7 @@ function HomeInner() {
                     <div style={{ fontSize: "0.65rem", fontWeight: 700, color: currentTool.accentColor, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 1 }}>
                       {currentTool.name}
                     </div>
-                    <div style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "normal" }}>
+                    <div style={{ fontSize: "0.875rem", color: "var(--clr-text-2)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {idea}
                     </div>
                     {selectedTool === "stack-advisor" && (
@@ -4633,7 +4634,7 @@ function HomeInner() {
                   </div>
 
                   {/* Actions */}
-                  <div style={{ display: "flex", gap: 8, flexShrink: 0, alignItems: "center" }}>
+                  <div style={{ display: "flex", gap: 8, flexShrink: 0, alignItems: "center", flexWrap: "wrap" as const, justifyContent: "flex-end" }}>
                     <button
                       onClick={async () => {
                         if (!userPlan?.isPro) { setShowUpgradeModal(true); return; }
