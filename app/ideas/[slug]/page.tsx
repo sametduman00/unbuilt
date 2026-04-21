@@ -532,8 +532,8 @@ export default async function IdeaPage({
           </p>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", fontSize: 13 }}>
             <Link href="/" style={{ color: "var(--clr-text-4)" }}>Launches</Link>
-            <Link href="/?tool=gap-analysis" style={{ color: "var(--clr-text-4)" }}>Dig</Link>
-            <Link href="/?tool=stack-advisor" style={{ color: "var(--clr-text-4)" }}>Stack</Link>
+            <Link href="/?tab=dig" style={{ color: "var(--clr-text-4)" }}>Dig</Link>
+            <Link href="/?tab=stack" style={{ color: "var(--clr-text-4)" }}>Stack</Link>
             <Link href="/ideas" style={{ color: "var(--clr-text-4)" }}>All Ideas</Link>
           </div>
         </div>

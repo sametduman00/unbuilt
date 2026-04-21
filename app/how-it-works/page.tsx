@@ -96,7 +96,7 @@ export default function HowItWorksPage() {
           <div style={{ marginTop: "3rem", padding: "2rem", borderRadius: 16, border: "1px solid rgba(124,111,255,0.2)", background: "rgba(124,111,255,0.05)", textAlign: "center" }}>
             <p style={{ fontSize: "0.9375rem", fontWeight: 700, margin: "0 0 6px" }}>Don't build what already exists.</p>
             <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Dig is free to try. Go Pro for full reports with 70+ sources. Find the gap before you spend months building.</p>
-            <Link href="/?tool=gap-analysis" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "#7c6fff", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
+            <Link href="/?tab=dig" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "#7c6fff", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
               Dig my idea →
             </Link>
           </div>
@@ -105,7 +105,7 @@ export default function HowItWorksPage() {
           <div style={{ marginTop: "3rem", padding: "2rem", borderRadius: 16, border: "1px solid rgba(56,189,248,0.2)", background: "rgba(56,189,248,0.05)", textAlign: "center" }}>
             <p style={{ fontSize: "0.9375rem", fontWeight: 700, margin: "0 0 6px" }}>Stop Googling "best tools for vibecoding".</p>
             <p style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)", margin: "0 0 18px" }}>Stack is free to try. Go Pro for complete build plans. Get a phased build plan in 90 seconds.</p>
-            <Link href="/?tool=stack-advisor" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "#38bdf8", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
+            <Link href="/?tab=stack" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", borderRadius: 9, background: "#38bdf8", color: "#fff", textDecoration: "none", fontSize: "0.875rem", fontWeight: 700, letterSpacing: "-0.01em" }}>
               Get my Stack →
             </Link>
           </div>

@@ -251,7 +251,7 @@ export default async function IdeasIndex({
           Dig analyzes it against 70+ live sources in 5 minutes.
         </p>
         <Link
-          href="/?tool=gap-analysis"
+          href="/?tab=dig"
           style={{
             display: "inline-flex",
             padding: "12px 28px",

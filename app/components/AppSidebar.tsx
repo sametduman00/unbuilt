@@ -27,6 +27,8 @@ function AppSidebarInner() {
 
   const handleToolClick = (tool: string) => {
     if (tool === "pulse") router.push("/launches");
+    else if (tool === "gap-analysis") router.push("/?tab=dig");
+    else if (tool === "stack-advisor") router.push("/?tab=stack");
     else router.push(`/?tool=${tool}`);
   };
 
