@@ -218,10 +218,14 @@ export default function PricingPage() {
                 </li>
               ))}
             </ul>
-            {planTier === "pro" ? (
+            {planTier === "pro" && hasActiveSubscription ? (
               <div style={{ display: "block", width: "100%", padding: "10px 0", borderRadius: 9, fontSize: "0.8rem", fontWeight: 700, background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.2)", color: "#6366f1", textAlign: "center", marginTop: "auto" }}>
                 ✓ Current plan
               </div>
+            ) : planTier === "pro" && !hasActiveSubscription ? (
+              <button onClick={() => handleBuy(PLANS[0].paddlePriceId, PLANS[0].slug)} style={{ display: "block", width: "100%", padding: "10px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer", background: "#6366f1", border: "none", color: "#fff", marginTop: "auto" }}>
+                Reactivate — $9.99/mo
+              </button>
             ) : planTier === "pro+" ? (
               <div style={{ display: "block", width: "100%", padding: "10px 0", borderRadius: 9, fontSize: "0.8rem", fontWeight: 600, background: "transparent", border: "1px solid var(--clr-border)", color: "var(--clr-text-4)", textAlign: "center", marginTop: "auto" }}>
                 Included in your Pro+ plan
@@ -259,10 +263,14 @@ export default function PricingPage() {
                 </li>
               ))}
             </ul>
-            {planTier === "pro+" ? (
+            {planTier === "pro+" && hasActiveSubscription ? (
               <div style={{ display: "block", width: "100%", padding: "10px 0", borderRadius: 9, fontSize: "0.8rem", fontWeight: 700, background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.2)", color: "#6366f1", textAlign: "center", marginTop: "auto" }}>
                 ✓ Current plan
               </div>
+            ) : planTier === "pro+" && !hasActiveSubscription ? (
+              <button onClick={() => handleBuy(PLANS[1].paddlePriceId, PLANS[1].slug)} style={{ display: "block", width: "100%", padding: "10px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer", background: "#6366f1", border: "none", color: "#fff", marginTop: "auto" }}>
+                Reactivate — $19.99/mo
+              </button>
             ) : planTier === "pro" ? (
               <button onClick={() => handleBuy(PLANS[1].paddlePriceId, PLANS[1].slug)} style={{ display: "block", width: "100%", padding: "10px 0", borderRadius: 9, fontFamily: "inherit", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer", background: "#6366f1", border: "none", color: "#fff", marginTop: "auto" }}>
                 Upgrade to Pro+ — $19.99/mo
