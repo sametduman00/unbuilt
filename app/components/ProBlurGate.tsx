@@ -14,19 +14,23 @@ export default function ProBlurGate({ children, freeLimit = 3 }: { children: Rea
 
   const items = React.Children.toArray(children);
   const totalCount = items.length;
-  const showAll = !checked || isPro;
-  const visibleItems = showAll ? items : items.slice(0, freeLimit);
   const hiddenCount = totalCount - freeLimit;
 
   return (
     <>
-      {visibleItems.map((child, i) => (
-        <React.Fragment key={i}>{child}</React.Fragment>
-      ))}
-      {!showAll && hiddenCount > 0 && (
+      {items.map((child, i) => {
+        const shouldBlur = i >= freeLimit && (!checked || !isPro);
+        if (!shouldBlur) return <React.Fragment key={i}>{child}</React.Fragment>;
+        return (
+          <div key={i} style={{ filter: "blur(6px)", pointerEvents: "none", userSelect: "none", opacity: 0.6 }}>
+            {child}
+          </div>
+        );
+      })}
+      {checked && !isPro && hiddenCount > 0 && (
         <div style={{
           marginTop: 12,
-          padding: "24px 28px",
+          padding: "20px 24px",
           borderRadius: 14,
           border: "1px solid var(--clr-border)",
           background: "var(--clr-surface)",
@@ -40,7 +44,7 @@ export default function ProBlurGate({ children, freeLimit = 3 }: { children: Rea
               +{hiddenCount} more ideas
             </div>
             <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>
-              Upgrade to Pro to browse the full list.
+              Upgrade to Pro to unlock everything.
             </div>
           </div>
           <a href="/pricing" style={{

@@ -99,10 +99,11 @@ export default function LaunchesPage() {
                         )}
                         {!pulseLoading && phPaged.length>0 && (
                           <div className="ph-card-grid" style={{ display:"grid", gridTemplateColumns:"repeat(2,minmax(0,1fr))", gap:10 }}>
-                            {phPaged.filter((_,i) => isPro || i < 3).map((s,i)=>{
+                            {phPaged.map((s,i)=>{
+                              const isLocked = !isPro && i >= 3;
                               return (
-                                <div key={s.title+i}>
-                                <div style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column" }}>
+                                <div key={s.title+i} style={{ position: "relative" }}>
+                                <div style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const } : {}) }}>
                                   
                                   <a href={s.externalUrl||s.url} target="_blank" rel="noopener noreferrer"
                                     style={{ display:"flex", alignItems:"flex-start", gap:"1rem", padding:"1.125rem 1.125rem 0.875rem", textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
@@ -138,15 +139,15 @@ export default function LaunchesPage() {
                             })}
                           </div>
                         )}
-                        {/* Upgrade banner for free users */}
+                        {/* Upgrade banner — sits below blurred cards */}
                         {!pulseLoading && !isPro && phPaged.length > 3 && (
-                          <div style={{ marginTop: 12, padding: "24px 28px", borderRadius: 14, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+                          <div style={{ marginTop: 12, padding: "20px 24px", borderRadius: 14, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
                             <div>
                               <div style={{ fontSize: "0.9375rem", fontWeight: 650, color: "var(--clr-text)", marginBottom: 4 }}>
                                 +{phPaged.length - 3} more launches today
                               </div>
                               <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>
-                                Upgrade to Pro to see every launch, every day.
+                                Upgrade to Pro to unlock everything.
                               </div>
                             </div>
                             <a href="/pricing" style={{ flexShrink: 0, padding: "8px 20px", borderRadius: 10, background: "var(--clr-text)", color: "#fff", textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600, transition: "opacity 0.15s" }}
@@ -181,10 +182,11 @@ export default function LaunchesPage() {
                         {!pulseAsLoading&&pulseAsDays.length===0&&<div style={{ textAlign:"center", padding:"4rem 0", color:"var(--clr-text-3)" }}>No App Store data yet. Check back after 08:00 UTC.</div>}
                         {!pulseAsLoading&&asPaged.length>0&&(
                           <div key={pulseAsCat+"_"+pulseAsSearch} style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                            {asPaged.filter((_,idx) => isPro || idx < 3).map((app,appIdx)=>{
+                            {asPaged.map((app,appIdx)=>{
+                              const isLocked = !isPro && appIdx >= 3;
                               return (
                               <div key={app.app_id}>
-                              <div style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden"}}>
+                              <div style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const } : {})}}>
                                         <a href={app.store_url} target="_blank" rel="noopener noreferrer"
                             style={{display:"flex",flexDirection:"column",gap:"0.875rem",padding:"1.25rem",textDecoration:"none",color:"inherit",transition:"background 0.15s"}}
                             onMouseEnter={e=>e.currentTarget.style.background="rgba(var(--clr-text-rgb),0.02)"}
