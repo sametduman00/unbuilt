@@ -63,6 +63,9 @@ export default function PricingPage() {
   }, [isSignedIn]);
 
   const [paddleReady, setPaddleReady] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
 
   // After checkout completes, wait for webhook to process then reload
   const pollAndReload = useCallback(() => {
@@ -377,23 +380,86 @@ export default function PricingPage() {
             Your {planTier === "pro+" ? "Pro+" : "Pro"}{" "}subscription renews monthly. Cancel anytime — you&apos;ll keep access until the end of your billing period.
           </p>
           <button
-            onClick={async () => {
-              if (!confirm("Are you sure you want to cancel? You'll keep Pro access until the end of your current billing period.")) return;
-              try {
-                const res = await fetch("/api/user/cancel-subscription", { method: "POST" });
-                const data = await res.json();
-                if (res.ok) {
-                  alert("Subscription cancelled. You'll keep Pro access until the end of your billing period.");
-                  window.location.reload();
-                } else {
-                  alert(data.error || "Failed to cancel. Please try again.");
-                }
-              } catch { alert("Something went wrong. Please try again."); }
-            }}
+            onClick={() => setShowCancelModal(true)}
             style={{ padding: "8px 18px", borderRadius: 9, fontFamily: "inherit", fontSize: "0.775rem", fontWeight: 600, cursor: "pointer", background: "transparent", border: "1px solid #fecaca", color: "#dc2626" }}
           >
             Cancel subscription
           </button>
+        </div>
+      )}
+
+      {/* Cancel retention modal */}
+      {showCancelModal && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowCancelModal(false); }}>
+          <div style={{ background: "#fff", borderRadius: 20, padding: "36px 32px", maxWidth: 420, width: "90%", boxShadow: "0 24px 48px rgba(0,0,0,0.15)", position: "relative" }}>
+            {/* Close */}
+            <button onClick={() => setShowCancelModal(false)} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", color: "#9ca3af", fontSize: 20, lineHeight: 1 }}>×</button>
+
+            {/* Icon */}
+            <div style={{ width: 56, height: 56, borderRadius: 16, background: "linear-gradient(135deg, #fef2f2, #fff1f2)", border: "1px solid #fecaca", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+            </div>
+
+            {/* Heading */}
+            <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#111", textAlign: "center", margin: "0 0 8px", letterSpacing: "-0.02em" }}>
+              We&apos;d hate to see you go
+            </h3>
+            <p style={{ fontSize: "0.8125rem", color: "#6b7280", textAlign: "center", margin: "0 0 24px", lineHeight: 1.5 }}>
+              If you cancel, you&apos;ll lose access at the end of your billing period:
+            </p>
+
+            {/* What they lose */}
+            <div style={{ background: "#fafafa", borderRadius: 12, padding: "16px 18px", marginBottom: 24 }}>
+              {["Full Dig reports — all 10 tabs with live data", "Full Stack recommendations — all phases", "Unlimited Launches & Startup Ideas", "PDF export & saved report history"].map((item) => (
+                <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "6px 0", fontSize: "0.8rem", color: "#374151" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}>
+                    <circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/>
+                  </svg>
+                  {item}
+                </div>
+              ))}
+            </div>
+
+            {/* Keep plan button (primary) */}
+            <button
+              onClick={() => setShowCancelModal(false)}
+              style={{ display: "block", width: "100%", padding: "12px 0", borderRadius: 12, border: "none", backgroundImage: "linear-gradient(135deg, #6366f1, #7c3aed)", color: "#fff", fontSize: "0.9rem", fontWeight: 700, cursor: "pointer", fontFamily: "inherit", marginBottom: 12, boxShadow: "0 4px 14px rgba(99,102,241,0.3)" }}
+            >
+              Keep my Pro plan
+            </button>
+
+            {/* Cancel anyway (secondary) */}
+            <button
+              onClick={async () => {
+                setCancelling(true);
+                try {
+                  const res = await fetch("/api/user/cancel-subscription", { method: "POST" });
+                  const data = await res.json();
+                  if (res.ok) {
+                    setShowCancelModal(false);
+                    setCancelled(true);
+                  } else {
+                    alert(data.error || "Failed to cancel. Please try again.");
+                  }
+                } catch { alert("Something went wrong. Please try again."); }
+                finally { setCancelling(false); }
+              }}
+              disabled={cancelling}
+              style={{ display: "block", width: "100%", padding: "10px 0", borderRadius: 10, border: "none", background: "transparent", color: "#9ca3af", fontSize: "0.8rem", fontWeight: 500, cursor: cancelling ? "wait" : "pointer", fontFamily: "inherit" }}
+            >
+              {cancelling ? "Cancelling..." : "Cancel anyway"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Cancelled confirmation */}
+      {cancelled && (
+        <div style={{ position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 9999, background: "#111", color: "#fff", padding: "12px 24px", borderRadius: 12, fontSize: "0.8125rem", fontWeight: 600, boxShadow: "0 8px 24px rgba(0,0,0,0.2)" }}>
+          Subscription cancelled. You&apos;ll keep Pro access until the end of your billing period.
         </div>
       )}
 
