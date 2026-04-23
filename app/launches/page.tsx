@@ -98,22 +98,20 @@ export default function LaunchesPage() {
                           <div style={{ textAlign:"center", padding:"3rem 0", color:"var(--clr-text-3)" }}>No results. <button onClick={()=>{setPulsePhSearch("");setPulsePhTopic("all");}} style={{ color:"#DA552F", background:"none", border:"none", cursor:"pointer" }}>Clear</button></div>
                         )}
                         {!pulseLoading && phPaged.length>0 && (
+                          <div style={{ position: "relative" }}>
                           <div className="ph-card-grid" style={{ display:"grid", gridTemplateColumns:"repeat(2,minmax(0,1fr))", gap:10 }}>
                             {phPaged.map((s,i)=>{
                               const isLocked = !isPro && i >= 3;
                               return (
-                                <div key={s.title+i} style={{ position: "relative" }}>
-                                <div style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const } : {}) }}>
-                                  
+                                <div key={s.title+i}>
+                                <div style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const, opacity: 0.5 } : {}) }}>
                                   <a href={s.externalUrl||s.url} target="_blank" rel="noopener noreferrer"
                                     style={{ display:"flex", alignItems:"flex-start", gap:"1rem", padding:"1.125rem 1.125rem 0.875rem", textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
                                     onMouseEnter={e=>e.currentTarget.style.background="rgba(0,0,0,0.02)"}
-                                    onMouseLeave={e=>e.currentTarget.style.background="transparent"}
-                                  >
+                                    onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
                                     {s.imageUrl
                                       ? <img src={s.imageUrl} alt="" width={48} height={48} style={{ borderRadius:10, flexShrink:0, objectFit:"cover", border:"1px solid var(--clr-border)" }}/>
-                                      : <div style={{ width:48, height:48, borderRadius:10, background:"var(--clr-border)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.25rem" }}>{s.emoji}</div>
-                                    }
+                                      : <div style={{ width:48, height:48, borderRadius:10, background:"var(--clr-border)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.25rem" }}>{s.emoji}</div>}
                                     <div style={{ flex:1, minWidth:0 }}>
                                       <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:3 }}>
                                         <span style={{ fontSize:"0.9375rem", fontWeight:600, color:"var(--clr-text)", letterSpacing:"-0.015em" }}>{s.title}</span>
@@ -123,53 +121,34 @@ export default function LaunchesPage() {
                                       {s.topics&&s.topics.length>0&&(
                                         <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
                                           {s.topics.map((t,ti)=><span key={t} style={{ fontSize:"0.5625rem", fontWeight:600, padding:"0.15rem 0.5rem", borderRadius:999, background:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length]+"18", color:PULSE_TOPIC_COLORS[ti%PULSE_TOPIC_COLORS.length] }}>{t}</span>)}
-                                        </div>
-                                      )}
+                                        </div>)}
                                     </div>
                                   </a>
                                   <div style={{ borderTop:"1px solid var(--clr-border)", padding:"8px 14px", display:"flex", justifyContent:"flex-end", marginTop:"auto" }}>
-                                    <button
-                                      onClick={e=>{e.preventDefault();handleDigNiche(s.tagline||s.title||"");}}
-                                      style={{ fontSize:"0.6875rem", fontWeight:600, color:"#534AB7", background:"rgba(99,102,241,0.08)", border:"0.5px solid rgba(99,102,241,0.25)", borderRadius:999, padding:"4px 12px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}
-                                    >Dig this niche →</button>
+                                    <button onClick={e=>{e.preventDefault();handleDigNiche(s.tagline||s.title||"");}}
+                                      style={{ fontSize:"0.6875rem", fontWeight:600, color:"#534AB7", background:"rgba(99,102,241,0.08)", border:"0.5px solid rgba(99,102,241,0.25)", borderRadius:999, padding:"4px 12px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}>Dig this niche →</button>
                                   </div>
-                                {isLocked && i === 3 && (
-                                  <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                    <div style={{
-                                      padding: "24px 28px", borderRadius: 20,
-                                      background: "rgba(255,255,255,0.85)",
-                                      backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)",
-                                      border: "1px solid rgba(255,255,255,0.6)",
-                                      boxShadow: "0 8px 32px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)",
-                                      textAlign: "center" as const, maxWidth: 280,
-                                    }}>
-                                      <div style={{ width: 48, height: 4, borderRadius: 2, background: "linear-gradient(90deg, #6366f1, #a855f7, #ec4899)", margin: "0 auto 14px" }} />
-                                      <div style={{ width: 40, height: 40, borderRadius: 10, background: "linear-gradient(135deg, #f5f3ff, #eef2ff)", border: "1px solid rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                                      </div>
-                                      <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "#111", marginBottom: 4, letterSpacing: "-0.02em" }}>+{phPaged.length - 3} more today</div>
-                                      <div style={{ fontSize: "0.6875rem", color: "#6b7280", marginBottom: 16 }}>Unlock full access with Pro</div>
-                                      <a href="/pricing" style={{
-                                        display: "inline-flex", alignItems: "center", gap: 6,
-                                        padding: "9px 20px", borderRadius: 12,
-                                        backgroundImage: "linear-gradient(135deg, #6366f1, #7c3aed)",
-                                        color: "#fff", textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600,
-                                        boxShadow: "0 4px 14px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.2)",
-                                        transition: "transform 0.2s, box-shadow 0.2s",
-                                      }}
-                                        onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
-                                        onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
-                                      >
-                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                                        Go Pro
-                                      </a>
-                                    </div>
-                                  </div>
-                                )}
                                 </div>
                                 </div>
                               );
                             })}
+                          </div>
+                          {!isPro && phPaged.length > 3 && (
+                            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "75%", background: "linear-gradient(to bottom, transparent 0%, rgba(253,251,247,0.6) 30%, rgba(253,251,247,0.97) 70%)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 5, pointerEvents: "none" }}>
+                              <div style={{ pointerEvents: "auto", padding: "28px 32px", borderRadius: 20, background: "rgba(255,255,255,0.88)", backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)", border: "1px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)", textAlign: "center" as const, maxWidth: 320 }}>
+                                <div style={{ width: 48, height: 4, borderRadius: 2, background: "linear-gradient(90deg, #6366f1, #a855f7, #ec4899)", margin: "0 auto 16px" }} />
+                                <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #f5f3ff, #eef2ff)", border: "1px solid rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+                                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                                </div>
+                                <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "#111", marginBottom: 4 }}>+{phPaged.length - 3} more today</div>
+                                <div style={{ fontSize: "0.75rem", color: "#6b7280", marginBottom: 18 }}>Unlock full access with Pro</div>
+                                <a href="/pricing" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 24px", borderRadius: 12, backgroundImage: "linear-gradient(135deg, #6366f1, #7c3aed)", color: "#fff", textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600, boxShadow: "0 4px 14px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.2)", transition: "transform 0.2s, box-shadow 0.2s" }}
+                                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
+                                  onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
+                                ><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Go Pro</a>
+                              </div>
+                            </div>
+                          )}
                           </div>
                         )}
                         {phPages > 1 && (
@@ -197,12 +176,13 @@ export default function LaunchesPage() {
                         {pulseAsLoading&&<div style={{ display:"flex",flexDirection:"column",gap:8 }}>{[1,2,3].map(i=><div key={i} className="shimmer" style={{ height:80, borderRadius:10 }}/>)}</div>}
                         {!pulseAsLoading&&pulseAsDays.length===0&&<div style={{ textAlign:"center", padding:"4rem 0", color:"var(--clr-text-3)" }}>No App Store data yet. Check back after 08:00 UTC.</div>}
                         {!pulseAsLoading&&asPaged.length>0&&(
+                          <div style={{ position: "relative" }}>
                           <div key={pulseAsCat+"_"+pulseAsSearch} style={{ display:"flex", flexDirection:"column", gap:8 }}>
                             {asPaged.map((app,appIdx)=>{
                               const isLocked = !isPro && appIdx >= 3;
                               return (
-                              <div key={app.app_id} style={{ position: "relative" }}>
-                              <div style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const } : {})}}>
+                              <div key={app.app_id}>
+                              <div style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const, opacity: 0.5 } : {})}}>
                                         <a href={app.store_url} target="_blank" rel="noopener noreferrer"
                             style={{display:"flex",flexDirection:"column",gap:"0.875rem",padding:"1.25rem",textDecoration:"none",color:"inherit",transition:"background 0.15s"}}
                             onMouseEnter={e=>e.currentTarget.style.background="rgba(var(--clr-text-rgb),0.02)"}
@@ -265,41 +245,25 @@ export default function LaunchesPage() {
                             </div>
                           </div>
                         </div>
-                        {isLocked && appIdx === 3 && (
-                          <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <div style={{
-                              padding: "28px 32px", borderRadius: 20,
-                              background: "rgba(255,255,255,0.85)",
-                              backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)",
-                              border: "1px solid rgba(255,255,255,0.6)",
-                              boxShadow: "0 8px 32px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)",
-                              textAlign: "center" as const, maxWidth: 320,
-                            }}>
-                              <div style={{ width: 48, height: 4, borderRadius: 2, background: "linear-gradient(90deg, #6366f1, #a855f7, #ec4899)", margin: "0 auto 16px" }} />
-                              <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #f5f3ff, #eef2ff)", border: "1px solid rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                              </div>
-                              <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "#111", marginBottom: 4, letterSpacing: "-0.02em" }}>+{asPaged.length - 3} more apps today</div>
-                              <div style={{ fontSize: "0.75rem", color: "#6b7280", marginBottom: 18 }}>Unlock full access with Pro</div>
-                              <a href="/pricing" style={{
-                                display: "inline-flex", alignItems: "center", gap: 7,
-                                padding: "10px 24px", borderRadius: 12,
-                                backgroundImage: "linear-gradient(135deg, #6366f1, #7c3aed)",
-                                color: "#fff", textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600,
-                                boxShadow: "0 4px 14px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.2)",
-                                transition: "transform 0.2s, box-shadow 0.2s",
-                              }}
-                                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
-                                onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
-                              >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                                Go Pro
-                              </a>
-                            </div>
-                          </div>
-                        )}
                         </div>
                             )})}
+                          </div>
+                          {!isPro && asPaged.length > 3 && (
+                            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "75%", background: "linear-gradient(to bottom, transparent 0%, rgba(253,251,247,0.6) 30%, rgba(253,251,247,0.97) 70%)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 5, pointerEvents: "none" }}>
+                              <div style={{ pointerEvents: "auto", padding: "28px 32px", borderRadius: 20, background: "rgba(255,255,255,0.88)", backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)", border: "1px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)", textAlign: "center" as const, maxWidth: 320 }}>
+                                <div style={{ width: 48, height: 4, borderRadius: 2, background: "linear-gradient(90deg, #6366f1, #a855f7, #ec4899)", margin: "0 auto 16px" }} />
+                                <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #f5f3ff, #eef2ff)", border: "1px solid rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+                                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                                </div>
+                                <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "#111", marginBottom: 4 }}>+{asPaged.length - 3} more apps today</div>
+                                <div style={{ fontSize: "0.75rem", color: "#6b7280", marginBottom: 18 }}>Unlock full access with Pro</div>
+                                <a href="/pricing" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 24px", borderRadius: 12, backgroundImage: "linear-gradient(135deg, #6366f1, #7c3aed)", color: "#fff", textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600, boxShadow: "0 4px 14px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.2)", transition: "transform 0.2s, box-shadow 0.2s" }}
+                                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
+                                  onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
+                                ><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Go Pro</a>
+                              </div>
+                            </div>
+                          )}
                           </div>
                         )}
                         {asPages > 1 && (
