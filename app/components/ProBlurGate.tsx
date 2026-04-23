@@ -13,8 +13,6 @@ export default function ProBlurGate({ children, freeLimit = 3 }: { children: Rea
   }, [isSignedIn]);
 
   const items = React.Children.toArray(children);
-  const totalCount = items.length;
-  const hiddenCount = totalCount - freeLimit;
 
   return (
     <>
@@ -22,47 +20,35 @@ export default function ProBlurGate({ children, freeLimit = 3 }: { children: Rea
         const shouldBlur = i >= freeLimit && (!checked || !isPro);
         if (!shouldBlur) return <React.Fragment key={i}>{child}</React.Fragment>;
         return (
-          <div key={i} style={{ filter: "blur(6px)", pointerEvents: "none", userSelect: "none", opacity: 0.6 }}>
-            {child}
+          <div key={i} style={{ position: "relative" }}>
+            <div style={{ filter: "blur(6px)", pointerEvents: "none", userSelect: "none", opacity: 0.6 }}>
+              {child}
+            </div>
+            {i === freeLimit && (
+              <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <a href="/pricing" style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  padding: "10px 22px",
+                  borderRadius: 12,
+                  background: "var(--clr-text)",
+                  color: "#fff",
+                  textDecoration: "none",
+                  fontSize: "0.8125rem",
+                  fontWeight: 600,
+                  letterSpacing: "-0.01em",
+                  boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
+                  transition: "transform 0.15s, box-shadow 0.15s",
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.2)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.15)"; }}
+                >
+                  See more — Go Pro
+                </a>
+              </div>
+            )}
           </div>
         );
       })}
-      {checked && !isPro && hiddenCount > 0 && (
-        <div style={{
-          marginTop: 12,
-          padding: "20px 24px",
-          borderRadius: 14,
-          border: "1px solid var(--clr-border)",
-          background: "var(--clr-surface)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 16,
-        }}>
-          <div>
-            <div style={{ fontSize: "0.9375rem", fontWeight: 650, color: "var(--clr-text)", marginBottom: 4 }}>
-              +{hiddenCount} more ideas
-            </div>
-            <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>
-              Upgrade to Pro to unlock everything.
-            </div>
-          </div>
-          <a href="/pricing" style={{
-            flexShrink: 0,
-            padding: "8px 20px",
-            borderRadius: 10,
-            background: "var(--clr-text)",
-            color: "#fff",
-            textDecoration: "none",
-            fontSize: "0.8125rem",
-            fontWeight: 600,
-            transition: "opacity 0.15s",
-          }}
-            onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
-            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
-          >See all →</a>
-        </div>
-      )}
     </>
   );
 }

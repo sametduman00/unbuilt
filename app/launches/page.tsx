@@ -133,27 +133,26 @@ export default function LaunchesPage() {
                                       style={{ fontSize:"0.6875rem", fontWeight:600, color:"#534AB7", background:"rgba(99,102,241,0.08)", border:"0.5px solid rgba(99,102,241,0.25)", borderRadius:999, padding:"4px 12px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}
                                     >Dig this niche →</button>
                                   </div>
+                                {isLocked && i === 3 && (
+                                  <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <a href="/pricing" style={{
+                                      display: "inline-flex", alignItems: "center", gap: 8,
+                                      padding: "10px 22px", borderRadius: 12,
+                                      background: "var(--clr-text)", color: "#fff",
+                                      textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600,
+                                      letterSpacing: "-0.01em",
+                                      boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
+                                      transition: "transform 0.15s, box-shadow 0.15s",
+                                    }}
+                                      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.2)"; }}
+                                      onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.15)"; }}
+                                    >See more — Go Pro</a>
+                                  </div>
+                                )}
                                 </div>
                                 </div>
                               );
                             })}
-                          </div>
-                        )}
-                        {/* Upgrade banner — sits below blurred cards */}
-                        {!pulseLoading && !isPro && phPaged.length > 3 && (
-                          <div style={{ marginTop: 12, padding: "20px 24px", borderRadius: 14, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
-                            <div>
-                              <div style={{ fontSize: "0.9375rem", fontWeight: 650, color: "var(--clr-text)", marginBottom: 4 }}>
-                                +{phPaged.length - 3} more launches today
-                              </div>
-                              <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>
-                                Upgrade to Pro to unlock everything.
-                              </div>
-                            </div>
-                            <a href="/pricing" style={{ flexShrink: 0, padding: "8px 20px", borderRadius: 10, background: "var(--clr-text)", color: "#fff", textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600, transition: "opacity 0.15s" }}
-                              onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
-                              onMouseLeave={e => e.currentTarget.style.opacity = "1"}
-                            >See all →</a>
                           </div>
                         )}
                         {phPages > 1 && (
@@ -185,7 +184,7 @@ export default function LaunchesPage() {
                             {asPaged.map((app,appIdx)=>{
                               const isLocked = !isPro && appIdx >= 3;
                               return (
-                              <div key={app.app_id}>
+                              <div key={app.app_id} style={{ position: "relative" }}>
                               <div style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden", ...(isLocked ? { filter: "blur(6px)", pointerEvents: "none" as const, userSelect: "none" as const } : {})}}>
                                         <a href={app.store_url} target="_blank" rel="noopener noreferrer"
                             style={{display:"flex",flexDirection:"column",gap:"0.875rem",padding:"1.25rem",textDecoration:"none",color:"inherit",transition:"background 0.15s"}}
@@ -249,25 +248,24 @@ export default function LaunchesPage() {
                             </div>
                           </div>
                         </div>
-                        </div>
-                            )})}
+                        {isLocked && appIdx === 3 && (
+                          <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <a href="/pricing" style={{
+                              display: "inline-flex", alignItems: "center", gap: 8,
+                              padding: "10px 22px", borderRadius: 12,
+                              background: "var(--clr-text)", color: "#fff",
+                              textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600,
+                              letterSpacing: "-0.01em",
+                              boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
+                              transition: "transform 0.15s, box-shadow 0.15s",
+                            }}
+                              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.2)"; }}
+                              onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.15)"; }}
+                            >See more — Go Pro</a>
                           </div>
                         )}
-                        {/* Upgrade banner for free users */}
-                        {!pulseAsLoading && !isPro && asPaged.length > 3 && (
-                          <div style={{ marginTop: 10, padding: "24px 28px", borderRadius: 14, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
-                            <div>
-                              <div style={{ fontSize: "0.9375rem", fontWeight: 650, color: "var(--clr-text)", marginBottom: 4 }}>
-                                +{asPaged.length - 3} more apps today
-                              </div>
-                              <div style={{ fontSize: "0.8125rem", color: "var(--clr-text-3)" }}>
-                                Upgrade to Pro to browse every new app, every day.
-                              </div>
-                            </div>
-                            <a href="/pricing" style={{ flexShrink: 0, padding: "8px 20px", borderRadius: 10, background: "var(--clr-text)", color: "#fff", textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600, transition: "opacity 0.15s" }}
-                              onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
-                              onMouseLeave={e => e.currentTarget.style.opacity = "1"}
-                            >See all →</a>
+                        </div>
+                            )})}
                           </div>
                         )}
                         {asPages > 1 && (
