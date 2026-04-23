@@ -3,14 +3,15 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 
 export default function ProBlurGate({ children, freeLimit = 3, totalCount }: { children: React.ReactNode; freeLimit?: number; totalCount?: number }) {
-  const { isSignedIn } = useUser();
+  const { isSignedIn, isLoaded } = useUser();
   const [isPro, setIsPro] = useState(false);
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
+    if (!isLoaded) return;
     if (!isSignedIn) { setChecked(true); return; }
     fetch("/api/user/plan").then(r => r.json()).then(d => { setIsPro(d.isPro ?? false); setChecked(true); }).catch(() => setChecked(true));
-  }, [isSignedIn]);
+  }, [isSignedIn, isLoaded]);
 
   const items = React.Children.toArray(children);
   const hiddenCount = (totalCount ?? items.length) - freeLimit;
