@@ -369,6 +369,34 @@ export default function PricingPage() {
         </div>
       </div>
 
+      {/* Manage plan — only for Pro users */}
+      {isPro && (
+        <div id="manage" style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginBottom: 32 }}>
+          <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 4 }}>Manage your plan</p>
+          <p style={{ fontSize: "0.775rem", color: "var(--clr-text-3)", margin: "0 0 14px" }}>
+            Your {planTier === "pro+" ? "Pro+" : "Pro"} subscription renews monthly. Cancel anytime — you&apos;ll keep access until the end of your billing period.
+          </p>
+          <button
+            onClick={async () => {
+              if (!confirm("Are you sure you want to cancel? You'll keep Pro access until the end of your current billing period.")) return;
+              try {
+                const res = await fetch("/api/user/cancel-subscription", { method: "POST" });
+                const data = await res.json();
+                if (res.ok) {
+                  alert("Subscription cancelled. You'll keep Pro access until the end of your billing period.");
+                  window.location.reload();
+                } else {
+                  alert(data.error || "Failed to cancel. Please try again.");
+                }
+              } catch { alert("Something went wrong. Please try again."); }
+            }}
+            style={{ padding: "8px 18px", borderRadius: 9, fontFamily: "inherit", fontSize: "0.775rem", fontWeight: 600, cursor: "pointer", background: "transparent", border: "1px solid #fecaca", color: "#dc2626" }}
+          >
+            Cancel subscription
+          </button>
+        </div>
+      )}
+
       {/* Footer */}
       <div style={{ borderTop: "1px solid var(--clr-border)", paddingTop: 36, marginTop: 48 }}>
         <div style={{ textAlign: "center", marginBottom: 28 }}>

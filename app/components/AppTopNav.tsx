@@ -289,6 +289,17 @@ export default function AppTopNav() {
                     My Reports
                     {!plan?.isPro && <span style={{ fontSize: "0.5625rem", fontWeight: 700, color: "#6366f1", background: "rgba(99,102,241,0.1)", padding: "1px 6px", borderRadius: 4, letterSpacing: "0.04em" }}>PRO</span>}
                   </Link>
+                  {plan?.isPro && (
+                    <Link href="/pricing#manage" style={{ ...dropItemStyle, display: "flex", alignItems: "center", gap: 8, color: "var(--clr-text-4)" }}
+                      onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f3")}
+                      onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                      onClick={() => setUserOpen(false)}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                      </svg>
+                      Manage plan
+                    </Link>
+                  )}
                   <div style={{ borderTop: "1px solid #f0f0ee", margin: "6px 0" }}/>
                   <button
                     style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", fontSize: "0.875rem", color: "#dc2626", borderRadius: 8, background: "transparent", border: "none", cursor: "pointer", width: "100%", fontWeight: 450 }}
