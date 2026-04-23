@@ -4,7 +4,8 @@ import { addPurchasedAnalyses, activateProSubscription, renewProSubscription, ca
 import { incrementAlert } from "@/app/lib/alerts";
 import { getSupabase } from "@/app/lib/supabase";
 
-const PACKAGES: Record<string, number> = { starter: 5, popular: 10, pro: 25, "addon-5": 5, "addon-10": 10, "addon-25": 25 };
+// Addon packages only — subscription plans are handled separately by subscription.activated
+const PACKAGES: Record<string, number> = { "addon-5": 5, "addon-10": 10, "addon-25": 25 };
 
 // Map Paddle subscription price IDs to monthly analysis quotas
 // TODO: Replace these with real Paddle price IDs after creating subscription products
@@ -103,7 +104,8 @@ export async function POST(req: NextRequest) {
   // ── Event processing ─────────────────────────────────────────────────────────
   const event = JSON.parse(body);
 
-  if (event.event_type === "transaction.completed") {
+  if (event.event_type === "transaction.completed" && !event.data?.subscription_id) {
+    // This is an addon/one-time purchase — NOT a subscription payment
     const userId        = event.data?.custom_data?.user_id as string | undefined;
     const packageSlug   = event.data?.custom_data?.package_slug as string | undefined;
     const paddleOrderId = event.data?.id as string | undefined;
