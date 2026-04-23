@@ -21,7 +21,7 @@ export default function ProBlurGate({ children, freeLimit = 3 }: { children: Rea
         const shouldBlur = i >= freeLimit && (!checked || !isPro);
         if (!shouldBlur) return <React.Fragment key={i}>{child}</React.Fragment>;
         return (
-          <div key={i} style={{ position: "relative" }}>
+          <div key={i} style={{ position: "relative", overflow: "hidden" }}>
             <div style={{ filter: "blur(6px)", pointerEvents: "none", userSelect: "none", opacity: 0.5 }}>
               {child}
             </div>
