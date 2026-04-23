@@ -7,7 +7,7 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Startup Ideas — Unbuilt",
-  description: "Browse 2,000+ startup ideas with opportunity scores and key insights. New AI-generated ideas added every 10 minutes.",
+  description: "Browse 2,000+ startup ideas with opportunity scores and key insights. New ideas added every 10 minutes.",
   openGraph: { title: "Startup Ideas — Unbuilt", description: "Browse 2,000+ startup ideas with opportunity scores and market gaps.", url: "https://unbuilt.me/startup-ideas" },
   alternates: { canonical: "https://unbuilt.me/startup-ideas" },
 };
@@ -70,7 +70,7 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
       </p>
       <p style={{ fontSize: 13, color: "var(--clr-text-4)", marginBottom: 32, display: "flex", alignItems: "center", gap: 6 }}>
         <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
-        New AI ideas added every ~10 min
+        New ideas added every ~10 min
       </p>
 
       {/* Table header */}
