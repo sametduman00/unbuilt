@@ -50,12 +50,14 @@ export default function PricingPage() {
   const [copied, setCopied] = useState<string | null>(null);
   const [isPro, setIsPro] = useState(false);
   const [planTier, setPlanTier] = useState<"free" | "pro" | "pro+">("free");
+  const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
 
   useEffect(() => {
     if (!isSignedIn) return;
     fetch("/api/user/plan").then(r => r.json()).then(d => {
       const pro = d.isPro ?? false;
       setIsPro(pro);
+      setHasActiveSubscription(!!d.paddleSubscriptionId);
       if (pro) {
         setPlanTier((d.monthlyAnalyses ?? 0) > 10 ? "pro+" : "pro");
       }
@@ -65,7 +67,6 @@ export default function PricingPage() {
   const [paddleReady, setPaddleReady] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelling, setCancelling] = useState(false);
-  const [cancelled, setCancelled] = useState(false);
 
   // After checkout completes, wait for webhook to process then reload
   const pollAndReload = useCallback(() => {
@@ -376,15 +377,26 @@ export default function PricingPage() {
       {isPro && (
         <div id="manage" style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginTop: 32, marginBottom: 32 }}>
           <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 4 }}>Manage your plan</p>
-          <p style={{ fontSize: "0.775rem", color: "var(--clr-text-3)", margin: "0 0 14px" }}>
-            Your {planTier === "pro+" ? "Pro+" : "Pro"}{" "}subscription renews monthly. Cancel anytime — you&apos;ll keep access until the end of your billing period.
-          </p>
-          <button
-            onClick={() => setShowCancelModal(true)}
-            style={{ padding: "8px 18px", borderRadius: 9, fontFamily: "inherit", fontSize: "0.775rem", fontWeight: 600, cursor: "pointer", background: "transparent", border: "1px solid #fecaca", color: "#dc2626" }}
-          >
-            Cancel subscription
-          </button>
+          {hasActiveSubscription ? (
+            <>
+              <p style={{ fontSize: "0.775rem", color: "var(--clr-text-3)", margin: "0 0 14px" }}>
+                Your {planTier === "pro+" ? "Pro+" : "Pro"}{" "}subscription renews monthly. Cancel anytime — you&apos;ll keep access until the end of your billing period.
+              </p>
+              <button
+                onClick={() => setShowCancelModal(true)}
+                style={{ padding: "8px 18px", borderRadius: 9, fontFamily: "inherit", fontSize: "0.775rem", fontWeight: 600, cursor: "pointer", background: "transparent", border: "1px solid #fecaca", color: "#dc2626" }}
+              >
+                Cancel subscription
+              </button>
+            </>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", borderRadius: 10, background: "#fefce8", border: "1px solid #fef08a" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              <span style={{ fontSize: "0.8rem", color: "#854d0e" }}>
+                Your subscription is cancelled. You&apos;ll keep Pro access until the end of your current billing period.
+              </span>
+            </div>
+          )}
         </div>
       )}
 
@@ -440,7 +452,7 @@ export default function PricingPage() {
                   const data = await res.json();
                   if (res.ok) {
                     setShowCancelModal(false);
-                    setCancelled(true);
+                    window.location.reload();
                   } else {
                     alert(data.error || "Failed to cancel. Please try again.");
                   }
@@ -453,13 +465,6 @@ export default function PricingPage() {
               {cancelling ? "Cancelling..." : "Cancel anyway"}
             </button>
           </div>
-        </div>
-      )}
-
-      {/* Cancelled confirmation */}
-      {cancelled && (
-        <div style={{ position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 9999, background: "#111", color: "#fff", padding: "12px 24px", borderRadius: 12, fontSize: "0.8125rem", fontWeight: 600, boxShadow: "0 8px 24px rgba(0,0,0,0.2)" }}>
-          Subscription cancelled. You&apos;ll keep Pro access until the end of your billing period.
         </div>
       )}
 
