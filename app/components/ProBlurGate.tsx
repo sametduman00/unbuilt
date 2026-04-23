@@ -14,7 +14,7 @@ export default function ProBlurGate({ children, freeLimit = 3, totalCount }: { c
 
   const items = React.Children.toArray(children);
   const hiddenCount = (totalCount ?? items.length) - freeLimit;
-  const showGate = !(checked && isPro) && hiddenCount > 0;
+  const showGate = checked && !isPro && hiddenCount > 0;
 
   return (
     <>
