@@ -14,14 +14,14 @@ export default function ProBlurGate({ children, freeLimit = 3, totalCount }: { c
 
   const items = React.Children.toArray(children);
   const hiddenCount = (totalCount ?? items.length) - freeLimit;
-  const showGate = checked && !isPro && hiddenCount > 0;
+  const showGate = !(checked && isPro) && hiddenCount > 0;
 
   return (
     <>
       {items.map((child, i) => {
-        if (!checked || isPro) return <React.Fragment key={i}>{child}</React.Fragment>;
-        if (i >= freeLimit) return null;
-        return <React.Fragment key={i}>{child}</React.Fragment>;
+        if (i < freeLimit) return <React.Fragment key={i}>{child}</React.Fragment>;
+        if (checked && isPro) return <React.Fragment key={i}>{child}</React.Fragment>;
+        return null;
       })}
 
       {showGate && (
