@@ -371,7 +371,7 @@ export default function PricingPage() {
 
       {/* Manage plan — only for Pro users */}
       {isPro && (
-        <div id="manage" style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginBottom: 32 }}>
+        <div id="manage" style={{ background: "var(--clr-surface)", border: "1px solid var(--clr-border)", borderRadius: 14, padding: "20px 24px", marginTop: 32, marginBottom: 32 }}>
           <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--clr-text)", marginBottom: 4 }}>Manage your plan</p>
           <p style={{ fontSize: "0.775rem", color: "var(--clr-text-3)", margin: "0 0 14px" }}>
             Your {planTier === "pro+" ? "Pro+" : "Pro"} subscription renews monthly. Cancel anytime — you&apos;ll keep access until the end of your billing period.
