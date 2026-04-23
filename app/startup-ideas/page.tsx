@@ -83,7 +83,7 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
 
       {/* Ideas list */}
       <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8 }}>
-        <ProBlurGate freeLimit={3}>
+        <ProBlurGate freeLimit={3} totalCount={total}>
         {cards.map((p, i) => (
           <Link key={`${i}-${p.slug}`} href={p.ai ? `/startup-ideas/${p.slug}` : `/ideas/${p.slug}`} style={{ display: "flex", alignItems: "center", gap: 16, padding: "18px 20px", borderRadius: 12, background: "var(--clr-surface)", border: "1px solid var(--clr-border)", textDecoration: "none", transition: "border-color 0.15s, box-shadow 0.15s" }}>
 

@@ -145,7 +145,7 @@ export default function LaunchesPage() {
                                       textAlign: "center" as const, maxWidth: 220,
                                     }}>
                                       <div style={{ width: 36, height: 3, borderRadius: 2, background: "linear-gradient(90deg, #6366f1, #a855f7, #ec4899)", margin: "0 auto 12px" }} />
-                                      <div style={{ fontSize: "0.8125rem", fontWeight: 700, color: "#111", marginBottom: 3 }}>+{phPaged.length - 3} more today</div>
+                                      <div style={{ fontSize: "0.8125rem", fontWeight: 700, color: "#111", marginBottom: 3 }}>+{phTotal - 3} more today</div>
                                       <div style={{ fontSize: "0.625rem", color: "#6b7280", marginBottom: 14 }}>Unlock full access</div>
                                       <a href="/pricing" style={{
                                         display: "inline-flex", alignItems: "center", gap: 6,
@@ -276,7 +276,7 @@ export default function LaunchesPage() {
                               <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #f5f3ff, #eef2ff)", border: "1px solid rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
                                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                               </div>
-                              <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "#111", marginBottom: 4, letterSpacing: "-0.02em" }}>+{asPaged.length - 3} more apps today</div>
+                              <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "#111", marginBottom: 4, letterSpacing: "-0.02em" }}>+{asTotal - 3} more apps today</div>
                               <div style={{ fontSize: "0.75rem", color: "#6b7280", marginBottom: 18 }}>Unlock full access with Pro</div>
                               <a href="/pricing" style={{
                                 display: "inline-flex", alignItems: "center", gap: 7,

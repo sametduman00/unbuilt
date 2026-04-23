@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 
-export default function ProBlurGate({ children, freeLimit = 3 }: { children: React.ReactNode; freeLimit?: number }) {
+export default function ProBlurGate({ children, freeLimit = 3, totalCount }: { children: React.ReactNode; freeLimit?: number; totalCount?: number }) {
   const { isSignedIn } = useUser();
   const [isPro, setIsPro] = useState(false);
   const [checked, setChecked] = useState(false);
@@ -13,7 +13,7 @@ export default function ProBlurGate({ children, freeLimit = 3 }: { children: Rea
   }, [isSignedIn]);
 
   const items = React.Children.toArray(children);
-  const hiddenCount = items.length - freeLimit;
+  const hiddenCount = (totalCount ?? items.length) - freeLimit;
   const showGate = checked && !isPro && hiddenCount > 0;
 
   return (
