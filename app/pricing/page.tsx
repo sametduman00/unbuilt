@@ -1,6 +1,6 @@
 "use client";
 import { useUser, SignInButton, useClerk } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Script from "next/script";
 
 const PLANS = [
@@ -56,6 +56,29 @@ export default function PricingPage() {
   }, [isSignedIn]);
 
   const [paddleReady, setPaddleReady] = useState(false);
+  const [checkoutSuccess, setCheckoutSuccess] = useState(false);
+
+  // Poll /api/user/plan until isPro becomes true (webhook needs a few seconds)
+  const pollPlanUntilPro = useCallback(() => {
+    let attempts = 0;
+    const maxAttempts = 8;
+    const poll = () => {
+      attempts++;
+      fetch("/api/user/plan").then(r => r.json()).then(d => {
+        if (d.isPro) {
+          setIsPro(true);
+          setCheckoutSuccess(true);
+        } else if (attempts < maxAttempts) {
+          setTimeout(poll, 2000);
+        } else {
+          // Webhook might be slow — force reload as fallback
+          window.location.reload();
+        }
+      }).catch(() => { if (attempts < maxAttempts) setTimeout(poll, 2000); });
+    };
+    // Start polling after 2s (give webhook time)
+    setTimeout(poll, 2000);
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -73,6 +96,8 @@ export default function PricingPage() {
             if (typeof (window as any).fbq === "function") {
               (window as any).fbq("track", "Purchase", { value: ev.data?.totals?.total ? parseFloat(ev.data.totals.total) : 0, currency: ev.data?.currencyCode || "USD" });
             }
+            // Poll plan until Pro is confirmed
+            pollPlanUntilPro();
           }
           if (ev.name === "checkout.closed" || ev.name === "checkout.completed") {
             document.body.style.overflow = "";
@@ -82,7 +107,7 @@ export default function PricingPage() {
       setPaddleReady(true);
     };
     document.head.appendChild(script);
-  }, []);
+  }, [pollPlanUntilPro]);
 
 
 
@@ -114,6 +139,25 @@ export default function PricingPage() {
 
   return (
     <main className="pricing-main" style={{ minHeight: "100vh", background: "var(--clr-bg)", padding: "32px 24px 80px", maxWidth: 860, margin: "0 auto" }}>
+
+      {/* Checkout success banner */}
+      {checkoutSuccess && (
+        <div style={{
+          margin: "0 auto 24px", padding: "16px 24px", borderRadius: 14,
+          background: "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)",
+          border: "1px solid #bbf7d0",
+          display: "flex", alignItems: "center", gap: 14,
+          maxWidth: 520, animation: "fadeIn 0.3s ease",
+        }}>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: "#fff", boxShadow: "0 2px 8px rgba(34,197,94,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div>
+            <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "#15803d" }}>You&apos;re Pro now!</div>
+            <div style={{ fontSize: "0.8125rem", color: "#166534" }}>Full reports, all data, saved history — unlocked.</div>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 36 }}>
