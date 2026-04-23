@@ -8,8 +8,15 @@ export default function LaunchesPage() {
   const { isSignedIn } = useUser();
   const [isPro, setIsPro] = useState(false);
   useEffect(() => {
+    try { if (localStorage.getItem("unbuilt_isPro") === "true") setIsPro(true); } catch {}
+  }, []);
+  useEffect(() => {
     if (!isSignedIn) return;
-    fetch("/api/user/plan").then(r => r.json()).then(d => setIsPro(d.isPro ?? false)).catch(() => {});
+    fetch("/api/user/plan").then(r => r.json()).then(d => {
+      const pro = d.isPro ?? false;
+      setIsPro(pro);
+      try { localStorage.setItem("unbuilt_isPro", String(pro)); } catch {}
+    }).catch(() => {});
   }, [isSignedIn]);
   const [pulseTab, setPulseTab] = useState<"ph"|"appstore">("appstore");
   const [pulseSignals, setPulseSignals] = useState<Array<{source:string;sourceLabel:string;emoji:string;title:string;subtitle:string;signal:string;url:string;timestamp:string;movementType?:string;imageUrl?:string;topics?:string[];tagline?:string;externalUrl?:string;claudeGap?:string;}>>([]);

@@ -7,10 +7,34 @@ export default function ProBlurGate({ children, freeLimit = 3, totalCount }: { c
   const [isPro, setIsPro] = useState(false);
   const [checked, setChecked] = useState(false);
 
+  // Instant: read cached Pro status from localStorage (no wait for Clerk/API)
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("unbuilt_isPro") === "true") {
+        setIsPro(true);
+        setChecked(true);
+      }
+    } catch {}
+  }, []);
+
+  // Verify: fetch fresh plan when Clerk is ready, update cache
   useEffect(() => {
     if (!isLoaded) return;
-    if (!isSignedIn) { setChecked(true); return; }
-    fetch("/api/user/plan").then(r => r.json()).then(d => { setIsPro(d.isPro ?? false); setChecked(true); }).catch(() => setChecked(true));
+    if (!isSignedIn) {
+      try { localStorage.removeItem("unbuilt_isPro"); } catch {}
+      setIsPro(false);
+      setChecked(true);
+      return;
+    }
+    fetch("/api/user/plan")
+      .then(r => r.json())
+      .then(d => {
+        const pro = d.isPro ?? false;
+        setIsPro(pro);
+        setChecked(true);
+        try { localStorage.setItem("unbuilt_isPro", String(pro)); } catch {}
+      })
+      .catch(() => setChecked(true));
   }, [isSignedIn, isLoaded]);
 
   const items = React.Children.toArray(children);
