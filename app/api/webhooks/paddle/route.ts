@@ -242,17 +242,31 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Renewal — reset monthly analyses
+  // Renewal — reset monthly analyses (only for ACTUAL renewals, not initial payment)
   if (event.event_type === "transaction.completed" && event.data?.subscription_id) {
-    // This is a renewal payment for an existing subscription
     const userId = event.data?.custom_data?.user_id as string | undefined;
     const priceId = event.data?.items?.[0]?.price?.id as string | undefined;
     const periodEnd = event.data?.current_billing_period?.ends_at as string | undefined;
 
-    if (userId && priceId && SUBSCRIPTION_QUOTAS[priceId]) {
-      const quota = SUBSCRIPTION_QUOTAS[priceId];
-      await renewProSubscription(userId, periodEnd ?? new Date(Date.now() + 30 * 86400000).toISOString(), quota);
-      await sendTelegram(`🔄 <b>Pro renewed!</b>\n⚡ ${quota} analyses reset\n👤 ${userId}`);
+    if (userId && priceId && SUBSCRIPTION_QUOTAS[priceId] && periodEnd) {
+      // Check if this period was already processed by subscription.activated
+      const supabase = getSupabase();
+      const { data: sub } = await supabase
+        .from("user_subscriptions")
+        .select("current_period_end")
+        .eq("user_id", userId)
+        .single();
+
+      if (sub?.current_period_end === periodEnd) {
+        // Same period — already handled by subscription.activated, skip
+        console.log("[Paddle] transaction.completed skipped — period already set by subscription.activated");
+      } else {
+        // Different period — this is an actual renewal
+        const quota = SUBSCRIPTION_QUOTAS[priceId];
+        await renewProSubscription(userId, periodEnd, quota);
+        const email = event.data?.customer?.email ?? event.data?.customer_email ?? "unknown";
+        await sendTelegram(`🔄 <b>Pro renewed!</b>\n⚡ ${quota} analyses reset\n📧 ${email}`);
+      }
     }
   }
 
