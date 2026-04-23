@@ -135,18 +135,35 @@ export default function LaunchesPage() {
                                   </div>
                                 {isLocked && i === 3 && (
                                   <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                    <a href="/pricing" style={{
-                                      display: "inline-flex", alignItems: "center", gap: 8,
-                                      padding: "10px 22px", borderRadius: 12,
-                                      background: "var(--clr-text)", color: "#fff",
-                                      textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600,
-                                      letterSpacing: "-0.01em",
-                                      boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
-                                      transition: "transform 0.15s, box-shadow 0.15s",
-                                    }}
-                                      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.2)"; }}
-                                      onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.15)"; }}
-                                    >See more — Go Pro</a>
+                                    <div style={{
+                                      padding: "24px 28px", borderRadius: 20,
+                                      background: "rgba(255,255,255,0.85)",
+                                      backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                                      border: "1px solid rgba(255,255,255,0.6)",
+                                      boxShadow: "0 8px 32px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)",
+                                      textAlign: "center" as const, maxWidth: 280,
+                                    }}>
+                                      <div style={{ width: 48, height: 4, borderRadius: 2, background: "linear-gradient(90deg, #6366f1, #a855f7, #ec4899)", margin: "0 auto 14px" }} />
+                                      <div style={{ width: 40, height: 40, borderRadius: 10, background: "linear-gradient(135deg, #f5f3ff, #eef2ff)", border: "1px solid rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                                      </div>
+                                      <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "#111", marginBottom: 4, letterSpacing: "-0.02em" }}>+{phPaged.length - 3} more today</div>
+                                      <div style={{ fontSize: "0.6875rem", color: "#6b7280", marginBottom: 16 }}>Unlock full access with Pro</div>
+                                      <a href="/pricing" style={{
+                                        display: "inline-flex", alignItems: "center", gap: 6,
+                                        padding: "9px 20px", borderRadius: 12,
+                                        backgroundImage: "linear-gradient(135deg, #6366f1, #7c3aed)",
+                                        color: "#fff", textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600,
+                                        boxShadow: "0 4px 14px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.2)",
+                                        transition: "transform 0.2s, box-shadow 0.2s",
+                                      }}
+                                        onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
+                                        onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
+                                      >
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                        Go Pro
+                                      </a>
+                                    </div>
                                   </div>
                                 )}
                                 </div>
@@ -250,18 +267,35 @@ export default function LaunchesPage() {
                         </div>
                         {isLocked && appIdx === 3 && (
                           <div style={{ position: "absolute", inset: 0, zIndex: 5, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <a href="/pricing" style={{
-                              display: "inline-flex", alignItems: "center", gap: 8,
-                              padding: "10px 22px", borderRadius: 12,
-                              background: "var(--clr-text)", color: "#fff",
-                              textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600,
-                              letterSpacing: "-0.01em",
-                              boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
-                              transition: "transform 0.15s, box-shadow 0.15s",
-                            }}
-                              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.2)"; }}
-                              onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.15)"; }}
-                            >See more — Go Pro</a>
+                            <div style={{
+                              padding: "28px 32px", borderRadius: 20,
+                              background: "rgba(255,255,255,0.85)",
+                              backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                              border: "1px solid rgba(255,255,255,0.6)",
+                              boxShadow: "0 8px 32px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)",
+                              textAlign: "center" as const, maxWidth: 320,
+                            }}>
+                              <div style={{ width: 48, height: 4, borderRadius: 2, background: "linear-gradient(90deg, #6366f1, #a855f7, #ec4899)", margin: "0 auto 16px" }} />
+                              <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #f5f3ff, #eef2ff)", border: "1px solid rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                              </div>
+                              <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "#111", marginBottom: 4, letterSpacing: "-0.02em" }}>+{asPaged.length - 3} more apps today</div>
+                              <div style={{ fontSize: "0.75rem", color: "#6b7280", marginBottom: 18 }}>Unlock full access with Pro</div>
+                              <a href="/pricing" style={{
+                                display: "inline-flex", alignItems: "center", gap: 7,
+                                padding: "10px 24px", borderRadius: 12,
+                                backgroundImage: "linear-gradient(135deg, #6366f1, #7c3aed)",
+                                color: "#fff", textDecoration: "none", fontSize: "0.8125rem", fontWeight: 600,
+                                boxShadow: "0 4px 14px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.2)",
+                                transition: "transform 0.2s, box-shadow 0.2s",
+                              }}
+                                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
+                                onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
+                              >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                Go Pro
+                              </a>
+                            </div>
                           </div>
                         )}
                         </div>
