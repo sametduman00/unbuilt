@@ -12,6 +12,7 @@ export default function ReportsPage() {
   const router = useRouter();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reportsError, setReportsError] = useState(false);
   const [isPro, setIsPro] = useState<boolean | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [generating, setGenerating] = useState<string | null>(null);
@@ -34,15 +35,32 @@ export default function ReportsPage() {
         try { localStorage.setItem("unbuilt_isPro", String(pro)); } catch {}
       })
       .catch(() => {});
-    fetch("/api/reports").then(r => r.json()).then(d => setReports(d.reports ?? [])).catch(() => {}).finally(() => setLoading(false));
+    // Distinguish "no reports yet" from "API failed" — the previous code showed
+    // an empty state in both cases, which made Supabase outages look like
+    // missing data.
+    fetch("/api/reports")
+      .then(async r => {
+        if (!r.ok) { setReportsError(true); return null; }
+        return r.json();
+      })
+      .then(d => { if (d) setReports(d.reports ?? []); })
+      .catch(() => setReportsError(true))
+      .finally(() => setLoading(false));
   }, [isSignedIn, isLoaded, router]);
 
   const handleDelete = async (id: string) => {
     if(!confirm("Delete this report?")) return;
     setDeleting(id);
-    await fetch("/api/reports", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
-    setReports(r => r.filter(x => x.id !== id));
-    setDeleting(null);
+    try {
+      const r = await fetch("/api/reports", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+      if (!r.ok) {
+        alert("Couldn't delete right now — please try again in a moment.");
+        return;
+      }
+      setReports(r => r.filter(x => x.id !== id));
+    } finally {
+      setDeleting(null);
+    }
   };
 
   const handlePdf = async (report: Report) => {
@@ -88,8 +106,26 @@ export default function ReportsPage() {
         <div style={{ padding: "48px 0", textAlign: "center", color: "var(--clr-text-4)", fontSize: 14 }}>Loading...</div>
       )}
 
+      {/* Error state — distinguishes Supabase outage from genuine empty list */}
+      {!loading && reportsError && (
+        <div style={{ padding: "48px 32px", textAlign: "center", border: "1px solid #fecaca", background: "#fef2f2", borderRadius: 12 }}>
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="1.5" style={{ margin: "0 auto 12px", display: "block" }}>
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <div style={{ fontSize: 15, fontWeight: 600, color: "#991b1b", marginBottom: 6 }}>Couldn't load your reports</div>
+          <div style={{ fontSize: 13, color: "#7f1d1d", marginBottom: 16 }}>Our database is having a temporary issue. Your reports are safe — please try again in a few minutes.</div>
+          <button onClick={() => window.location.reload()} style={{
+            padding: "8px 18px", borderRadius: 8, border: "1px solid #fecaca",
+            background: "#fff", color: "#991b1b", fontSize: 13, fontWeight: 600,
+            cursor: "pointer", fontFamily: "inherit",
+          }}>Retry</button>
+        </div>
+      )}
+
       {/* Empty state */}
-      {!loading && reports.length === 0 && (
+      {!loading && !reportsError && reports.length === 0 && (
         isPro === false ? (
           /* Free user — upgrade CTA */
           <div style={{ padding: "56px 32px", textAlign: "center", borderRadius: 16, background: "linear-gradient(135deg, #f5f3ff 0%, #eef2ff 50%, #fdf2f8 100%)", border: "1px solid #e9e5ff" }}>

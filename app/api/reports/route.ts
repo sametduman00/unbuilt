@@ -6,8 +6,13 @@ import { validateReportsDeleteBody, checkPayloadSize, errorResponse } from "@/ap
 export async function GET() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const reports = await getUserReports(userId);
-  return NextResponse.json({ reports });
+  try {
+    const reports = await getUserReports(userId);
+    return NextResponse.json({ reports });
+  } catch (err) {
+    console.error("reports GET error:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "reports_fetch_failed" }, { status: 503 });
+  }
 }
 
 export async function DELETE(req: NextRequest) {
@@ -23,6 +28,11 @@ export async function DELETE(req: NextRequest) {
   if (!validation.ok) return errorResponse(validation);
   const { id } = validation.data;
 
-  const ok = await deleteReport(userId, id);
-  return NextResponse.json({ ok });
+  try {
+    const ok = await deleteReport(userId, id);
+    return NextResponse.json({ ok });
+  } catch (err) {
+    console.error("reports DELETE error:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "delete_failed" }, { status: 503 });
+  }
 }

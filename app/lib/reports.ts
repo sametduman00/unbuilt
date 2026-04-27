@@ -48,8 +48,8 @@ export async function getUserReports(userId: string): Promise<UserReportSummary[
     .order("created_at", { ascending: false })
     .limit(50);
   if (error) {
-    console.error("getUserReports error:", error.message);
-    return [];
+    // Don't silently return [] — that masks Supabase outages as "no reports"
+    throw new Error(`getUserReports: ${error.message}`);
   }
   return data ?? [];
 }
@@ -64,8 +64,11 @@ export async function getReport(
     .select("*")
     .eq("user_id", userId)
     .eq("id", reportId)
-    .single();
-  if (error) return null;
+    .maybeSingle();
+  if (error) {
+    // Real Supabase failure — surface it so the API returns 503, not 404.
+    throw new Error(`getReport: ${error.message}`);
+  }
   return data ?? null;
 }
 
@@ -79,5 +82,8 @@ export async function deleteReport(
     .delete()
     .eq("user_id", userId)
     .eq("id", reportId);
-  return !error;
+  if (error) {
+    throw new Error(`deleteReport: ${error.message}`);
+  }
+  return true;
 }

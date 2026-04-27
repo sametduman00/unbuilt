@@ -11,8 +11,12 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ error: "Invalid id" }, { status: 400 });
   }
 
-  const report = await getReport(userId, id);
-  if (!report) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  return NextResponse.json({ report });
+  try {
+    const report = await getReport(userId, id);
+    if (!report) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ report });
+  } catch (err) {
+    console.error("reports detail error:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "report_fetch_failed" }, { status: 503 });
+  }
 }

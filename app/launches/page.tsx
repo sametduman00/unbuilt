@@ -5,13 +5,20 @@ import { useUser } from "@clerk/nextjs";
 
 export default function LaunchesPage() {
   const router = useRouter();
-  const { isSignedIn } = useUser();
+  const { isSignedIn, isLoaded } = useUser();
   const [isPro, setIsPro] = useState(false);
   useEffect(() => {
     try { if (localStorage.getItem("unbuilt_isPro") === "true") setIsPro(true); } catch {}
   }, []);
   useEffect(() => {
-    if (!isSignedIn) return;
+    if (!isLoaded) return;
+    if (!isSignedIn) {
+      // Clear cached Pro state on sign-out so a different account on the same
+      // browser doesn't inherit the previous user's Pro flag.
+      try { localStorage.removeItem("unbuilt_isPro"); } catch {}
+      setIsPro(false);
+      return;
+    }
     fetch("/api/user/plan").then(async r => {
       // Don't overwrite cached Pro state on Supabase/server failure
       if (!r.ok) return null;
@@ -22,7 +29,7 @@ export default function LaunchesPage() {
       setIsPro(pro);
       try { localStorage.setItem("unbuilt_isPro", String(pro)); } catch {}
     }).catch(() => {});
-  }, [isSignedIn]);
+  }, [isSignedIn, isLoaded]);
   const [pulseTab, setPulseTab] = useState<"ph"|"appstore">("appstore");
   const [pulseSignals, setPulseSignals] = useState<Array<{source:string;sourceLabel:string;emoji:string;title:string;subtitle:string;signal:string;url:string;timestamp:string;movementType?:string;imageUrl?:string;topics?:string[];tagline?:string;externalUrl?:string;claudeGap?:string;}>>([]);
   const [pulseLoading, setPulseLoading] = useState(false);
