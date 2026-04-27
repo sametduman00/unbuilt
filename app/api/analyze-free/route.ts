@@ -52,11 +52,11 @@ export async function POST(req: NextRequest) {
   const rl = rateLimit(ip, 10, 600000); // 10 per 10 min by IP
   if (!rl.ok) return new Response(JSON.stringify({ error: "Too many requests. Please slow down." }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" } });
 
-  // 3. Free daily cap: TEMPORARILY DISABLED FOR TESTING
-  // const underLimit = await checkFreeRateLimit(ip);
-  // if (!underLimit) {
-  //   return new Response(JSON.stringify({ error: "free_limit_reached", message: "You've reached today's free limit. Upgrade to Pro for full analyses." }), { status: 429, headers: { "Content-Type": "application/json" } });
-  // }
+  // 3. Free daily cap
+  const underLimit = await checkFreeRateLimit(ip);
+  if (!underLimit) {
+    return new Response(JSON.stringify({ error: "free_limit_reached", message: "You've reached today's free limit. Upgrade to Pro for full analyses." }), { status: 429, headers: { "Content-Type": "application/json" } });
+  }
 
   // 4. Parse body
   if (!checkPayloadSize(req)) return new Response(JSON.stringify({ error: "Request too large." }), { status: 413, headers: { "Content-Type": "application/json" } });
