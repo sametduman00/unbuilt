@@ -3342,16 +3342,19 @@ function HomeInner() {
   const [userPlan, setUserPlan] = useState<{ plan: string; totalAnalyses: number; isPro: boolean; currentPeriodEnd: string | null } | null>(null);
   useEffect(() => {
     if (!isSignedIn) return;
-    // Restore pending idea/tool saved before sign-in redirect
+    // Restore pending idea/tool saved before sign-in redirect, then arm auto-submit
     const pendingIdea = sessionStorage.getItem("unbuilt_pending_idea");
     const pendingTool = sessionStorage.getItem("unbuilt_pending_tool");
     if (pendingIdea) {
       sessionStorage.removeItem("unbuilt_pending_idea");
       sessionStorage.removeItem("unbuilt_pending_tool");
       if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") {
-        setIdea(pendingIdea); if (pendingTool === "gap-analysis" || pendingTool === "stack-advisor") setActiveHeroTab(pendingTool as "gap-analysis" | "stack-advisor");
-        // Update URL too
-        window.history.replaceState({}, "", `/?tool=${pendingTool}`);
+        setIdea(pendingIdea);
+        setActiveHeroTab(pendingTool as "gap-analysis" | "stack-advisor");
+        setSelectedTool(pendingTool as ToolId);
+        pendingAutoSubmit.current = true;
+        // Clear URL params now that the pending state is consumed
+        window.history.replaceState({}, "", "/");
       } else if (pendingIdea && selectedTool) {
         setIdea(pendingIdea);
       }
@@ -3371,9 +3374,8 @@ function HomeInner() {
     else if (tabParam === "dig") setActiveHeroTab("gap-analysis");
   }, [tabParam]);
   const [showSampleReport, setShowSampleReport] = useState(false);
-  // Reset sample report when tool changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { setShowSampleReport(false); if (selectedTool) { setTimeout(() => handleSubmit(), 50); } }, [selectedTool]);
+  // Reset sample report when tool changes (auto-submit is handled by the dedicated effect below)
+  useEffect(() => { setShowSampleReport(false); }, [selectedTool]);
   const [budget, setBudget] = useState<Budget>("bootstrap");
   const [techLevel, setTechLevel] = useState<TechLevel>("nocode");
   const [platform, setPlatform] = useState<Platform>("web");
@@ -3865,14 +3867,14 @@ function HomeInner() {
     }
   };
 
-  // Auto-submit when selectedTool and idea are set from URL params
+  // Auto-submit when selectedTool and idea are set from URL params (single source of truth)
   useEffect(() => {
-    if (pendingAutoSubmit.current && selectedTool && idea.trim().length >= 3) {
+    if (pendingAutoSubmit.current && selectedTool && idea.trim().length >= 3 && isSignedIn) {
       pendingAutoSubmit.current = false;
       handleSubmit();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTool, idea]);
+  }, [selectedTool, idea, isSignedIn]);
 
   const backToTools = () => {
     scanTimersRef.current.forEach(clearTimeout);
