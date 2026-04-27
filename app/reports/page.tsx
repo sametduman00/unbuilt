@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Script from "next/script";
 import { generatePdf, type ReportData } from "@/app/lib/generatePdf";
 
-type Report = ReportData;
+type Report = Omit<ReportData, "json_content"> & { json_content?: string };
 
 export default function ReportsPage() {
   const { isSignedIn, isLoaded } = useAuth();
@@ -19,7 +19,21 @@ export default function ReportsPage() {
   useEffect(() => {
     if (!isLoaded) return;
     if (!isSignedIn) { router.push("/"); return; }
-    fetch("/api/user/plan").then(r => r.json()).then(d => setIsPro(d.isPro ?? false)).catch(() => setIsPro(false));
+    // Read cached Pro state first so the empty-state CTA doesn't flash the wrong variant.
+    try {
+      const cached = localStorage.getItem("unbuilt_isPro");
+      if (cached === "true") setIsPro(true);
+      else if (cached === "false") setIsPro(false);
+    } catch {}
+    fetch("/api/user/plan")
+      .then(async r => (r.ok ? r.json() : null))
+      .then(d => {
+        if (!d) return; // API failed — keep cached state
+        const pro = d.isPro ?? false;
+        setIsPro(pro);
+        try { localStorage.setItem("unbuilt_isPro", String(pro)); } catch {}
+      })
+      .catch(() => {});
     fetch("/api/reports").then(r => r.json()).then(d => setReports(d.reports ?? [])).catch(() => {}).finally(() => setLoading(false));
   }, [isSignedIn, isLoaded, router]);
 
@@ -31,12 +45,27 @@ export default function ReportsPage() {
     setDeleting(null);
   };
 
-  const handlePdf = (report: Report) => {
+  const handlePdf = async (report: Report) => {
     const jsPDF = (window as any).jspdf?.jsPDF;
     if (!jsPDF) { alert("PDF library loading, please wait and try again."); return; }
     setGenerating(report.id);
-    try { generatePdf(report, jsPDF); }
-    catch (err) { console.error("PDF error:", err); }
+    try {
+      // Lazy-load full report content if not already in memory.
+      // The list endpoint intentionally omits json_content for speed.
+      let full: Report = report;
+      if (!report.json_content) {
+        const r = await fetch(`/api/reports/${report.id}`);
+        if (!r.ok) throw new Error(`fetch failed: ${r.status}`);
+        const j = await r.json();
+        if (!j?.report?.json_content) throw new Error("missing content");
+        full = j.report as Report;
+      }
+      generatePdf(full as ReportData, jsPDF);
+    }
+    catch (err) {
+      console.error("PDF error:", err);
+      alert("Could not generate PDF. Please try again.");
+    }
     finally { setTimeout(() => setGenerating(null), 1500); }
   };
 

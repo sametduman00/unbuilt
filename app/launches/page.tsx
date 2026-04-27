@@ -12,7 +12,12 @@ export default function LaunchesPage() {
   }, []);
   useEffect(() => {
     if (!isSignedIn) return;
-    fetch("/api/user/plan").then(r => r.json()).then(d => {
+    fetch("/api/user/plan").then(async r => {
+      // Don't overwrite cached Pro state on Supabase/server failure
+      if (!r.ok) return null;
+      return r.json();
+    }).then(d => {
+      if (!d) return;
       const pro = d.isPro ?? false;
       setIsPro(pro);
       try { localStorage.setItem("unbuilt_isPro", String(pro)); } catch {}

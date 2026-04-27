@@ -12,19 +12,30 @@ export interface UserPlan {
 
 export async function getUserPlan(userId: string): Promise<UserPlan> {
   const supabase = getSupabase();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("user_subscriptions")
     .select("*")
     .eq("user_id", userId)
-    .single();
+    .maybeSingle();
+
+  // Real Supabase failure (timeout / unhealthy / etc) — surface it.
+  // We must NOT silently return free here, because the API route relies on
+  // throwing to send a 503 instead of an incorrect "free" payload.
+  if (error) {
+    throw new Error(`getUserPlan: ${error.message}`);
+  }
 
   if (!data) {
-    // Check legacy user_credits table for backward compat
-    const { data: legacy } = await supabase
+    // No subscription row — check legacy user_credits table for backward compat
+    const { data: legacy, error: legacyErr } = await supabase
       .from("user_credits")
       .select("credits")
       .eq("user_id", userId)
-      .single();
+      .maybeSingle();
+
+    if (legacyErr) {
+      throw new Error(`getUserPlan legacy: ${legacyErr.message}`);
+    }
 
     const purchased = legacy?.credits ?? 0;
     return {
@@ -78,18 +89,24 @@ export async function addPurchasedAnalyses(userId: string, amount: number): Prom
 /** Initialize subscription row for a new user */
 export async function initUserSubscription(userId: string): Promise<void> {
   const supabase = getSupabase();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("user_subscriptions")
     .select("user_id")
     .eq("user_id", userId)
-    .single();
+    .maybeSingle();
+  if (error) {
+    throw new Error(`initUserSubscription: ${error.message}`);
+  }
   if (!data) {
-    await supabase.from("user_subscriptions").insert({
+    const { error: insertError } = await supabase.from("user_subscriptions").insert({
       user_id: userId,
       plan: "free",
       monthly_analyses: 0,
       purchased_analyses: 0,
     });
+    if (insertError) {
+      throw new Error(`initUserSubscription insert: ${insertError.message}`);
+    }
   }
 }
 

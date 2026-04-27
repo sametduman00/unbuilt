@@ -17,7 +17,9 @@ export default function ProBlurGate({ children, freeLimit = 3, totalCount }: { c
     } catch {}
   }, []);
 
-  // Verify: fetch fresh plan when Clerk is ready, update cache
+  // Verify: fetch fresh plan when Clerk is ready, update cache.
+  // If the API fails (5xx / network), KEEP the cached Pro state — never demote
+  // a Pro user to free because of a transient Supabase outage.
   useEffect(() => {
     if (!isLoaded) return;
     if (!isSignedIn) {
@@ -27,8 +29,16 @@ export default function ProBlurGate({ children, freeLimit = 3, totalCount }: { c
       return;
     }
     fetch("/api/user/plan")
-      .then(r => r.json())
+      .then(async r => {
+        if (!r.ok) return null;
+        return r.json();
+      })
       .then(d => {
+        if (!d) {
+          // API failed — trust the cache, just unblock UI
+          setChecked(true);
+          return;
+        }
         const pro = d.isPro ?? false;
         setIsPro(pro);
         setChecked(true);

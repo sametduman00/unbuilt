@@ -3359,7 +3359,10 @@ function HomeInner() {
         setIdea(pendingIdea);
       }
     }
-    fetch("/api/user/plan").then(r => r.json()).then(d => setUserPlan({ plan: d.plan ?? "free", totalAnalyses: d.totalAnalyses ?? 0, isPro: d.isPro ?? false, currentPeriodEnd: d.currentPeriodEnd ?? null })).catch(() => {});
+    fetch("/api/user/plan").then(async r => (r.ok ? r.json() : null)).then(d => {
+      if (!d) return; // API failed — keep whatever state we have
+      setUserPlan({ plan: d.plan ?? "free", totalAnalyses: d.totalAnalyses ?? 0, isPro: d.isPro ?? false, currentPeriodEnd: d.currentPeriodEnd ?? null });
+    }).catch(() => {});
   }, [isSignedIn]);
   const { openSignIn } = useClerk();
   const [selectedTool, setSelectedTool] = useState<ToolId | null>(null);
@@ -3860,7 +3863,8 @@ function HomeInner() {
       if (!abortCtrl.signal.aborted) setLoading(false);
       // Refresh plan counter after search
       if (!isFreeSearch) {
-        fetch("/api/user/plan").then(r => r.json()).then(d => {
+        fetch("/api/user/plan").then(async r => (r.ok ? r.json() : null)).then(d => {
+          if (!d) return;
           setUserPlan({ plan: d.plan ?? "free", totalAnalyses: d.totalAnalyses ?? 0, isPro: d.isPro ?? false, currentPeriodEnd: d.currentPeriodEnd ?? null });
         }).catch(() => {});
       }

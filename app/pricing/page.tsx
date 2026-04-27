@@ -54,7 +54,8 @@ export default function PricingPage() {
 
   useEffect(() => {
     if (!isSignedIn) return;
-    fetch("/api/user/plan").then(r => r.json()).then(d => {
+    fetch("/api/user/plan").then(async r => (r.ok ? r.json() : null)).then(d => {
+      if (!d) return; // API failed — don't downgrade UI to free
       const pro = d.isPro ?? false;
       setIsPro(pro);
       setHasActiveSubscription(!!d.paddleSubscriptionId);
@@ -73,8 +74,8 @@ export default function PricingPage() {
     let attempts = 0;
     const poll = () => {
       attempts++;
-      fetch("/api/user/plan").then(r => r.json()).then(d => {
-        if (d.isPro) {
+      fetch("/api/user/plan").then(async r => (r.ok ? r.json() : null)).then(d => {
+        if (d?.isPro) {
           window.location.reload();
         } else if (attempts < 8) {
           setTimeout(poll, 2000);

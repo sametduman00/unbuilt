@@ -84,8 +84,9 @@ export default function AppTopNav() {
   useEffect(() => {
     if (!isSignedIn) return;
     fetch("/api/user/plan")
-      .then((r) => r.json())
+      .then(async (r) => (r.ok ? r.json() : null))
       .then((d) => {
+        if (!d) return; // API failed — keep whatever badge we had
         const isPro = d.isPro ?? false;
         const monthly = d.monthlyAnalyses ?? 0;
         const tier = !isPro ? "free" as const : monthly > 10 ? "pro+" as const : "pro" as const;

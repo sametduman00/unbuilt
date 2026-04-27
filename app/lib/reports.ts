@@ -6,8 +6,11 @@ export interface UserReport {
   tool: "gap-analysis" | "stack-advisor";
   idea: string;
   created_at: string;
-  json_content: string;
+  json_content?: string;
 }
+
+/** Lightweight summary used by the list view — no json_content payload */
+export type UserReportSummary = Omit<UserReport, "json_content">;
 
 export async function saveReport(
   userId: string,
@@ -33,11 +36,14 @@ export async function saveReport(
   return data?.id ?? null;
 }
 
-export async function getUserReports(userId: string): Promise<UserReport[]> {
+export async function getUserReports(userId: string): Promise<UserReportSummary[]> {
   const supabase = getSupabase();
+  // Intentionally exclude json_content — that field can be 50–200KB per row and
+  // the list view only renders id/tool/idea/created_at. Detail/PDF reads use
+  // getReport(userId, reportId) instead.
   const { data, error } = await supabase
     .from("user_reports")
-    .select("id, user_id, tool, idea, created_at, json_content")
+    .select("id, user_id, tool, idea, created_at")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(50);
