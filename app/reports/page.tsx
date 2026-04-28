@@ -8,7 +8,7 @@ import { generatePdf, type ReportData } from "@/app/lib/generatePdf";
 type Report = Omit<ReportData, "json_content"> & { json_content?: string };
 
 export default function ReportsPage() {
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isSignedIn, isLoaded, userId } = useAuth();
   const router = useRouter();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,21 +18,27 @@ export default function ReportsPage() {
   const [generating, setGenerating] = useState<string | null>(null);
 
   useEffect(() => {
+    // Drop the legacy single-key cache from before the per-user fix.
+    try { localStorage.removeItem("unbuilt_isPro"); } catch {}
     if (!isLoaded) return;
     if (!isSignedIn) { router.push("/"); return; }
     // Read cached Pro state first so the empty-state CTA doesn't flash the wrong variant.
-    try {
-      const cached = localStorage.getItem("unbuilt_isPro");
-      if (cached === "true") setIsPro(true);
-      else if (cached === "false") setIsPro(false);
-    } catch {}
+    if (userId) {
+      try {
+        const cached = localStorage.getItem(`unbuilt_isPro:${userId}`);
+        if (cached === "true") setIsPro(true);
+        else if (cached === "false") setIsPro(false);
+      } catch {}
+    }
     fetch("/api/user/plan")
       .then(async r => (r.ok ? r.json() : null))
       .then(d => {
         if (!d) return; // API failed — keep cached state
         const pro = d.isPro ?? false;
         setIsPro(pro);
-        try { localStorage.setItem("unbuilt_isPro", String(pro)); } catch {}
+        if (userId) {
+          try { localStorage.setItem(`unbuilt_isPro:${userId}`, String(pro)); } catch {}
+        }
       })
       .catch(() => {});
     // Distinguish "no reports yet" from "API failed" — the previous code showed
@@ -46,7 +52,7 @@ export default function ReportsPage() {
       .then(d => { if (d) setReports(d.reports ?? []); })
       .catch(() => setReportsError(true))
       .finally(() => setLoading(false));
-  }, [isSignedIn, isLoaded, router]);
+  }, [isSignedIn, isLoaded, userId, router]);
 
   const handleDelete = async (id: string) => {
     if(!confirm("Delete this report?")) return;
