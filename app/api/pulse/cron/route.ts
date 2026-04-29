@@ -95,6 +95,28 @@ export async function GET(req: NextRequest) {
     await sb.from("pulse_feed_cache").delete().lt("generated_at", new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString());
     cleanupOldSnapshots();
 
+    // Daily cleanup of growing tables — runs as part of the existing daily cron
+    // so we stay within Vercel Hobby's once-per-day limit.
+    // - ph_analyses: keep the most recent 1000 by id. The list view only shows
+    //   the latest few hundred Launches; older analyses are dead weight.
+    // - free_analysis_log: keep last 7 days. Only used for the per-IP free
+    //   rate limit, which has a 24h window — anything older is unused.
+    try {
+      const { data: phMax } = await sb.from("ph_analyses").select("id").order("id", { ascending: false }).limit(1).maybeSingle();
+      if (phMax?.id && phMax.id > 1000) {
+        const cutoff = phMax.id - 1000;
+        const { error: phDelErr } = await sb.from("ph_analyses").delete().lte("id", cutoff);
+        if (phDelErr) console.log("[CRON] ph_analyses cleanup error:", phDelErr.message);
+        else console.log(`[CRON] ph_analyses cleanup: kept ids > ${cutoff}`);
+      }
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      const { error: logDelErr } = await sb.from("free_analysis_log").delete().lt("created_at", sevenDaysAgo);
+      if (logDelErr) console.log("[CRON] free_analysis_log cleanup error:", logDelErr.message);
+    } catch (cleanupErr) {
+      // Cleanup failure must not break the rest of the cron — log and continue.
+      console.log("[CRON] cleanup unexpected error:", cleanupErr instanceof Error ? cleanupErr.message : cleanupErr);
+    }
+
     // Analyze NEW products (max 20 per run — safe within 60s timeout)
     const needsAnalysis = freshPHSignals.filter((s: any) => s.url && !analysisMap.has(s.url)).slice(0, 20);
     if (needsAnalysis.length > 0) {
