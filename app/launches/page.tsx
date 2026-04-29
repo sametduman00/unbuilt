@@ -129,34 +129,16 @@ export default function LaunchesPage() {
                               gridTemplateColumns: "repeat(2,minmax(0,1fr))",
                               gap: 10,
                               position: "relative",
-                              ...((!isPro && phPaged.length > 3) ? {
-                                // Top half stays solid; bottom half fades to transparent.
-                                // ProUpgradeReveal lands inside this fade via negative margin.
-                                maskImage: "linear-gradient(to bottom, black 0%, black 45%, transparent 92%)",
-                                WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 45%, transparent 92%)",
-                              } : {}),
                             }}
                           >
                             {phPaged.map((s,i)=>{
-                              const isLocked = !isPro && i >= 3;
-                              // Show 3 unlocked + 3 blurred teaser cards (positions 3-5),
-                              // then collapse the rest. The teaser cards fade to
-                              // transparent via a grid-wide mask applied below — the
-                              // ProUpgradeReveal lives at the bottom of the fade.
-                              const isCollapsed = !isPro && i > 5;
+                              // Free users see exactly 3 cards. After that, the list ends
+                              // and the ProUpgradeReveal takes over directly below — no
+                              // teaser blur, no fade, no scroll-eating ghost cards.
+                              if (!isPro && i >= 3) return null;
                               return (
-                                <div key={s.title+i} style={{
-                                  position: "relative",
-                                  ...(isCollapsed ? {
-                                    opacity: 0,
-                                    pointerEvents: "none" as const,
-                                    height: 0,
-                                    overflow: "hidden",
-                                    margin: 0,
-                                    padding: 0,
-                                  } : {}),
-                                }}>
-                                <div style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column", ...(isLocked ? { filter: "blur(4px)", pointerEvents: "none" as const, userSelect: "none" as const } : {}) }}>
+                                <div key={s.title+i} style={{ position: "relative" }}>
+                                <div style={{ background:"var(--clr-surface)", border:"1px solid var(--clr-border)", borderRadius:12, overflow:"hidden", display:"flex", flexDirection:"column" }}>
                                   
                                   <a href={s.externalUrl||s.url} target="_blank" rel="noopener noreferrer"
                                     style={{ display:"flex", alignItems:"flex-start", gap:"1rem", padding:"1.125rem 1.125rem 0.875rem", textDecoration:"none", color:"inherit", transition:"background 0.15s" }}
@@ -192,17 +174,14 @@ export default function LaunchesPage() {
                             })}
                           </div>
                         )}
-                        {/* Pro upgrade reveal — colorful, festive, lives at the seam where
-                            the blurred teaser cards fade out. Negative margin pulls it up
-                            into the bottom of the fade so the visual feels continuous. */}
+                        {/* Hard cut after 3 cards for free users — the reveal sits in
+                            natural flow directly below, no overlap tricks. */}
                         {!isPro && !pulseLoading && phPaged.length > 3 && (
-                          <div style={{ marginTop: -120, position: "relative", zIndex: 5 }}>
-                            <ProUpgradeReveal
-                              hiddenCount={Math.max(0, phTotal - 3)}
-                              noun="launches"
-                              description="The full Product Hunt feed, refreshed every 10 minutes — every launch, every category, no caps."
-                            />
-                          </div>
+                          <ProUpgradeReveal
+                            hiddenCount={Math.max(0, phTotal - 3)}
+                            noun="launches"
+                            description="The full Product Hunt feed, refreshed every 10 minutes — every launch, every category, no caps."
+                          />
                         )}
                         {phPages > 1 && (
                           <div style={{ display:"flex", justifyContent:"center", alignItems:"center", gap:12, marginTop:24 }}>
@@ -235,28 +214,14 @@ export default function LaunchesPage() {
                               display: "flex",
                               flexDirection: "column",
                               gap: 8,
-                              ...((!isPro && asPaged.length > 3) ? {
-                                maskImage: "linear-gradient(to bottom, black 0%, black 45%, transparent 92%)",
-                                WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 45%, transparent 92%)",
-                              } : {}),
                             }}
                           >
                             {asPaged.map((app,appIdx)=>{
-                              const isLocked = !isPro && appIdx >= 3;
-                              const isCollapsed = !isPro && appIdx > 5;
+                              // Free users see exactly 3 cards. The reveal takes over below.
+                              if (!isPro && appIdx >= 3) return null;
                               return (
-                              <div key={app.app_id} style={{
-                                position: "relative",
-                                ...(isCollapsed ? {
-                                  opacity: 0,
-                                  pointerEvents: "none" as const,
-                                  height: 0,
-                                  overflow: "hidden",
-                                  margin: 0,
-                                  padding: 0,
-                                } : {}),
-                              }}>
-                              <div style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden", ...(isLocked ? { filter: "blur(4px)", pointerEvents: "none" as const, userSelect: "none" as const } : {})}}>
+                              <div key={app.app_id} style={{ position: "relative" }}>
+                              <div style={{background:"var(--clr-surface)",border:"1px solid var(--clr-border)",borderRadius:12,overflow:"hidden"}}>
                                         <a href={app.store_url} target="_blank" rel="noopener noreferrer"
                             style={{display:"flex",flexDirection:"column",gap:"0.875rem",padding:"1.25rem",textDecoration:"none",color:"inherit",transition:"background 0.15s"}}
                             onMouseEnter={e=>e.currentTarget.style.background="rgba(var(--clr-text-rgb),0.02)"}
@@ -323,16 +288,13 @@ export default function LaunchesPage() {
                             )})}
                           </div>
                         )}
-                        {/* Pro upgrade reveal — same delightful component as PH, lands on the
-                            seam where the App Store fade ends. */}
+                        {/* Hard cut after 3 cards — reveal in natural flow */}
                         {!isPro && !pulseAsLoading && asPaged.length > 3 && (
-                          <div style={{ marginTop: -120, position: "relative", zIndex: 5 }}>
-                            <ProUpgradeReveal
-                              hiddenCount={Math.max(0, asTotal - 3)}
-                              noun="apps"
-                              description="Every new App Store launch, fresh every morning — full list, all categories, no caps."
-                            />
-                          </div>
+                          <ProUpgradeReveal
+                            hiddenCount={Math.max(0, asTotal - 3)}
+                            noun="apps"
+                            description="Every new App Store launch, fresh every morning — full list, all categories, no caps."
+                          />
                         )}
                         {asPages > 1 && (
                           <div style={{ display:"flex", justifyContent:"center", alignItems:"center", gap:12, marginTop:24 }}>

@@ -78,33 +78,20 @@ export default function ProBlurGate({ children, freeLimit = 3, totalCount }: { c
 
   return (
     <>
-      {/* The last freeLimit item gracefully fades into the page so the cut-off
-          doesn't feel abrupt. We only fade the very last visible item, not the
-          whole row, to keep the rest of the list normal. */}
+      {/* Free users see exactly the first `freeLimit` items, full clarity, no
+          mask. After that the list ends and ProUpgradeReveal takes over. */}
       {items.map((child, i) => {
-        if (i < freeLimit) {
-          const isLastVisible = !isPro && i === freeLimit - 1 && hiddenCount > 0;
-          return (
-            <div key={i} style={isLastVisible ? {
-              maskImage: "linear-gradient(to bottom, black 0%, black 50%, transparent 100%)",
-              WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 50%, transparent 100%)",
-            } : undefined}>
-              {child}
-            </div>
-          );
-        }
+        if (i < freeLimit) return <React.Fragment key={i}>{child}</React.Fragment>;
         if (isPro) return <React.Fragment key={i}>{child}</React.Fragment>;
         return null;
       })}
 
       {showGate && (
-        <div style={{ marginTop: -32, position: "relative" }}>
-          <ProUpgradeReveal
-            hiddenCount={hiddenCount}
-            noun="ideas"
-            description="The full list of fresh startup ideas, refreshed every 10 minutes — every gap, every signal."
-          />
-        </div>
+        <ProUpgradeReveal
+          hiddenCount={hiddenCount}
+          noun="ideas"
+          description="The full list of fresh startup ideas, refreshed every 10 minutes — every gap, every signal."
+        />
       )}
     </>
   );
