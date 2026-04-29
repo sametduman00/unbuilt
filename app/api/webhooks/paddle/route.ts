@@ -201,6 +201,46 @@ export async function POST(req: NextRequest) {
     const quota = SUBSCRIPTION_QUOTAS[priceId] ?? 10;
     await activateProSubscription(userId, subscriptionId ?? "", periodEnd ?? new Date(Date.now() + 30 * 86400000).toISOString(), quota);
 
+    // Also record this in the orders table so revenue dashboards
+    // (which read from `orders`) include subscription income. Without
+    // this, only addon/one-time purchases show up as revenue and the
+    // cockpit under-reports total income by the entire MRR.
+    //
+    // We derive the package_slug from the priceId so it matches the
+    // pricing page conventions ("pro-monthly" / "pro-plus-monthly").
+    // Amount comes from the transaction details on the event.
+    const planSlug = quota >= 25 ? "pro-plus-monthly" : "pro-monthly";
+    const subAmountStr = event.data?.transaction_details?.payments?.[0]?.amount
+      ?? event.data?.items?.[0]?.price?.unit_price?.amount;
+    const subAmountUsd = subAmountStr ? parseInt(subAmountStr) / 100 : (quota >= 25 ? 19.99 : 9.99);
+    const subPaddleId = event.data?.transaction_id ?? subscriptionId ?? null;
+
+    if (subPaddleId) {
+      const supabase = getSupabase();
+      // Idempotency: if a row with this paddle_order_id already exists
+      // (e.g. from a previous subscription.activated event), skip.
+      const { data: existingSub } = await supabase
+        .from("orders")
+        .select("id")
+        .eq("paddle_order_id", subPaddleId)
+        .maybeSingle();
+      if (!existingSub) {
+        const { error: insertErr } = await supabase.from("orders").insert({
+          user_id: userId,
+          paddle_order_id: subPaddleId,
+          package_slug: planSlug,
+          credits_added: quota,
+          amount_usd: subAmountUsd,
+          status: "completed",
+        });
+        // Ignore unique-constraint races; everything else gets logged
+        // but we still ack the webhook so Paddle doesn't retry forever.
+        if (insertErr && insertErr.code !== "23505") {
+          console.error("[Paddle] Failed to record subscription as order:", insertErr.code);
+        }
+      }
+    }
+
     await sendTelegram(
       `🎉 <b>New Pro subscriber!</b>\n⚡ Plan: <b>${quota} analyses/mo</b>\n📧 ${email}`
     );
@@ -264,6 +304,36 @@ export async function POST(req: NextRequest) {
         // Different period — this is an actual renewal
         const quota = SUBSCRIPTION_QUOTAS[priceId];
         await renewProSubscription(userId, periodEnd, quota);
+
+        // Record the renewal in `orders` too (same reason as the
+        // subscription.activated branch above — revenue dashboards
+        // read from this table).
+        const planSlug = quota >= 25 ? "pro-plus-monthly" : "pro-monthly";
+        const renewAmountStr = event.data?.details?.totals?.total
+          ?? event.data?.items?.[0]?.price?.unit_price?.amount;
+        const renewAmountUsd = renewAmountStr ? parseInt(renewAmountStr) / 100 : (quota >= 25 ? 19.99 : 9.99);
+        const renewPaddleId = event.data?.id ?? null;
+        if (renewPaddleId) {
+          const { data: existingRenew } = await supabase
+            .from("orders")
+            .select("id")
+            .eq("paddle_order_id", renewPaddleId)
+            .maybeSingle();
+          if (!existingRenew) {
+            const { error: insertErr } = await supabase.from("orders").insert({
+              user_id: userId,
+              paddle_order_id: renewPaddleId,
+              package_slug: planSlug,
+              credits_added: quota,
+              amount_usd: renewAmountUsd,
+              status: "completed",
+            });
+            if (insertErr && insertErr.code !== "23505") {
+              console.error("[Paddle] Failed to record renewal as order:", insertErr.code);
+            }
+          }
+        }
+
         const email = event.data?.customer?.email ?? event.data?.customer_email ?? "unknown";
         await sendTelegram(`🔄 <b>Pro renewed!</b>\n⚡ ${quota} analyses reset\n📧 ${email}`);
       }

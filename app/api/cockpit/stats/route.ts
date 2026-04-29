@@ -96,7 +96,7 @@ export async function GET(req: NextRequest) {
     sb.from("pulse_feed_cache").select("generated_at").order("generated_at", { ascending: false }).limit(50),
     sb.from("user_reports").select("created_at,tool,user_id,idea").gte("created_at", month.toISOString()).order("created_at", { ascending: true }),
     sb.from("user_credits").select("user_id,created_at").gte("created_at", eightWeeks.toISOString()).order("created_at", { ascending: true }),
-    sb.from("user_subscriptions").select("plan,monthly_analyses,purchased_analyses,user_id").eq("plan", "pro"),
+    sb.from("user_subscriptions").select("plan,monthly_analyses,purchased_analyses,user_id,paddle_subscription_id,current_period_end,created_at").eq("plan", "pro"),
     sb.from("orders").select("amount_usd,created_at,package_slug").gte("created_at", month.toISOString()).order("created_at", { ascending: true }),
     sb.from("free_analysis_log").select("ip,created_at").gte("created_at", today.toISOString()),
   ]);
@@ -362,6 +362,48 @@ export async function GET(req: NextRequest) {
   const totalMonthlyRemaining = subscriptionData?.reduce((s: number, u: any) => s + (u.monthly_analyses ?? 0), 0) ?? 0;
   const totalPurchasedRemaining = subscriptionData?.reduce((s: number, u: any) => s + (u.purchased_analyses ?? 0), 0) ?? 0;
 
+  // ─── Subscription detail ─────────────────────────────────────
+  // Tier is derived: monthly_analyses >= 25 = Pro+, otherwise Pro.
+  // (Same rule the navbar uses, see app/components/AppTopNav.tsx.)
+  // MRR sums each row at its tier price.
+  type SubRow = {
+    user_id: string;
+    monthly_analyses: number;
+    purchased_analyses: number;
+    paddle_subscription_id: string | null;
+    current_period_end: string | null;
+    created_at: string;
+    tier: "pro" | "pro+";
+    monthly_price_usd: number;
+    days_to_renewal: number | null;
+  };
+  const subscriptions: SubRow[] = (subscriptionData ?? []).map((s: any) => {
+    const tier: "pro" | "pro+" = (s.monthly_analyses ?? 0) >= 25 ? "pro+" : "pro";
+    const monthly_price_usd = tier === "pro+" ? 19.99 : 9.99;
+    const days_to_renewal = s.current_period_end
+      ? Math.ceil((new Date(s.current_period_end).getTime() - Date.now()) / 86400000)
+      : null;
+    return {
+      user_id: s.user_id,
+      monthly_analyses: s.monthly_analyses ?? 0,
+      purchased_analyses: s.purchased_analyses ?? 0,
+      paddle_subscription_id: s.paddle_subscription_id ?? null,
+      current_period_end: s.current_period_end ?? null,
+      created_at: s.created_at,
+      tier,
+      monthly_price_usd,
+      days_to_renewal,
+    };
+  });
+  const proCount = subscriptions.filter(s => s.tier === "pro").length;
+  const proPlusCount = subscriptions.filter(s => s.tier === "pro+").length;
+  const mrrUsd = subscriptions.reduce((sum, s) => sum + s.monthly_price_usd, 0);
+  const arrUsd = mrrUsd * 12;
+  // Churn risk: subscriptions ending in the next 7 days (period end ≤ 7d
+  // away). Includes scheduled cancellations because Paddle stops sending
+  // subscription.canceled until the end of period.
+  const expiringSoon = subscriptions.filter(s => s.days_to_renewal !== null && s.days_to_renewal <= 7).length;
+
   return NextResponse.json({
     users: { total: usersTotal ?? 0, today: usersToday ?? 0, week: usersWeek ?? 0, prevWeek: usersPrevWeek ?? 0, deltaPct: usersDelta },
     reports: {
@@ -399,6 +441,14 @@ export async function GET(req: NextRequest) {
       purchasedAnalysesRemaining: totalPurchasedRemaining,
       topFreeIPs,
       proConversionRate: Number(proConversionRate.toFixed(2)),
+    },
+    subscriptions: {
+      list: subscriptions,
+      proCount,
+      proPlusCount,
+      mrrUsd: Number(mrrUsd.toFixed(2)),
+      arrUsd: Number(arrUsd.toFixed(2)),
+      expiringSoon,
     },
   }, { headers: CORS });
 }
