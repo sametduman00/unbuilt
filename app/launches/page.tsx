@@ -183,7 +183,7 @@ export default function LaunchesPage() {
                             description="The full Product Hunt feed, refreshed every 10 minutes — every launch, every category, no caps."
                           />
                         )}
-                        {phPages > 1 && (
+                        {isPro && phPages > 1 && (
                           <div style={{ display:"flex", justifyContent:"center", alignItems:"center", gap:12, marginTop:24 }}>
                             {phPage > 1 && <button onClick={()=>{setPhPage(p=>p-1);window.scrollTo(0,0);}} style={{ padding:"8px 20px", borderRadius:8, border:"1px solid var(--clr-border)", background:"var(--clr-surface)", color:"var(--clr-text-2)", fontSize:14, fontWeight:500, cursor:"pointer", fontFamily:"inherit" }}>← Previous</button>}
                             <span style={{ fontSize:13, color:"var(--clr-text-4)" }}>Page {phPage} / {phPages}</span>
@@ -296,7 +296,7 @@ export default function LaunchesPage() {
                             description="Every new App Store launch, fresh every morning — full list, all categories, no caps."
                           />
                         )}
-                        {asPages > 1 && (
+                        {isPro && asPages > 1 && (
                           <div style={{ display:"flex", justifyContent:"center", alignItems:"center", gap:12, marginTop:24 }}>
                             {asPage > 1 && <button onClick={()=>{setAsPage(p=>p-1);window.scrollTo(0,0);}} style={{ padding:"8px 20px", borderRadius:8, border:"1px solid var(--clr-border)", background:"var(--clr-surface)", color:"var(--clr-text-2)", fontSize:14, fontWeight:500, cursor:"pointer", fontFamily:"inherit" }}>← Previous</button>}
                             <span style={{ fontSize:13, color:"var(--clr-text-4)" }}>Page {asPage} / {asPages}</span>

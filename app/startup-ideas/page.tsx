@@ -1,9 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { auth } from "@clerk/nextjs/server";
 import { getSupabase } from "@/app/lib/supabase";
+import { getUserPlan } from "@/app/lib/plan";
 import ProBlurGate from "@/app/components/ProBlurGate";
 
-export const revalidate = 60;
+// This page now reads Clerk auth on the server, so it must render
+// dynamically per-request — no static cache, no shared CDN cache.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Startup Ideas — Unbuilt",
@@ -21,8 +25,28 @@ const PER_PAGE = 60;
 
 export default async function StartupIdeasPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const sp = await searchParams;
-  const page = Math.max(1, parseInt(sp.page || "1"));
   const sb = getSupabase();
+
+  // Server-side Pro gate. Anonymous and free users are forced to page 1
+  // so they cannot bypass the ProBlurGate by editing the URL. We do this
+  // BEFORE reading the page param so the rest of the function works on
+  // the clamped value.
+  const { userId } = await auth();
+  let isPro = false;
+  if (userId) {
+    try {
+      const plan = await getUserPlan(userId);
+      isPro = plan.isPro;
+    } catch {
+      // If the plan lookup fails (Supabase outage, etc.) we fail closed:
+      // free view, no pagination. Better than letting a broken request
+      // accidentally expose the full feed.
+      isPro = false;
+    }
+  }
+
+  const requestedPage = Math.max(1, parseInt(sp.page || "1"));
+  const page = isPro ? requestedPage : 1;
 
   /* ── AI ideas (page 1 only) ── */
   let aiRows: any[] = [];
@@ -131,8 +155,9 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
         <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--clr-text-4)" }}>No ideas found.</div>
       )}
 
-      {/* Pagination */}
-      {totalPages > 1 && (
+      {/* Pagination — Pro only. Free users are clamped to page 1, so showing
+          page navigation would be misleading. */}
+      {isPro && totalPages > 1 && (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 40 }}>
           {hasPrev ? (
             <Link href={`/startup-ideas?page=${page - 1}`} style={{ padding: "8px 20px", borderRadius: 8, border: "1px solid var(--clr-border)", background: "var(--clr-surface)", color: "var(--clr-text-2)", fontSize: 14, fontWeight: 500, textDecoration: "none" }}>
