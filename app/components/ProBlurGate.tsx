@@ -77,68 +77,63 @@ export default function ProBlurGate({ children, freeLimit = 3, totalCount }: { c
 
   return (
     <>
+      {/* The last freeLimit item gracefully fades into the page so the cut-off
+          doesn't feel abrupt. We only fade the very last visible item, not the
+          whole row, to keep the rest of the list normal. */}
       {items.map((child, i) => {
-        if (i < freeLimit) return <React.Fragment key={i}>{child}</React.Fragment>;
+        if (i < freeLimit) {
+          const isLastVisible = !isPro && i === freeLimit - 1 && hiddenCount > 0;
+          return (
+            <div key={i} style={isLastVisible ? {
+              maskImage: "linear-gradient(to bottom, black 0%, black 50%, transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 50%, transparent 100%)",
+            } : undefined}>
+              {child}
+            </div>
+          );
+        }
         if (isPro) return <React.Fragment key={i}>{child}</React.Fragment>;
         return null;
       })}
 
       {showGate && (
         <div style={{
-          margin: "12px 0",
-          padding: "36px 32px",
-          borderRadius: 20,
-          background: "linear-gradient(135deg, #f5f3ff 0%, #eef2ff 50%, #fdf2f8 100%)",
-          border: "1px solid #e9e5ff",
-          textAlign: "center",
+          marginTop: -16, // overlap the fade so the band feels continuous with the list
+          position: "relative",
+          background: "var(--clr-surface)",
+          border: "1px solid var(--clr-border)",
+          borderRadius: 12,
+          padding: "20px 24px",
+          display: "flex",
+          alignItems: "center",
+          gap: 16,
+          flexWrap: "wrap",
         }}>
-          <div style={{
-            width: 48, height: 4, borderRadius: 2,
-            background: "linear-gradient(90deg, #6366f1, #a855f7, #ec4899)",
-            margin: "0 auto 20px",
-          }} />
-
-          <div style={{
-            width: 52, height: 52, borderRadius: 14,
-            background: "#fff",
-            boxShadow: "0 2px 12px rgba(99,102,241,0.12)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            margin: "0 auto 16px",
-          }}>
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--clr-text)", marginBottom: 2 }}>
+              +{hiddenCount} more ideas
+            </div>
+            <div style={{ fontSize: "0.75rem", color: "var(--clr-text-3)" }}>
+              Pro unlocks the full list, refreshed every 10 minutes.
+            </div>
           </div>
-
-          <div style={{ fontSize: "1.125rem", fontWeight: 700, color: "#111", marginBottom: 6, letterSpacing: "-0.02em" }}>
-            +{hiddenCount} more ideas waiting for you
-          </div>
-          <div style={{ fontSize: "0.8125rem", color: "#6b7280", lineHeight: 1.5, marginBottom: 24, maxWidth: 320, margin: "0 auto 24px" }}>
-            Upgrade to Pro and unlock the full list —<br/>updated every 10 minutes.
-          </div>
-
           <a href="/pricing" style={{
-            display: "inline-flex", alignItems: "center", gap: 8,
-            padding: "12px 28px",
-            borderRadius: 12,
-            backgroundImage: "linear-gradient(135deg, #6366f1 0%, #7c3aed 100%)",
+            flexShrink: 0,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "8px 18px",
+            borderRadius: 8,
+            background: "var(--clr-accent)",
             color: "#fff",
             textDecoration: "none",
-            fontSize: "0.875rem",
+            fontSize: "0.8125rem",
             fontWeight: 600,
-            boxShadow: "0 4px 16px rgba(99,102,241,0.3), inset 0 1px 0 rgba(255,255,255,0.2)",
-            transition: "transform 0.2s, box-shadow 0.2s",
+            transition: "background 0.15s",
           }}
-            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 24px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(99,102,241,0.3), inset 0 1px 0 rgba(255,255,255,0.2)"; }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-            </svg>
-            Go Pro
-          </a>
+            onMouseEnter={e => e.currentTarget.style.background = "var(--clr-accent-hover)"}
+            onMouseLeave={e => e.currentTarget.style.background = "var(--clr-accent)"}
+          >Upgrade <span style={{ opacity: 0.7 }}>→</span></a>
         </div>
       )}
     </>
