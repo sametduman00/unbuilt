@@ -4010,7 +4010,20 @@ function HomeInner() {
                       <textarea
                         value={idea}
                         onChange={(e) => setIdea(e.target.value.slice(0, 2000))}
-                        onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); } } } }}
+                        onKeyDown={(e) => {
+                          if (e.key !== "Enter") return;
+                          if (!(e.metaKey || e.ctrlKey)) return;
+                          if (idea.trim().length < 40) return;
+                          if (!isSignedIn) {
+                            sessionStorage.setItem("unbuilt_pending_idea", idea);
+                            sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab);
+                            openSignIn();
+                            return;
+                          }
+                          // Same direct-submit path as the button — skip InputSection.
+                          pendingAutoSubmit.current = true;
+                          setSelectedTool(activeHeroTab as ToolId);
+                        }}
                         placeholder={activeHeroTab === "gap-analysis" ? 'e.g. "Project management for freelancers"' : 'e.g. "A marketplace for local freelancers with payments"'}
                         style={{ width: "100%", minHeight: 88, resize: "none", background: "var(--clr-bg)", border: "1px solid var(--clr-border)", borderRadius: 12, padding: "16px 18px", fontSize: "1.0625rem", color: "var(--clr-text)", fontFamily: "inherit", outline: "none", boxSizing: "border-box" as const }}
                       />
@@ -4064,7 +4077,27 @@ function HomeInner() {
                             <span style={{ fontSize: "0.8125rem", color: "var(--clr-text)" }}>{40 - idea.trim().length} more chars</span>
                           )}
                           <button
-                            onClick={() => { if (idea.trim().length >= 40) { if (!isSignedIn) { sessionStorage.setItem("unbuilt_pending_idea", idea); sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab); openSignIn(); } else { setSelectedTool(activeHeroTab as ToolId); } } }}
+                            onClick={() => {
+                              if (idea.trim().length < 40) return;
+                              if (!isSignedIn) {
+                                // Sign-in detour preserves the idea + tool so the auto-submit
+                                // effect picks it up after the user comes back signed in
+                                // (see useEffect on line ~3346).
+                                sessionStorage.setItem("unbuilt_pending_idea", idea);
+                                sessionStorage.setItem("unbuilt_pending_tool", activeHeroTab);
+                                openSignIn();
+                                return;
+                              }
+                              // Skip the redundant InputSection screen: arm the auto-submit
+                              // ref and set the tool. The useEffect on [selectedTool, idea,
+                              // isSignedIn] notices the ref and fires handleSubmit() on the
+                              // next render, jumping straight from the hero into the loading
+                              // / results view. Hero already collects the only stack-specific
+                              // fields (budget/techLevel/platform) above, so InputSection
+                              // wasn't gathering anything new.
+                              pendingAutoSubmit.current = true;
+                              setSelectedTool(activeHeroTab as ToolId);
+                            }}
                             disabled={idea.trim().length < 40}
                             style={{ background: idea.trim().length >= 40 ? "var(--clr-text)" : "var(--clr-surface-2)", color: idea.trim().length >= 40 ? "#fff" : "var(--clr-text)", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: "0.9375rem", fontWeight: 600, cursor: idea.trim().length >= 40 ? "pointer" : "default", fontFamily: "inherit" }}
                           >{activeHeroTab === "gap-analysis" ? "Dig →" : "Stack →"}</button>
