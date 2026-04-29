@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
+import ProUpgradeReveal from "./ProUpgradeReveal";
 
 /**
  * Renders only `freeLimit` items + a paywall card for free users.
@@ -97,43 +98,12 @@ export default function ProBlurGate({ children, freeLimit = 3, totalCount }: { c
       })}
 
       {showGate && (
-        <div style={{
-          marginTop: -16, // overlap the fade so the band feels continuous with the list
-          position: "relative",
-          background: "var(--clr-surface)",
-          border: "1px solid var(--clr-border)",
-          borderRadius: 12,
-          padding: "20px 24px",
-          display: "flex",
-          alignItems: "center",
-          gap: 16,
-          flexWrap: "wrap",
-        }}>
-          <div style={{ flex: 1, minWidth: 200 }}>
-            <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--clr-text)", marginBottom: 2 }}>
-              +{hiddenCount} more ideas
-            </div>
-            <div style={{ fontSize: "0.75rem", color: "var(--clr-text-3)" }}>
-              Pro unlocks the full list, refreshed every 10 minutes.
-            </div>
-          </div>
-          <a href="/pricing" style={{
-            flexShrink: 0,
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            padding: "8px 18px",
-            borderRadius: 8,
-            background: "var(--clr-accent)",
-            color: "#fff",
-            textDecoration: "none",
-            fontSize: "0.8125rem",
-            fontWeight: 600,
-            transition: "background 0.15s",
-          }}
-            onMouseEnter={e => e.currentTarget.style.background = "var(--clr-accent-hover)"}
-            onMouseLeave={e => e.currentTarget.style.background = "var(--clr-accent)"}
-          >Upgrade <span style={{ opacity: 0.7 }}>→</span></a>
+        <div style={{ marginTop: -32, position: "relative" }}>
+          <ProUpgradeReveal
+            hiddenCount={hiddenCount}
+            noun="ideas"
+            description="The full list of fresh startup ideas, refreshed every 10 minutes — every gap, every signal."
+          />
         </div>
       )}
     </>

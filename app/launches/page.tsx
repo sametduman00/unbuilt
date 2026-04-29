@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import ProUpgradeReveal from "@/app/components/ProUpgradeReveal";
 
 export default function LaunchesPage() {
   const router = useRouter();
@@ -121,23 +122,32 @@ export default function LaunchesPage() {
                           <div style={{ textAlign:"center", padding:"3rem 0", color:"var(--clr-text-3)" }}>No results. <button onClick={()=>{setPulsePhSearch("");setPulsePhTopic("all");}} style={{ color:"#DA552F", background:"none", border:"none", cursor:"pointer" }}>Clear</button></div>
                         )}
                         {!pulseLoading && phPaged.length>0 && (
-                          <div className="ph-card-grid" style={{ display:"grid", gridTemplateColumns:"repeat(2,minmax(0,1fr))", gap:10 }}>
+                          <div
+                            className="ph-card-grid"
+                            style={{
+                              display: "grid",
+                              gridTemplateColumns: "repeat(2,minmax(0,1fr))",
+                              gap: 10,
+                              position: "relative",
+                              ...((!isPro && phPaged.length > 3) ? {
+                                // Top half stays solid; bottom half fades to transparent.
+                                // ProUpgradeReveal lands inside this fade via negative margin.
+                                maskImage: "linear-gradient(to bottom, black 0%, black 45%, transparent 92%)",
+                                WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 45%, transparent 92%)",
+                              } : {}),
+                            }}
+                          >
                             {phPaged.map((s,i)=>{
                               const isLocked = !isPro && i >= 3;
-                              const isFirstLocked = !isPro && i === 3;
+                              // Show 3 unlocked + 3 blurred teaser cards (positions 3-5),
+                              // then collapse the rest. The teaser cards fade to
+                              // transparent via a grid-wide mask applied below — the
+                              // ProUpgradeReveal lives at the bottom of the fade.
+                              const isCollapsed = !isPro && i > 5;
                               return (
                                 <div key={s.title+i} style={{
                                   position: "relative",
-                                  // The first locked card is wrapped in a fade-out mask that
-                                  // gracefully dissolves the rest of the grid into the page —
-                                  // no harsh paywall block, no "promo screenshot" energy.
-                                  // Subsequent locked cards inherit the visual fadeout via
-                                  // `pointer-events: none` and reduced opacity below.
-                                  ...(isFirstLocked ? {
-                                    maskImage: "linear-gradient(to bottom, black 0%, black 30%, transparent 95%)",
-                                    WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 30%, transparent 95%)",
-                                  } : {}),
-                                  ...(isLocked && i > 3 ? {
+                                  ...(isCollapsed ? {
                                     opacity: 0,
                                     pointerEvents: "none" as const,
                                     height: 0,
@@ -182,46 +192,16 @@ export default function LaunchesPage() {
                             })}
                           </div>
                         )}
-                        {/* Soft, site-native CTA band — appears once below the locked PH grid */}
+                        {/* Pro upgrade reveal — colorful, festive, lives at the seam where
+                            the blurred teaser cards fade out. Negative margin pulls it up
+                            into the bottom of the fade so the visual feels continuous. */}
                         {!isPro && !pulseLoading && phPaged.length > 3 && (
-                          <div style={{
-                            marginTop: -32,
-                            position: "relative",
-                            zIndex: 5,
-                            background: "var(--clr-surface)",
-                            border: "1px solid var(--clr-border)",
-                            borderRadius: 12,
-                            padding: "20px 24px",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 16,
-                            flexWrap: "wrap",
-                          }}>
-                            <div style={{ flex: 1, minWidth: 200 }}>
-                              <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--clr-text)", marginBottom: 2 }}>
-                                +{phTotal - 3} more launches today
-                              </div>
-                              <div style={{ fontSize: "0.75rem", color: "var(--clr-text-3)" }}>
-                                Pro unlocks the full Product Hunt feed, refreshed every 10 minutes.
-                              </div>
-                            </div>
-                            <a href="/pricing" style={{
-                              flexShrink: 0,
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: 6,
-                              padding: "8px 18px",
-                              borderRadius: 8,
-                              background: "var(--clr-accent)",
-                              color: "#fff",
-                              textDecoration: "none",
-                              fontSize: "0.8125rem",
-                              fontWeight: 600,
-                              transition: "background 0.15s",
-                            }}
-                              onMouseEnter={e => e.currentTarget.style.background = "var(--clr-accent-hover)"}
-                              onMouseLeave={e => e.currentTarget.style.background = "var(--clr-accent)"}
-                            >Upgrade <span style={{ opacity: 0.7 }}>→</span></a>
+                          <div style={{ marginTop: -120, position: "relative", zIndex: 5 }}>
+                            <ProUpgradeReveal
+                              hiddenCount={Math.max(0, phTotal - 3)}
+                              noun="launches"
+                              description="The full Product Hunt feed, refreshed every 10 minutes — every launch, every category, no caps."
+                            />
                           </div>
                         )}
                         {phPages > 1 && (
@@ -249,18 +229,25 @@ export default function LaunchesPage() {
                         {pulseAsLoading&&<div style={{ display:"flex",flexDirection:"column",gap:8 }}>{[1,2,3].map(i=><div key={i} className="shimmer" style={{ height:80, borderRadius:10 }}/>)}</div>}
                         {!pulseAsLoading&&pulseAsDays.length===0&&<div style={{ textAlign:"center", padding:"4rem 0", color:"var(--clr-text-3)" }}>No App Store data yet. Check back after 08:00 UTC.</div>}
                         {!pulseAsLoading&&asPaged.length>0&&(
-                          <div key={pulseAsCat+"_"+pulseAsSearch} style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                          <div
+                            key={pulseAsCat+"_"+pulseAsSearch}
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: 8,
+                              ...((!isPro && asPaged.length > 3) ? {
+                                maskImage: "linear-gradient(to bottom, black 0%, black 45%, transparent 92%)",
+                                WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 45%, transparent 92%)",
+                              } : {}),
+                            }}
+                          >
                             {asPaged.map((app,appIdx)=>{
                               const isLocked = !isPro && appIdx >= 3;
-                              const isFirstLocked = !isPro && appIdx === 3;
+                              const isCollapsed = !isPro && appIdx > 5;
                               return (
                               <div key={app.app_id} style={{
                                 position: "relative",
-                                ...(isFirstLocked ? {
-                                  maskImage: "linear-gradient(to bottom, black 0%, black 30%, transparent 95%)",
-                                  WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 30%, transparent 95%)",
-                                } : {}),
-                                ...(isLocked && appIdx > 3 ? {
+                                ...(isCollapsed ? {
                                   opacity: 0,
                                   pointerEvents: "none" as const,
                                   height: 0,
@@ -336,46 +323,15 @@ export default function LaunchesPage() {
                             )})}
                           </div>
                         )}
-                        {/* Soft, site-native CTA band — matches the PH version above */}
+                        {/* Pro upgrade reveal — same delightful component as PH, lands on the
+                            seam where the App Store fade ends. */}
                         {!isPro && !pulseAsLoading && asPaged.length > 3 && (
-                          <div style={{
-                            marginTop: -32,
-                            position: "relative",
-                            zIndex: 5,
-                            background: "var(--clr-surface)",
-                            border: "1px solid var(--clr-border)",
-                            borderRadius: 12,
-                            padding: "20px 24px",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 16,
-                            flexWrap: "wrap",
-                          }}>
-                            <div style={{ flex: 1, minWidth: 200 }}>
-                              <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--clr-text)", marginBottom: 2 }}>
-                                +{asTotal - 3} more apps today
-                              </div>
-                              <div style={{ fontSize: "0.75rem", color: "var(--clr-text-3)" }}>
-                                Pro unlocks the full App Store list, refreshed every morning.
-                              </div>
-                            </div>
-                            <a href="/pricing" style={{
-                              flexShrink: 0,
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: 6,
-                              padding: "8px 18px",
-                              borderRadius: 8,
-                              background: "var(--clr-accent)",
-                              color: "#fff",
-                              textDecoration: "none",
-                              fontSize: "0.8125rem",
-                              fontWeight: 600,
-                              transition: "background 0.15s",
-                            }}
-                              onMouseEnter={e => e.currentTarget.style.background = "var(--clr-accent-hover)"}
-                              onMouseLeave={e => e.currentTarget.style.background = "var(--clr-accent)"}
-                            >Upgrade <span style={{ opacity: 0.7 }}>→</span></a>
+                          <div style={{ marginTop: -120, position: "relative", zIndex: 5 }}>
+                            <ProUpgradeReveal
+                              hiddenCount={Math.max(0, asTotal - 3)}
+                              noun="apps"
+                              description="Every new App Store launch, fresh every morning — full list, all categories, no caps."
+                            />
                           </div>
                         )}
                         {asPages > 1 && (
