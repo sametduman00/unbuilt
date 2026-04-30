@@ -17,9 +17,20 @@ export const viewport = {
   initialScale: 1,
 };
 
+// Production URL (canonical, served). DNS points www.unbuilt.me to Vercel,
+// so we use the www host throughout to match the served URL — Okara and
+// Google were flagging a canonical/served mismatch when canonical pointed
+// at the apex.
+const SITE_URL = "https://www.unbuilt.me";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Unbuilt — for vibecoders",
-  description: "Unbuilt is the home base for vibe coders. Launches tracks what's launching daily. Dig analyzes any app idea against 70+ live sources in 5 minutes. Stack recommends the exact tools to build it from 700+ options.",
+  // Keep description ≤ 160 chars. Google truncates SERP snippets around
+  // ~155 chars on desktop / ~120 on mobile, so the previous 210-char copy
+  // was getting cut mid-sentence. New version still hits the three product
+  // pillars (Launches, Dig, Stack) but in a tight, snippet-safe length.
+  description: "Validate startup ideas against 70+ live sources, pick the right stack from 700+ tools, and watch what's launching every day. Built for vibe coders.",
   keywords: [
     "vibe coding",
     "vibecoder",
@@ -40,7 +51,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Unbuilt — for vibecoders",
     description: "The home base for vibe coders. Find what to build, validate if it's worth it, and get the exact tools to ship it.",
-    url: "https://unbuilt.me",
+    url: SITE_URL,
     siteName: "Unbuilt",
     type: "website",
   },
@@ -51,7 +62,7 @@ export const metadata: Metadata = {
     site: "@Unbuilt_me",
   },
   alternates: {
-    canonical: "https://unbuilt.me",
+    canonical: SITE_URL,
   },
 };
 
@@ -60,7 +71,7 @@ const jsonLd = [
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Unbuilt",
-    "url": "https://unbuilt.me",
+    "url": "https://www.unbuilt.me",
     "description": "Unbuilt helps vibe coders find what to build before they waste months on the wrong idea. Launches tracks what's launching daily (free). Dig analyzes any app idea against 70+ live sources in 5 minutes. Stack recommends the exact tools to build it from 700+ options.",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web",
@@ -92,7 +103,7 @@ const jsonLd = [
     "creator": {
       "@type": "Organization",
       "name": "Unbuilt",
-      "url": "https://unbuilt.me"
+      "url": "https://www.unbuilt.me"
     },
     "keywords": "vibe coding, app idea validation, market research, indie hacker, no-code, saas validation, find market gap, what to build, vibecoder tools"
   },
@@ -100,7 +111,7 @@ const jsonLd = [
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Unbuilt",
-    "url": "https://unbuilt.me",
+    "url": "https://www.unbuilt.me",
     "description": "The home base for the vibecoding generation. Market intelligence for vibe coders, indie hackers, and no-code founders.",
     "foundingDate": "2026",
     "sameAs": [

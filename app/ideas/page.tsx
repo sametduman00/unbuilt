@@ -8,9 +8,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: "App Ideas & Market Gaps — Unbuilt",
     description: "Browse 5,000+ app ideas with market opportunity scores. Find gaps, compare tools, and discover what to build next.",
-    url: "https://unbuilt.me/ideas",
+    url: "https://www.unbuilt.me/ideas",
   },
-  alternates: { canonical: "https://unbuilt.me/ideas" },
+  alternates: { canonical: "https://www.unbuilt.me/ideas" },
 };
 
 interface PageRow {

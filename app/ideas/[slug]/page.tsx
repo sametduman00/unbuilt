@@ -69,7 +69,7 @@ export async function generateMetadata(
     openGraph: {
       title: page.title,
       description: page.meta_description,
-      url: `https://unbuilt.me/ideas/${page.slug}`,
+      url: `https://www.unbuilt.me/ideas/${page.slug}`,
       siteName: "Unbuilt",
       type: "article",
     },
@@ -80,7 +80,7 @@ export async function generateMetadata(
       site: "@Unbuilt_me",
     },
     alternates: {
-      canonical: `https://unbuilt.me/ideas/${page.slug}`,
+      canonical: `https://www.unbuilt.me/ideas/${page.slug}`,
     },
   };
 }
@@ -138,11 +138,11 @@ export default async function IdeaPage({
       "@type": "Article",
       headline: page.h1,
       description: page.meta_description,
-      url: `https://unbuilt.me/ideas/${page.slug}`,
+      url: `https://www.unbuilt.me/ideas/${page.slug}`,
       publisher: {
         "@type": "Organization",
         name: "Unbuilt",
-        url: "https://unbuilt.me",
+        url: "https://www.unbuilt.me",
       },
       dateModified: page.updated_at,
       keywords: page.tags?.join(", ") || page.keyword,

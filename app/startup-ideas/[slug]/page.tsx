@@ -34,8 +34,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${idea.title} — Startup Idea | Unbuilt`,
     description: idea.one_liner,
-    openGraph: { title: idea.title, description: idea.one_liner, url: `https://unbuilt.me/startup-ideas/${idea.slug}` },
-    alternates: { canonical: `https://unbuilt.me/startup-ideas/${idea.slug}` },
+    openGraph: { title: idea.title, description: idea.one_liner, url: `https://www.unbuilt.me/startup-ideas/${idea.slug}` },
+    alternates: { canonical: `https://www.unbuilt.me/startup-ideas/${idea.slug}` },
   };
 }
 

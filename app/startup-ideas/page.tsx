@@ -12,8 +12,8 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Startup Ideas — Unbuilt",
   description: "Browse 2,000+ startup ideas with opportunity scores and key insights. New ideas added every 10 minutes.",
-  openGraph: { title: "Startup Ideas — Unbuilt", description: "Browse 2,000+ startup ideas with opportunity scores and market gaps.", url: "https://unbuilt.me/startup-ideas" },
-  alternates: { canonical: "https://unbuilt.me/startup-ideas" },
+  openGraph: { title: "Startup Ideas — Unbuilt", description: "Browse 2,000+ startup ideas with opportunity scores and market gaps.", url: "https://www.unbuilt.me/startup-ideas" },
+  alternates: { canonical: "https://www.unbuilt.me/startup-ideas" },
 };
 
 function catLabel(c: string) { return c.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()); }

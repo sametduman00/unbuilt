@@ -11,7 +11,7 @@ function getSb() {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = "https://unbuilt.me";
+  const base = "https://www.unbuilt.me";
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
