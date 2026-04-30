@@ -161,6 +161,49 @@ const jsonLd = [
         "acceptedAnswer": { "@type": "Answer", "text": "Yes. Many users run Dig on their own niche to map competitors before pitching, or use Stack to scope tooling for client builds. Pro plans support unlimited analyses for this kind of use." }
       }
     ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Unbuilt",
+    "url": "https://www.unbuilt.me",
+    "description": "Validate startup ideas, pick the right stack, and watch what's launching every day.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Unbuilt",
+      "url": "https://www.unbuilt.me"
+    },
+    "inLanguage": "en",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.unbuilt.me/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Unbuilt — for vibecoders",
+    "url": "https://www.unbuilt.me",
+    "description": "Validate startup ideas against 70+ live sources, pick the right stack from 700+ tools, and watch what's launching every day. Built for vibe coders.",
+    "isPartOf": { "@type": "WebSite", "url": "https://www.unbuilt.me" },
+    "inLanguage": "en",
+    "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://www.unbuilt.me/og-image.png"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.unbuilt.me"
+      }
+    ]
   }
 ];
 
@@ -169,6 +212,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${syne.variable} ${figtree.variable}`} suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* Explicit language signals. <html lang="en"> already covers the
+            primary case, but some auditors (Okara among them) also look
+            for the legacy http-equiv content-language meta and an
+            x-default hreflang link. Adding both costs nothing and stops
+            those checks from failing. */}
+        <meta httpEquiv="content-language" content="en" />
+        <link rel="alternate" hrefLang="en" href={SITE_URL} />
+        <link rel="alternate" hrefLang="x-default" href={SITE_URL} />
         {/* Preconnect to Clerk — saves 100-300ms on auth requests */}
         <link rel="preconnect" href="https://clerk.unbuilt.me" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
