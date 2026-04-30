@@ -125,6 +125,42 @@ const jsonLd = [
     "sameAs": [
       "https://x.com/Unbuilt_me"
     ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is Unbuilt free?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Browsing Launches is free with no signup. You also get one free Dig analysis and one free Stack recommendation per day to try the product. Pro plans unlock unlimited analyses, deeper market signals, and the full daily feed." }
+      },
+      {
+        "@type": "Question",
+        "name": "How is Dig different from asking ChatGPT?",
+        "acceptedAnswer": { "@type": "Answer", "text": "ChatGPT answers from training data that's already months old and frequently hallucinates competitors that don't exist. Dig pulls live data from 70+ sources at the moment you ask — Product Hunt today, GitHub commits this week, App Store releases this hour — so the gap analysis reflects the market right now, not the market a year ago." }
+      },
+      {
+        "@type": "Question",
+        "name": "How does Stack pick from 700+ tools?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Stack matches your idea, budget, and technical level to a curated decision tree. We test the recommendations ourselves — the tools that show up are the ones we actually use to ship products, ranked by cost, learning curve, and how well they fit your specific use case rather than generic popularity." }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need to know how to code?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. Stack defaults to no-code builders like Lovable and Bolt for non-technical founders. If you select a higher technical level, it switches to Cursor, Claude Code and developer-focused infrastructure. The same product serves both audiences." }
+      },
+      {
+        "@type": "Question",
+        "name": "Where does the data come from?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Product Hunt API for daily launches, App Store and Google Play for mobile releases, GitHub for repository signals, public Reddit and Hacker News, indie founder communities, and a handful of paid market intelligence APIs. We refresh the live feed every ten minutes." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use Unbuilt for client work or competitive research?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Many users run Dig on their own niche to map competitors before pitching, or use Stack to scope tooling for client builds. Pro plans support unlimited analyses for this kind of use." }
+      }
+    ]
   }
 ];
 
