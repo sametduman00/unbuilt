@@ -194,7 +194,7 @@ export default async function IdeaPage({
         maxWidth: 720,
         margin: "0 auto",
         padding: "48px 20px 80px",
-        fontFamily: "'Figtree', -apple-system, sans-serif",
+        fontFamily: "var(--font-figtree), 'Figtree', -apple-system, sans-serif",
       }}>
         {/* Breadcrumb */}
         <nav style={{
@@ -258,7 +258,7 @@ export default async function IdeaPage({
           lineHeight: 1.2,
           margin: "0 0 16px",
           color: "var(--clr-text)",
-          fontFamily: "'Syne', sans-serif",
+          fontFamily: "var(--font-syne), 'Syne', sans-serif",
         }}>
           {page.h1}
         </h1>
@@ -293,7 +293,7 @@ export default async function IdeaPage({
               Opportunity Score
             </div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-              <span style={{ fontSize: 36, fontWeight: 800, color: sc, fontFamily: "'Syne', sans-serif" }}>
+              <span style={{ fontSize: 36, fontWeight: 800, color: sc, fontFamily: "var(--font-syne), 'Syne', sans-serif" }}>
                 {page.opportunity_score}
               </span>
               <span style={{ fontSize: 14, color: sc, fontWeight: 600 }}>
@@ -318,7 +318,7 @@ export default async function IdeaPage({
             <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
               <span style={{
                 fontSize: 36, fontWeight: 800, color: "var(--clr-text)",
-                fontFamily: "'Syne', sans-serif",
+                fontFamily: "var(--font-syne), 'Syne', sans-serif",
               }}>
                 {page.competitor_count ?? "—"}
               </span>
@@ -360,7 +360,7 @@ export default async function IdeaPage({
               fontSize: 20,
               fontWeight: 700,
               marginBottom: 16,
-              fontFamily: "'Syne', sans-serif",
+              fontFamily: "var(--font-syne), 'Syne', sans-serif",
               color: "var(--clr-text)",
             }}>
               Market Overview
@@ -389,7 +389,7 @@ export default async function IdeaPage({
             fontSize: 20,
             fontWeight: 700,
             marginBottom: 8,
-            fontFamily: "'Syne', sans-serif",
+            fontFamily: "var(--font-syne), 'Syne', sans-serif",
           }}>
             Want the full report?
           </h3>
@@ -459,7 +459,7 @@ export default async function IdeaPage({
               fontSize: 18,
               fontWeight: 700,
               marginBottom: 16,
-              fontFamily: "'Syne', sans-serif",
+              fontFamily: "var(--font-syne), 'Syne', sans-serif",
               color: "var(--clr-text)",
             }}>
               Related ideas

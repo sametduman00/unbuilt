@@ -86,7 +86,7 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
 
   return (
     <main style={{ maxWidth: 860, margin: "0 auto", padding: "2.5rem 20px 5rem" }}>
-      <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.035em", fontFamily: "'Syne', sans-serif", marginBottom: 8 }}>
+      <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.035em", fontFamily: "var(--font-syne), 'Syne', sans-serif", marginBottom: 8 }}>
         Startup Ideas
       </h1>
       <p style={{ fontSize: 16, color: "var(--clr-text-3)", marginBottom: 10, lineHeight: 1.6 }}>
@@ -177,7 +177,7 @@ export default async function StartupIdeasPage({ searchParams }: { searchParams:
 
       {/* Bottom CTA */}
       <div style={{ marginTop: 48, padding: "32px 28px", borderRadius: 12, background: "linear-gradient(135deg, #7c6fff12 0%, #0891b212 100%)", border: "1px solid var(--clr-border-2)", textAlign: "center" }}>
-        <h3 style={{ fontSize: 20, fontWeight: 700, fontFamily: "'Syne', sans-serif", marginBottom: 8 }}>Got your own idea?</h3>
+        <h3 style={{ fontSize: 20, fontWeight: 700, fontFamily: "var(--font-syne), 'Syne', sans-serif", marginBottom: 8 }}>Got your own idea?</h3>
         <p style={{ fontSize: 15, color: "var(--clr-text-3)", marginBottom: 20 }}>Dig analyzes it against 70+ live sources in 5 minutes.</p>
         <Link href="/?tab=dig" style={{ display: "inline-flex", padding: "12px 28px", borderRadius: 8, background: "#7c6fff", color: "#fff", fontSize: 15, fontWeight: 600, textDecoration: "none" }}>
           Try Dig free

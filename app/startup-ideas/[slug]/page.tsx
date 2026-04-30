@@ -54,7 +54,7 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ slu
   const sc = scoreColor(idea.opportunity_score);
 
   return (
-    <main style={{ maxWidth: 720, margin: "0 auto", padding: "48px 20px 80px", fontFamily: "'Figtree', -apple-system, sans-serif" }}>
+    <main style={{ maxWidth: 720, margin: "0 auto", padding: "48px 20px 80px", fontFamily: "var(--font-figtree), 'Figtree', -apple-system, sans-serif" }}>
 
       {/* Breadcrumb */}
       <nav style={{ fontSize: 13, color: "var(--clr-text-4)", marginBottom: 24, display: "flex", gap: 6, alignItems: "center" }}>
@@ -76,7 +76,7 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ slu
       </div>
 
       {/* Title */}
-      <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.035em", lineHeight: 1.2, margin: "0 0 16px", color: "var(--clr-text)", fontFamily: "'Syne', sans-serif" }}>
+      <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.035em", lineHeight: 1.2, margin: "0 0 16px", color: "var(--clr-text)", fontFamily: "var(--font-syne), 'Syne', sans-serif" }}>
         {idea.title}
       </h1>
 
@@ -166,7 +166,7 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ slu
 
       {/* Dig CTA — bottom */}
       <div style={{ padding: "32px 28px", borderRadius: 12, background: "linear-gradient(135deg, #7c6fff12 0%, #0891b212 100%)", border: "1px solid var(--clr-border-2)", textAlign: "center", marginBottom: 48 }}>
-        <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, fontFamily: "'Syne', sans-serif" }}>Dig deeper into this idea</h3>
+        <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, fontFamily: "var(--font-syne), 'Syne', sans-serif" }}>Dig deeper into this idea</h3>
         <p style={{ fontSize: 15, color: "var(--clr-text-3)", marginBottom: 20, maxWidth: 440, margin: "0 auto 20px" }}>
           Get a full competitive analysis of &quot;{idea.title}&quot; — 70+ live sources scanned in 5 minutes.
         </p>
@@ -178,7 +178,7 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ slu
       {/* Related ideas */}
       {related.length > 0 && (
         <div>
-          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, fontFamily: "'Syne', sans-serif", color: "var(--clr-text)" }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, fontFamily: "var(--font-syne), 'Syne', sans-serif", color: "var(--clr-text)" }}>
             More Startup Ideas
           </h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -205,7 +205,7 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ slu
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 32 }}>
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, fontFamily: "'Syne', sans-serif", color: "var(--clr-text)" }}>{title}</h2>
+      <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, fontFamily: "var(--font-syne), 'Syne', sans-serif", color: "var(--clr-text)" }}>{title}</h2>
       <p style={{ fontSize: 15, lineHeight: 1.75, color: "var(--clr-text-2)", whiteSpace: "pre-line", margin: 0 }}>{children}</p>
     </div>
   );

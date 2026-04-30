@@ -86,13 +86,13 @@ export default async function IdeasIndex({
       maxWidth: 960,
       margin: "0 auto",
       padding: "48px 20px 80px",
-      fontFamily: "'Figtree', -apple-system, sans-serif",
+      fontFamily: "var(--font-figtree), 'Figtree', -apple-system, sans-serif",
     }}>
       <h1 style={{
         fontSize: 32,
         fontWeight: 800,
         letterSpacing: "-0.035em",
-        fontFamily: "'Syne', sans-serif",
+        fontFamily: "var(--font-syne), 'Syne', sans-serif",
         marginBottom: 8,
       }}>
         App Ideas & Market Gaps
@@ -242,7 +242,7 @@ export default async function IdeasIndex({
         <h3 style={{
           fontSize: 20,
           fontWeight: 700,
-          fontFamily: "'Syne', sans-serif",
+          fontFamily: "var(--font-syne), 'Syne', sans-serif",
           marginBottom: 8,
         }}>
           Got your own idea?

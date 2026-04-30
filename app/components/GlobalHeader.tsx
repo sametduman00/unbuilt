@@ -33,7 +33,7 @@ export default function GlobalHeader() {
           <svg width="22" height="22" viewBox="0 0 19 19" fill="none">
             <path d="M2.5 5.5h14M2.5 9.5h10M2.5 13.5h6" stroke="var(--clr-accent)" strokeWidth="2.2" strokeLinecap="round" />
           </svg>
-          <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.025em", fontFamily: "Figtree, sans-serif" }}>
+          <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--clr-text)", letterSpacing: "-0.025em", fontFamily: "var(--font-figtree), Figtree, sans-serif" }}>
             Unbuilt
           </span>
         </Link>
