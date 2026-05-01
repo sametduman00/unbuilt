@@ -1,7 +1,7 @@
 # Unbuilt — Full Documentation for AI
 
 > The home base for the vibecoding generation.
-> URL: https://unbuilt.me
+> URL: https://www.unbuilt.me
 
 ## What is Unbuilt?
 
@@ -87,4 +87,4 @@ Unbuilt is the only tool that covers the full vibe coder journey: discover → v
 - Pulse: Free, no account required
 - Dig: 1 credit per report
 - Stack: 1 credit per report
-- Credits can be purchased on the pricing page: https://unbuilt.me/pricing
+- Credits can be purchased on the pricing page: https://www.unbuilt.me/pricing

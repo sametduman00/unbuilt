@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { COMPARISONS } from "./compare/comparisons";
 import { createClient } from "@supabase/supabase-js";
 
 // We can't use the singleton from app/lib/supabase here because
@@ -21,6 +22,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/use-cases`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/help`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/ideas`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    // Comparison pages — high priority because they own "Unbuilt vs X"
+    // and "X alternative" queries that AI assistants search for live
+    // when users ask comparison questions in ChatGPT / Perplexity / Claude.
+    { url: `${base}/compare`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    ...COMPARISONS.map(c => ({
+      url: `${base}/compare/${c.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.75,
+    })),
   ];
 
   // Dynamic SEO pages from Supabase (paginated to bypass 1000 row limit)
