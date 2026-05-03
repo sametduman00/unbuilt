@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from "react";
-import { getLabels } from "@/app/lib/i18n";
 // generatePdf is lazy-loaded when needed (heavy dep: jspdf + html2canvas)
 const lazyGeneratePdf = () => import("@/app/lib/generatePdf").then(m => m.generatePdf);
 import Link from "next/link";
@@ -564,12 +563,6 @@ function ThreatDots({ level }: { level: number }) {
 }
 
 function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack, isFreeResult }: { data: GapAnalysisData; itunesApps?: ITunesApp[]; gplayApps?: GooglePlayApp[]; idea?: string; onSwitchToStack?: (idea: string) => void; isFreeResult?: boolean }) {
-  // i18n labels — derived from the idea string the user typed. detectLang
-  // checks for Turkish-specific characters and stopwords, falls through
-  // to English. Memoised because GapAnalysisResult re-renders often
-  // (mobile media query, hover states, etc.) and detectLang shouldn't
-  // run every paint.
-  const t = useMemo(() => getLabels(idea ?? ""), [idea]);
   const [mob, setMob] = useState(false);
   useEffect(() => { const mq = window.matchMedia("(max-width: 768px)"); const chk = () => setMob(mq.matches); chk(); mq.addEventListener("change", chk); return () => mq.removeEventListener("change", chk); }, []);
   data = {
@@ -705,17 +698,12 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
         const heroColor = band === "band1" ? { bg:"#fef2f2", border:"#fecaca", text:"#991b1b", sub:"#b91c1c", label:"#dc2626", circle:"#ef4444" }
           : band === "band2" ? { bg:"#fffbeb", border:"#fcd34d", text:"#78350f", sub:"#92400e", label:"#d97706", circle:"#f59e0b" }
           : { bg:"#f0fdf4", border:"#86efac", text:"#14532d", sub:"#166534", label:"#16a34a", circle:"#10b981" };
-        const recLabelRaw = data.synthesis?.recommendedAction ?? "analyze";
-        // Translate enum value to localized label. Keys we know live in
-        // t.actions; for any unrecognised value (future enum, free-form
-        // string), fall back to the raw value with underscores replaced
-        // by spaces so the UI still shows something useful.
-        const recLabel = (t.actions as Record<string, string>)[recLabelRaw] ?? recLabelRaw.replace(/_/g, " ");
+        const recLabel = data.synthesis?.recommendedAction?.replace(/_/g," ") ?? "analyze";
         const hardPartText = data.synthesis?.hardPart || data.synthesis?.fatalFlaw || "";
         return (
         <div>
-          <Card title={t.assessmentTitle} right={
-            data._evidence?.level ? <Pill text={data._evidence.level==="high"?t.confidenceHigh:data._evidence.level==="moderate"?t.confidenceModerate:t.confidenceLow} color={data._evidence.level==="high"?"green":data._evidence.level==="moderate"?"orange":"red"} /> : null
+          <Card title="Current idea assessment" right={
+            data._evidence?.level ? <Pill text={data._evidence.level+" confidence"} color={data._evidence.level==="high"?"green":data._evidence.level==="moderate"?"orange":"red"} /> : null
           }>
             {/* Hero block — score + recommendation */}
             <div style={{ display:"flex", gap:0, marginBottom:16, borderRadius:10, overflow:"hidden", border:`1px solid ${heroColor.border}` }}>
@@ -725,7 +713,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 </div>
               </div>
               <div style={{ flex:1, background:heroColor.bg, padding:"14px 16px", borderLeft:`1px solid ${heroColor.border}` }}>
-                <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.08em", color:heroColor.label, marginBottom:4 }}>{t.recommendedPrefix}: {recLabel}</div>
+                <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.08em", color:heroColor.label, marginBottom:4 }}>Recommended: {recLabel}</div>
                 {data.verdict && <div style={{ fontSize:13, fontWeight:500, color:heroColor.text, lineHeight:1.5, marginBottom:6 }}>{data.verdict}</div>}
                 <div style={{ fontSize:11, color:heroColor.sub, lineHeight:1.5 }}>{data.marketScoreSummary}</div>
               </div>
@@ -737,7 +725,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 {/* Where this idea actually works */}
                 {data.synthesis?.repositionPaths && data.synthesis.repositionPaths.length > 0 && (
                   <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:10, padding:14, marginBottom:10 }}>
-                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#7c3aed", marginBottom:8 }}>{t.whereItWorks}</div>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#7c3aed", marginBottom:8 }}>Where this idea actually works</div>
                     <div style={{ display:"flex", flexDirection:"column" as const, gap:8, ...fb }}>
                       {data.synthesis.repositionPaths.map((p,i) => (
                         <div key={i} style={{ display:"flex", gap:8, alignItems:"flex-start" }}>
@@ -751,7 +739,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 {/* Your move */}
                 {data.synthesis?.bestNextMove && (
                   <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14, marginBottom:10 }}>
-                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#16a34a", marginBottom:4 }}>{t.yourMove}</div>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#16a34a", marginBottom:4 }}>Your move</div>
                     <div style={{ ...fb }}>
                     <div style={{ fontSize:13, fontWeight:500, color:"#14532d", marginBottom:4 }}>{data.synthesis.bestNextMove.action}</div>
                     <div style={{ fontSize:12, color:"#166534", lineHeight:1.5 }}>{data.synthesis.bestNextMove.detail}</div>
@@ -761,7 +749,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 {/* The hard part */}
                 {hardPartText && (
                   <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:14, marginBottom:10 }}>
-                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#d97706", marginBottom:4 }}>{t.hardPart}</div>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#d97706", marginBottom:4 }}>The hard part</div>
                     <div style={{ fontSize:12, color:"#78350f", lineHeight:1.5, ...fb }}>{hardPartText}</div>
                   </div>
                 )}
@@ -772,27 +760,27 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
               <>
                 {data.synthesis?.upsideCondition && (
                   <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:10, padding:14, marginBottom:10 }}>
-                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#2563eb", marginBottom:4 }}>{t.whatMakesItWork}</div>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#2563eb", marginBottom:4 }}>What makes this work</div>
                     <div style={{ fontSize:12, color:"#1e3a5f", lineHeight:1.5, ...fb }}>{data.synthesis.upsideCondition}</div>
                   </div>
                 )}
                 <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:10, marginBottom:10 }}>
                   {data.synthesis?.bestNextMove && (
                     <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14 }}>
-                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#16a34a", marginBottom:4 }}>{t.bestNextMove}</div>
+                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#16a34a", marginBottom:4 }}>Best next move</div>
                       <div style={{ fontSize:12, color:"#14532d", lineHeight:1.5, ...fb }}><strong>{data.synthesis.bestNextMove.action}</strong>{data.synthesis.bestNextMove.detail ? ` — ${data.synthesis.bestNextMove.detail}` : ""}</div>
                     </div>
                   )}
                   {data.synthesis?.repositionPaths?.[0] && (
                     <div style={{ background:"#f5f3ff", border:"1px solid #ddd6fe", borderRadius:10, padding:14 }}>
-                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#7c3aed", marginBottom:4 }}>{t.sharpenAngle}</div>
+                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#7c3aed", marginBottom:4 }}>Sharpen the angle</div>
                       <div style={{ fontSize:12, color:"#3b0764", lineHeight:1.5, ...fb }}>{data.synthesis.repositionPaths[0].angle}{data.synthesis.repositionPaths[0].reasoning ? ` — ${data.synthesis.repositionPaths[0].reasoning}` : ""}</div>
                     </div>
                   )}
                 </div>
                 {hardPartText && (
                   <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:14, marginBottom:10 }}>
-                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#d97706", marginBottom:4 }}>{t.hardPart}</div>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#d97706", marginBottom:4 }}>The hard part</div>
                     <div style={{ fontSize:12, color:"#78350f", lineHeight:1.5, ...fb }}>{hardPartText}</div>
                   </div>
                 )}
@@ -804,7 +792,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 {/* Why this has signal */}
                 {data.synthesis?.upsideCondition && (
                   <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14, marginBottom:10 }}>
-                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#16a34a", marginBottom:4 }}>{t.whyHasSignal}</div>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#16a34a", marginBottom:4 }}>Why this has signal</div>
                     <div style={{ fontSize:12, color:"#14532d", lineHeight:1.5, ...fb }}>{data.synthesis.upsideCondition}</div>
                   </div>
                 )}
@@ -816,7 +804,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 )}
                 {data.synthesis?.bestNextMove && (
                   <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:10, padding:14, marginBottom:10 }}>
-                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#2563eb", marginBottom:4 }}>{t.yourMove}</div>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#2563eb", marginBottom:4 }}>Your move</div>
                     <div style={{ ...fb }}>
                     <div style={{ fontSize:13, fontWeight:500, color:"#1e3a5f", marginBottom:4 }}>{data.synthesis.bestNextMove.action}</div>
                     <div style={{ fontSize:12, color:"#1e40af", lineHeight:1.5 }}>{data.synthesis.bestNextMove.detail}</div>
@@ -825,7 +813,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 )}
                 {hardPartText && (
                   <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:14, marginBottom:10 }}>
-                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#d97706", marginBottom:4 }}>{t.riskToWatch}</div>
+                    <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, letterSpacing:"0.07em", color:"#d97706", marginBottom:4 }}>The risk you should watch</div>
                     <div style={{ fontSize:12, color:"#78350f", lineHeight:1.5, ...fb }}>{hardPartText}</div>
                   </div>
                 )}
@@ -844,13 +832,13 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:10, marginBottom:10 }}>
                   {hardPartText && (
                     <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:14 }}>
-                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#d97706", marginBottom:6, letterSpacing:"0.07em" }}>{t.hardPart}</div>
+                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#d97706", marginBottom:6, letterSpacing:"0.07em" }}>The hard part</div>
                       <div style={{ fontSize:13, color:"#78350f", lineHeight:1.5 }}>{hardPartText}</div>
                     </div>
                   )}
                   {data.synthesis?.upsideCondition && (
                     <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10, padding:14 }}>
-                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#16a34a", marginBottom:6, letterSpacing:"0.07em" }}>{t.upsideCondition}</div>
+                      <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#16a34a", marginBottom:6, letterSpacing:"0.07em" }}>Upside condition</div>
                       <div style={{ fontSize:13, color:"#14532d", lineHeight:1.5 }}>{data.synthesis.upsideCondition}</div>
                     </div>
                   )}
@@ -877,7 +865,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
           </Card>
           {/* D1-D5 Score Breakdown */}
           {data._scoring && (
-            <Card title={t.scoreBreakdown} sub={t.scoreBreakdownSub}>
+            <Card title="Score Breakdown" sub="How the market score was calculated">
               <div style={{ display:"flex", flexDirection:"column" as const, gap:10, ...fb }}>
                 {[
                   { key:"D1_demand", label:"Demand signals", weight:"30%", color:"#6366f1" },
@@ -910,7 +898,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
               )}
               {data._evidence?.level && data._evidence.level !== "high" && (
                 <div style={{ marginTop:8, padding:"8px 12px", background:"#fffbeb", border:"1px solid #fde68a", borderRadius:8, fontSize:12, color:"#92400e" }}>
-                  ℹ {t.evidenceNoteFn(data._evidence.activeSources ?? 0, data._evidence.totalSources ?? 0, data._evidence.level)}
+                  ℹ {data._evidence.activeSources} of {data._evidence.totalSources} data sources returned results. Confidence: {data._evidence.level}.
                 </div>
               )}
             </Card>
@@ -930,7 +918,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
       case "market": return (
         <div>
           {data.marketSize && (
-            <Card title={t.marketSizing} sub={t.marketSizingSub} right={<Pill text={t.multiSource} color="blue" />}>
+            <Card title="Market Sizing" sub="TAM to SAM to SOM funnel" right={<Pill text="Multi-source" color="blue" />}>
               <div style={{ display:"flex", flexDirection:(typeof window!=="undefined"&&window.innerWidth<768)?"column":"row" as const, alignItems:"stretch", gap:(typeof window!=="undefined"&&window.innerWidth<768)?12:10, marginBottom:16 }}>
                 {[{ val:data.marketSize.tam, label:"TAM", sub:"Everyone who could buy" }, null, { val:data.marketSize.sam, label:"SAM", sub:"People you can reach" }, null, { val:data.marketSize.som, label:"SOM", sub:"Realistic customers" }].map((item,i) =>
                   item===null ? <div key={i} style={{ display:"flex", alignItems:"center", color:"#9ca3af", fontSize:18, flexShrink:0 }}>→</div> : (() => {
@@ -950,13 +938,13 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                 <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8, padding:"10px 14px", display:"flex", alignItems:"center", gap:10 }}>
                   <span style={{ color:"#16a34a", fontWeight:700, fontSize:16 }}>↗</span>
                   <span style={{ fontSize:13, fontWeight:600, color:"#15803d" }}>{data.marketSize.growthRate} annual growth</span>
-                  <Pill text={t.growing} color="green" />
+                  <Pill text="Growing" color="green" />
                 </div>
               )}
             </Card>
           )}
           {data.marketSegments && data.marketSegments.length > 0 && (
-            <Card title={t.marketSegments} sub={t.marketSegmentsSub}>
+            <Card title="Market Segments" sub="Addressable sub-markets ranked by fit">
               {data.marketSegments.map((seg,i) => (
                 <div key={i} style={{ borderLeft:"4px solid "+(seg.fit==="primary"?"#0ea5e9":seg.fit==="secondary"?"#10b981":"#f59e0b"), paddingLeft:14, marginBottom:16 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:5, flexWrap:"wrap" as const }}>
@@ -974,7 +962,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
       );
       case "community": return (
         <div>
-          <Card title={t.communitySignals} sub={t.communitySignalsSub}>
+          <Card title="Community Signals" sub="What real users are saying">
             <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10 }}>
               {[{ label:"Pain Level", val:data.painPoints?.some(p=>p.severity==="high")?"HIGH":"MEDIUM", note:"Frustration signals" }, { label:"Signals Found", val:(data.painPoints?.length??0)+(data.communitySignals?.length??0)+"+", note:"Validated pain points" }, { label:"Sources", val:"3+", note:"Platform coverage" }].map(m => (
                 <div key={m.label} style={{ background:"#fafafa", border:"1px solid #e5e7eb", borderRadius:10, padding:14 }}>
@@ -986,7 +974,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
             </div>
           </Card>
           {data.painPoints && data.painPoints.length > 0 && (
-            <Card title={t.painPoints} sub={t.painPointsSub}>
+            <Card title="Pain Points" sub="Real quotes from your target market">
               {data.painPoints.map((pp,i) => (
                 <div key={i} style={{ borderLeft:"3px solid #e5e7eb", paddingLeft:14, marginBottom:14 }}>
                   <div style={{ display:"flex", gap:6, marginBottom:6, flexWrap:"wrap" as const, alignItems:"center" }}>
@@ -999,7 +987,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
             </Card>
           )}
           {data.communitySignals && data.communitySignals.length > 0 && (
-            <Card title={t.signalFeed} sub={t.signalFeedSub}>
+            <Card title="Signal Feed" sub="Community discussions">
               {data.communitySignals.map((sig,i) => (
                 <div key={i} style={{ background:"#fafafa", border:"1px solid #e5e7eb", borderRadius:8, padding:12, marginBottom:8 }}>
                   <div style={{ display:"flex", gap:5, marginBottom:6, flexWrap:"wrap" as const, alignItems:"center" }}>
@@ -1012,7 +1000,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
             </Card>
           )}
           {data.redditPosts && data.redditPosts.length > 0 && (
-            <Card title={t.redditPosts} sub={t.redditPostsSubFn(data.redditPosts.length)} right={<Pill text="Reddit" color="orange" />}>
+            <Card title="Reddit Posts" sub={"Live posts from Reddit — " + data.redditPosts.length + " found"} right={<Pill text="Reddit" color="orange" />}>
               {data.redditPosts.map((post, i) => (
                 <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14, marginBottom:10 }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8, gap:10 }}>
@@ -1031,7 +1019,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
             </Card>
           )}
           {data.xPosts && data.xPosts.length > 0 && (
-            <Card title={t.xPosts} sub={t.xPostsSubFn(data.xPosts.length)} right={<Pill text="X / Twitter" color="dark" />}>
+            <Card title="X / Twitter Posts" sub={"Live posts from X — " + data.xPosts.length + " found"} right={<Pill text="X / Twitter" color="dark" />}>
               {data.xPosts.map((post, i) => (
                 <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:12, marginBottom:8 }}>
                   <div style={{ display:"flex", alignItems:"flex-start", gap:10 }}>
@@ -1055,7 +1043,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
       );
       case "competitors": return (
         <div>
-          <Card title={t.competitiveLandscape} sub={t.competitiveLandscapeSubFn(data.competitors?.length??0)} right={<Pill text={t.activeSuffixFn(data.competitors?.length??0)} color="green" />}>
+          <Card title="Competitive Landscape" sub={(data.competitors?.length??0)+" competitors analyzed"} right={<Pill text={(data.competitors?.length??0)+" Active"} color="green" />}>
             {data.competitors?.map((c,i) => {
               const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(c.name)}`;
               return (
@@ -1091,7 +1079,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
             })}
           </Card>
           {allApps.length > 0 && (
-            <Card title={t.existingApps} sub={t.existingAppsSub} right={
+            <Card title="Existing Apps" sub="Top results from App Store and Google Play" right={
               <div style={{ display:"flex", gap:6 }}>
                 {(itunesApps?.length??0) > 0 && <Pill text={"App Store "+itunesApps!.length} color="blue" />}
                 {(gplayApps?.length??0) > 0 && <Pill text={"Play "+gplayApps!.length} color="green" />}
@@ -1124,7 +1112,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
       );
       case "gaps": return (
         <div>
-          <Card title={t.marketGaps} sub={t.marketGapsSub}>
+          <Card title="Market Gaps" sub="Where competitors fall short">
             {data.marketGaps?.map((gap,i) => (
               <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14, marginBottom:10 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
@@ -1142,7 +1130,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
             ))}
           </Card>
           {data.swot && (
-            <Card title={t.swot} sub={t.swotSub}>
+            <Card title="SWOT Analysis" sub="Strategic position overview">
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
                 {([{ key:"strengths" as const, label:"Strengths", bg:"#dcfce7", border:"#bbf7d0", tc:"#15803d" }, { key:"weaknesses" as const, label:"Weaknesses", bg:"#fff7ed", border:"#fed7aa", tc:"#ea580c" }, { key:"opportunities" as const, label:"Opportunities", bg:"#eff6ff", border:"#bfdbfe", tc:"#2563eb" }, { key:"threats" as const, label:"Threats", bg:"#fef2f2", border:"#fecaca", tc:"#dc2626" }]).map(({ key, label, bg, border, tc }) => (
                   <div key={key} style={{ background:bg, border:"1px solid "+border, borderRadius:8, padding:12 }}>
@@ -1158,7 +1146,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
       case "gtm": return (
         <div>
           {data.targetCustomerDeep && (
-            <Card title={t.targetCustomer} sub={t.targetCustomerSub}>
+            <Card title="Target Customer" sub="Who to sell to first">
               <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8, marginBottom:14 }}>
                 {[{ label:"Who They Are", value:data.targetCustomerDeep.whoTheyAre }, { label:"How They Think", value:data.targetCustomerDeep.howTheyThink }, { label:"Available Money", value:data.targetCustomerDeep.availableMoney }, { label:"How They Buy", value:data.targetCustomerDeep.howTheyBuy }].map(({ label, value }) => (
                   <div key={label} style={{ background:"#fafafa", border:"1px solid #e5e7eb", borderRadius:8, padding:10 }}>
@@ -1184,7 +1172,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
             </Card>
           )}
           {data.goToMarket && (
-            <Card title={t.goToMarket} sub={t.goToMarketSub}>
+            <Card title="Go-to-Market Channels" sub="Distribution strategy + estimated CAC">
               {data.goToMarket.channels?.map((ch,i) => {
                 // Extract just the numeric CAC from potentially long strings
                 const cacNum = ch.estimatedCAC.match(/\$[\d,.]+-?[\d,.]*[KMB]?/)?.[0] ?? ch.estimatedCAC.substring(0,12);
@@ -1207,7 +1195,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
             </Card>
           )}
           {data.industryTrends && (
-            <Card title={t.industryTrends} sub={t.industryTrendsSub}>
+            <Card title="Industry Trends" sub="Forces shaping your market">
               {([{ key:"now" as const, label:"Current (Now)", color:"#0ea5e9" }, { key:"emerging" as const, label:"Emerging (1-3yr)", color:"#f59e0b" }, { key:"structural" as const, label:"Structural (3-5yr)", color:"#8b5cf6" }]).map(({ key, label, color }) =>
                 (data.industryTrends?.[key]?.length??0) > 0 ? (
                   <div key={key} style={{ marginBottom:14 }}>
@@ -1231,7 +1219,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
       case "financials": return (
         <div>
           {data.financialDeep && (
-            <Card title={t.financialSnapshot} sub={t.financialSnapshotSub}>
+            <Card title="Financial Snapshot" sub="Key metrics for your first year">
               <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10, marginBottom:20 }}>
                 <div style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14, display:"flex", flexDirection:"column" as const, gap:6 }}>
                   <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#ef4444" }}>Monthly Burn</div>
@@ -1277,7 +1265,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
             </Card>
           )}
           {data.fundabilityRadar && (
-            <Card title={t.fundabilityRadar} sub={t.fundabilityRadarSub}>
+            <Card title="Fundability Radar" sub="Investor lens">
               <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10 }}>
                 {Object.entries(data.fundabilityRadar).map(([key, dim]) => {
                   const d = dim as { score: number; note: string };
@@ -1303,7 +1291,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
       case "validate": return (
         <div>
           {(data.validationChecklist?.length??0) > 0 && (
-            <Card title={t.validateBeforeBuilding} sub={t.validateBeforeBuildingSubFn(data.validationChecklist?.length??0)}>
+            <Card title="Validate Before Building" sub={(data.validationChecklist?.length??0)+" assumptions to test"}>
               {data.validationChecklist?.map((item,i) => (
                 <div key={i} style={{ borderLeft:"4px solid "+(item.risk==="high"?"#ef4444":item.risk==="medium"?"#f59e0b":"#10b981"), paddingLeft:14, marginBottom:16 }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:5 }}>
@@ -1316,7 +1304,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
             </Card>
           )}
           {data.customerInterviewGuide && (
-            <Card title={t.customerInterviewGuide} sub={t.customerInterviewGuideSubFn(data.customerInterviewGuide.targetInterviews)}>
+            <Card title="Customer Interview Guide" sub={"Non-leading questions — Target: "+data.customerInterviewGuide.targetInterviews+" interviews"}>
               <div style={{ marginBottom:14 }}>
                 <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase" as const, color:"#374151", marginBottom:9, letterSpacing:"0.07em" }}>Questions to Ask</div>
                 {data.customerInterviewGuide.questions.map((q,i) => (
@@ -1346,7 +1334,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
       );
       case "action": return (
         <div>
-          <Card title={t.yourOpportunity} sub={t.yourOpportunitySub} right={<button style={{ background:"#111827", color:"white", padding:"4px 12px", borderRadius:6, border:"none", fontSize:12, cursor:"pointer", fontWeight:600 }}>{t.actNow}</button>}>
+          <Card title="Your Opportunity" sub="The gap you can own" right={<button style={{ background:"#111827", color:"white", padding:"4px 12px", borderRadius:6, border:"none", fontSize:12, cursor:"pointer", fontWeight:600 }}>Act Now</button>}>
             <div style={{ fontSize:15, fontWeight:700, color:"#111827", marginBottom:16, lineHeight:1.5 }}>{data.opportunity?.headline}</div>
             {(() => {
               const items = data.opportunity?.actionItems ?? [];
@@ -1365,7 +1353,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
             })()}
           </Card>
           {(data.goToMarket?.launchPhases?.length??0) > 0 && (
-            <Card title={t.launchRoadmap} sub={t.launchRoadmapSub}>
+            <Card title="Launch Roadmap" sub="Phased go-to-market plan">
               {data.goToMarket?.launchPhases?.map((phase,i) => (
                 <div key={i} style={{ border:"1px solid #e5e7eb", borderRadius:10, padding:14, marginBottom:10 }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
@@ -1389,7 +1377,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
       );
       case "synthesis": return (
         <div>
-          <Card title={t.synthesis} sub={t.synthesisSub}>
+          <Card title="Synthesis" sub="Your idea, the full picture">
             <div style={{ display:"flex", gap:20, marginBottom:18 }}>
               <ScoreCircle size={80} />
               <div style={{ flex:1, minWidth:0 }}>
@@ -1404,7 +1392,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
                   background: data.synthesis.recommendedAction==="kill"?"#fee2e2" : data.synthesis.recommendedAction==="move_fast"?"#dcfce7" : data.synthesis.recommendedAction==="build_mvp"?"#dbeafe" : data.synthesis.recommendedAction==="reposition"?"#fff7ed" : "#f3f4f6",
                   color: data.synthesis.recommendedAction==="kill"?"#dc2626" : data.synthesis.recommendedAction==="move_fast"?"#16a34a" : data.synthesis.recommendedAction==="build_mvp"?"#2563eb" : data.synthesis.recommendedAction==="reposition"?"#ea580c" : "#374151",
                 }}>
-                  → {t.recommendedPrefix}: {(t.actions as Record<string, string>)[data.synthesis.recommendedAction] ?? data.synthesis.recommendedAction.replace(/_/g," ")}
+                  → Recommended: {data.synthesis.recommendedAction.replace(/_/g," ")}
                 </div>
                 {data._scoring?.action_override && (
                   <div style={{ fontSize:12, color:"#6b7280", marginTop:6, lineHeight:1.5 }}>
@@ -1426,7 +1414,7 @@ function GapAnalysisResult({ data, itunesApps, gplayApps, idea, onSwitchToStack,
           </Card>
           {/* Defensibility */}
           {data.synthesis?.defensibility && (
-            <Card title={t.defensibility} sub={t.defensibilitySub}>
+            <Card title="Defensibility" sub="How protected is this position?">
               <div style={{ display:"flex", gap:12, alignItems:"center", marginBottom:14 }}>
                 <div style={{ display:"inline-flex", padding:"4px 12px", borderRadius:8, fontSize:12, fontWeight:600,
                   background: data.synthesis.defensibility.level==="high"?"#dcfce7" : data.synthesis.defensibility.level==="medium"?"#fff7ed" : "#fee2e2",
