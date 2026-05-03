@@ -225,9 +225,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://connect.facebook.net" />
         <link rel="dns-prefetch" href="https://www.clarity.ms" />
-        {/* Fonts (Syne + Figtree) are now self-hosted via next/font — no
-            external <link rel="stylesheet"> here. That used to be the main
-            render-blocking request on mobile (LCP +800ms in tests). */}
+        {/* Restore the Google Fonts stylesheet link as a safety net.
+            next/font (Syne + Figtree) is still wired up above and
+            should be doing the heavy lifting via self-host, but if any
+            subtree references the literal 'Syne' / 'Figtree' family
+            without the CSS variable, this stylesheet guarantees the
+            font is still loaded so visible type doesn't fall back to
+            system fonts. preconnect first so DNS+TLS overlap with the
+            CSS download. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Figtree:wght@300;400;500;600&display=swap" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
