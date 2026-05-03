@@ -6,6 +6,7 @@ import { getCached, setCached, TTL_MS } from "../_cache";
 import { normalizeQuery } from "../_normalize";
 import { auth } from "@clerk/nextjs/server";
 import { deductAnalysis, addPurchasedAnalyses } from "@/app/lib/plan";
+import { LANGUAGE_RULE } from "@/app/lib/lang-rule";
 import { saveReport } from "@/app/lib/reports";
 import { validateAnalyzeBody, checkPayloadSize, errorResponse, MAX_PAYLOAD_BYTES } from "@/app/lib/validate";
 import { checkDailyCreditQuota, incrementDailyCredits } from "@/app/lib/abuse";
@@ -856,7 +857,7 @@ export async function POST(req: NextRequest) {
         const anthropicStream = client.messages.stream({
           model: "claude-opus-4-6", max_tokens: 64000,
           thinking: { type: "enabled", budget_tokens: 25000 },
-          system: SYSTEM_PROMPT,
+          system: SYSTEM_PROMPT + LANGUAGE_RULE,
           messages: [{ role: "user", content: USER_PROMPT(sanitizeIdea(idea), youtubeContext, combinedAppContext, serperContext, trendsContext, segmentsContext, customerContext, gtmContext, reviewsContext, financialContext, fundabilityContext, socialContext) }],
         });
         for await (const event of anthropicStream) {

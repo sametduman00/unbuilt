@@ -5,6 +5,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { getCached, setCached, TTL_MS } from "../_cache";
 import { normalizeQuery } from "../_normalize";
+import { LANGUAGE_RULE } from "@/app/lib/lang-rule";
 import { auth } from "@clerk/nextjs/server";
 import { deductAnalysis } from "@/app/lib/plan";
 import { saveReport } from "@/app/lib/reports";
@@ -270,7 +271,7 @@ export async function POST(req: NextRequest) {
         const s = client.messages.stream({
           model: "claude-opus-4-6", max_tokens: 24000,
           thinking: { type: "enabled", budget_tokens: 10000 },
-          system: SYSTEM,
+          system: SYSTEM + LANGUAGE_RULE,
           messages: [{ role: "user", content: PROMPT(sanitizeIdea(idea), budget as string, techLevel as string, (platform ?? "web") as string) }],
         });
         for await (const event of s) {

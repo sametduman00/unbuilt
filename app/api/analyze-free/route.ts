@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { rateLimit } from "@/app/api/_ratelimit";
 import { validateAnalyzeBody, checkPayloadSize, errorResponse } from "@/app/lib/validate";
 import { checkFreeRateLimit, logFreeAnalysis } from "@/app/lib/plan";
+import { LANGUAGE_RULE } from "@/app/lib/lang-rule";
 
 const FREE_PROMPT = `You are a sharp market analyst. Given a startup/product idea, provide a quick assessment using your existing knowledge. No live data — use what you know about the market.
 
@@ -87,7 +88,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1000,
-        system: FREE_PROMPT,
+        system: FREE_PROMPT + LANGUAGE_RULE,
         messages: [{ role: "user", content: `Idea: "${cleanIdea}"` }],
       }),
     });

@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { rateLimit } from "@/app/api/_ratelimit";
 import { validateStackBody, checkPayloadSize, errorResponse } from "@/app/lib/validate";
 import { checkFreeRateLimit, logFreeAnalysis } from "@/app/lib/plan";
+import { LANGUAGE_RULE } from "@/app/lib/lang-rule";
 
 const FREE_STACK_PROMPT = `You are a pragmatic tech advisor for vibe coders. Given a startup/product idea, recommend the fastest $0 way to validate demand before building anything.
 
@@ -98,7 +99,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 2000,
-        system: FREE_STACK_PROMPT,
+        system: FREE_STACK_PROMPT + LANGUAGE_RULE,
         messages: [{ role: "user", content: `Idea: "${cleanIdea}"` }],
       }),
     });
